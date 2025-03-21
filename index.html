@@ -10,8 +10,31 @@
 <link rel="stylesheet" href="https://unpkg.com/@egjs/flicking/dist/flicking-inline.css" crossorigin="anonymous" />
 <!-- cdnjs -->
 <link rel="stylesheet" href="https://naver.github.io/egjs-flicking-plugins/release/latest/dist/flicking-plugins.css">
+<style type="text/css">
+  .plugins-panel {
+  position: relative;
+  border-radius: 5px;
+  width: 80%;
+  margin-right: 10px;
+  height: 200px;
+  overflow: hidden;
+}
 
+.panel-image {
+  top: -100%;
+  bottom: -100%;
+  width: 100%;
+  margin: auto;
+  position: absolute;
+  left: 50%;
+  transform: translate(-50%);
+}
+</style>
+<script>
+import { AutoPlay } from "@egjs/flicking-plugins";
 
+flicking.addPlugins(new AutoPlay({ duration: 2000, direction: "NEXT", stopOnHover: false }));
+</script>
 
 </head>
 <body>
@@ -19,37 +42,23 @@
 <p>테스트 페이지입니다.</p>
 <p>I'm hosted with GitHub Pages.</p>
 
-
 <div id="flick" class="flicking-viewport">
   <div class="flicking-camera">
-    <div class="flicking-panel">1</div>
-    <div class="flicking-panel">2</div>
-    <div class="flicking-panel">3</div>
-    <div class="flicking-panel">4</div>
-    <div class="flicking-panel">5</div>
+    <div class="plugins-panel"><img class="panel-image" src="/img/demo/bg01.jpg" /></div>
+    <div class="plugins-panel"><img class="panel-image" src="/img/demo/bg02.jpg" /></div>
+    <div class="plugins-panel"><img class="panel-image" src="/img/demo/bg03.jpg" /></div>
   </div>
-</div>
-<div class="block is-flex is-justify-content-center">
-  <span id="btn-prepend" class="button mr-2 is-info is-outlined">Prepend</span>
-  <span id="btn-append" class="button mr-2 is-info is-outlined">Append</span>
 </div>
 
 <script>
+import Flicking from "@egjs/flicking";
+import { Autoplay } from "@egjs/flicking-plugins";
+
 const flicking = new Flicking("#flick", {
-  renderOnlyVisible: true
+  circular: true
 });
-let minIdx = 1;
-let maxIdx = 5;
 
-const prependBtn = document.querySelector("#btn-prepend");
-const appendBtn = document.querySelector("#btn-append");
-
-prependBtn.addEventListener("click", () => {
-  flicking.prepend(`<div class="flicking-panel">${--minIdx}</div>`)
-});
-appendBtn.addEventListener("click", () => {
-  flicking.append(`<div class="flicking-panel">${++maxIdx}</div>`)
-});
+flicking.addPlugins(new Autoplay());
 </script>
 </body>
 </html>
