@@ -5,60 +5,11 @@
     <title>UXmanual</title>
     <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1, maximum-scale=1" />    
     <link rel="stylesheet" href="css/default.css">
-<!-- unpkg -->
-<link rel="stylesheet" href="https://unpkg.com/@egjs/flicking/dist/flicking.css" crossorigin="anonymous" />
-<link rel="stylesheet" href="https://unpkg.com/@egjs/flicking/dist/flicking-inline.css" crossorigin="anonymous" />
-<!-- cdnjs -->
-<link rel="stylesheet" href="https://naver.github.io/egjs-flicking-plugins/release/latest/dist/flicking-plugins.css">
-<style type="text/css">
-  .plugins-panel {
-  position: relative;
-  border-radius: 5px;
-  width: 80%;
-  margin-right: 10px;
-  height: 200px;
-  overflow: hidden;
-}
-
-.panel-image {
-  top: -100%;
-  bottom: -100%;
-  width: 100%;
-  margin: auto;
-  position: absolute;
-  left: 50%;
-  transform: translate(-50%);
-}
-</style>
-<script>
-import { AutoPlay } from "@egjs/flicking-plugins";
-
-flicking.addPlugins(new AutoPlay({ duration: 2000, direction: "NEXT", stopOnHover: false }));
-</script>
-
 </head>
 <body>
 <h1>Welcome UXmaunal</h1>
 <p>테스트 페이지입니다.</p>
 <p>I'm hosted with GitHub Pages.</p>
 
-<div id="flick" class="flicking-viewport">
-  <div class="flicking-camera">
-    <div class="plugins-panel"><img class="panel-image" src="https://splice-res.cloudinary.com/image/upload/q_auto/f_auto/c_fit,h_180/dpr_1.0/v1594917496/1594917485.jpg" /></div>
-    <div class="plugins-panel"><img class="panel-image" src="https://splice-res.cloudinary.com/image/upload/q_auto/f_auto/c_fit,h_280/dpr_1.0/v1619622093/1619622083.jpg" /></div>
-    <div class="plugins-panel"><img class="panel-image" src="https://splice-res.cloudinary.com/image/upload/q_auto/f_auto/c_fit,h_110/dpr_1.0/v1585145297/1585145294.jpg" /></div>
-  </div>
-</div>
-
-<script>
-import Flicking from "@egjs/flicking";
-import { Autoplay } from "@egjs/flicking-plugins";
-
-const flicking = new Flicking("#flick", {
-  circular: true
-});
-
-flicking.addPlugins(new Autoplay());
-</script>
 </body>
 </html>
