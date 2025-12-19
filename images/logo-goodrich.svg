@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 141 24" width="141" height="24">
+    <!-- 굿리치 로고 (간단한 버전) -->
+    <g>
+        <!-- G -->
+        <path d="M8 2C4 2 2 5 2 8.5C2 12 4 15 8 15C10 15 11.5 14 12 13L10 12C9.5 12.5 8.5 13 8 13C5.5 13 4 11.5 4 8.5C4 5.5 5.5 4 8 4C9.5 4 10.5 4.5 11 5.5H8V7H13V2.5C12 1 10.5 0 8 0Z" fill="white"/>
+        
+        <!-- O -->
+        <ellipse cx="19" cy="7.5" rx="4" ry="6" fill="none" stroke="white" stroke-width="2"/>
+        
+        <!-- 간단한 텍스트 -->
+        <text x="30" y="16" font-family="Arial, sans-serif" font-size="14" font-weight="bold" fill="white">GOODRICH</text>
+    </g>
+</svg>
