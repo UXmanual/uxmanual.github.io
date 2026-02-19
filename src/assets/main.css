@@ -5,32 +5,45 @@
     --color-card-bg: #161618;
 }
 
+/* Explicitly define dark mode variant to use .dark class */
+@custom-variant dark (&:where(.dark, .dark *));
+
 :root {
     --bg-dark: #0a0a0c;
+    color-scheme: light dark;
+}
+
+/* Ensure body and html follow the theme */
+html {
+    @apply transition-colors duration-500;
+}
+
+html.dark {
+    color-scheme: dark;
 }
 
 body {
-    @apply bg-white text-zinc-900 transition-colors duration-500;
+    @apply bg-zinc-50 text-zinc-900 antialiased transition-colors duration-500;
     font-family: 'Pretendard', sans-serif;
 }
 
-.dark body {
-    @apply bg-[#0a0a0c] text-white;
+html.dark body {
+    @apply bg-[#0a0a0c] text-zinc-100;
 }
 
-/* Custom scrollbar for dark/light */
+/* Custom scrollbar */
 ::-webkit-scrollbar {
-    width: 8px;
+    width: 10px;
 }
 
 ::-webkit-scrollbar-track {
-    @apply bg-transparent;
+    @apply bg-zinc-100 dark:bg-zinc-900;
 }
 
 ::-webkit-scrollbar-thumb {
-    @apply bg-zinc-300 rounded-full;
+    @apply bg-zinc-300 dark:bg-zinc-700 rounded-full border-2 border-transparent bg-clip-content;
 }
 
-.dark ::-webkit-scrollbar-thumb {
-    @apply bg-zinc-800;
+::-webkit-scrollbar-thumb:hover {
+    @apply bg-zinc-400 dark:bg-zinc-600;
 }

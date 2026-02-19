@@ -88,30 +88,33 @@ const tags = ['All Projects', 'UI/UX Design', '3D Art', 'Motion', 'Concept']
 const activeTag = ref('All Projects')
 
 // Theme management
-const toggleTheme = () => {
-  isDark.value = !isDark.value
-  updateThemeClass()
-  localStorage.setItem('theme', isDark.value ? 'dark' : 'light')
-}
-
-const updateThemeClass = () => {
-  if (isDark.value) {
+const updateThemeClass = (dark: boolean) => {
+  if (dark) {
     document.documentElement.classList.add('dark')
   } else {
     document.documentElement.classList.remove('dark')
   }
 }
 
-onMounted(() => {
-  // Load preferred theme
-  const savedTheme = localStorage.getItem('theme')
-  if (savedTheme === 'light') {
-    isDark.value = false
-  } else {
-    isDark.value = true // Default dark
-  }
-  updateThemeClass()
+const toggleTheme = () => {
+  isDark.value = !isDark.value
+  updateThemeClass(isDark.value)
+  localStorage.setItem('theme', isDark.value ? 'dark' : 'light')
+}
 
+// Initial theme setup (runs before mount)
+const savedTheme = localStorage.getItem('theme')
+if (savedTheme) {
+  isDark.value = savedTheme === 'dark'
+} else {
+  isDark.value = true // Default to dark
+}
+updateThemeClass(isDark.value)
+
+onMounted(() => {
+  // Double check theme on mount
+  updateThemeClass(isDark.value)
+  
   // Simulate initial data loading delay
   setTimeout(() => {
     isLoading.value = false
@@ -134,6 +137,7 @@ const filteredItems = computed(() => {
   return items.filter(item => item.category === activeTag.value)
 })
 </script>
+
 
 <style>
 .no-scrollbar::-webkit-scrollbar { display: none; }
