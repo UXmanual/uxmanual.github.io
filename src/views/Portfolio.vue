@@ -27,7 +27,7 @@
 
     <!-- Header -->
     <header class="pt-40 px-6 md:px-10 max-w-[1600px] mx-auto mb-10">
-      <h1 class="text-5xl font-bold tracking-tight mb-4 text-zinc-900 dark:text-white uppercase tracking-tighter">Design Portfolio</h1>
+      <h1 class="text-5xl font-bold tracking-tight mb-4 text-zinc-900 dark:text-white tracking-tighter">Design Portfolio</h1>
       <p class="text-zinc-600 dark:text-zinc-400 text-lg mb-8 uppercase tracking-widest text-xs font-black">미드저니 벤치마킹 스타일의 메이슨리 그리드 및 다중 테마가 적용된 디자인 아카이브입니다.</p>
       
       <!-- Quick Add Section -->
