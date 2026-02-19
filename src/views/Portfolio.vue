@@ -1,36 +1,48 @@
 <template>
-  <div class="min-h-screen bg-[#0a0a0c] text-white selection:bg-indigo-500/30">
+  <div class="min-h-screen transition-colors duration-500 selection:bg-indigo-500/30">
     <!-- Navbar -->
-    <nav class="fixed top-0 w-full px-10 py-5 flex justify-between items-center z-50 bg-[#0a0a0c]/80 backdrop-blur-xl border-b border-white/10">
-      <router-link to="/" class="flex items-center gap-3 text-xl font-extrabold tracking-tighter">
+    <nav class="fixed top-0 w-full px-6 md:px-10 py-5 flex justify-between items-center z-50 bg-white/80 dark:bg-[#0a0a0c]/80 backdrop-blur-xl border-b border-zinc-200 dark:border-white/10 transition-colors duration-500">
+      <router-link to="/" class="flex items-center gap-3 text-xl font-extrabold tracking-tighter text-zinc-900 dark:text-white transition-colors">
         <div class="w-2 h-2 bg-indigo-500 rounded-full animate-pulse"></div>
         UXmanual
       </router-link>
-      <div class="hidden md:flex gap-8 text-sm font-semibold text-zinc-500">
-        <a href="#" class="text-white">Explore Project</a>
-        <a href="#" class="hover:text-white transition-colors">Digital Lab</a>
-        <a href="#" class="hover:text-white transition-colors">Archived</a>
+      
+      <div class="flex items-center gap-4 md:gap-8">
+        <div class="hidden md:flex gap-8 text-sm font-semibold text-zinc-500">
+          <a href="#" class="text-zinc-900 dark:text-white">Explore Project</a>
+          <a href="#" class="hover:text-zinc-900 dark:hover:text-white transition-colors">Digital Lab</a>
+        </div>
+        
+        <!-- Theme Toggle Button -->
+        <button @click="toggleTheme" class="p-2 rounded-full bg-zinc-100 dark:bg-zinc-800 text-zinc-600 dark:text-zinc-300 hover:bg-zinc-200 dark:hover:bg-zinc-700 transition-all duration-300" aria-label="Toggle Theme">
+          <svg v-if="isDark" xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364-6.364l-.707.707M6.343 17.657l-.707.707M16.243 17.657l.707.707M7.757 7.757l.707.707M12 7a5 5 0 100 10 5 5 0 000-10z" />
+          </svg>
+          <svg v-else xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" />
+          </svg>
+        </button>
       </div>
     </nav>
 
     <!-- Header -->
-    <header class="pt-40 px-10 max-w-[1600px] mx-auto mb-10">
-      <h1 class="text-5xl font-bold tracking-tight mb-4">Design Portfolio</h1>
-      <p class="text-zinc-500 text-lg max-w-xl">미드저니 벤치마킹 스타일의 메이슨리 그리드 및 다크 테마가 적용된 디자인 아카이브입니다.</p>
+    <header class="pt-40 px-6 md:px-10 max-w-[1600px] mx-auto mb-10 transition-colors">
+      <h1 class="text-5xl font-bold tracking-tight mb-4 text-zinc-900 dark:text-white">Design Portfolio</h1>
+      <p class="text-zinc-500 dark:text-zinc-400 text-lg max-w-xl">미드저니 벤치마킹 스타일의 메이슨리 그리드 및 다중 테마가 적용된 디자인 아카이브입니다.</p>
     </header>
 
     <!-- Filter Bar -->
-    <div class="px-10 max-w-[1600px] mx-auto mb-12 flex gap-3 overflow-x-auto pb-4 no-scrollbar">
+    <div class="px-6 md:px-10 max-w-[1600px] mx-auto mb-12 flex gap-3 overflow-x-auto pb-4 no-scrollbar">
       <button v-for="tag in tags" :key="tag" 
         @click="activeTag = tag"
         :class="['px-6 py-2 rounded-full text-sm font-bold transition-all duration-300 ease-out whitespace-nowrap border', 
-        activeTag === tag ? 'bg-white text-black border-white' : 'bg-zinc-900/50 text-zinc-400 border-white/10 hover:border-white/30 hover:text-white']">
+        activeTag === tag ? 'bg-zinc-900 text-white dark:bg-white dark:text-black border-zinc-900 dark:border-white' : 'bg-zinc-100 dark:bg-zinc-900/50 text-zinc-500 dark:text-zinc-400 border-transparent dark:border-white/10 hover:border-zinc-300 dark:hover:border-white/30 hover:text-zinc-900 dark:hover:text-white']">
         {{ tag }}
       </button>
     </div>
 
     <!-- Masonry Grid -->
-    <main class="px-10 pb-32 max-w-[1600px] mx-auto columns-1 sm:columns-2 lg:columns-3 xl:columns-4 gap-5 space-y-5">
+    <main class="px-6 md:px-10 pb-32 max-w-[1600px] mx-auto columns-1 sm:columns-2 lg:columns-3 xl:columns-4 gap-5 space-y-5">
       
       <!-- Skeleton Loading State -->
       <template v-if="isLoading">
@@ -40,13 +52,13 @@
       <!-- Actual Content -->
       <template v-else>
         <div v-for="(item, index) in filteredItems" :key="index" 
-          class="relative rounded-2xl overflow-hidden group bg-zinc-900 border border-white/5 hover:scale-[1.02] transition-all duration-500 cursor-zoom-in break-inside-avoid animate-in fade-in duration-1000">
+          class="relative rounded-2xl overflow-hidden group bg-white dark:bg-zinc-900 border border-zinc-100 dark:border-white/5 hover:scale-[1.02] transition-all duration-500 cursor-zoom-in break-inside-avoid animate-in fade-in duration-1000">
           <img :src="item.image" :alt="item.title" class="w-full h-auto block group-hover:brightness-50 transition-all duration-700">
           
           <!-- Overlay -->
           <div class="absolute inset-0 p-8 flex flex-col justify-end opacity-0 group-hover:opacity-100 transition-opacity duration-300 bg-gradient-to-t from-black/90 via-black/20 to-transparent">
             <span class="text-xs font-black uppercase tracking-[0.2em] text-indigo-400 mb-2">{{ item.category }}</span>
-            <h3 class="text-xl font-bold mb-4">{{ item.title }}</h3>
+            <h3 class="text-xl font-bold mb-4 text-white">{{ item.title }}</h3>
             <div class="flex gap-5 text-xs font-medium text-zinc-400">
               <span class="flex items-center gap-1.5">👁 {{ item.views }}</span>
               <span class="flex items-center gap-1.5">♥ {{ item.likes }}</span>
@@ -71,10 +83,35 @@ interface PortfolioItem {
 }
 
 const isLoading = ref(true)
+const isDark = ref(true)
 const tags = ['All Projects', 'UI/UX Design', '3D Art', 'Motion', 'Concept']
 const activeTag = ref('All Projects')
 
+// Theme management
+const toggleTheme = () => {
+  isDark.value = !isDark.value
+  updateThemeClass()
+  localStorage.setItem('theme', isDark.value ? 'dark' : 'light')
+}
+
+const updateThemeClass = () => {
+  if (isDark.value) {
+    document.documentElement.classList.add('dark')
+  } else {
+    document.documentElement.classList.remove('dark')
+  }
+}
+
 onMounted(() => {
+  // Load preferred theme
+  const savedTheme = localStorage.getItem('theme')
+  if (savedTheme === 'light') {
+    isDark.value = false
+  } else {
+    isDark.value = true // Default dark
+  }
+  updateThemeClass()
+
   // Simulate initial data loading delay
   setTimeout(() => {
     isLoading.value = false
@@ -97,7 +134,6 @@ const filteredItems = computed(() => {
   return items.filter(item => item.category === activeTag.value)
 })
 </script>
-
 
 <style>
 .no-scrollbar::-webkit-scrollbar { display: none; }
