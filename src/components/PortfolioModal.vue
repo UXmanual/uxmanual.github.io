@@ -13,9 +13,21 @@
           </svg>
         </button>
 
-        <!-- Image Area -->
+        <!-- Image/Video Area -->
         <div class="flex-1 bg-zinc-100 dark:bg-black flex items-center justify-center overflow-hidden">
-          <img :src="item?.image" :alt="item?.title" class="max-w-full max-h-full object-contain animate-in zoom-in-95 duration-500">
+          <template v-if="item?.youtubeId">
+            <div class="w-full aspect-video">
+              <iframe 
+                class="w-full h-full border-0"
+                :src="`https://www.youtube.com/embed/${item.youtubeId}?autoplay=1`"
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                allowfullscreen
+              ></iframe>
+            </div>
+          </template>
+          <template v-else>
+            <img :src="item?.image" :alt="item?.title" class="max-w-full max-h-full object-contain animate-in zoom-in-95 duration-500">
+          </template>
         </div>
 
         <!-- Info Area -->
@@ -59,6 +71,7 @@ interface PortfolioItem {
   category: string
   views: string
   likes: string
+  youtubeId?: string
 }
 
 const props = defineProps<{

@@ -56,6 +56,13 @@
           class="relative rounded-2xl overflow-hidden group bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-white/5 transition-all duration-500 cursor-pointer break-inside-avoid animate-in fade-in duration-1000">
           <img :src="item.image" :alt="item.title" class="w-full h-auto block group-hover:brightness-50 transition-all duration-700">
           
+          <!-- Play Icon for Video -->
+          <div v-if="item.youtubeId" class="absolute top-4 right-4 z-10 p-2 bg-black/40 backdrop-blur-md rounded-full text-white opacity-100 group-hover:opacity-0 transition-opacity duration-300">
+            <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
+              <path d="M8 5v14l11-7z" />
+            </svg>
+          </div>
+          
           <!-- Overlay -->
           <div class="absolute inset-0 p-8 flex flex-col justify-end opacity-0 group-hover:opacity-100 transition-opacity duration-300 bg-gradient-to-t from-black/90 via-black/20 to-transparent">
             <span class="text-xs font-black uppercase tracking-[0.2em] text-indigo-400 mb-2">{{ item.category }}</span>
@@ -103,6 +110,7 @@ interface PortfolioItem {
   category: string
   views: string
   likes: string
+  youtubeId?: string
 }
 
 const isLoading = ref(true)
@@ -113,6 +121,20 @@ const selectedItem = ref<PortfolioItem | null>(null)
 const tags = ['All Projects', 'UI/UX Design', '3D Art', 'Motion', 'Concept']
 const activeTag = ref('All Projects')
 const visibleCount = ref(8)
+
+const updateThemeClass = (dark: boolean) => {
+  if (dark) {
+    document.documentElement.classList.add('dark')
+  } else {
+    document.documentElement.classList.remove('dark')
+  }
+}
+
+const toggleTheme = () => {
+  isDark.value = !isDark.value
+  updateThemeClass(isDark.value)
+  localStorage.setItem('theme', isDark.value ? 'dark' : 'light')
+}
 
 const loadMore = () => {
   isBotLoading.value = true
@@ -129,20 +151,6 @@ const openModal = (item: PortfolioItem) => {
 }
 
 // Initial theme setup (runs before mount)
-const updateThemeClass = (dark: boolean) => {
-  if (dark) {
-    document.documentElement.classList.add('dark')
-  } else {
-    document.documentElement.classList.remove('dark')
-  }
-}
-
-const toggleTheme = () => {
-  isDark.value = !isDark.value
-  updateThemeClass(isDark.value)
-  localStorage.setItem('theme', isDark.value ? 'dark' : 'light')
-}
-
 const savedTheme = localStorage.getItem('theme')
 if (savedTheme) {
   isDark.value = savedTheme === 'dark'
@@ -162,10 +170,10 @@ onMounted(() => {
 })
 
 const items: PortfolioItem[] = [
+  { image: 'https://images.unsplash.com/photo-1614850523296-d8c1af93d400?q=80&w=800', title: 'Neon Chromatics Motion', category: 'Motion', views: '4.2k', likes: '1.1k', youtubeId: 'dQw4w9WgXcQ' },
   { image: 'https://images.unsplash.com/photo-1634017839464-5c339ebe3cb4?q=80&w=800', title: 'Digital Fluidity Vol.1', category: '3D Art', views: '2.4k', likes: '482' },
   { image: 'https://images.unsplash.com/photo-1550745165-9bc0b252726f?q=80&w=800', title: 'Cybernetic Retrofit', category: 'Concept', views: '1.8k', likes: '315' },
   { image: 'https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?q=80&w=800', title: 'Minimalist Flux', category: 'UI/UX Design', views: '3.1k', likes: '920' },
-  { image: 'https://images.unsplash.com/photo-1614850523296-d8c1af93d400?q=80&w=800', title: 'Neon Chromatics', category: 'Motion', views: '4.2k', likes: '1.1k' },
   { image: 'https://images.unsplash.com/photo-1633167606207-d840b5070fc2?q=80&w=800', title: 'Glass Refraction Lab', category: '3D Art', views: '1.2k', likes: '256' },
   { image: 'https://images.unsplash.com/photo-1498050108023-c5249f4df085?q=80&w=800', title: 'Next-Gen Code Editor', category: 'UI/UX Design', views: '5.5k', likes: '2.3k' },
   { image: 'https://images.unsplash.com/photo-1558655146-d09347e92766?q=80&w=800', title: 'Solari Weather OS', category: 'UI/UX Design', views: '2.9k', likes: '740' },
