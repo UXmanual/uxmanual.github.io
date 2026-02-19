@@ -1,5 +1,5 @@
 <template>
-  <div class="min-h-screen transition-colors duration-500 selection:bg-indigo-500/30">
+  <div class="min-h-screen bg-zinc-50 dark:bg-[#0a0a0c] text-zinc-900 dark:text-white transition-colors duration-500 selection:bg-indigo-500/30">
     <!-- Navbar -->
     <nav class="fixed top-0 w-full px-6 md:px-10 py-5 flex justify-between items-center z-50 bg-white/80 dark:bg-[#0a0a0c]/80 backdrop-blur-xl border-b border-zinc-200 dark:border-white/10 transition-colors duration-500">
       <router-link to="/" class="flex items-center gap-3 text-xl font-extrabold tracking-tighter text-zinc-900 dark:text-white transition-colors">
@@ -26,9 +26,9 @@
     </nav>
 
     <!-- Header -->
-    <header class="pt-40 px-6 md:px-10 max-w-[1600px] mx-auto mb-10 transition-colors">
+    <header class="pt-40 px-6 md:px-10 max-w-[1600px] mx-auto mb-10">
       <h1 class="text-5xl font-bold tracking-tight mb-4 text-zinc-900 dark:text-white">Design Portfolio</h1>
-      <p class="text-zinc-500 dark:text-zinc-400 text-lg max-w-xl">미드저니 벤치마킹 스타일의 메이슨리 그리드 및 다중 테마가 적용된 디자인 아카이브입니다.</p>
+      <p class="text-zinc-600 dark:text-zinc-400 text-lg max-w-xl">미드저니 벤치마킹 스타일의 메이슨리 그리드 및 다중 테마가 적용된 디자인 아카이브입니다.</p>
     </header>
 
     <!-- Filter Bar -->
@@ -36,7 +36,7 @@
       <button v-for="tag in tags" :key="tag" 
         @click="activeTag = tag"
         :class="['px-6 py-2 rounded-full text-sm font-bold transition-all duration-300 ease-out whitespace-nowrap border', 
-        activeTag === tag ? 'bg-zinc-900 text-white dark:bg-white dark:text-black border-zinc-900 dark:border-white' : 'bg-zinc-100 dark:bg-zinc-900/50 text-zinc-500 dark:text-zinc-400 border-transparent dark:border-white/10 hover:border-zinc-300 dark:hover:border-white/30 hover:text-zinc-900 dark:hover:text-white']">
+        activeTag === tag ? 'bg-zinc-900 text-white dark:bg-white dark:text-black border-zinc-900 dark:border-white shadow-md' : 'bg-white dark:bg-zinc-900/50 text-zinc-500 dark:text-zinc-400 border-zinc-200 dark:border-white/10 hover:border-zinc-400 dark:hover:border-white/30 hover:text-zinc-900 dark:hover:text-white']">
         {{ tag }}
       </button>
     </div>
@@ -52,14 +52,14 @@
       <!-- Actual Content -->
       <template v-else>
         <div v-for="(item, index) in filteredItems" :key="index" 
-          class="relative rounded-2xl overflow-hidden group bg-white dark:bg-zinc-900 border border-zinc-100 dark:border-white/5 hover:scale-[1.02] transition-all duration-500 cursor-zoom-in break-inside-avoid animate-in fade-in duration-1000">
+          class="relative rounded-2xl overflow-hidden group bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-white/5 hover:scale-[1.02] transition-all duration-500 cursor-zoom-in break-inside-avoid animate-in fade-in duration-1000 shadow-sm hover:shadow-xl dark:shadow-none">
           <img :src="item.image" :alt="item.title" class="w-full h-auto block group-hover:brightness-50 transition-all duration-700">
           
           <!-- Overlay -->
           <div class="absolute inset-0 p-8 flex flex-col justify-end opacity-0 group-hover:opacity-100 transition-opacity duration-300 bg-gradient-to-t from-black/90 via-black/20 to-transparent">
             <span class="text-xs font-black uppercase tracking-[0.2em] text-indigo-400 mb-2">{{ item.category }}</span>
-            <h3 class="text-xl font-bold mb-4 text-white">{{ item.title }}</h3>
-            <div class="flex gap-5 text-xs font-medium text-zinc-400">
+            <h3 class="text-xl font-bold mb-4 text-white uppercase tracking-tight">{{ item.title }}</h3>
+            <div class="flex gap-5 text-xs font-medium text-zinc-300">
               <span class="flex items-center gap-1.5">👁 {{ item.views }}</span>
               <span class="flex items-center gap-1.5">♥ {{ item.likes }}</span>
             </div>
