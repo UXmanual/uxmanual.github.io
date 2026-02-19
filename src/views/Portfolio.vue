@@ -23,8 +23,8 @@
     <div class="px-10 max-w-[1600px] mx-auto mb-12 flex gap-3 overflow-x-auto pb-4 no-scrollbar">
       <button v-for="tag in tags" :key="tag" 
         @click="activeTag = tag"
-        :class="['px-6 py-2 rounded-full text-sm font-bold transition-all whitespace-nowrap', 
-        activeTag === tag ? 'bg-white text-black' : 'bg-zinc-900 text-zinc-400 hover:bg-zinc-800 hover:text-white border border-white/5']">
+        :class="['px-6 py-2 rounded-full text-sm font-bold transition-all duration-300 ease-out whitespace-nowrap border', 
+        activeTag === tag ? 'bg-white text-black border-white' : 'bg-zinc-900/50 text-zinc-400 border-white/10 hover:border-white/30 hover:text-white']">
         {{ tag }}
       </button>
     </div>
