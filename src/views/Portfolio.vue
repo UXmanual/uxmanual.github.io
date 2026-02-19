@@ -27,8 +27,24 @@
 
     <!-- Header -->
     <header class="pt-40 px-6 md:px-10 max-w-[1600px] mx-auto mb-10">
-      <h1 class="text-5xl font-bold tracking-tight mb-4 text-zinc-900 dark:text-white">Design Portfolio</h1>
-      <p class="text-zinc-600 dark:text-zinc-400 text-lg">미드저니 벤치마킹 스타일의 메이슨리 그리드 및 다중 테마가 적용된 디자인 아카이브입니다.</p>
+      <h1 class="text-5xl font-bold tracking-tight mb-4 text-zinc-900 dark:text-white uppercase tracking-tighter">Design Portfolio</h1>
+      <p class="text-zinc-600 dark:text-zinc-400 text-lg mb-8 uppercase tracking-widest text-xs font-black">미드저니 벤치마킹 스타일의 메이슨리 그리드 및 다중 테마가 적용된 디자인 아카이브입니다.</p>
+      
+      <!-- Quick Add Section -->
+      <div class="flex gap-2 max-w-lg">
+        <input 
+          v-model="newYoutubeUrl" 
+          type="text" 
+          placeholder="Paste YouTube URL to add..." 
+          class="flex-1 bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-white/10 rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 transition-all"
+        >
+        <button 
+          @click="addProjectFromYoutube"
+          class="px-6 py-3 bg-zinc-900 dark:bg-white text-white dark:text-black rounded-xl font-bold text-sm hover:bg-indigo-600 dark:hover:bg-indigo-500 dark:hover:text-white transition-all whitespace-nowrap"
+        >
+          Add Video
+        </button>
+      </div>
     </header>
 
     <!-- Filter Bar -->
@@ -54,7 +70,7 @@
         <div v-for="(item, index) in filteredItems" :key="index" 
           @click="openModal(item)"
           class="relative rounded-2xl overflow-hidden group bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-white/5 transition-all duration-500 cursor-pointer break-inside-avoid animate-in fade-in duration-1000">
-          <img :src="item.image" :alt="item.title" class="w-full h-auto block group-hover:brightness-50 transition-all duration-700">
+          <img :src="getThumbnail(item)" :alt="item.title" class="w-full h-auto block group-hover:brightness-50 transition-all duration-700">
           
           <!-- Play Icon for Video -->
           <div v-if="item.youtubeId" class="absolute top-4 right-4 z-10 p-2 bg-black/40 backdrop-blur-md rounded-full text-white opacity-100 group-hover:opacity-0 transition-opacity duration-300">
@@ -121,6 +137,7 @@ const selectedItem = ref<PortfolioItem | null>(null)
 const tags = ['All Projects', 'UI/UX Design', '3D Art', 'Motion', 'Concept']
 const activeTag = ref('All Projects')
 const visibleCount = ref(8)
+const newYoutubeUrl = ref('')
 
 const updateThemeClass = (dark: boolean) => {
   if (dark) {
@@ -169,8 +186,8 @@ onMounted(() => {
   }, 1200)
 })
 
-const items: PortfolioItem[] = [
-  { image: 'https://images.unsplash.com/photo-1614850523296-d8c1af93d400?q=80&w=800', title: 'Neon Chromatics Motion', category: 'Motion', views: '4.2k', likes: '1.1k', youtubeId: 'dQw4w9WgXcQ' },
+const items = ref<PortfolioItem[]>([
+  { image: '', title: 'Neon Chromatics Motion', category: 'Motion', views: '4.2k', likes: '1.1k', youtubeId: 'dQw4w9WgXcQ' },
   { image: 'https://images.unsplash.com/photo-1634017839464-5c339ebe3cb4?q=80&w=800', title: 'Digital Fluidity Vol.1', category: '3D Art', views: '2.4k', likes: '482' },
   { image: 'https://images.unsplash.com/photo-1550745165-9bc0b252726f?q=80&w=800', title: 'Cybernetic Retrofit', category: 'Concept', views: '1.8k', likes: '315' },
   { image: 'https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?q=80&w=800', title: 'Minimalist Flux', category: 'UI/UX Design', views: '3.1k', likes: '920' },
@@ -186,20 +203,49 @@ const items: PortfolioItem[] = [
   { image: 'https://images.unsplash.com/photo-1620641788421-7a1c342ea42e?q=80&w=800', title: 'Chrome Aesthetics', category: '3D Art', views: '900', likes: '150' },
   { image: 'https://images.unsplash.com/photo-1451187580459-43490279c0fa?q=80&w=800', title: 'Global Data Web', category: 'Concept', views: '12k', likes: '5.2k' },
   { image: 'https://images.unsplash.com/photo-1605142859862-978be7eba909?q=80&w=800', title: 'Vaporwave Interface', category: 'UI/UX Design', views: '4.8k', likes: '1.2k' },
-]
+])
+
+const getThumbnail = (item: PortfolioItem) => {
+  if (item.youtubeId) {
+    return `https://img.youtube.com/vi/${item.youtubeId}/maxresdefault.jpg`
+  }
+  return item.image
+}
+
+const addProjectFromYoutube = () => {
+  if (!newYoutubeUrl.value) return
+  
+  const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|\&v=)([^#\&\?]*).*/
+  const match = newYoutubeUrl.value.match(regExp)
+  const id = (match && match[2].length === 11) ? match[2] : null
+  
+  if (id) {
+    items.value.unshift({
+      image: '',
+      title: `New Video ${items.value.length + 1}`,
+      category: 'Motion',
+      views: '0',
+      likes: '0',
+      youtubeId: id
+    })
+    newYoutubeUrl.value = ''
+  } else {
+    alert('Please enter a valid YouTube URL.')
+  }
+}
 
 const filteredItems = computed(() => {
-  let filtered = items
+  let filtered = items.value
   if (activeTag.value !== 'All Projects') {
-    filtered = items.filter(item => item.category === activeTag.value)
+    filtered = items.value.filter(item => item.category === activeTag.value)
   }
   return filtered.slice(0, visibleCount.value)
 })
 
 const hasMore = computed(() => {
   const currentTotal = activeTag.value === 'All Projects' 
-    ? items.length 
-    : items.filter(item => item.category === activeTag.value).length
+    ? items.value.length 
+    : items.value.filter(item => item.category === activeTag.value).length
   return visibleCount.value < currentTotal
 })
 </script>
