@@ -30,17 +30,17 @@
     </div>
 
     <!-- Masonry Grid -->
-    <main class="px-10 pb-32 max-w-[1600px] mx-auto columns-1 sm:columns-2 lg:columns-3 xl:columns-4 gap-5 space-y-5 transition-opacity duration-1000" :class="isLoading ? 'opacity-0' : 'opacity-100'">
+    <main class="px-10 pb-32 max-w-[1600px] mx-auto columns-1 sm:columns-2 lg:columns-3 xl:columns-4 gap-5 space-y-5">
       
       <!-- Skeleton Loading State -->
       <template v-if="isLoading">
-        <PortfolioSkeleton v-for="i in 8" :key="'skeleton-' + i" :height="[300, 450, 350, 500][i % 4]" />
+        <PortfolioSkeleton v-for="i in 8" :key="'skeleton-' + i" :height="[400, 300, 500, 350][i % 4]" />
       </template>
 
       <!-- Actual Content -->
       <template v-else>
         <div v-for="(item, index) in filteredItems" :key="index" 
-          class="relative rounded-2xl overflow-hidden group bg-zinc-900 border border-white/5 hover:scale-[1.02] transition-all duration-500 cursor-zoom-in break-inside-avoid">
+          class="relative rounded-2xl overflow-hidden group bg-zinc-900 border border-white/5 hover:scale-[1.02] transition-all duration-500 cursor-zoom-in break-inside-avoid animate-in fade-in duration-1000">
           <img :src="item.image" :alt="item.title" class="w-full h-auto block group-hover:brightness-50 transition-all duration-700">
           
           <!-- Overlay -->
@@ -55,11 +55,6 @@
         </div>
       </template>
     </main>
-    
-    <!-- Skeleton Grid (shown separately to maintain layout while loading) -->
-    <div v-if="isLoading" class="absolute top-[350px] left-0 w-full px-10 pb-32 max-w-[1600px] mx-auto columns-1 sm:columns-2 lg:columns-3 xl:columns-4 gap-5 space-y-5 pointer-events-none">
-      <PortfolioSkeleton v-for="i in 8" :key="'skeleton-main-' + i" :height="[400, 300, 500, 350][i % 4]" />
-    </div>
   </div>
 </template>
 
