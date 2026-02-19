@@ -32,13 +32,18 @@
     </header>
 
     <!-- Filter Bar -->
-    <div class="px-6 md:px-10 max-w-[1600px] mx-auto mb-12 flex gap-3 overflow-x-auto pb-4 no-scrollbar touch-pan-x overscroll-behavior-x-contain">
-      <button v-for="tag in tags" :key="tag" 
-        @click="activeTag = tag"
-        :class="['px-6 py-2 rounded-full text-sm font-bold transition-all duration-300 ease-out whitespace-nowrap border flex-none', 
-        activeTag === tag ? 'bg-zinc-900 text-white dark:bg-white dark:text-black border-zinc-900 dark:border-white shadow-md' : 'bg-white dark:bg-zinc-900/50 text-zinc-500 dark:text-zinc-400 border-zinc-200 dark:border-white/10 hover:border-zinc-400 dark:hover:border-white/30 hover:text-zinc-900 dark:hover:text-white']">
-        {{ tag }}
-      </button>
+    <div class="px-6 md:px-10 max-w-[1600px] mx-auto mb-12 relative overflow-hidden">
+      <!-- 횡스크롤 지원 영역 -->
+      <div class="flex flex-nowrap gap-3 overflow-x-auto pb-4 no-scrollbar -mx-6 px-6 md:-mx-10 md:px-10 scroll-smooth">
+        <button v-for="tag in tags" :key="tag" 
+          @click="activeTag = tag"
+          :class="['px-6 py-2 rounded-full text-sm font-bold transition-all duration-300 ease-out whitespace-nowrap border flex-none', 
+          activeTag === tag ? 'bg-zinc-900 text-white dark:bg-white dark:text-black border-zinc-900 dark:border-white shadow-md' : 'bg-white dark:bg-zinc-900/50 text-zinc-500 dark:text-zinc-400 border-zinc-200 dark:border-white/10 hover:border-zinc-400 dark:hover:border-white/30 hover:text-zinc-900 dark:hover:text-white']">
+          {{ tag }}
+        </button>
+      </div>
+      <!-- 그라데이션 인디케이터 (스크롤 가능 암시) -->
+      <div class="absolute right-0 top-0 bottom-4 w-12 bg-gradient-to-l from-zinc-50 dark:from-[#0a0a0c] to-transparent pointer-events-none md:hidden"></div>
     </div>
 
     <!-- Masonry Grid -->
