@@ -46,9 +46,10 @@
           <div class="flex justify-end">
             <button 
               @click="addPost"
-              class="px-10 py-4 bg-zinc-900 dark:bg-white text-white dark:text-black rounded-2xl font-black text-sm uppercase tracking-widest hover:scale-[1.02] active:scale-[0.98] transition-all shadow-lg shadow-indigo-500/10"
+              :disabled="isPosting"
+              class="px-10 py-4 bg-zinc-900 dark:bg-white text-white dark:text-black rounded-2xl font-black text-sm uppercase tracking-widest hover:scale-[1.02] active:scale-[0.98] transition-all shadow-lg shadow-indigo-500/10 disabled:opacity-50 disabled:scale-100"
             >
-              Post Message
+              {{ isPosting ? 'Posting...' : 'Post Message' }}
             </button>
           </div>
         </div>
@@ -96,8 +97,9 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted, watch } from 'vue'
+import { ref, onMounted } from 'vue'
 import SiteNavbar from '../components/SiteNavbar.vue'
+import { supabase } from '../lib/supabaseClient'
 
 interface Post {
   id: number
@@ -112,24 +114,25 @@ const newName = ref('')
 const newTitle = ref('')
 const newMessage = ref('')
 const newPassword = ref('')
-
-const defaultPost: Post = { 
-  id: 1, 
-  name: "Alex Design", 
-  title: "Amazing Masonry Grid!", 
-  message: "미드저니 느낌을 그대로 살린 그리드가 정말 인상적입니다. 특히 다크 모드에서의 유리 질감(glassmorphism)이 최고예요!",
-  date: "2026.02.19",
-  password: "0000"
-}
+const isPosting = ref(false)
 
 const posts = ref<Post[]>([])
 
-// Watch posts changes and save to localStorage
-watch(posts, (newPosts) => {
-  localStorage.setItem('community-posts', JSON.stringify(newPosts))
-}, { deep: true })
+// Fetch posts from Supabase
+const fetchPosts = async () => {
+  const { data, error } = await supabase
+    .from('posts')
+    .select('*')
+    .order('created_at', { ascending: false })
 
-const addPost = () => {
+  if (error) {
+    console.error('Error fetching posts:', error)
+  } else {
+    posts.value = data || []
+  }
+}
+
+const addPost = async () => {
   if (!newName.value || !newMessage.value || !newPassword.value) {
     alert('Please enter your name, message, and a 4-digit password.')
     return
@@ -139,48 +142,62 @@ const addPost = () => {
     alert('Password must be exactly 4 digits.')
     return
   }
+
+  isPosting.value = true
   
   const now = new Date()
   const dateStr = `${now.getFullYear()}.${(now.getMonth() + 1).toString().padStart(2, '0')}.${now.getDate().toString().padStart(2, '0')}`
   
-  posts.value.unshift({
-    id: Date.now(),
+  const newPost = {
     name: newName.value,
     title: newTitle.value,
     message: newMessage.value,
     date: dateStr,
     password: newPassword.value
-  })
+  }
+
+  const { error } = await supabase
+    .from('posts')
+    .insert([newPost])
+
+  if (error) {
+    alert('Error posting message. Please check if table is created.')
+    console.error(error)
+  } else {
+    // Clear inputs and refetch
+    newName.value = ''
+    newTitle.value = ''
+    newMessage.value = ''
+    newPassword.value = ''
+    await fetchPosts()
+  }
   
-  newName.value = ''
-  newTitle.value = ''
-  newMessage.value = ''
-  newPassword.value = ''
+  isPosting.value = false
 }
 
-const verifyAndDelete = (post: Post) => {
+const verifyAndDelete = async (post: Post) => {
   const input = prompt('Enter the 4-digit password to delete this post:')
   if (input === null) return
   
   if (input === post.password) {
-    posts.value = posts.value.filter(p => p.id !== post.id)
+    const { error } = await supabase
+      .from('posts')
+      .delete()
+      .eq('id', post.id)
+
+    if (error) {
+      alert('Error deleting post.')
+      console.error(error)
+    } else {
+      await fetchPosts()
+    }
   } else {
     alert('Incorrect password.')
   }
 }
 
 onMounted(() => {
-  const savedPosts = localStorage.getItem('community-posts')
-  if (savedPosts) {
-    try {
-      posts.value = JSON.parse(savedPosts)
-    } catch (e) {
-      console.error('Failed to parse saved posts', e)
-      posts.value = [defaultPost]
-    }
-  } else {
-    posts.value = [defaultPost]
-  }
+  fetchPosts()
 })
 </script>
 
