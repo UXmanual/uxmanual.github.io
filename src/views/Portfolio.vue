@@ -30,30 +30,53 @@
     </div>
 
     <!-- Masonry Grid -->
-    <main class="px-10 pb-32 max-w-[1600px] mx-auto columns-1 sm:columns-2 lg:columns-3 xl:columns-4 gap-5 space-y-5">
-      <div v-for="(item, index) in filteredItems" :key="index" 
-        class="relative rounded-2xl overflow-hidden group bg-zinc-900 border border-white/5 hover:scale-[1.02] transition-all duration-500 cursor-zoom-in break-inside-avoid">
-        <img :src="item.image" :alt="item.title" class="w-full h-auto block group-hover:brightness-50 transition-all duration-700">
-        
-        <!-- Overlay -->
-        <div class="absolute inset-0 p-8 flex flex-col justify-end opacity-0 group-hover:opacity-100 transition-opacity duration-300 bg-gradient-to-t from-black/90 via-black/20 to-transparent">
-          <span class="text-xs font-black uppercase tracking-[0.2em] text-indigo-400 mb-2">{{ item.category }}</span>
-          <h3 class="text-xl font-bold mb-4">{{ item.title }}</h3>
-          <div class="flex gap-5 text-xs font-medium text-zinc-400">
-            <span class="flex items-center gap-1.5">👁 {{ item.views }}</span>
-            <span class="flex items-center gap-1.5">♥ {{ item.likes }}</span>
+    <main class="px-10 pb-32 max-w-[1600px] mx-auto columns-1 sm:columns-2 lg:columns-3 xl:columns-4 gap-5 space-y-5 transition-opacity duration-1000" :class="isLoading ? 'opacity-0' : 'opacity-100'">
+      
+      <!-- Skeleton Loading State -->
+      <template v-if="isLoading">
+        <PortfolioSkeleton v-for="i in 8" :key="'skeleton-' + i" :height="[300, 450, 350, 500][i % 4]" />
+      </template>
+
+      <!-- Actual Content -->
+      <template v-else>
+        <div v-for="(item, index) in filteredItems" :key="index" 
+          class="relative rounded-2xl overflow-hidden group bg-zinc-900 border border-white/5 hover:scale-[1.02] transition-all duration-500 cursor-zoom-in break-inside-avoid">
+          <img :src="item.image" :alt="item.title" class="w-full h-auto block group-hover:brightness-50 transition-all duration-700">
+          
+          <!-- Overlay -->
+          <div class="absolute inset-0 p-8 flex flex-col justify-end opacity-0 group-hover:opacity-100 transition-opacity duration-300 bg-gradient-to-t from-black/90 via-black/20 to-transparent">
+            <span class="text-xs font-black uppercase tracking-[0.2em] text-indigo-400 mb-2">{{ item.category }}</span>
+            <h3 class="text-xl font-bold mb-4">{{ item.title }}</h3>
+            <div class="flex gap-5 text-xs font-medium text-zinc-400">
+              <span class="flex items-center gap-1.5">👁 {{ item.views }}</span>
+              <span class="flex items-center gap-1.5">♥ {{ item.likes }}</span>
+            </div>
           </div>
         </div>
-      </div>
+      </template>
     </main>
+    
+    <!-- Skeleton Grid (shown separately to maintain layout while loading) -->
+    <div v-if="isLoading" class="absolute top-[350px] left-0 w-full px-10 pb-32 max-w-[1600px] mx-auto columns-1 sm:columns-2 lg:columns-3 xl:columns-4 gap-5 space-y-5 pointer-events-none">
+      <PortfolioSkeleton v-for="i in 8" :key="'skeleton-main-' + i" :height="[400, 300, 500, 350][i % 4]" />
+    </div>
   </div>
 </template>
 
 <script setup>
-import { ref, computed } from 'vue'
+import { ref, computed, onMounted } from 'vue'
+import PortfolioSkeleton from '../components/PortfolioSkeleton.vue'
 
+const isLoading = ref(true)
 const tags = ['All Projects', 'UI/UX Design', '3D Art', 'Motion', 'Concept']
 const activeTag = ref('All Projects')
+
+onMounted(() => {
+  // Simulate initial data loading delay
+  setTimeout(() => {
+    isLoading.value = false
+  }, 1200)
+})
 
 const items = [
   { image: 'https://images.unsplash.com/photo-1634017839464-5c339ebe3cb4?q=80&w=800', title: 'Digital Fluidity Vol.1', category: '3D Art', views: '2.4k', likes: '482' },
@@ -71,6 +94,7 @@ const filteredItems = computed(() => {
   return items.filter(item => item.category === activeTag.value)
 })
 </script>
+
 
 <style>
 .no-scrollbar::-webkit-scrollbar { display: none; }
