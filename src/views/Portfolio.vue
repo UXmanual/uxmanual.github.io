@@ -28,7 +28,7 @@
     <!-- Header -->
     <header class="pt-40 px-6 md:px-10 max-w-[1600px] mx-auto mb-10">
       <h1 class="text-5xl font-bold tracking-tight mb-4 text-zinc-900 dark:text-white">Design Portfolio</h1>
-      <p class="text-zinc-600 dark:text-zinc-400 text-lg max-w-xl">미드저니 벤치마킹 스타일의 메이슨리 그리드 및 다중 테마가 적용된 디자인 아카이브입니다.</p>
+      <p class="text-zinc-600 dark:text-zinc-400 text-lg">미드저니 벤치마킹 스타일의 메이슨리 그리드 및 다중 테마가 적용된 디자인 아카이브입니다.</p>
     </header>
 
     <!-- Filter Bar -->
