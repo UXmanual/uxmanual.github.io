@@ -10,7 +10,7 @@
       <div class="flex items-center gap-4 md:gap-8">
         <div class="flex gap-8 text-sm font-semibold">
           <router-link to="/" class="text-zinc-500 hover:text-zinc-900 dark:hover:text-white transition-colors">Explore Projects</router-link>
-          <router-link to="/community" class="text-zinc-900 dark:text-white underline underline-offset-4 decoration-indigo-500 decoration-2">Community</router-link>
+          <router-link to="/community" class="text-zinc-900 dark:text-white">Community</router-link>
         </div>
         
         <!-- Theme Toggle -->
@@ -49,7 +49,14 @@
               v-model="newTitle" 
               type="text" 
               placeholder="Subject (Optional)" 
-              class="flex-[2] bg-zinc-50 dark:bg-black/50 border border-zinc-200 dark:border-white/10 rounded-2xl px-5 py-4 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 transition-all font-bold"
+              class="flex-1 bg-zinc-50 dark:bg-black/50 border border-zinc-200 dark:border-white/10 rounded-2xl px-5 py-4 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 transition-all font-bold"
+            >
+            <input 
+              v-model="newPassword" 
+              type="password" 
+              maxlength="4"
+              placeholder="Pass (4 digits)" 
+              class="flex-[0.5] bg-zinc-50 dark:bg-black/50 border border-zinc-200 dark:border-white/10 rounded-2xl px-5 py-4 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 transition-all font-bold text-center"
             >
           </div>
           <textarea 
@@ -86,9 +93,13 @@
                 </div>
               </div>
               <div class="flex items-center gap-2">
-                <button class="p-2 rounded-xl hover:bg-zinc-100 dark:hover:bg-white/5 text-zinc-400 transition-colors">
-                  <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
+                <button 
+                  @click="verifyAndDelete(post)"
+                  class="p-2 rounded-xl hover:bg-red-500/10 text-zinc-400 hover:text-red-500 transition-all opacity-0 group-hover:opacity-100"
+                  title="Delete Post"
+                >
+                  <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
                   </svg>
                 </button>
               </div>
@@ -115,12 +126,14 @@ interface Post {
   title: string
   message: string
   date: string
+  password?: string // 4 digits
 }
 
 const isDark = ref(true)
 const newName = ref('')
 const newTitle = ref('')
 const newMessage = ref('')
+const newPassword = ref('')
 
 const posts = ref<Post[]>([
   { 
@@ -128,14 +141,8 @@ const posts = ref<Post[]>([
     name: "Alex Design", 
     title: "Amazing Masonry Grid!", 
     message: "미드저니 느낌을 그대로 살린 그리드가 정말 인상적입니다. 특히 다크 모드에서의 유리 질감(glassmorphism)이 최고예요!",
-    date: "2026.02.19"
-  },
-  { 
-    id: 2, 
-    name: "UI Enthusiast", 
-    title: "", 
-    message: "방명록 기능까지 깔끔하네요. 앞으로 더 많은 작품 기대하겠습니다!",
-    date: "2026.02.18"
+    date: "2026.02.19",
+    password: "0000"
   }
 ])
 
@@ -154,8 +161,13 @@ const toggleTheme = () => {
 }
 
 const addPost = () => {
-  if (!newName.value || !newMessage.value) {
-    alert('Please enter your name and message.')
+  if (!newName.value || !newMessage.value || !newPassword.value) {
+    alert('Please enter your name, message, and a 4-digit password.')
+    return
+  }
+  
+  if (newPassword.value.length !== 4 || !/^\d+$/.test(newPassword.value)) {
+    alert('Password must be exactly 4 digits.')
     return
   }
   
@@ -167,12 +179,25 @@ const addPost = () => {
     name: newName.value,
     title: newTitle.value,
     message: newMessage.value,
-    date: dateStr
+    date: dateStr,
+    password: newPassword.value
   })
   
   newName.value = ''
   newTitle.value = ''
   newMessage.value = ''
+  newPassword.value = ''
+}
+
+const verifyAndDelete = (post: Post) => {
+  const input = prompt('Enter the 4-digit password to delete this post:')
+  if (input === null) return
+  
+  if (input === post.password) {
+    posts.value = posts.value.filter(p => p.id !== post.id)
+  } else {
+    alert('Incorrect password.')
+  }
 }
 
 onMounted(() => {
