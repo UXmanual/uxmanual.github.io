@@ -67,6 +67,20 @@
         </div>
       </template>
     </main>
+
+    <!-- Load More Button -->
+    <div v-if="!isLoading && hasMore" class="max-w-[1600px] mx-auto px-10 pb-32 flex justify-center">
+      <button @click="loadMore" :disabled="isBotLoading"
+        class="group relative px-12 py-4 bg-zinc-900 dark:bg-white text-white dark:text-black rounded-full font-bold text-sm tracking-widest uppercase overflow-hidden transition-all hover:scale-105 active:scale-95 disabled:opacity-50">
+        <span class="relative z-10 flex items-center gap-2">
+          {{ isBotLoading ? 'Loading...' : 'Explore More' }}
+          <svg v-if="!isBotLoading" xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 group-hover:translate-y-1 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 13l-7 7-7-7m14-8l-7 7-7-7" />
+          </svg>
+        </span>
+        <div class="absolute inset-0 bg-indigo-600 translate-y-full group-hover:translate-y-0 transition-transform duration-300"></div>
+      </button>
+    </div>
   </div>
 </template>
 
@@ -83,9 +97,11 @@ interface PortfolioItem {
 }
 
 const isLoading = ref(true)
+const isBotLoading = ref(false)
 const isDark = ref(true)
 const tags = ['All Projects', 'UI/UX Design', '3D Art', 'Motion', 'Concept']
 const activeTag = ref('All Projects')
+const visibleCount = ref(8)
 
 // Theme management
 const updateThemeClass = (dark: boolean) => {
@@ -100,6 +116,15 @@ const toggleTheme = () => {
   isDark.value = !isDark.value
   updateThemeClass(isDark.value)
   localStorage.setItem('theme', isDark.value ? 'dark' : 'light')
+}
+
+const loadMore = () => {
+  isBotLoading.value = true
+  // Simulate network delay for loading more
+  setTimeout(() => {
+    visibleCount.value += 4
+    isBotLoading.value = false
+  }, 800)
 }
 
 // Initial theme setup (runs before mount)
@@ -130,13 +155,32 @@ const items: PortfolioItem[] = [
   { image: 'https://images.unsplash.com/photo-1498050108023-c5249f4df085?q=80&w=800', title: 'Next-Gen Code Editor', category: 'UI/UX Design', views: '5.5k', likes: '2.3k' },
   { image: 'https://images.unsplash.com/photo-1558655146-d09347e92766?q=80&w=800', title: 'Solari Weather OS', category: 'UI/UX Design', views: '2.9k', likes: '740' },
   { image: 'https://images.unsplash.com/photo-1620121692029-d088224ddc74?q=80&w=800', title: 'Waveform Particles', category: 'Motion', views: '1.1k', likes: '190' },
+  { image: 'https://images.unsplash.com/photo-1635241161466-541f065683ba?q=80&w=800', title: 'Prism Geometry', category: '3D Art', views: '1.5k', likes: '280' },
+  { image: 'https://images.unsplash.com/photo-1518770660439-4636190af475?q=80&w=800', title: 'Ethereal Hardware', category: 'Concept', views: '4.2k', likes: '1.5k' },
+  { image: 'https://images.unsplash.com/photo-1550751827-4bd374c3f58b?q=80&w=800', title: 'Security Protocol 01', category: 'UI/UX Design', views: '2.1k', likes: '540' },
+  { image: 'https://images.unsplash.com/photo-1618005198919-d3d4b5a92ead?q=80&w=800', title: 'Abstract Velocity', category: 'Motion', views: '3.3k', likes: '890' },
+  { image: 'https://images.unsplash.com/photo-1551434678-e076c223a692?q=80&w=800', title: 'Neural Network UI', category: 'UI/UX Design', views: '6.7k', likes: '3.1k' },
+  { image: 'https://images.unsplash.com/photo-1620641788421-7a1c342ea42e?q=80&w=800', title: 'Chrome Aesthetics', category: '3D Art', views: '900', likes: '150' },
+  { image: 'https://images.unsplash.com/photo-1451187580459-43490279c0fa?q=80&w=800', title: 'Global Data Web', category: 'Concept', views: '12k', likes: '5.2k' },
+  { image: 'https://images.unsplash.com/photo-1605142859862-978be7eba909?q=80&w=800', title: 'Vaporwave Interface', category: 'UI/UX Design', views: '4.8k', likes: '1.2k' },
 ]
 
 const filteredItems = computed(() => {
-  if (activeTag.value === 'All Projects') return items
-  return items.filter(item => item.category === activeTag.value)
+  let filtered = items
+  if (activeTag.value !== 'All Projects') {
+    filtered = items.filter(item => item.category === activeTag.value)
+  }
+  return filtered.slice(0, visibleCount.value)
+})
+
+const hasMore = computed(() => {
+  const currentTotal = activeTag.value === 'All Projects' 
+    ? items.length 
+    : items.filter(item => item.category === activeTag.value).length
+  return visibleCount.value < currentTotal
 })
 </script>
+
 
 
 <style>
