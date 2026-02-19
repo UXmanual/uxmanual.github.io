@@ -141,16 +141,6 @@ const toggleTheme = () => {
   localStorage.setItem('theme', isDark.value ? 'dark' : 'light')
 }
 
-const loadMore = () => {
-  isBotLoading.value = true
-  // Simulate network delay for loading more
-  setTimeout(() => {
-    visibleCount.value += 4
-    isBotLoading.value = false
-  }, 800)
-}
-
-// Initial theme setup (runs before mount)
 const savedTheme = localStorage.getItem('theme')
 if (savedTheme) {
   isDark.value = savedTheme === 'dark'
