@@ -58,9 +58,17 @@
   </div>
 </template>
 
-<script setup>
+<script setup lang="ts">
 import { ref, computed, onMounted } from 'vue'
 import PortfolioSkeleton from '../components/PortfolioSkeleton.vue'
+
+interface PortfolioItem {
+  image: string
+  title: string
+  category: string
+  views: string
+  likes: string
+}
 
 const isLoading = ref(true)
 const tags = ['All Projects', 'UI/UX Design', '3D Art', 'Motion', 'Concept']
@@ -73,7 +81,7 @@ onMounted(() => {
   }, 1200)
 })
 
-const items = [
+const items: PortfolioItem[] = [
   { image: 'https://images.unsplash.com/photo-1634017839464-5c339ebe3cb4?q=80&w=800', title: 'Digital Fluidity Vol.1', category: '3D Art', views: '2.4k', likes: '482' },
   { image: 'https://images.unsplash.com/photo-1550745165-9bc0b252726f?q=80&w=800', title: 'Cybernetic Retrofit', category: 'Concept', views: '1.8k', likes: '315' },
   { image: 'https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?q=80&w=800', title: 'Minimalist Flux', category: 'UI/UX Design', views: '3.1k', likes: '920' },
