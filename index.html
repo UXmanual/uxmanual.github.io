@@ -7,8 +7,29 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
     <!-- Primary Meta Tags -->
-    <title>UXManual | Midjourney Style Portfolio</title>
-    <meta name="title" content="UXManual | Midjourney Style Portfolio" />
+    <title>UXManual — Premium UX/UI Portfolio Archive</title>
+    <!-- SPA Redirect Handler for GitHub Pages -->
+    <script type="text/javascript">
+        (function (l) {
+            if (l.search[1] === '/') {
+                var decoded = l.search.slice(1).split('&').map(function (s) {
+                    return s.replace(/~and~/g, '&')
+                }).filter(function (v) {
+                    return v.indexOf('p=/') === 0
+                })[0];
+                if (decoded) {
+                    window.history.replaceState(null, null,
+                        l.pathname.slice(0, -1) + decoded.slice(4) +
+                        l.search.replace(/^\?/, '?').split('&').filter(function (s) {
+                            return s.indexOf('p=/') !== 0
+                        }).join('&').replace(/^\?$/, '') +
+                        l.hash
+                    );
+                }
+            }
+        }(window.location))
+    </script>
+    <meta name="title" content="UXManual — Premium UX/UI Portfolio Archive" />
     <meta name="description" content="미드저니 벤치마킹 스타일의 프리미엄 디자인 아카이브. 고해상도 디자인 작업물과 영상을 현대적인 메이슨리 그리드로 감상하세요." />
 
     <!-- Open Graph / Facebook -->

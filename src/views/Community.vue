@@ -57,7 +57,8 @@
 
       <!-- Messages List -->
       <div class="space-y-6">
-        <TransitionGroup name="list">
+        <CommunitySkeleton v-if="isLoading" />
+        <TransitionGroup v-else name="list">
           <div v-for="post in posts" :key="post.id" 
             class="group relative bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-white/5 rounded-3xl p-8 transition-all duration-300 hover:border-indigo-500 dark:hover:border-indigo-400 hover:ring-2 hover:ring-indigo-500/20 hover:shadow-2xl hover:shadow-indigo-500/10"
           >
@@ -96,6 +97,7 @@
 <script setup lang="ts">
 import { ref, onMounted } from 'vue'
 import SiteNavbar from '../components/SiteNavbar.vue'
+import CommunitySkeleton from '../components/CommunitySkeleton.vue'
 import { supabase } from '../lib/supabaseClient'
 
 interface Post {
@@ -112,11 +114,13 @@ const newTitle = ref('')
 const newMessage = ref('')
 const newPassword = ref('')
 const isPosting = ref(false)
+const isLoading = ref(true)
 
 const posts = ref<Post[]>([])
 
 // Fetch posts from Supabase
 const fetchPosts = async () => {
+  isLoading.value = true
   const { data, error } = await supabase
     .from('posts')
     .select('*')
@@ -127,6 +131,7 @@ const fetchPosts = async () => {
   } else {
     posts.value = data || []
   }
+  isLoading.value = false
 }
 
 const addPost = async () => {
