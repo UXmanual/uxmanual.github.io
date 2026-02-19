@@ -79,7 +79,9 @@
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 13l-7 7-7-7m14-8l-7 7-7-7" />
           </svg>
         </span>
-        <div class="absolute inset-0 bg-indigo-600 translate-y-full group-hover:translate-y-0 transition-transform duration-300"></div>
+      </button>
+    </div>
+
     <!-- Portfolio Modal -->
     <PortfolioModal 
       v-if="isModalOpen" 
