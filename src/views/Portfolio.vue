@@ -6,7 +6,10 @@
     <!-- Header -->
     <header class="pt-40 px-6 md:px-10 max-w-[1600px] mx-auto mb-10">
       <h1 class="text-5xl font-bold tracking-tight mb-4 text-zinc-900 dark:text-white">Design Portfolio</h1>
-      <p class="text-zinc-600 dark:text-zinc-400 text-lg">미드저니 벤치마킹 스타일의 메이슨리 그리드 및 다중 테마가 적용된 디자인 아카이브입니다.</p>
+      <p class="text-zinc-600 dark:text-zinc-400 text-lg leading-relaxed">
+        창의적인 영감과 디자인 결과물을 정성스럽게 기록하고 보관하는 아카이브 공간입니다. <br class="hidden md:block">
+        미드저니 스타일의 유연한 그리드와 감도 높은 테마로 모든 작업물을 가장 아름답게 보존합니다.
+      </p>
     </header>
 
     <!-- Filter Bar -->
