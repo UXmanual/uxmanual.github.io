@@ -52,7 +52,7 @@
       <!-- Actual Content -->
       <template v-else>
         <div v-for="(item, index) in filteredItems" :key="index" 
-          class="relative rounded-2xl overflow-hidden group bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-white/5 hover:scale-[1.02] transition-all duration-500 cursor-zoom-in break-inside-avoid animate-in fade-in duration-1000 shadow-sm hover:shadow-xl dark:shadow-none">
+          class="relative rounded-2xl overflow-hidden group bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-white/5 transition-all duration-500 cursor-zoom-in break-inside-avoid animate-in fade-in duration-1000 shadow-sm hover:shadow-xl dark:shadow-none">
           <img :src="item.image" :alt="item.title" class="w-full h-auto block group-hover:brightness-50 transition-all duration-700">
           
           <!-- Overlay -->
