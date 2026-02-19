@@ -59,7 +59,7 @@
       <div class="space-y-6">
         <TransitionGroup name="list">
           <div v-for="post in posts" :key="post.id" 
-            class="group relative bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-white/5 rounded-3xl p-8 transition-all duration-500 hover:border-indigo-500/30"
+            class="group relative bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-white/5 rounded-3xl p-8 transition-all duration-500 hover:border-indigo-500 dark:hover:border-indigo-500/50 hover:shadow-xl hover:shadow-indigo-500/5"
           >
             <div class="flex justify-between items-start mb-6">
               <div class="flex items-center gap-4">
@@ -86,9 +86,6 @@
             
             <h4 v-if="post.title" class="text-lg font-bold mb-3 text-zinc-800 dark:text-zinc-200 tracking-tight">{{ post.title }}</h4>
             <p class="text-zinc-600 dark:text-zinc-400 leading-relaxed whitespace-pre-line">{{ post.message }}</p>
-            
-            <!-- Deco line (Improved integration with card rounding) -->
-            <div class="absolute left-0 top-0 bottom-0 w-1.5 bg-indigo-500/0 group-hover:bg-indigo-500 transition-all rounded-l-3xl"></div>
           </div>
         </TransitionGroup>
       </div>
