@@ -42,7 +42,7 @@
     </div>
 
     <!-- Masonry Grid -->
-    <main class="px-6 md:px-10 pb-32 max-w-[1600px] mx-auto columns-1 sm:columns-2 lg:columns-3 xl:columns-4 gap-5 space-y-5">
+    <main class="px-6 md:px-10 pb-32 max-w-[1600px] mx-auto columns-1 sm:columns-2 lg:columns-3 xl:columns-4 gap-3 space-y-3">
       
       <!-- Skeleton Loading State -->
       <template v-if="isLoading">
@@ -52,7 +52,7 @@
       <!-- Actual Content -->
       <template v-else>
         <div v-for="(item, index) in filteredItems" :key="index" 
-          class="relative rounded-2xl overflow-hidden group bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-white/5 transition-all duration-500 cursor-zoom-in break-inside-avoid animate-in fade-in duration-1000 shadow-sm hover:shadow-xl dark:shadow-none">
+          class="relative rounded-2xl overflow-hidden group bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-white/5 transition-all duration-500 cursor-zoom-in break-inside-avoid animate-in fade-in duration-1000">
           <img :src="item.image" :alt="item.title" class="w-full h-auto block group-hover:brightness-50 transition-all duration-700">
           
           <!-- Overlay -->
