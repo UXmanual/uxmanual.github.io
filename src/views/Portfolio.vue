@@ -32,10 +32,10 @@
     </header>
 
     <!-- Filter Bar -->
-    <div class="px-6 md:px-10 max-w-[1600px] mx-auto mb-12 flex gap-3 overflow-x-auto pb-4 no-scrollbar">
+    <div class="px-6 md:px-10 max-w-[1600px] mx-auto mb-12 flex gap-3 overflow-x-auto pb-4 no-scrollbar touch-pan-x overscroll-behavior-x-contain">
       <button v-for="tag in tags" :key="tag" 
         @click="activeTag = tag"
-        :class="['px-6 py-2 rounded-full text-sm font-bold transition-all duration-300 ease-out whitespace-nowrap border', 
+        :class="['px-6 py-2 rounded-full text-sm font-bold transition-all duration-300 ease-out whitespace-nowrap border flex-none', 
         activeTag === tag ? 'bg-zinc-900 text-white dark:bg-white dark:text-black border-zinc-900 dark:border-white shadow-md' : 'bg-white dark:bg-zinc-900/50 text-zinc-500 dark:text-zinc-400 border-zinc-200 dark:border-white/10 hover:border-zinc-400 dark:hover:border-white/30 hover:text-zinc-900 dark:hover:text-white']">
         {{ tag }}
       </button>
