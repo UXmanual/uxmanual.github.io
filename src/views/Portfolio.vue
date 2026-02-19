@@ -32,18 +32,37 @@
     </header>
 
     <!-- Filter Bar -->
-    <div class="px-6 md:px-10 max-w-[1600px] mx-auto mb-12 relative overflow-hidden">
+    <div class="px-6 md:px-10 max-w-[1600px] mx-auto mb-12 relative overflow-hidden group/filter">
+      <!-- Left Gradient indicator -->
+      <div 
+        class="absolute left-0 top-0 bottom-4 w-12 bg-gradient-to-r from-zinc-50 dark:from-[#0a0a0c] to-transparent pointer-events-none z-10 transition-opacity duration-300"
+        :class="showLeftGradient ? 'opacity-100' : 'opacity-0'"
+      ></div>
+
       <!-- 횡스크롤 지원 영역 -->
-      <div class="flex flex-nowrap gap-3 overflow-x-auto pb-4 no-scrollbar -mx-6 px-6 md:-mx-10 md:px-10 scroll-smooth">
+      <div 
+        ref="scrollContainer"
+        @mousedown="startDragging"
+        @mousemove="doDragging"
+        @mouseup="stopDragging"
+        @mouseleave="stopDragging"
+        @scroll="checkScroll"
+        :class="['flex flex-nowrap gap-3 overflow-x-auto pb-4 no-scrollbar -mx-6 px-6 md:-mx-10 md:px-10 select-none touch-pan-x', isDragging ? 'cursor-grabbing' : 'cursor-grab']"
+      >
         <button v-for="tag in tags" :key="tag" 
           @click="activeTag = tag"
-          :class="['px-6 py-2 rounded-full text-sm font-bold transition-all duration-300 ease-out whitespace-nowrap border flex-none', 
-          activeTag === tag ? 'bg-zinc-900 text-white dark:bg-white dark:text-black border-zinc-900 dark:border-white shadow-md' : 'bg-white dark:bg-zinc-900/50 text-zinc-500 dark:text-zinc-400 border-zinc-200 dark:border-white/10 hover:border-zinc-400 dark:hover:border-white/30 hover:text-zinc-900 dark:hover:text-white']">
+          class="px-6 py-2 rounded-full text-sm font-bold transition-all duration-300 ease-out whitespace-nowrap border flex-none pointer-events-auto"
+          :class="activeTag === tag ? 'bg-zinc-900 text-white dark:bg-white dark:text-black border-zinc-900 dark:border-white shadow-md' : 'bg-white dark:bg-zinc-900/50 text-zinc-500 dark:text-zinc-400 border-zinc-200 dark:border-white/10 hover:border-zinc-400 dark:hover:border-white/30 hover:text-zinc-900 dark:hover:text-white'"
+        >
           {{ tag }}
         </button>
       </div>
-      <!-- 그라데이션 인디케이터 (스크롤 가능 암시) -->
-      <div class="absolute right-0 top-0 bottom-4 w-12 bg-gradient-to-l from-zinc-50 dark:from-[#0a0a0c] to-transparent pointer-events-none md:hidden"></div>
+
+      <!-- Right Gradient indicator -->
+      <div 
+        class="absolute right-0 top-0 bottom-4 w-12 bg-gradient-to-l from-zinc-50 dark:from-[#0a0a0c] to-transparent pointer-events-none z-10 transition-opacity duration-300"
+        :class="showRightGradient ? 'opacity-100' : 'opacity-0'"
+      ></div>
     </div>
 
     <!-- Masonry Grid -->
@@ -164,9 +183,45 @@ if (savedTheme) {
 }
 updateThemeClass(isDark.value)
 
+// Drag-to-scroll and Gradient logic
+const scrollContainer = ref<HTMLElement | null>(null)
+const isDragging = ref(false)
+const startX = ref(0)
+const scrollLeftStart = ref(0)
+const showLeftGradient = ref(false)
+const showRightGradient = ref(true)
+
+const checkScroll = () => {
+  if (!scrollContainer.value) return
+  const { scrollLeft, scrollWidth, clientWidth } = scrollContainer.value
+  showLeftGradient.value = scrollLeft > 10
+  showRightGradient.value = scrollLeft < scrollWidth - clientWidth - 10
+}
+
+const startDragging = (e: MouseEvent) => {
+  isDragging.value = true
+  startX.value = e.pageX - (scrollContainer.value?.offsetLeft || 0)
+  scrollLeftStart.value = scrollContainer.value?.scrollLeft || 0
+}
+
+const stopDragging = () => {
+  isDragging.value = false
+}
+
+const doDragging = (e: MouseEvent) => {
+  if (!isDragging.value || !scrollContainer.value) return
+  e.preventDefault()
+  const x = e.pageX - (scrollContainer.value.offsetLeft || 0)
+  const walk = (x - startX.value) * 2 // Speed adjustment
+  scrollContainer.value.scrollLeft = scrollLeftStart.value - walk
+}
+
 onMounted(() => {
   // Double check theme on mount
   updateThemeClass(isDark.value)
+  
+  // Initial scroll check
+  setTimeout(checkScroll, 100)
   
   // Simulate initial data loading delay
   setTimeout(() => {
