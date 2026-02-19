@@ -3,137 +3,409 @@
 
 <head>
   <meta charset="utf-8" />
-  <title>index</title>
+  <title>Portfolio | UXmanual Digital Lab</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1, maximum-scale=1" />
-  <!-- Link Swiper's CSS -->
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@9/swiper-bundle.min.css" />
-    <link rel="stylesheet" href="../css/default.css">
+  <link rel="stylesheet" href="../css/default.css">
+  <style>
+    :root {
+      --bg-dark: #0a0a0c;
+      --card-bg: #161618;
+      --accent: #6366f1;
+      --text-dim: #8e8e93;
+      --glass: rgba(255, 255, 255, 0.05);
+      --glass-border: rgba(255, 255, 255, 0.1);
+    }
 
-<style>
-    html, body {position: relative; height: 100%; scroll-behavior: smooth;}
-    body {background: #000; font-size: 14px;}
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
 
-    .header {margin: 0 auto; width: 100%; height: 44px; background: #f7f7f7;}      
-    
-    .contents-top {height: 400px; background-color: #f7f7f7; border-bottom: #dddddd 1px solid;}
-    /* 섹션 요소에 대한 스타일 */
-    section {height: 1200px; /* 전체 뷰포트 높이 */ display: flex; justify-content: center; align-items: center; background-color: #f5f7f8; border-bottom: #dddddd 1px solid;}
-    /* 페이드인 효과를 위한 스타일 */
-    .fade-in {opacity: 0; /* 초기에는 투명도를 0으로 설정 */ transition: opacity 0.5s ease-in-out; /* 0.5초간의 트랜지션 */}
-    
-    .fixed-bar {position: relative; width: 100%; height: 56px; line-height: 56px; background-color: #ccc; transition: all 0.3s ease-in-out; /* 애니메이션 효과 추가 */ padding: 0; margin: 0;}
+    body {
+      background-color: var(--bg-dark);
+      color: #ffffff;
+      font-family: 'Pretendard', sans-serif;
+      overflow-x: hidden;
+    }
 
-    .fixed-bar.fixed {position: fixed; top: 0; z-index: 999999;}
-    .fixed-bar li {float: left; padding: 0 10px;}
-    .fixed-bar li a {display: inline-block;}
-    .scroll-anchor {height: 0px; /* 기준점을 설정할 높이 */}
-    .footer {margin: 0 auto; width: 100%; height: 100px; background: #f8f9fa;}
-</style>
+    /* Navigation */
+    nav {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      padding: 20px 40px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      z-index: 1000;
+      background: linear-gradient(to bottom, rgba(10, 10, 12, 0.8), transparent);
+      backdrop-filter: blur(10px);
+      border-bottom: 1px solid var(--glass-border);
+    }
+
+    .logo {
+      font-size: 20px;
+      font-weight: 800;
+      letter-spacing: -0.02em;
+      color: #fff;
+      text-decoration: none;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .nav-links {
+      display: flex;
+      gap: 24px;
+    }
+
+    .nav-link {
+      color: var(--text-dim);
+      text-decoration: none;
+      font-size: 14px;
+      font-weight: 600;
+      transition: color 0.3s;
+    }
+
+    .nav-link:hover,
+    .nav-link.active {
+      color: #fff;
+    }
+
+    /* Hero / Header */
+    .header-section {
+      padding: 140px 40px 60px;
+      max-width: 1600px;
+      margin: 0 auto;
+    }
+
+    .header-section h1 {
+      font-size: 48px;
+      font-weight: 800;
+      letter-spacing: -0.04em;
+      margin-bottom: 12px;
+    }
+
+    .header-section p {
+      color: var(--text-dim);
+      font-size: 18px;
+      max-width: 600px;
+    }
+
+    /* Masonry Grid */
+    .portfolio-grid {
+      padding: 0 40px 100px;
+      max-width: 1600px;
+      margin: 0 auto;
+      column-count: 4;
+      column-gap: 20px;
+    }
+
+    .portfolio-item {
+      break-inside: avoid;
+      margin-bottom: 20px;
+      position: relative;
+      border-radius: 16px;
+      overflow: hidden;
+      background-color: var(--card-bg);
+      cursor: pointer;
+      transition: transform 0.4s cubic-bezier(0.2, 0, 0.2, 1);
+    }
+
+    .portfolio-item:hover {
+      transform: scale(1.02);
+    }
+
+    .portfolio-item img {
+      width: 100%;
+      display: block;
+      transition: filter 0.4s;
+    }
+
+    .portfolio-item:hover img {
+      filter: brightness(0.7);
+    }
+
+    /* Hover Overlay */
+    .overlay {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      width: 100%;
+      padding: 24px;
+      background: linear-gradient(to top, rgba(0, 0, 0, 0.8), transparent);
+      opacity: 0;
+      transition: opacity 0.3s ease;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .portfolio-item:hover .overlay {
+      opacity: 1;
+    }
+
+    .item-category {
+      font-size: 12px;
+      font-weight: 700;
+      text-transform: uppercase;
+      color: var(--accent);
+      letter-spacing: 0.1em;
+    }
+
+    .item-title {
+      font-size: 18px;
+      font-weight: 700;
+    }
+
+    .item-stats {
+      display: flex;
+      gap: 16px;
+      margin-top: 8px;
+      font-size: 12px;
+      color: rgba(255, 255, 255, 0.6);
+    }
+
+    /* Tags / Filters */
+    .filter-bar {
+      padding: 0 40px 40px;
+      max-width: 1600px;
+      margin: 0 auto;
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+
+    .filter-chip {
+      padding: 8px 18px;
+      border-radius: 999px;
+      background: var(--glass);
+      border: 1px solid var(--glass-border);
+      color: #fff;
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s;
+    }
+
+    .filter-chip:hover {
+      background: rgba(255, 255, 255, 0.1);
+    }
+
+    .filter-chip.active {
+      background: #fff;
+      color: #000;
+    }
+
+    /* Responsive */
+    @media (max-width: 1200px) {
+      .portfolio-grid {
+        column-count: 3;
+      }
+    }
+
+    @media (max-width: 900px) {
+      .portfolio-grid {
+        column-count: 2;
+      }
+    }
+
+    @media (max-width: 600px) {
+      .portfolio-grid {
+        column-count: 1;
+      }
+
+      .header-section h1 {
+        font-size: 32px;
+      }
+
+      nav {
+        padding: 15px 20px;
+      }
+
+      .portfolio-grid {
+        padding: 0 20px 80px;
+      }
+
+      .filter-bar {
+        padding: 0 20px 30px;
+      }
+    }
+
+    /* Animation */
+    @keyframes fadeInUp {
+      from {
+        opacity: 0;
+        transform: translateY(30px);
+      }
+
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .portfolio-item {
+      animation: fadeInUp 0.8s cubic-bezier(0.2, 0, 0.2, 1) backwards;
+    }
+
+    .portfolio-item:nth-child(2) {
+      animation-delay: 0.1s;
+    }
+
+    .portfolio-item:nth-child(3) {
+      animation-delay: 0.2s;
+    }
+
+    .portfolio-item:nth-child(4) {
+      animation-delay: 0.3s;
+    }
+
+    .portfolio-item:nth-child(5) {
+      animation-delay: 0.4s;
+    }
+  </style>
 </head>
 
 <body>
-<!-- //헤더 -->
-<div class="header">
-    <a href="#logo" class="scroll-btn">LOGO Type</a>
-</div>
-<!-- 서브고정메뉴 기준점 역할을 하는 빈 div -->
-<div class="scroll-anchor"></div>
-<!-- //서브고정메뉴-->
-<div class="fixed-bar">
-    <ul>
-        <li><a href="#" id="scroll-to-top">top </a></li>
-        <li><a href="#section1" class="scroll-btn">sub menu01 </a></li>
-        <li><a href="#section2" class="scroll-btn">sub menu02 </a></li>
-         <li><a href="#section3" class="scroll-btn">sub menu03</a></li>
-    </ul>
-</div>
 
-    <div class="contents-top">
-        컨텐츠 상단영역
+  <nav>
+    <a href="../index.html" class="logo">
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"
+        stroke-linecap="round" stroke-linejoin="round">
+        <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" />
+        <polyline points="9 22 9 12 15 12 15 22" />
+      </svg>
+      UXmanual
+    </a>
+    <div class="nav-links">
+      <a href="#" class="nav-link active">Explore</a>
+      <a href="#" class="nav-link">Personal</a>
+      <a href="#" class="nav-link">Showcase</a>
     </div>
-    <section id="section1" class="fade-in"> 
-        <div>컨텐츠 영역 01</div>
-    </section>
-    <section id="section2" class="fade-in"> 
-        <div>컨텐츠 영역 02</div>      
-    </section>
-    <section id="section3" class="fade-in"> 
-        <div>컨텐츠 영역 03</div>     
-    </section>
-    
-    <div class="footer">
-    Copyright © 2023 Jeonhyunsoo Inc. 모든 권리 보유.
+  </nav>
+
+  <header class="header-section">
+    <h1>Design Portfolio</h1>
+    <p>UXmanual이 설계한 디지털 비주얼의 정점, 고도의 미학적 실험 결과물들을 확인하세요.</p>
+  </header>
+
+  <div class="filter-bar">
+    <div class="filter-chip active">All Projects</div>
+    <div class="filter-chip">UI/UX Design</div>
+    <div class="filter-chip">Brand Identity</div>
+    <div class="filter-chip">3D Art</div>
+    <div class="filter-chip">Motion</div>
+  </div>
+
+  <main class="portfolio-grid">
+    <!-- Item 1 -->
+    <div class="portfolio-item">
+      <img src="https://images.unsplash.com/photo-1634017839464-5c339ebe3cb4?q=80&w=800&auto=format" alt="Abstract 3D">
+      <div class="overlay">
+        <span class="item-category">3D Art</span>
+        <h3 class="item-title">Digital Fluidity Vol.1</h3>
+        <div class="item-stats">
+          <span>👁 2.4k</span>
+          <span>♥ 482</span>
+        </div>
+      </div>
     </div>
-    
-    <script>
-      // 스크롤 이벤트를 감지하여 페이드인 효과를 추가하는 JavaScript 코드
-      window.addEventListener('scroll', function() {
-        let sections = document.querySelectorAll('.fade-in'); // 모든 fade-in 클래스를 가진 섹션 요소 선택
-        for (let i = 0; i < sections.length; i++) {
-          let section = sections[i];
-          let position = section.getBoundingClientRect(); // 요소의 위치 정보 가져오기
-          if (position.top < window.innerHeight) {
-            section.style.opacity = 1; // 요소가 뷰포트에 나타나면 투명도를 1로 설정하여 페이드인 효과 추가
-          }
-        }
-      });
-    </script>
-    <script>
-    
-        // 고정되는 바 요소와 기준점 요소를 가져옴
-const fixedBar = document.querySelector('.fixed-bar');
-const scrollAnchor = document.querySelector('.scroll-anchor');
 
-// 기준점의 위치를 계산하여 저장
-const anchorOffsetTop = scrollAnchor.offsetTop;
+    <!-- Item 2 -->
+    <div class="portfolio-item">
+      <img src="https://images.unsplash.com/photo-1550745165-9bc0b252726f?q=80&w=800&auto=format" alt="Retro Tech">
+      <div class="overlay">
+        <span class="item-category">Hardware UI</span>
+        <h3 class="item-title">Cybernetic Retrofit</h3>
+        <div class="item-stats">
+          <span>👁 1.8k</span>
+          <span>♥ 315</span>
+        </div>
+      </div>
+    </div>
 
-// 스크롤 이벤트에 대한 리스너 등록
-window.addEventListener('scroll', function() {
-  // 현재 스크롤 위치를 가져옴
-  const scrollPosition = window.scrollY;
+    <!-- Item 3 -->
+    <div class="portfolio-item">
+      <img src="https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?q=80&w=800&auto=format" alt="Minimal Grid">
+      <div class="overlay">
+        <span class="item-category">UI System</span>
+        <h3 class="item-title">Minimalist Flux</h3>
+        <div class="item-stats">
+          <span>👁 3.1k</span>
+          <span>♥ 920</span>
+        </div>
+      </div>
+    </div>
 
-  // 현재 스크롤 위치가 기준점 위치 이상이면 고정시킴
-  if (scrollPosition >= anchorOffsetTop) {
-    fixedBar.classList.add('fixed');
-  } else {
-    fixedBar.classList.remove('fixed');
-  }
-});
-    </script>
-    
-    <script>
-    
-        // 스크롤 버튼 요소 가져오기
-const scrollBtn = document.querySelector('.scroll-btn');
+    <!-- Item 4 -->
+    <div class="portfolio-item">
+      <img src="https://images.unsplash.com/photo-1614850523296-d8c1af93d400?q=80&w=800&auto=format" alt="Gradient Art">
+      <div class="overlay">
+        <span class="item-category">Digital Art</span>
+        <h3 class="item-title">Neon Chromatics</h3>
+        <div class="item-stats">
+          <span>👁 4.2k</span>
+          <span>♥ 1.1k</span>
+        </div>
+      </div>
+    </div>
 
-// 스크롤 버튼 클릭 이벤트 리스너 등록
-scrollBtn.addEventListener('click', function(e) {
-  e.preventDefault(); // 기본 동작 취소
+    <!-- Item 5 -->
+    <div class="portfolio-item">
+      <img src="https://images.unsplash.com/photo-1633167606207-d840b5070fc2?q=80&w=800&auto=format" alt="Glass Art">
+      <div class="overlay">
+        <span class="item-category">3D Art</span>
+        <h3 class="item-title">Glass Refraction Lab</h3>
+        <div class="item-stats">
+          <span>👁 1.2k</span>
+          <span>♥ 256</span>
+        </div>
+      </div>
+    </div>
 
-  // 애니메이션 효과를 위해 스크롤 위치 변경
-  const targetId = this.getAttribute('href');
-  const targetElement = document.querySelector(targetId);
-  const targetOffsetTop = targetElement.offsetTop;
-  
-  window.scrollTo({
-    top: targetOffsetTop,
-    behavior: 'smooth' // 애니메이션 효과 추가
-  });
-    
-  function scrollToTop() {
-  window.scrollTo({
-    top: 0,
-    behavior: 'smooth'
-  });
-}
-    const scrollToTopBtn = document.querySelector('#scroll-to-top');
-    // 제일 위로 가는 버튼 클릭 이벤트 리스너 등록
-    scrollToTopBtn.addEventListener('click', scrollToTop);
+    <!-- Item 6 -->
+    <div class="portfolio-item">
+      <img src="https://images.unsplash.com/photo-1498050108023-c5249f4df085?q=80&w=800&auto=format" alt="Coding UI">
+      <div class="overlay">
+        <span class="item-category">UX Design</span>
+        <h3 class="item-title">Next-Gen Code Editor</h3>
+        <div class="item-stats">
+          <span>👁 5.5k</span>
+          <span>♥ 2.3k</span>
+        </div>
+      </div>
+    </div>
 
-});
+    <!-- Item 7 -->
+    <div class="portfolio-item">
+      <img src="https://images.unsplash.com/photo-1558655146-d09347e92766?q=80&w=800&auto=format" alt="App UI">
+      <div class="overlay">
+        <span class="item-category">App Design</span>
+        <h3 class="item-title">Solari Weather OS</h3>
+        <div class="item-stats">
+          <span>👁 2.9k</span>
+          <span>♥ 740</span>
+        </div>
+      </div>
+    </div>
 
-        
-    </script>
+    <!-- Item 8 -->
+    <div class="portfolio-item">
+      <img src="https://images.unsplash.com/photo-1620121692029-d088224ddc74?q=80&w=800&auto=format" alt="Wave Art">
+      <div class="overlay">
+        <span class="item-category">Motion</span>
+        <h3 class="item-title">Waveform Particles</h3>
+        <div class="item-stats">
+          <span>👁 1.1k</span>
+          <span>♥ 190</span>
+        </div>
+      </div>
+    </div>
+  </main>
+
 </body>
 
 </html>
