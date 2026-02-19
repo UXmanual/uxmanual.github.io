@@ -52,7 +52,8 @@
       <!-- Actual Content -->
       <template v-else>
         <div v-for="(item, index) in filteredItems" :key="index" 
-          class="relative rounded-2xl overflow-hidden group bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-white/5 transition-all duration-500 cursor-zoom-in break-inside-avoid animate-in fade-in duration-1000">
+          @click="openModal(item)"
+          class="relative rounded-2xl overflow-hidden group bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-white/5 transition-all duration-500 cursor-pointer break-inside-avoid animate-in fade-in duration-1000">
           <img :src="item.image" :alt="item.title" class="w-full h-auto block group-hover:brightness-50 transition-all duration-700">
           
           <!-- Overlay -->
@@ -79,14 +80,20 @@
           </svg>
         </span>
         <div class="absolute inset-0 bg-indigo-600 translate-y-full group-hover:translate-y-0 transition-transform duration-300"></div>
-      </button>
-    </div>
+    <!-- Portfolio Modal -->
+    <PortfolioModal 
+      v-if="isModalOpen" 
+      :is-open="isModalOpen" 
+      :item="selectedItem" 
+      @close="isModalOpen = false" 
+    />
   </div>
 </template>
 
 <script setup lang="ts">
 import { ref, computed, onMounted } from 'vue'
 import PortfolioSkeleton from '../components/PortfolioSkeleton.vue'
+import PortfolioModal from '../components/PortfolioModal.vue'
 
 interface PortfolioItem {
   image: string
@@ -99,11 +106,27 @@ interface PortfolioItem {
 const isLoading = ref(true)
 const isBotLoading = ref(false)
 const isDark = ref(true)
+const isModalOpen = ref(false)
+const selectedItem = ref<PortfolioItem | null>(null)
 const tags = ['All Projects', 'UI/UX Design', '3D Art', 'Motion', 'Concept']
 const activeTag = ref('All Projects')
 const visibleCount = ref(8)
 
-// Theme management
+const loadMore = () => {
+  isBotLoading.value = true
+  // Simulate network delay for loading more
+  setTimeout(() => {
+    visibleCount.value += 4
+    isBotLoading.value = false
+  }, 800)
+}
+
+const openModal = (item: PortfolioItem) => {
+  selectedItem.value = item
+  isModalOpen.value = true
+}
+
+// Initial theme setup (runs before mount)
 const updateThemeClass = (dark: boolean) => {
   if (dark) {
     document.documentElement.classList.add('dark')
