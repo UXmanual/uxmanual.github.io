@@ -59,7 +59,7 @@
       <div class="space-y-6">
         <TransitionGroup name="list">
           <div v-for="post in posts" :key="post.id" 
-            class="group relative bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-white/5 rounded-3xl p-8 transition-all duration-500 hover:border-indigo-500 dark:hover:border-indigo-500/50 hover:shadow-xl hover:shadow-indigo-500/5"
+            class="group relative bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-white/5 rounded-3xl p-8 transition-all duration-300 hover:border-indigo-500 dark:hover:border-indigo-400 hover:ring-2 hover:ring-indigo-500/20 hover:shadow-2xl hover:shadow-indigo-500/10"
           >
             <div class="flex justify-between items-start mb-6">
               <div class="flex items-center gap-4">
