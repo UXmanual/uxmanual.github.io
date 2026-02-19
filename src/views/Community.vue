@@ -96,7 +96,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted } from 'vue'
+import { ref, onMounted, watch } from 'vue'
 import SiteNavbar from '../components/SiteNavbar.vue'
 
 interface Post {
@@ -113,16 +113,21 @@ const newTitle = ref('')
 const newMessage = ref('')
 const newPassword = ref('')
 
-const posts = ref<Post[]>([
-  { 
-    id: 1, 
-    name: "Alex Design", 
-    title: "Amazing Masonry Grid!", 
-    message: "미드저니 느낌을 그대로 살린 그리드가 정말 인상적입니다. 특히 다크 모드에서의 유리 질감(glassmorphism)이 최고예요!",
-    date: "2026.02.19",
-    password: "0000"
-  }
-])
+const defaultPost: Post = { 
+  id: 1, 
+  name: "Alex Design", 
+  title: "Amazing Masonry Grid!", 
+  message: "미드저니 느낌을 그대로 살린 그리드가 정말 인상적입니다. 특히 다크 모드에서의 유리 질감(glassmorphism)이 최고예요!",
+  date: "2026.02.19",
+  password: "0000"
+}
+
+const posts = ref<Post[]>([])
+
+// Watch posts changes and save to localStorage
+watch(posts, (newPosts) => {
+  localStorage.setItem('community-posts', JSON.stringify(newPosts))
+}, { deep: true })
 
 const addPost = () => {
   if (!newName.value || !newMessage.value || !newPassword.value) {
@@ -165,7 +170,17 @@ const verifyAndDelete = (post: Post) => {
 }
 
 onMounted(() => {
-  // Simulating initial load or data fetching if needed
+  const savedPosts = localStorage.getItem('community-posts')
+  if (savedPosts) {
+    try {
+      posts.value = JSON.parse(savedPosts)
+    } catch (e) {
+      console.error('Failed to parse saved posts', e)
+      posts.value = [defaultPost]
+    }
+  } else {
+    posts.value = [defaultPost]
+  }
 })
 </script>
 
