@@ -2,9 +2,9 @@
   <div class="min-h-screen bg-zinc-50 dark:bg-[#0a0a0c] text-zinc-900 dark:text-white transition-colors duration-500 selection:bg-indigo-500/30">
     <!-- Navbar -->
     <nav class="fixed top-0 w-full px-6 md:px-10 py-5 flex justify-between items-center z-50 bg-white/80 dark:bg-[#0a0a0c]/80 backdrop-blur-xl border-b border-zinc-200 dark:border-white/10 transition-colors duration-500">
-      <router-link to="/" class="flex items-center gap-3 text-xl font-bold tracking-tighter text-zinc-900 dark:text-white transition-colors uppercase">
+      <router-link to="/" class="flex items-center gap-3 text-lg font-bold tracking-tighter text-zinc-900 dark:text-white transition-colors">
         <div class="w-2 h-2 bg-indigo-500 rounded-full animate-pulse"></div>
-        UXMANUAL
+        UXManual
       </router-link>
       
       <div class="flex items-center gap-4 md:gap-8">
