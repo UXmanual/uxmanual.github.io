@@ -16,6 +16,7 @@
 /* Ensure body and html follow the theme */
 html {
     @apply transition-colors duration-500;
+    scrollbar-gutter: stable;
 }
 
 html.dark {
