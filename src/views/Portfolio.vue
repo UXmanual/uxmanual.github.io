@@ -10,7 +10,7 @@
       <div class="flex items-center gap-4 md:gap-8">
         <div class="hidden md:flex gap-8 text-sm font-semibold text-zinc-500">
           <a href="#" class="text-zinc-900 dark:text-white">Explore Project</a>
-          <a href="#" class="hover:text-zinc-900 dark:hover:text-white transition-colors">Digital Lab</a>
+          <a href="#" class="hover:text-zinc-900 dark:hover:text-white transition-colors">Community</a>
         </div>
         
         <!-- Theme Toggle Button -->
