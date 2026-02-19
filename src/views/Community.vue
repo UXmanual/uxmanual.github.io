@@ -1,0 +1,200 @@
+<template>
+  <div class="min-h-screen bg-zinc-50 dark:bg-[#0a0a0c] text-zinc-900 dark:text-white transition-colors duration-500">
+    <!-- Navbar -->
+    <nav class="fixed top-0 w-full px-6 md:px-10 py-5 flex justify-between items-center z-50 bg-white/80 dark:bg-[#0a0a0c]/80 backdrop-blur-xl border-b border-zinc-200 dark:border-white/10 transition-colors duration-500">
+      <router-link to="/" class="flex items-center gap-3 text-lg font-bold tracking-tighter text-zinc-900 dark:text-white transition-colors">
+        <div class="w-2 h-2 bg-indigo-500 rounded-full animate-pulse"></div>
+        UXManual
+      </router-link>
+      
+      <div class="flex items-center gap-4 md:gap-8">
+        <div class="flex gap-8 text-sm font-semibold">
+          <router-link to="/" class="text-zinc-500 hover:text-zinc-900 dark:hover:text-white transition-colors">Explore Projects</router-link>
+          <router-link to="/community" class="text-zinc-900 dark:text-white underline underline-offset-4 decoration-indigo-500 decoration-2">Community</router-link>
+        </div>
+        
+        <!-- Theme Toggle -->
+        <button @click="toggleTheme" class="p-2 rounded-full bg-zinc-100 dark:bg-zinc-800 text-zinc-600 dark:text-zinc-300 hover:bg-zinc-200 dark:hover:bg-zinc-700 transition-all duration-300">
+          <svg v-if="isDark" xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364-6.364l-.707.707M6.343 17.657l-.707.707M16.243 17.657l.707.707M7.757 7.757l.707.707M12 7a5 5 0 100 10 5 5 0 000-10z" />
+          </svg>
+          <svg v-else xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" />
+          </svg>
+        </button>
+      </div>
+    </nav>
+
+    <!-- Header Section -->
+    <header class="pt-40 px-6 md:px-10 max-w-[1000px] mx-auto mb-16">
+      <h1 class="text-5xl font-bold tracking-tight mb-4 text-zinc-900 dark:text-white uppercase tracking-tighter">Community Hub</h1>
+      <p class="text-zinc-600 dark:text-zinc-400 text-lg leading-relaxed">
+        프로젝트에 대한 의견이나 질문을 남겨주세요. <br class="hidden md:block">
+        디자인 아카이브의 성장을 위한 소중한 한마디를 기다립니다.
+      </p>
+    </header>
+
+    <main class="px-6 md:px-10 max-w-[1000px] mx-auto pb-40">
+      <!-- Input Area -->
+      <div class="mb-20 bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-white/5 rounded-3xl p-8 shadow-xl">
+        <div class="flex flex-col gap-6">
+          <div class="flex flex-col md:flex-row gap-4">
+            <input 
+              v-model="newName" 
+              type="text" 
+              placeholder="Name" 
+              class="flex-1 bg-zinc-50 dark:bg-black/50 border border-zinc-200 dark:border-white/10 rounded-2xl px-5 py-4 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 transition-all font-bold"
+            >
+            <input 
+              v-model="newTitle" 
+              type="text" 
+              placeholder="Subject (Optional)" 
+              class="flex-[2] bg-zinc-50 dark:bg-black/50 border border-zinc-200 dark:border-white/10 rounded-2xl px-5 py-4 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 transition-all font-bold"
+            >
+          </div>
+          <textarea 
+            v-model="newMessage" 
+            rows="4" 
+            placeholder="Share your thoughts..." 
+            class="w-full bg-zinc-50 dark:bg-black/50 border border-zinc-200 dark:border-white/10 rounded-2xl px-5 py-4 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 transition-all resize-none leading-relaxed"
+          ></textarea>
+          <div class="flex justify-end">
+            <button 
+              @click="addPost"
+              class="px-10 py-4 bg-zinc-900 dark:bg-white text-white dark:text-black rounded-2xl font-black text-sm uppercase tracking-widest hover:scale-[1.02] active:scale-[0.98] transition-all shadow-lg shadow-indigo-500/10"
+            >
+              Post Message
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Messages List -->
+      <div class="space-y-6">
+        <TransitionGroup name="list">
+          <div v-for="post in posts" :key="post.id" 
+            class="group relative bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-white/5 rounded-3xl p-8 transition-all duration-500 hover:border-indigo-500/30"
+          >
+            <div class="flex justify-between items-start mb-6">
+              <div class="flex items-center gap-4">
+                <div class="w-10 h-10 rounded-full bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center text-white font-black text-xs">
+                  {{ post.name.charAt(0).toUpperCase() }}
+                </div>
+                <div>
+                  <h3 class="font-black text-zinc-900 dark:text-white uppercase tracking-tight">{{ post.name }}</h3>
+                  <span class="text-xs text-zinc-400">{{ post.date }}</span>
+                </div>
+              </div>
+              <div class="flex items-center gap-2">
+                <button class="p-2 rounded-xl hover:bg-zinc-100 dark:hover:bg-white/5 text-zinc-400 transition-colors">
+                  <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
+                  </svg>
+                </button>
+              </div>
+            </div>
+            
+            <h4 v-if="post.title" class="text-lg font-bold mb-3 text-zinc-800 dark:text-zinc-200 tracking-tight">{{ post.title }}</h4>
+            <p class="text-zinc-600 dark:text-zinc-400 leading-relaxed whitespace-pre-line">{{ post.message }}</p>
+            
+            <!-- Deco line -->
+            <div class="absolute left-0 top-0 bottom-0 w-1 bg-indigo-500/0 group-hover:bg-indigo-500 transition-all rounded-l-3xl"></div>
+          </div>
+        </TransitionGroup>
+      </div>
+    </main>
+  </div>
+</template>
+
+<script setup lang="ts">
+import { ref, onMounted } from 'vue'
+
+interface Post {
+  id: number
+  name: string
+  title: string
+  message: string
+  date: string
+}
+
+const isDark = ref(true)
+const newName = ref('')
+const newTitle = ref('')
+const newMessage = ref('')
+
+const posts = ref<Post[]>([
+  { 
+    id: 1, 
+    name: "Alex Design", 
+    title: "Amazing Masonry Grid!", 
+    message: "미드저니 느낌을 그대로 살린 그리드가 정말 인상적입니다. 특히 다크 모드에서의 유리 질감(glassmorphism)이 최고예요!",
+    date: "2026.02.19"
+  },
+  { 
+    id: 2, 
+    name: "UI Enthusiast", 
+    title: "", 
+    message: "방명록 기능까지 깔끔하네요. 앞으로 더 많은 작품 기대하겠습니다!",
+    date: "2026.02.18"
+  }
+])
+
+const updateThemeClass = (dark: boolean) => {
+  if (dark) {
+    document.documentElement.classList.add('dark')
+  } else {
+    document.documentElement.classList.remove('dark')
+  }
+}
+
+const toggleTheme = () => {
+  isDark.value = !isDark.value
+  updateThemeClass(isDark.value)
+  localStorage.setItem('theme', isDark.value ? 'dark' : 'light')
+}
+
+const addPost = () => {
+  if (!newName.value || !newMessage.value) {
+    alert('Please enter your name and message.')
+    return
+  }
+  
+  const now = new Date()
+  const dateStr = `${now.getFullYear()}.${(now.getMonth() + 1).toString().padStart(2, '0')}.${now.getDate().toString().padStart(2, '0')}`
+  
+  posts.value.unshift({
+    id: Date.now(),
+    name: newName.value,
+    title: newTitle.value,
+    message: newMessage.value,
+    date: dateStr
+  })
+  
+  newName.value = ''
+  newTitle.value = ''
+  newMessage.value = ''
+}
+
+onMounted(() => {
+  const savedTheme = localStorage.getItem('theme')
+  if (savedTheme) {
+    isDark.value = savedTheme === 'dark'
+  }
+  updateThemeClass(isDark.value)
+})
+</script>
+
+<style scoped>
+.list-enter-active,
+.list-leave-active {
+  transition: all 0.6s ease;
+}
+.list-enter-from {
+  opacity: 0;
+  transform: translateY(30px);
+}
+.list-leave-to {
+  opacity: 0;
+  transform: scale(0.9);
+}
+</style>

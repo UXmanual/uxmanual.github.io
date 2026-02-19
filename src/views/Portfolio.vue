@@ -8,9 +8,9 @@
       </router-link>
       
       <div class="flex items-center gap-4 md:gap-8">
-        <div class="hidden md:flex gap-8 text-sm font-semibold text-zinc-500">
-          <a href="#" class="text-zinc-900 dark:text-white">Explore Project</a>
-          <a href="#" class="hover:text-zinc-900 dark:hover:text-white transition-colors">Community</a>
+        <div class="hidden md:flex gap-8 text-sm font-semibold">
+          <router-link to="/" class="text-zinc-900 dark:text-white underline underline-offset-4 decoration-indigo-500 decoration-2">Explore Projects</router-link>
+          <router-link to="/community" class="text-zinc-500 hover:text-zinc-900 dark:hover:text-white transition-colors">Community</router-link>
         </div>
         
         <!-- Theme Toggle Button -->
