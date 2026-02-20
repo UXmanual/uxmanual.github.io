@@ -133,8 +133,8 @@ const RSS_SOURCES = [
   { name: 'TechCrunch', url: 'https://techcrunch.com/feed/', category: 'ai' },
   { name: '매경 경제', url: 'https://www.mk.co.kr/rss/30100041/', category: 'finance' },
   { name: '한경 금융', url: 'https://www.hankyung.com/feed/finance', category: 'finance' },
-  { name: 'Dezeen Design', url: 'https://www.dezeen.com/feed/', category: 'design' },
-  { name: 'Design Milk', url: 'http://design-milk.com/feed/', category: 'design' }
+  { name: 'Google 뉴스 (디자인)', url: 'https://news.google.com/rss/search?q=%EB%94%94%EC%9E%90%EC%9D%B8+%ED%8A%B8%EB%A0%8C%EB%93%9C&hl=ko&gl=KR&ceid=KR:ko', category: 'design' },
+  { name: 'Dezeen', url: 'https://www.dezeen.com/feed/', category: 'design' }
 ]
 
 const filteredNews = computed(() => {
@@ -147,41 +147,37 @@ const displayedNews = computed(() => {
 })
 
 watch(activeCategory, () => {
-  visibleCount.value = 15
+  visibleCount.value = 20
 })
 
 const fetchNews = async () => {
   isLoading.value = true
   
-  // 1. Load from cache first for instant UI
   const cachedNews = localStorage.getItem('uxm_trends_cache')
   if (cachedNews) {
     news.value = JSON.parse(cachedNews)
-    // Don't turn off isLoading yet, we're doing a fresh fetch
   }
 
   const fetchSource = async (source: typeof RSS_SOURCES[0]) => {
     try {
-      // 5 second timeout for each source
       const controller = new AbortController()
-      const timeoutId = setTimeout(() => controller.abort(), 5000)
+      const timeoutId = setTimeout(() => controller.abort(), 4000) // Tighten timeout to 4s
       
-      const proxyUrl = `https://api.allorigins.win/get?url=${encodeURIComponent(source.url)}&timestamp=${Date.now()}`
+      // Use corsproxy.io for faster response times
+      const proxyUrl = `https://corsproxy.io/?url=${encodeURIComponent(source.url)}&timestamp=${Date.now()}`
       const response = await fetch(proxyUrl, { signal: controller.signal })
       clearTimeout(timeoutId)
       
       if (!response.ok) return []
       
-      const data = await response.json()
-      if (!data.contents) return []
-      
+      const xmlString = await response.text()
       const parser = new DOMParser()
-      const xmlDoc = parser.parseFromString(data.contents, 'text/xml')
+      const xmlDoc = parser.parseFromString(xmlString, 'text/xml')
       const items = xmlDoc.querySelectorAll('item')
       const parsedItems: NewsItem[] = []
       
       items.forEach((item, idx) => {
-        if (idx > 10) return 
+        if (idx > 15) return 
         
         const title = item.querySelector('title')?.textContent || ''
         const link = item.querySelector('link')?.textContent || ''
@@ -190,39 +186,36 @@ const fetchNews = async () => {
         
         description = description.replace(/<[^>]*>?/gm, '').trim()
         if (description.length > 150) description = description.slice(0, 150) + '...'
-        if (!description) description = 'Explore full story for more details.'
         
         parsedItems.push({
           title,
           link,
           pubDate,
-          description,
+          description: description || 'No summary available.',
           source: source.name,
           category: source.category
         })
       })
       return parsedItems
     } catch (err) {
-      console.warn(`Source skipped (${source.name}):`, err)
+      console.warn(`Source skipped (${source.name})`)
       return []
     }
   }
 
-  // 2. Fetch all sources in parallel and update progressively
   let loadedSources = 0
   const allParsedItems: NewsItem[] = []
 
-  RSS_SOURCES.map(async (source) => {
+  // Concurrent fetching for peak speed
+  RSS_SOURCES.forEach(async (source) => {
     const items = await fetchSource(source)
     loadedSources++
     
     if (items.length > 0) {
       allParsedItems.push(...items)
-      // Progressive update
       const sorted = [...allParsedItems, ...(news.value.filter(n => !allParsedItems.some(an => an.link === n.link)))]
         .sort((a, b) => new Date(b.pubDate).getTime() - new Date(a.pubDate).getTime())
       
-      // Remove duplicates
       news.value = Array.from(new Map(sorted.map(item => [item.link, item])).values())
       localStorage.setItem('uxm_trends_cache', JSON.stringify(news.value))
     }
@@ -235,7 +228,7 @@ const fetchNews = async () => {
 
 const formatDate = (dateStr: string) => {
   const date = new Date(dateStr)
-  return date.toLocaleDateString('en-US', {
+  return date.toLocaleDateString('ko-KR', {
     month: 'short',
     day: 'numeric',
     hour: '2-digit',
@@ -246,22 +239,23 @@ const formatDate = (dateStr: string) => {
 onMounted(() => {
   fetchNews()
   
-  // Infinite Scroll Observer
   const observer = new IntersectionObserver((entries) => {
+    // Load 600px BEFORE reaching the bottom for a seamless feel
     if (entries[0].isIntersecting && filteredNews.value.length > visibleCount.value) {
-      visibleCount.value += 12
+      visibleCount.value += 20
     }
-  }, { threshold: 0.1 })
+  }, { rootMargin: '600px', threshold: 0.01 })
 
   if (sentinel.value) {
     observer.observe(sentinel.value)
   }
-})
 
-// Refresh trends every 10 minutes
-onMounted(() => {
+  // Refresh trends every 10 minutes
   const interval = setInterval(fetchNews, 10 * 60 * 1000)
-  return () => clearInterval(interval)
+  return () => {
+    observer.disconnect()
+    clearInterval(interval)
+  }
 })
 </script>
 
