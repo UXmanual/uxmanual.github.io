@@ -32,61 +32,54 @@
       </div>
     </header>
 
-    <main class="px-6 md:px-10 pb-32 max-w-[1200px] mx-auto">
-      <div v-if="isLoading && news.length === 0" class="space-y-4">
-        <div v-for="i in 5" :key="i" class="bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-white/5 rounded-2xl p-6 animate-pulse flex items-center gap-6">
-          <div class="w-12 h-12 bg-zinc-200 dark:bg-zinc-800 rounded-xl"></div>
-          <div class="flex-1 space-y-3">
-            <div class="h-4 w-1/4 bg-zinc-200 dark:bg-zinc-800 rounded"></div>
-            <div class="h-6 w-3/4 bg-zinc-200 dark:bg-zinc-800 rounded"></div>
-          </div>
+    <main class="px-6 md:px-10 pb-32 max-w-[1600px] mx-auto">
+      <div v-if="isLoading && news.length === 0" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+        <div v-for="i in 8" :key="i" class="bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-white/5 rounded-2xl p-5 animate-pulse h-48">
+          <div class="h-3 w-20 bg-zinc-200 dark:bg-zinc-800 rounded mb-4"></div>
+          <div class="h-5 w-full bg-zinc-200 dark:bg-zinc-800 rounded mb-3"></div>
+          <div class="h-5 w-4/5 bg-zinc-200 dark:bg-zinc-800 rounded mb-6"></div>
+          <div class="h-3 w-24 bg-zinc-200 dark:bg-zinc-800 rounded mt-auto"></div>
         </div>
       </div>
 
-      <div v-else class="space-y-3">
-        <TransitionGroup name="list">
-          <a v-for="(item, index) in displayedNews" 
-             :key="item.link + index" 
-             :href="item.link" 
-             target="_blank"
-             class="group flex flex-col md:flex-row md:items-center gap-4 bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-white/5 rounded-2xl p-5 transition-all duration-300 hover:border-indigo-500/50 hover:bg-zinc-50 dark:hover:bg-zinc-800/50 hover:shadow-xl hover:shadow-indigo-500/5"
-          >
-            <!-- Badge & Source -->
-            <div class="flex flex-row md:flex-col items-center md:items-start gap-3 md:w-32 flex-shrink-0">
-              <span class="px-2 py-0.5 rounded-md bg-zinc-100 dark:bg-zinc-800 text-zinc-500 dark:text-zinc-400 text-[9px] font-bold uppercase tracking-wider border border-zinc-200 dark:border-white/5">
-                {{ item.category }}
-              </span>
-              <span class="text-[10px] font-black text-indigo-600 dark:text-indigo-400 truncate w-full">
-                {{ item.source }}
-              </span>
-            </div>
-            
-            <!-- Content Area -->
-            <div class="flex-1 min-w-0">
-              <h3 class="text-base font-bold text-zinc-900 dark:text-white leading-tight mb-1 group-hover:text-indigo-600 dark:group-hover:text-indigo-400 transition-colors line-clamp-1">
+      <div v-else class="space-y-10">
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+          <TransitionGroup name="list">
+            <a v-for="(item, index) in displayedNews" 
+               :key="item.link + index" 
+               :href="item.link" 
+               target="_blank"
+               class="group flex flex-col bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-white/5 rounded-2xl p-5 transition-all duration-300 hover:border-indigo-500/50 hover:shadow-[0_10px_30px_rgba(79,70,229,0.08)] hover:-translate-y-1"
+            >
+              <div class="flex justify-between items-center mb-3">
+                <span class="px-2 py-0.5 rounded-md bg-indigo-50 dark:bg-indigo-500/10 text-indigo-600 dark:text-indigo-400 text-[9px] font-black uppercase tracking-widest border border-indigo-100 dark:border-indigo-500/10">
+                  {{ item.source }}
+                </span>
+                <span class="text-[9px] text-zinc-400 font-bold uppercase">{{ item.category }}</span>
+              </div>
+              
+              <h3 class="text-sm font-bold text-zinc-900 dark:text-white leading-tight mb-3 group-hover:text-indigo-600 dark:group-hover:text-indigo-400 transition-colors line-clamp-2">
                 {{ item.title }}
               </h3>
-              <p class="text-zinc-500 dark:text-zinc-400 text-xs line-clamp-1">
+              
+              <p class="text-zinc-500 dark:text-zinc-400 text-[11px] leading-relaxed mb-4 line-clamp-2">
                 {{ item.description }}
               </p>
-            </div>
-            
-            <!-- Date & Link -->
-            <div class="flex items-center justify-between md:justify-end gap-6 md:w-32 flex-shrink-0">
-              <span class="text-[10px] text-zinc-400 font-medium">{{ formatDate(item.pubDate) }}</span>
-              <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 text-zinc-300 transition-transform group-hover:translate-x-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
-              </svg>
-            </div>
-          </a>
-        </TransitionGroup>
+              
+              <div class="mt-auto pt-3 border-t border-zinc-100 dark:border-white/5 flex justify-between items-center">
+                <span class="text-[10px] text-zinc-400 font-medium">{{ formatDate(item.pubDate) }}</span>
+                <span class="text-[9px] font-bold text-indigo-500 opacity-0 group-hover:opacity-100 transition-opacity">READ MORE →</span>
+              </div>
+            </a>
+          </TransitionGroup>
+        </div>
 
         <!-- Load More Section -->
-        <div v-if="filteredNews.length > visibleCount" class="pt-10 flex justify-center">
-          <button @click="visibleCount += 5" 
-            class="px-8 py-3 bg-zinc-900 dark:bg-white text-white dark:text-black rounded-xl font-bold text-xs uppercase tracking-widest hover:scale-105 active:scale-95 transition-all shadow-xl shadow-zinc-500/10"
+        <div v-if="filteredNews.length > visibleCount" class="flex justify-center">
+          <button @click="visibleCount += 8" 
+            class="group relative px-10 py-3 bg-zinc-900 dark:bg-white text-white dark:text-black rounded-xl font-bold text-[11px] uppercase tracking-[0.2em] overflow-hidden transition-all hover:scale-105 active:scale-95"
           >
-            Show More Trends (+5)
+            <span class="relative z-10">Load More Trends</span>
           </button>
         </div>
       </div>
@@ -127,17 +120,14 @@ const categories = [
   { id: 'all', name: 'All News' },
   { id: 'ai', name: 'AI & Tech' },
   { id: 'finance', name: 'Finance' },
-  { id: 'crypto', name: 'Crypto' },
-  { id: 'gtrends', name: 'Google Trends' }
+  { id: 'crypto', name: 'Crypto' }
 ]
 
 const RSS_SOURCES = [
   { name: 'Google News AI (인공지능)', url: 'https://news.google.com/rss/search?q=%EC%9D%B8%EA%B3%B5%EC%A7%80%EB%8A%A5&hl=ko&gl=KR&ceid=KR:ko', category: 'ai' },
   { name: 'TechCrunch (Global)', url: 'https://techcrunch.com/feed/', category: 'ai' },
   { name: 'Google News Finance (경제)', url: 'https://news.google.com/rss/search?q=%ED%85%8C%ED%81%AC+%EA%B2%BD%EC%A0%9C&hl=ko&gl=KR&ceid=KR:ko', category: 'finance' },
-  { name: 'CoinTelegraph KR (가상자산)', url: 'https://kr.cointelegraph.com/rss', category: 'crypto' },
-  { name: 'Google 실시간 트렌드', url: 'https://trends.google.co.kr/trends/trendingsearches/daily/rss?geo=KR', category: 'gtrends' },
-  { name: '실시간 검색어 (Signal)', url: 'https://api.signal.bz/news/rss', category: 'gtrends' }
+  { name: 'CoinTelegraph KR (가상자산)', url: 'https://kr.cointelegraph.com/rss', category: 'crypto' }
 ]
 
 const filteredNews = computed(() => {
