@@ -49,28 +49,28 @@
                :key="item.link + index" 
                :href="item.link" 
                target="_blank"
-               class="group flex flex-col bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-white/5 rounded-2xl p-4 transition-all duration-300 hover:border-indigo-500/50 hover:shadow-[0_10px_25px_rgba(79,70,229,0.08)] hover:-translate-y-1"
+               class="group flex flex-col bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-white/5 rounded-3xl p-6 transition-all duration-300 hover:border-indigo-500/50 hover:shadow-[0_20px_40px_rgba(79,70,229,0.1)] hover:-translate-y-1"
             >
-              <div class="flex justify-between items-center mb-3">
-                <span class="px-2 py-0.5 rounded bg-indigo-50 dark:bg-indigo-500/10 text-indigo-600 dark:text-indigo-400 text-[9px] font-black uppercase tracking-tight border border-indigo-100 dark:border-indigo-500/10">
+              <div class="flex justify-between items-center mb-4">
+                <span class="px-2.5 py-1 rounded-md bg-indigo-50 dark:bg-indigo-500/10 text-indigo-600 dark:text-indigo-400 text-[10px] font-black uppercase tracking-widest border border-indigo-100 dark:border-indigo-500/10">
                   {{ item.source }}
                 </span>
-                <span class="text-[9px] text-zinc-400 font-bold uppercase tracking-tighter">{{ item.category }}</span>
+                <span class="text-[10px] text-zinc-400 font-bold uppercase tracking-tight">{{ item.category }}</span>
               </div>
               
-              <h3 class="text-[13px] font-bold text-zinc-900 dark:text-white leading-tight mb-2 group-hover:text-indigo-600 dark:group-hover:text-indigo-400 transition-colors line-clamp-2">
+              <h3 class="text-lg font-bold text-zinc-900 dark:text-white leading-tight mb-3 group-hover:text-indigo-600 dark:group-hover:text-indigo-400 transition-colors line-clamp-2">
                 {{ item.title }}
               </h3>
               
-              <p class="text-zinc-500 dark:text-zinc-400 text-[11px] leading-snug mb-3 line-clamp-2">
+              <p class="text-zinc-500 dark:text-zinc-400 text-sm leading-relaxed mb-6 line-clamp-3">
                 {{ item.description }}
               </p>
               
-              <div class="mt-auto pt-3 border-t border-zinc-100 dark:border-white/5 flex justify-between items-center">
-                <span class="text-[9px] text-zinc-400 font-medium">{{ formatDate(item.pubDate) }}</span>
-                <span class="text-[9px] font-bold text-indigo-500 flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
-                  GO
-                  <svg xmlns="http://www.w3.org/2000/svg" class="w-2.5 h-2.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <div class="mt-auto pt-4 border-t border-zinc-100 dark:border-white/5 flex justify-between items-center">
+                <span class="text-xs text-zinc-400 font-medium">{{ formatDate(item.pubDate) }}</span>
+                <span class="text-xs font-bold text-indigo-500 flex items-center gap-1">
+                  MORE
+                  <svg xmlns="http://www.w3.org/2000/svg" class="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
                   </svg>
                 </span>
@@ -126,14 +126,15 @@ const categories = [
   { id: 'all', name: 'All News' },
   { id: 'ai', name: 'AI & Tech' },
   { id: 'finance', name: 'Finance' },
-  { id: 'crypto', name: 'Crypto' }
+  { id: 'design', name: 'Design' }
 ]
 
 const RSS_SOURCES = [
   { name: 'Google News AI (인공지능)', url: 'https://news.google.com/rss/search?q=%EC%9D%B8%EA%B3%B5%EC%A7%80%EB%8A%A5&hl=ko&gl=KR&ceid=KR:ko', category: 'ai' },
   { name: 'TechCrunch (Global)', url: 'https://techcrunch.com/feed/', category: 'ai' },
   { name: 'Google News Finance (경제)', url: 'https://news.google.com/rss/search?q=%ED%85%8C%ED%81%AC+%EA%B2%BD%EC%A0%9C&hl=ko&gl=KR&ceid=KR:ko', category: 'finance' },
-  { name: 'CoinTelegraph KR (가상자산)', url: 'https://kr.cointelegraph.com/rss', category: 'crypto' }
+  { name: 'Behance Featured', url: 'https://www.behance.net/feeds/projects', category: 'design' },
+  { name: 'Dribbble Popular', url: 'https://dribbble.com/shots/popular.rss', category: 'design' }
 ]
 
 const filteredNews = computed(() => {
