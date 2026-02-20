@@ -52,10 +52,10 @@
                class="group flex flex-col bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-white/5 rounded-3xl p-6 transition-all duration-300 hover:border-indigo-500/50 hover:shadow-[0_20px_40px_rgba(79,70,229,0.1)] hover:-translate-y-1"
             >
               <div class="flex justify-between items-center mb-4">
-                <span class="px-2.5 py-1 rounded-md bg-indigo-50 dark:bg-indigo-500/10 text-indigo-600 dark:text-indigo-400 text-[10px] font-black uppercase tracking-widest border border-indigo-100 dark:border-indigo-500/10">
+                <span class="px-3 py-1.5 rounded-lg bg-indigo-50 dark:bg-indigo-500/10 text-indigo-600 dark:text-indigo-400 text-xs font-extrabold uppercase tracking-tight border border-indigo-100 dark:border-indigo-500/10">
                   {{ item.source }}
                 </span>
-                <span class="text-[10px] text-zinc-400 font-bold uppercase">{{ item.category }}</span>
+                <span class="text-xs text-zinc-400 font-bold uppercase tracking-tighter">{{ item.category }}</span>
               </div>
               
               <h3 class="text-lg font-bold text-zinc-900 dark:text-white leading-tight mb-3 group-hover:text-indigo-600 dark:group-hover:text-indigo-400 transition-colors line-clamp-2">
@@ -150,41 +150,39 @@ watch(activeCategory, () => {
 
 const fetchNews = async () => {
   isLoading.value = true
-  news.value = []
   
-  for (const source of RSS_SOURCES) {
+  // 1. Load from cache first for instant UI
+  const cachedNews = localStorage.getItem('uxm_trends_cache')
+  if (cachedNews) {
+    news.value = JSON.parse(cachedNews)
+    isLoading.value = false
+  }
+
+  const fetchSource = async (source: typeof RSS_SOURCES[0]) => {
     try {
       const proxyUrl = `https://api.allorigins.win/get?url=${encodeURIComponent(source.url)}&timestamp=${Date.now()}`
       const response = await fetch(proxyUrl)
-      if (!response.ok) continue
+      if (!response.ok) return []
       
       const data = await response.json()
-      if (!data.contents) continue
+      if (!data.contents) return []
       
-      const xmlString = data.contents
       const parser = new DOMParser()
-      const xmlDoc = parser.parseFromString(xmlString, 'text/xml')
-      
+      const xmlDoc = parser.parseFromString(data.contents, 'text/xml')
       const items = xmlDoc.querySelectorAll('item')
       const parsedItems: NewsItem[] = []
       
       items.forEach((item, idx) => {
-        if (idx > 15) return // Limit per source
+        if (idx > 12) return // Optimized limit
         
         const title = item.querySelector('title')?.textContent || ''
         const link = item.querySelector('link')?.textContent || ''
         let pubDate = item.querySelector('pubDate')?.textContent || ''
         let description = item.querySelector('description')?.textContent || ''
         
-        // Handle Google Trends specific fields (ht:approx_traffic)
-        const traffic = item.getElementsByTagName('ht:approx_traffic')[0]?.textContent
-        if (traffic && source.category === 'gtrends') {
-          description = `🔥 실시간 트래픽: ${traffic} | ${description}`
-        }
-        
         description = description.replace(/<[^>]*>?/gm, '').trim()
-        if (description.length > 200) description = description.slice(0, 200) + '...'
-        if (!description) description = '관련 보도자료 및 상세 내용을 확인하시려면 클릭하세요.'
+        if (description.length > 180) description = description.slice(0, 180) + '...'
+        if (!description) description = '상세 내용을 확인하시려면 클릭하세요.'
         
         parsedItems.push({
           title,
@@ -195,15 +193,23 @@ const fetchNews = async () => {
           category: source.category
         })
       })
-      
-      news.value = [...news.value, ...parsedItems].sort((a, b) => 
-        new Date(b.pubDate).getTime() - new Date(a.pubDate).getTime()
-      )
-      
-      if (news.value.length > 0) isLoading.value = false
+      return parsedItems
     } catch (err) {
       console.error(`Error fetching ${source.name}:`, err)
+      return []
     }
+  }
+
+  // 2. Fetch all sources in parallel for speed
+  const results = await Promise.all(RSS_SOURCES.map(fetchSource))
+  const flattenedResults = results.flat().sort((a, b) => 
+    new Date(b.pubDate).getTime() - new Date(a.pubDate).getTime()
+  )
+
+  if (flattenedResults.length > 0) {
+    news.value = flattenedResults
+    // 3. Update cache
+    localStorage.setItem('uxm_trends_cache', JSON.stringify(flattenedResults))
   }
   
   isLoading.value = false
