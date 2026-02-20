@@ -79,13 +79,13 @@
           </TransitionGroup>
         </div>
 
-        <!-- Load More Section -->
-        <div v-if="filteredNews.length > visibleCount" class="flex justify-center">
-          <button @click="visibleCount += 8" 
-            class="group relative px-10 py-3 bg-zinc-900 dark:bg-white text-white dark:text-black rounded-xl font-bold text-[11px] uppercase tracking-[0.2em] overflow-hidden transition-all hover:scale-105 active:scale-95"
-          >
-            <span class="relative z-10">Load More Trends</span>
-          </button>
+        <!-- Infinite Scroll Sentinel -->
+        <div ref="sentinel" class="h-20 flex items-center justify-center">
+          <div v-if="filteredNews.length > visibleCount" class="flex gap-1">
+            <div class="w-1.5 h-1.5 bg-indigo-500 rounded-full animate-bounce [animation-delay:-0.3s]"></div>
+            <div class="w-1.5 h-1.5 bg-indigo-500 rounded-full animate-bounce [animation-delay:-0.15s]"></div>
+            <div class="w-1.5 h-1.5 bg-indigo-500 rounded-full animate-bounce"></div>
+          </div>
         </div>
       </div>
 
@@ -119,7 +119,8 @@ interface NewsItem {
 const isLoading = ref(true)
 const activeCategory = ref('all')
 const news = ref<NewsItem[]>([])
-const visibleCount = ref(10)
+const visibleCount = ref(12)
+const sentinel = ref<HTMLElement | null>(null)
 
 const categories = [
   { id: 'all', name: 'All News' },
@@ -145,7 +146,7 @@ const displayedNews = computed(() => {
 })
 
 watch(activeCategory, () => {
-  visibleCount.value = 10
+  visibleCount.value = 12
 })
 
 const fetchNews = async () => {
@@ -227,6 +228,17 @@ const formatDate = (dateStr: string) => {
 
 onMounted(() => {
   fetchNews()
+  
+  // Infinite Scroll Observer
+  const observer = new IntersectionObserver((entries) => {
+    if (entries[0].isIntersecting && filteredNews.value.length > visibleCount.value) {
+      visibleCount.value += 12
+    }
+  }, { threshold: 0.1 })
+
+  if (sentinel.value) {
+    observer.observe(sentinel.value)
+  }
 })
 
 // Refresh trends every 10 minutes
