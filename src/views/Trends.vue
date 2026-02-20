@@ -43,32 +43,37 @@
       </div>
 
       <div v-else class="space-y-10">
-        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5">
           <TransitionGroup name="list">
             <a v-for="(item, index) in displayedNews" 
                :key="item.link + index" 
                :href="item.link" 
                target="_blank"
-               class="group flex flex-col bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-white/5 rounded-2xl p-5 transition-all duration-300 hover:border-indigo-500/50 hover:shadow-[0_10px_30px_rgba(79,70,229,0.08)] hover:-translate-y-1"
+               class="group flex flex-col bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-white/5 rounded-3xl p-6 transition-all duration-300 hover:border-indigo-500/50 hover:shadow-[0_20px_40px_rgba(79,70,229,0.1)] hover:-translate-y-1"
             >
-              <div class="flex justify-between items-center mb-3">
-                <span class="px-2 py-0.5 rounded-md bg-indigo-50 dark:bg-indigo-500/10 text-indigo-600 dark:text-indigo-400 text-[9px] font-black uppercase tracking-widest border border-indigo-100 dark:border-indigo-500/10">
+              <div class="flex justify-between items-center mb-4">
+                <span class="px-2.5 py-1 rounded-md bg-indigo-50 dark:bg-indigo-500/10 text-indigo-600 dark:text-indigo-400 text-[10px] font-black uppercase tracking-widest border border-indigo-100 dark:border-indigo-500/10">
                   {{ item.source }}
                 </span>
-                <span class="text-[9px] text-zinc-400 font-bold uppercase">{{ item.category }}</span>
+                <span class="text-[10px] text-zinc-400 font-bold uppercase">{{ item.category }}</span>
               </div>
               
-              <h3 class="text-sm font-bold text-zinc-900 dark:text-white leading-tight mb-3 group-hover:text-indigo-600 dark:group-hover:text-indigo-400 transition-colors line-clamp-2">
+              <h3 class="text-lg font-bold text-zinc-900 dark:text-white leading-tight mb-3 group-hover:text-indigo-600 dark:group-hover:text-indigo-400 transition-colors line-clamp-2">
                 {{ item.title }}
               </h3>
               
-              <p class="text-zinc-500 dark:text-zinc-400 text-[11px] leading-relaxed mb-4 line-clamp-2">
+              <p class="text-zinc-500 dark:text-zinc-400 text-sm leading-relaxed mb-6 line-clamp-3">
                 {{ item.description }}
               </p>
               
-              <div class="mt-auto pt-3 border-t border-zinc-100 dark:border-white/5 flex justify-between items-center">
-                <span class="text-[10px] text-zinc-400 font-medium">{{ formatDate(item.pubDate) }}</span>
-                <span class="text-[9px] font-bold text-indigo-500 opacity-0 group-hover:opacity-100 transition-opacity">READ MORE →</span>
+              <div class="mt-auto pt-4 border-t border-zinc-100 dark:border-white/5 flex justify-between items-center">
+                <span class="text-xs text-zinc-400 font-medium">{{ formatDate(item.pubDate) }}</span>
+                <span class="text-xs font-bold text-indigo-500 flex items-center gap-1">
+                  MORE
+                  <svg xmlns="http://www.w3.org/2000/svg" class="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+                  </svg>
+                </span>
               </div>
             </a>
           </TransitionGroup>
