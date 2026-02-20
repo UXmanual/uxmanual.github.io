@@ -32,58 +32,74 @@
       </div>
     </header>
 
-    <main class="px-6 md:px-10 pb-32 max-w-[1600px] mx-auto">
-      <div v-if="isLoading" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        <div v-for="i in 6" :key="i" class="bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-white/5 rounded-3xl p-8 animate-pulse h-64">
-          <div class="h-4 w-24 bg-zinc-200 dark:bg-zinc-800 rounded mb-6"></div>
-          <div class="h-8 w-full bg-zinc-200 dark:bg-zinc-800 rounded mb-4"></div>
-          <div class="h-4 w-5/6 bg-zinc-200 dark:bg-zinc-800 rounded mb-8"></div>
-          <div class="h-4 w-32 bg-zinc-200 dark:bg-zinc-800 rounded mt-auto"></div>
+    <main class="px-6 md:px-10 pb-32 max-w-[1200px] mx-auto">
+      <div v-if="isLoading && news.length === 0" class="space-y-4">
+        <div v-for="i in 5" :key="i" class="bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-white/5 rounded-2xl p-6 animate-pulse flex items-center gap-6">
+          <div class="w-12 h-12 bg-zinc-200 dark:bg-zinc-800 rounded-xl"></div>
+          <div class="flex-1 space-y-3">
+            <div class="h-4 w-1/4 bg-zinc-200 dark:bg-zinc-800 rounded"></div>
+            <div class="h-6 w-3/4 bg-zinc-200 dark:bg-zinc-800 rounded"></div>
+          </div>
         </div>
       </div>
 
-      <div v-else class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+      <div v-else class="space-y-3">
         <TransitionGroup name="list">
-          <a v-for="(item, index) in filteredNews" 
-             :key="item.link" 
+          <a v-for="(item, index) in displayedNews" 
+             :key="item.link + index" 
              :href="item.link" 
              target="_blank"
-             class="group block bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-white/5 rounded-3xl p-8 transition-all duration-500 hover:border-indigo-500/50 hover:shadow-[0_20px_50px_rgba(79,70,229,0.1)] hover:-translate-y-1"
+             class="group flex flex-col md:flex-row md:items-center gap-4 bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-white/5 rounded-2xl p-5 transition-all duration-300 hover:border-indigo-500/50 hover:bg-zinc-50 dark:hover:bg-zinc-800/50 hover:shadow-xl hover:shadow-indigo-500/5"
           >
-            <div class="flex justify-between items-start mb-6">
-              <span class="px-3 py-1 rounded-full bg-indigo-50 dark:bg-indigo-500/10 text-indigo-600 dark:text-indigo-400 text-[10px] font-black uppercase tracking-widest border border-indigo-100 dark:border-indigo-500/20">
+            <!-- Badge & Source -->
+            <div class="flex flex-row md:flex-col items-center md:items-start gap-3 md:w-32 flex-shrink-0">
+              <span class="px-2 py-0.5 rounded-md bg-zinc-100 dark:bg-zinc-800 text-zinc-500 dark:text-zinc-400 text-[9px] font-bold uppercase tracking-wider border border-zinc-200 dark:border-white/5">
+                {{ item.category }}
+              </span>
+              <span class="text-[10px] font-black text-indigo-600 dark:text-indigo-400 truncate w-full">
                 {{ item.source }}
               </span>
-              <span class="text-[10px] text-zinc-400 font-medium tracking-tighter">{{ formatDate(item.pubDate) }}</span>
             </div>
             
-            <h3 class="text-xl font-bold mb-4 text-zinc-900 dark:text-white leading-snug group-hover:text-indigo-600 dark:group-hover:text-indigo-400 transition-colors line-clamp-3">
-              {{ item.title }}
-            </h3>
+            <!-- Content Area -->
+            <div class="flex-1 min-w-0">
+              <h3 class="text-base font-bold text-zinc-900 dark:text-white leading-tight mb-1 group-hover:text-indigo-600 dark:group-hover:text-indigo-400 transition-colors line-clamp-1">
+                {{ item.title }}
+              </h3>
+              <p class="text-zinc-500 dark:text-zinc-400 text-xs line-clamp-1">
+                {{ item.description }}
+              </p>
+            </div>
             
-            <p class="text-zinc-500 dark:text-zinc-400 text-sm leading-relaxed mb-6 line-clamp-2">
-              {{ item.description }}
-            </p>
-            
-            <div class="flex items-center gap-2 text-[10px] font-bold text-zinc-400 group-hover:text-zinc-900 dark:group-hover:text-white transition-colors">
-              READ FULL STORY
-              <svg xmlns="http://www.w3.org/2000/svg" class="w-3 h-3 transition-transform group-hover:translate-x-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3" />
+            <!-- Date & Link -->
+            <div class="flex items-center justify-between md:justify-end gap-6 md:w-32 flex-shrink-0">
+              <span class="text-[10px] text-zinc-400 font-medium">{{ formatDate(item.pubDate) }}</span>
+              <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 text-zinc-300 transition-transform group-hover:translate-x-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
               </svg>
             </div>
           </a>
         </TransitionGroup>
+
+        <!-- Load More Section -->
+        <div v-if="filteredNews.length > visibleCount" class="pt-10 flex justify-center">
+          <button @click="visibleCount += 5" 
+            class="px-8 py-3 bg-zinc-900 dark:bg-white text-white dark:text-black rounded-xl font-bold text-xs uppercase tracking-widest hover:scale-105 active:scale-95 transition-all shadow-xl shadow-zinc-500/10"
+          >
+            Show More Trends (+5)
+          </button>
+        </div>
       </div>
 
       <!-- Empty State -->
-      <div v-if="!isLoading && filteredNews.length === 0" class="flex flex-col items-center justify-center py-40 text-center">
-        <div class="w-16 h-16 bg-zinc-100 dark:bg-zinc-900 rounded-full flex items-center justify-center mb-6">
+      <div v-if="!isLoading && displayedNews.length === 0" class="flex flex-col items-center justify-center py-40 text-center">
+        <div class="w-16 h-16 bg-zinc-100 dark:bg-zinc-900 rounded-full flex items-center justify-center mb-6 border border-zinc-200 dark:border-white/5">
           <svg xmlns="http://www.w3.org/2000/svg" class="w-8 h-8 text-zinc-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10l4 4v10a2 2 0 01-2 2z" />
           </svg>
         </div>
-        <h3 class="text-xl font-bold mb-2 text-zinc-400">No trends found</h3>
-        <p class="text-zinc-500">Wait a moment or try another category.</p>
+        <h3 class="text-xl font-bold mb-2 text-zinc-400">Searching for trends...</h3>
+        <p class="text-zinc-500 text-sm">Please wait while we fetch the latest data.</p>
       </div>
     </main>
   </div>
@@ -105,6 +121,7 @@ interface NewsItem {
 const isLoading = ref(true)
 const activeCategory = ref('all')
 const news = ref<NewsItem[]>([])
+const visibleCount = ref(10)
 
 const categories = [
   { id: 'all', name: 'All News' },
@@ -126,6 +143,14 @@ const RSS_SOURCES = [
 const filteredNews = computed(() => {
   if (activeCategory.value === 'all') return news.value
   return news.value.filter(item => item.category === activeCategory.value)
+})
+
+const displayedNews = computed(() => {
+  return filteredNews.value.slice(0, visibleCount.value)
+})
+
+watch(activeCategory, () => {
+  visibleCount.value = 10
 })
 
 const fetchNews = async () => {
