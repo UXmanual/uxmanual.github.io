@@ -2,7 +2,7 @@
   <div class="min-h-screen bg-zinc-50 dark:bg-[#0a0a0c] text-zinc-900 dark:text-white transition-colors duration-500">
     <SiteNavbar />
 
-    <header class="pt-40 px-6 md:px-10 max-w-[1600px] mx-auto mb-10">
+    <header class="pt-40 px-6 md:px-10 max-w-[1800px] mx-auto mb-10">
       <div class="flex flex-col md:flex-row md:items-end justify-between gap-6">
         <div>
           <h1 class="text-5xl font-bold tracking-tight mb-4 flex items-center gap-4">
@@ -13,8 +13,7 @@
             </span>
           </h1>
           <p class="text-zinc-600 dark:text-zinc-400 text-lg leading-relaxed max-w-2xl">
-            유튜브 콘텐츠 기획을 위한 실시간 글로벌 트렌드 데이터입니다. <br class="hidden md:block">
-            AI, 금융, 테크 분야의 최신 소식을 한 곳에서 파악하고 인사이트를 얻으세요.
+            지금 가장 뜨거운 최신 뉴스 트렌드를 확인하고 새로운 영감을 얻어보세요.
           </p>
         </div>
         
