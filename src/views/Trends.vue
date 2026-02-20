@@ -110,14 +110,16 @@ const categories = [
   { id: 'all', name: 'All News' },
   { id: 'ai', name: 'AI & Tech' },
   { id: 'finance', name: 'Finance' },
-  { id: 'crypto', name: 'Crypto' }
+  { id: 'crypto', name: 'Crypto' },
+  { id: 'gtrends', name: 'Google Trends' }
 ]
 
 const RSS_SOURCES = [
   { name: 'Google News AI (인공지능)', url: 'https://news.google.com/rss/search?q=%EC%9D%B8%EA%B3%B5%EC%A7%80%EB%8A%A5&hl=ko&gl=KR&ceid=KR:ko', category: 'ai' },
   { name: 'TechCrunch (Global)', url: 'https://techcrunch.com/feed/', category: 'ai' },
   { name: 'Google News Finance (경제)', url: 'https://news.google.com/rss/search?q=%ED%85%8C%ED%81%AC+%EA%B2%BD%EC%A0%9C&hl=ko&gl=KR&ceid=KR:ko', category: 'finance' },
-  { name: 'CoinTelegraph KR (가상자산)', url: 'https://kr.cointelegraph.com/rss', category: 'crypto' }
+  { name: 'CoinTelegraph KR (가상자산)', url: 'https://kr.cointelegraph.com/rss', category: 'crypto' },
+  { name: 'Google 실시간 트렌드', url: 'https://trends.google.com/trends/trendingsearches/daily/rss?geo=KR', category: 'gtrends' }
 ]
 
 const filteredNews = computed(() => {
