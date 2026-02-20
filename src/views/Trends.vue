@@ -17,12 +17,12 @@
           </p>
         </div>
         
-        <div class="flex gap-2 bg-white dark:bg-zinc-900 p-1 rounded-2xl border border-zinc-200 dark:border-white/5 shadow-sm">
+        <div class="flex items-center gap-2 bg-white dark:bg-zinc-900 p-1 rounded-2xl border border-zinc-200 dark:border-white/5 shadow-sm overflow-x-auto no-scrollbar max-w-full">
           <button 
             v-for="cat in categories" 
             :key="cat.id"
             @click="activeCategory = cat.id"
-            class="px-5 py-2 rounded-xl text-sm font-bold transition-all duration-300"
+            class="px-5 py-2 rounded-xl text-sm font-bold transition-all duration-300 whitespace-nowrap flex-shrink-0"
             :class="activeCategory === cat.id ? 'bg-zinc-900 text-white dark:bg-white dark:text-black shadow-lg shadow-zinc-500/20' : 'text-zinc-500 hover:text-zinc-900 dark:hover:text-white'"
           >
             {{ cat.name }}
