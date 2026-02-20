@@ -151,10 +151,13 @@ watch(activeCategory, () => {
 })
 
 const fetchNews = async () => {
-  // 1. Initial Cache Load
+  // 1. Initial Cache Load (Instant)
   if (news.value.length === 0) {
     const cached = localStorage.getItem('uxm_trends_cache')
-    if (cached) news.value = JSON.parse(cached)
+    if (cached) {
+      const parsed = JSON.parse(cached)
+      news.value = parsed.sort((a: NewsItem, b: NewsItem) => new Date(b.pubDate).getTime() - new Date(a.pubDate).getTime())
+    }
   }
   
   isLoading.value = true
@@ -168,7 +171,7 @@ const fetchNews = async () => {
     for (const getProxyUrl of proxies) {
       try {
         const controller = new AbortController()
-        const timeoutId = setTimeout(() => controller.abort(), 7000)
+        const timeoutId = setTimeout(() => controller.abort(), 6000)
         
         const response = await fetch(getProxyUrl(source.url), { signal: controller.signal })
         clearTimeout(timeoutId)
@@ -191,7 +194,7 @@ const fetchNews = async () => {
         const parsedItems: NewsItem[] = []
         
         items.forEach((item, idx) => {
-          if (idx >= 25) return 
+          if (idx >= 30) return 
           const title = item.querySelector('title')?.textContent || ''
           const link = item.querySelector('link')?.textContent || ''
           const pubDate = item.querySelector('pubDate')?.textContent || ''
@@ -213,25 +216,41 @@ const fetchNews = async () => {
 
         if (parsedItems.length > 0) return parsedItems
       } catch (err) {
-        console.warn(`Proxy failed for ${source.name}, trying next...`)
+        // Silent fail for individual proxy
       }
     }
     return []
   }
 
-  // 2. Fetch all in parallel
+  // 2. Fetch all in parallel for maximum speed
   const results = await Promise.all(RSS_SOURCES.map(source => fetchSource(source)))
-  const newItems = results.flat()
+  const nextNews = results.flat()
 
-  // 3. Update state
-  if (newItems.length > 0) {
-    const combined = [...newItems, ...news.value]
-    const unique = Array.from(new Map(combined.map(item => [item.link, item])).values())
-      .sort((a, b) => new Date(b.pubDate).getTime() - new Date(a.pubDate).getTime())
-      .slice(0, 400)
+  // 3. Robust Merge & Sort
+  if (nextNews.length > 0) {
+    // Merge new items with current ones, prioritize newer versions of the same link
+    const combined = [...nextNews, ...news.value]
+    
+    // Use a Map for O(1) deduplication by Link
+    const newsMap = new Map()
+    combined.forEach(item => {
+      const existing = newsMap.get(item.link)
+      if (!existing || new Date(item.pubDate) > new Date(existing.pubDate)) {
+        newsMap.set(item.link, item)
+      }
+    })
 
-    news.value = unique
-    localStorage.setItem('uxm_trends_cache', JSON.stringify(unique))
+    // Strict Chronological Sort
+    const finalized = Array.from(newsMap.values())
+      .sort((a, b) => {
+        const timeA = new Date(a.pubDate).getTime()
+        const timeB = new Date(b.pubDate).getTime()
+        return timeB - timeA
+      })
+      .slice(0, 500) // Keep more for "All News"
+
+    news.value = finalized
+    localStorage.setItem('uxm_trends_cache', JSON.stringify(finalized))
   }
   
   isLoading.value = false
@@ -239,6 +258,7 @@ const fetchNews = async () => {
 
 const formatDate = (dateStr: string) => {
   const date = new Date(dateStr)
+  if (isNaN(date.getTime())) return dateStr
   return date.toLocaleDateString('ko-KR', {
     month: 'short',
     day: 'numeric',
@@ -250,19 +270,19 @@ const formatDate = (dateStr: string) => {
 onMounted(() => {
   fetchNews()
   
+  // High-performance Infinite Scroll
   const observer = new IntersectionObserver((entries) => {
-    // Load 600px BEFORE reaching the bottom for a seamless feel
+    // Load 1000px BEFORE reaching bottom for instant-feeling loads
     if (entries[0].isIntersecting && filteredNews.value.length > visibleCount.value) {
       visibleCount.value += 20
     }
-  }, { rootMargin: '600px', threshold: 0.01 })
+  }, { rootMargin: '1000px', threshold: 0.01 })
 
   if (sentinel.value) {
     observer.observe(sentinel.value)
   }
 
-  // Refresh trends every 10 minutes
-  const interval = setInterval(fetchNews, 10 * 60 * 1000)
+  const interval = setInterval(fetchNews, 5 * 60 * 1000) // Refresh every 5 mins
   return () => {
     observer.disconnect()
     clearInterval(interval)
