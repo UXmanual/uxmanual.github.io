@@ -133,8 +133,8 @@ const RSS_SOURCES = [
   { name: 'TechCrunch', url: 'https://techcrunch.com/feed/', category: 'ai' },
   { name: '매경 경제', url: 'https://www.mk.co.kr/rss/30100041/', category: 'finance' },
   { name: '한경 금융', url: 'https://www.hankyung.com/feed/finance', category: 'finance' },
-  { name: 'Google 뉴스 (디자인)', url: 'https://news.google.com/rss/search?q=%EB%94%94%EC%9E%90%EC%9D%B8+%ED%8A%B8%EB%A0%8C%EB%93%9C&hl=ko&gl=KR&ceid=KR:ko', category: 'design' },
-  { name: 'Dezeen', url: 'https://www.dezeen.com/feed/', category: 'design' }
+  { name: '디자인 트렌드', url: 'https://news.google.com/rss/search?q=%EB%94%94%EC%9E%90%EC%9D%B8+%ED%8A%B8%EB%A0%8C%EB%93%9C&hl=ko&gl=KR&ceid=KR:ko', category: 'design' },
+  { name: 'UX/UI 디자인', url: 'https://news.google.com/rss/search?q=UX+UI+%EB%94%94%EC%9E%90%EC%9D%B8&hl=ko&gl=KR&ceid=KR:ko', category: 'design' }
 ]
 
 const filteredNews = computed(() => {
