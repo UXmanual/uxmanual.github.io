@@ -151,79 +151,90 @@ watch(activeCategory, () => {
 })
 
 const fetchNews = async () => {
-  isLoading.value = true
-  
-  const cachedNews = localStorage.getItem('uxm_trends_cache')
-  if (cachedNews) {
-    news.value = JSON.parse(cachedNews)
+  // 1. Initial Cache Load
+  if (news.value.length === 0) {
+    const cached = localStorage.getItem('uxm_trends_cache')
+    if (cached) news.value = JSON.parse(cached)
   }
+  
+  isLoading.value = true
 
   const fetchSource = async (source: typeof RSS_SOURCES[0]) => {
-    try {
-      const controller = new AbortController()
-      const timeoutId = setTimeout(() => controller.abort(), 4000) // Tighten timeout to 4s
-      
-      // Use corsproxy.io for faster response times
-      const proxyUrl = `https://corsproxy.io/?url=${encodeURIComponent(source.url)}&timestamp=${Date.now()}`
-      const response = await fetch(proxyUrl, { signal: controller.signal })
-      clearTimeout(timeoutId)
-      
-      if (!response.ok) return []
-      
-      const xmlString = await response.text()
-      const parser = new DOMParser()
-      const xmlDoc = parser.parseFromString(xmlString, 'text/xml')
-      const items = xmlDoc.querySelectorAll('item')
-      const parsedItems: NewsItem[] = []
-      
-      items.forEach((item, idx) => {
-        if (idx > 15) return 
+    const proxies = [
+      (url: string) => `https://corsproxy.io/?url=${encodeURIComponent(url)}`,
+      (url: string) => `https://api.allorigins.win/get?url=${encodeURIComponent(url)}&timestamp=${Date.now()}`
+    ]
+
+    for (const getProxyUrl of proxies) {
+      try {
+        const controller = new AbortController()
+        const timeoutId = setTimeout(() => controller.abort(), 7000)
         
-        const title = item.querySelector('title')?.textContent || ''
-        const link = item.querySelector('link')?.textContent || ''
-        let pubDate = item.querySelector('pubDate')?.textContent || ''
-        let description = item.querySelector('description')?.textContent || ''
+        const response = await fetch(getProxyUrl(source.url), { signal: controller.signal })
+        clearTimeout(timeoutId)
         
-        description = description.replace(/<[^>]*>?/gm, '').trim()
-        if (description.length > 150) description = description.slice(0, 150) + '...'
+        if (!response.ok) continue
+
+        let xmlString = ''
+        if (getProxyUrl(source.url).includes('allorigins')) {
+          const data = await response.json()
+          xmlString = data.contents
+        } else {
+          xmlString = await response.text()
+        }
+
+        if (!xmlString) continue
+
+        const parser = new DOMParser()
+        const xmlDoc = parser.parseFromString(xmlString, 'text/xml')
+        const items = xmlDoc.querySelectorAll('item')
+        const parsedItems: NewsItem[] = []
         
-        parsedItems.push({
-          title,
-          link,
-          pubDate,
-          description: description || 'No summary available.',
-          source: source.name,
-          category: source.category
+        items.forEach((item, idx) => {
+          if (idx >= 25) return 
+          const title = item.querySelector('title')?.textContent || ''
+          const link = item.querySelector('link')?.textContent || ''
+          const pubDate = item.querySelector('pubDate')?.textContent || ''
+          let description = item.querySelector('description')?.textContent || ''
+          
+          description = description.replace(/<[^>]*>?/gm, '').trim()
+          
+          if (title && link) {
+            parsedItems.push({
+              title,
+              link,
+              pubDate,
+              description: description || '뉴스 본문을 통해 자세한 내용을 확인하세요.',
+              source: source.name,
+              category: source.category
+            })
+          }
         })
-      })
-      return parsedItems
-    } catch (err) {
-      console.warn(`Source skipped (${source.name})`)
-      return []
+
+        if (parsedItems.length > 0) return parsedItems
+      } catch (err) {
+        console.warn(`Proxy failed for ${source.name}, trying next...`)
+      }
     }
+    return []
   }
 
-  let loadedSources = 0
-  const allParsedItems: NewsItem[] = []
+  // 2. Fetch all in parallel
+  const results = await Promise.all(RSS_SOURCES.map(source => fetchSource(source)))
+  const newItems = results.flat()
 
-  // Concurrent fetching for peak speed
-  RSS_SOURCES.forEach(async (source) => {
-    const items = await fetchSource(source)
-    loadedSources++
-    
-    if (items.length > 0) {
-      allParsedItems.push(...items)
-      const sorted = [...allParsedItems, ...(news.value.filter(n => !allParsedItems.some(an => an.link === n.link)))]
-        .sort((a, b) => new Date(b.pubDate).getTime() - new Date(a.pubDate).getTime())
-      
-      news.value = Array.from(new Map(sorted.map(item => [item.link, item])).values())
-      localStorage.setItem('uxm_trends_cache', JSON.stringify(news.value))
-    }
+  // 3. Update state
+  if (newItems.length > 0) {
+    const combined = [...newItems, ...news.value]
+    const unique = Array.from(new Map(combined.map(item => [item.link, item])).values())
+      .sort((a, b) => new Date(b.pubDate).getTime() - new Date(a.pubDate).getTime())
+      .slice(0, 400)
 
-    if (loadedSources === RSS_SOURCES.length) {
-      isLoading.value = false
-    }
-  })
+    news.value = unique
+    localStorage.setItem('uxm_trends_cache', JSON.stringify(unique))
+  }
+  
+  isLoading.value = false
 }
 
 const formatDate = (dateStr: string) => {
