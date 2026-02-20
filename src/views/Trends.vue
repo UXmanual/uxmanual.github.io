@@ -119,7 +119,8 @@ const RSS_SOURCES = [
   { name: 'TechCrunch (Global)', url: 'https://techcrunch.com/feed/', category: 'ai' },
   { name: 'Google News Finance (경제)', url: 'https://news.google.com/rss/search?q=%ED%85%8C%ED%81%AC+%EA%B2%BD%EC%A0%9C&hl=ko&gl=KR&ceid=KR:ko', category: 'finance' },
   { name: 'CoinTelegraph KR (가상자산)', url: 'https://kr.cointelegraph.com/rss', category: 'crypto' },
-  { name: 'Google 실시간 트렌드', url: 'https://trends.google.com/trends/trendingsearches/daily/rss?geo=KR', category: 'gtrends' }
+  { name: 'Google 실시간 트렌드', url: 'https://trends.google.co.kr/trends/trendingsearches/daily/rss?geo=KR', category: 'gtrends' },
+  { name: '실시간 검색어 (Signal)', url: 'https://api.signal.bz/news/rss', category: 'gtrends' }
 ]
 
 const filteredNews = computed(() => {
@@ -131,14 +132,15 @@ const fetchNews = async () => {
   isLoading.value = true
   news.value = []
   
-  const allFetchPromises = RSS_SOURCES.map(async (source) => {
+  for (const source of RSS_SOURCES) {
     try {
-      // Use AllOrigins Proxy to bypass CORS
-      const proxyUrl = `https://api.allorigins.win/get?url=${encodeURIComponent(source.url)}`
+      const proxyUrl = `https://api.allorigins.win/get?url=${encodeURIComponent(source.url)}&timestamp=${Date.now()}`
       const response = await fetch(proxyUrl)
-      if (!response.ok) throw new Error('Proxy error')
+      if (!response.ok) continue
       
       const data = await response.json()
+      if (!data.contents) continue
+      
       const xmlString = data.contents
       const parser = new DOMParser()
       const xmlDoc = parser.parseFromString(xmlString, 'text/xml')
@@ -147,15 +149,22 @@ const fetchNews = async () => {
       const parsedItems: NewsItem[] = []
       
       items.forEach((item, idx) => {
-        if (idx > 10) return // Limit per source
+        if (idx > 15) return // Limit per source
         
         const title = item.querySelector('title')?.textContent || ''
         const link = item.querySelector('link')?.textContent || ''
-        const pubDate = item.querySelector('pubDate')?.textContent || ''
+        let pubDate = item.querySelector('pubDate')?.textContent || ''
         let description = item.querySelector('description')?.textContent || ''
         
-        // Clean description (remove HTML tags)
-        description = description.replace(/<[^>]*>?/gm, '').slice(0, 160) + '...'
+        // Handle Google Trends specific fields (ht:approx_traffic)
+        const traffic = item.getElementsByTagName('ht:approx_traffic')[0]?.textContent
+        if (traffic && source.category === 'gtrends') {
+          description = `🔥 실시간 트래픽: ${traffic} | ${description}`
+        }
+        
+        description = description.replace(/<[^>]*>?/gm, '').trim()
+        if (description.length > 200) description = description.slice(0, 200) + '...'
+        if (!description) description = '관련 보도자료 및 상세 내용을 확인하시려면 클릭하세요.'
         
         parsedItems.push({
           title,
@@ -167,20 +176,16 @@ const fetchNews = async () => {
         })
       })
       
-      return parsedItems
+      news.value = [...news.value, ...parsedItems].sort((a, b) => 
+        new Date(b.pubDate).getTime() - new Date(a.pubDate).getTime()
+      )
+      
+      if (news.value.length > 0) isLoading.value = false
     } catch (err) {
       console.error(`Error fetching ${source.name}:`, err)
-      return []
     }
-  })
-
-  const results = await Promise.all(allFetchPromises)
-  const flattenedResults = results.flat()
+  }
   
-  // Sort by date
-  flattenedResults.sort((a, b) => new Date(b.pubDate).getTime() - new Date(a.pubDate).getTime())
-  
-  news.value = flattenedResults
   isLoading.value = false
 }
 
