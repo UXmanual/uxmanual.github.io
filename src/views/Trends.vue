@@ -130,9 +130,9 @@ const categories = [
 ]
 
 const RSS_SOURCES = [
-  { name: 'Google News AI (인공지능)', url: 'https://news.google.com/rss/search?q=%EC%9D%B8%EA%B3%B5%EC%A7%80%EB%8A%A5&hl=ko&gl=KR&ceid=KR:ko', category: 'ai' },
+  { name: '한경 AI/IT', url: 'https://www.hankyung.com/feed/it', category: 'ai' },
   { name: 'TechCrunch (Global)', url: 'https://techcrunch.com/feed/', category: 'ai' },
-  { name: 'Google News Finance (경제)', url: 'https://news.google.com/rss/search?q=%ED%85%8C%ED%81%AC+%EA%B2%BD%EC%A0%9C&hl=ko&gl=KR&ceid=KR:ko', category: 'finance' },
+  { name: '한경 경제/금융', url: 'https://www.hankyung.com/feed/finance', category: 'finance' },
   { name: 'Behance Featured', url: 'https://www.behance.net/feeds/projects', category: 'design' },
   { name: 'Dribbble Popular', url: 'https://dribbble.com/shots/popular.rss', category: 'design' }
 ]
