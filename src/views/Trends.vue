@@ -130,10 +130,11 @@ const categories = [
 
 const RSS_SOURCES = [
   { name: '한경 AI/IT', url: 'https://www.hankyung.com/feed/it', category: 'ai' },
-  { name: 'TechCrunch (Global)', url: 'https://techcrunch.com/feed/', category: 'ai' },
-  { name: '한경 경제/금융', url: 'https://www.hankyung.com/feed/finance', category: 'finance' },
-  { name: 'Behance Featured', url: 'https://www.behance.net/feeds/projects', category: 'design' },
-  { name: 'Dribbble Popular', url: 'https://dribbble.com/shots/popular.rss', category: 'design' }
+  { name: 'TechCrunch', url: 'https://techcrunch.com/feed/', category: 'ai' },
+  { name: '매경 경제', url: 'https://www.mk.co.kr/rss/30100041/', category: 'finance' },
+  { name: '한경 금융', url: 'https://www.hankyung.com/feed/finance', category: 'finance' },
+  { name: 'Dezeen Design', url: 'https://www.dezeen.com/feed/', category: 'design' },
+  { name: 'Design Milk', url: 'http://design-milk.com/feed/', category: 'design' }
 ]
 
 const filteredNews = computed(() => {
@@ -146,7 +147,7 @@ const displayedNews = computed(() => {
 })
 
 watch(activeCategory, () => {
-  visibleCount.value = 12
+  visibleCount.value = 15
 })
 
 const fetchNews = async () => {
@@ -156,13 +157,19 @@ const fetchNews = async () => {
   const cachedNews = localStorage.getItem('uxm_trends_cache')
   if (cachedNews) {
     news.value = JSON.parse(cachedNews)
-    isLoading.value = false
+    // Don't turn off isLoading yet, we're doing a fresh fetch
   }
 
   const fetchSource = async (source: typeof RSS_SOURCES[0]) => {
     try {
+      // 5 second timeout for each source
+      const controller = new AbortController()
+      const timeoutId = setTimeout(() => controller.abort(), 5000)
+      
       const proxyUrl = `https://api.allorigins.win/get?url=${encodeURIComponent(source.url)}&timestamp=${Date.now()}`
-      const response = await fetch(proxyUrl)
+      const response = await fetch(proxyUrl, { signal: controller.signal })
+      clearTimeout(timeoutId)
+      
       if (!response.ok) return []
       
       const data = await response.json()
@@ -174,7 +181,7 @@ const fetchNews = async () => {
       const parsedItems: NewsItem[] = []
       
       items.forEach((item, idx) => {
-        if (idx > 12) return // Optimized limit
+        if (idx > 10) return 
         
         const title = item.querySelector('title')?.textContent || ''
         const link = item.querySelector('link')?.textContent || ''
@@ -182,8 +189,8 @@ const fetchNews = async () => {
         let description = item.querySelector('description')?.textContent || ''
         
         description = description.replace(/<[^>]*>?/gm, '').trim()
-        if (description.length > 180) description = description.slice(0, 180) + '...'
-        if (!description) description = '상세 내용을 확인하시려면 클릭하세요.'
+        if (description.length > 150) description = description.slice(0, 150) + '...'
+        if (!description) description = 'Explore full story for more details.'
         
         parsedItems.push({
           title,
@@ -196,24 +203,34 @@ const fetchNews = async () => {
       })
       return parsedItems
     } catch (err) {
-      console.error(`Error fetching ${source.name}:`, err)
+      console.warn(`Source skipped (${source.name}):`, err)
       return []
     }
   }
 
-  // 2. Fetch all sources in parallel for speed
-  const results = await Promise.all(RSS_SOURCES.map(fetchSource))
-  const flattenedResults = results.flat().sort((a, b) => 
-    new Date(b.pubDate).getTime() - new Date(a.pubDate).getTime()
-  )
+  // 2. Fetch all sources in parallel and update progressively
+  let loadedSources = 0
+  const allParsedItems: NewsItem[] = []
 
-  if (flattenedResults.length > 0) {
-    news.value = flattenedResults
-    // 3. Update cache
-    localStorage.setItem('uxm_trends_cache', JSON.stringify(flattenedResults))
-  }
-  
-  isLoading.value = false
+  RSS_SOURCES.map(async (source) => {
+    const items = await fetchSource(source)
+    loadedSources++
+    
+    if (items.length > 0) {
+      allParsedItems.push(...items)
+      // Progressive update
+      const sorted = [...allParsedItems, ...(news.value.filter(n => !allParsedItems.some(an => an.link === n.link)))]
+        .sort((a, b) => new Date(b.pubDate).getTime() - new Date(a.pubDate).getTime())
+      
+      // Remove duplicates
+      news.value = Array.from(new Map(sorted.map(item => [item.link, item])).values())
+      localStorage.setItem('uxm_trends_cache', JSON.stringify(news.value))
+    }
+
+    if (loadedSources === RSS_SOURCES.length) {
+      isLoading.value = false
+    }
+  })
 }
 
 const formatDate = (dateStr: string) => {
