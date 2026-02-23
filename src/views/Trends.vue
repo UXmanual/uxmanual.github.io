@@ -112,7 +112,7 @@
                   <span class="text-[10px] text-zinc-400 font-bold uppercase tracking-tight">{{ item.category }}</span>
                 </div>
                 
-                <h3 class="text-[15px] font-bold text-zinc-900 dark:text-white leading-snug mb-5 transition-colors line-clamp-3 group-hover:opacity-80">
+                <h3 class="text-lg font-bold text-zinc-900 dark:text-white leading-tight mb-5 transition-colors line-clamp-3 group-hover:opacity-80">
                   {{ item.title }}
                 </h3>
                 
@@ -184,7 +184,7 @@ interface NewsItem {
 const isLoading = ref(true)
 const activeCategory = ref('all')
 const news = ref<NewsItem[]>([])
-const visibleCount = ref(20)
+const visibleCount = ref(50)
 
 // Tab Scroll Indicators logic
 const scrollContainer = ref<HTMLElement | null>(null)
@@ -303,7 +303,7 @@ const groupedNews = computed(() => {
 })
 
 watch(activeCategory, () => {
-  visibleCount.value = 20
+  visibleCount.value = 50
 })
 
 
