@@ -28,8 +28,9 @@
             {{ cat.name }}
             <!-- Active Underline -->
             <div 
-              class="absolute bottom-0 left-0 right-0 h-0.5 bg-zinc-900 dark:bg-white transition-all duration-300 transform scale-x-100"
+              class="absolute bottom-0 left-0 right-0 h-0.5 transition-all duration-300 transform scale-x-100"
               v-if="activeCategory === cat.id"
+              :style="{ backgroundColor: getCategoryTheme(cat.id).main }"
             ></div>
           </button>
         </div>
@@ -54,18 +55,22 @@
                :href="item.link" 
                target="_blank"
                class="group flex flex-col bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-white/5 rounded-3xl p-6 transition-all duration-300 hover:-translate-y-1"
-               :class="getCategoryTheme(item.category).hoverBorder"
+               @mouseenter="(e) => (e.currentTarget as HTMLElement).style.borderColor = getCategoryTheme(item.category).main + '80'"
+               @mouseleave="(e) => (e.currentTarget as HTMLElement).style.borderColor = ''"
             >
               <div class="flex justify-between items-center mb-4">
                 <span class="px-2.5 py-1 rounded-md text-[10px] font-black uppercase tracking-widest border transition-colors"
-                      :class="[getCategoryTheme(item.category).bg, getCategoryTheme(item.category).text, getCategoryTheme(item.category).border]">
+                      :style="{ 
+                        backgroundColor: getCategoryTheme(item.category).bg, 
+                        color: getCategoryTheme(item.category).main,
+                        borderColor: getCategoryTheme(item.category).main + '30'
+                      }">
                   {{ item.source }}
                 </span>
                 <span class="text-[10px] text-zinc-400 font-bold uppercase tracking-tight">{{ item.category }}</span>
               </div>
               
-              <h3 class="text-lg font-bold text-zinc-900 dark:text-white leading-tight mb-3 transition-colors line-clamp-2"
-                  :class="getCategoryTheme(item.category).titleHover">
+              <h3 class="text-lg font-bold text-zinc-900 dark:text-white leading-tight mb-3 transition-colors line-clamp-2 group-hover:opacity-80">
                 {{ item.title }}
               </h3>
               
@@ -76,7 +81,7 @@
               <div class="mt-auto pt-4 border-t border-zinc-100 dark:border-white/5 flex justify-between items-center">
                 <span class="text-xs text-zinc-400 font-medium">{{ formatDate(item.pubDate) }}</span>
                 <span class="text-xs font-bold flex items-center gap-1"
-                      :class="getCategoryTheme(item.category).accent">
+                      :style="{ color: getCategoryTheme(item.category).main }">
                   MORE
                   <svg xmlns="http://www.w3.org/2000/svg" class="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
@@ -164,36 +169,20 @@ watch(activeCategory, () => {
 
 const categoryColors: Record<string, any> = {
   ai: {
-    bg: 'bg-indigo-50 dark:bg-indigo-500/10',
-    text: 'text-indigo-600 dark:text-indigo-400',
-    border: 'border-indigo-100 dark:border-indigo-500/20',
-    hoverBorder: 'hover:border-indigo-500/50',
-    accent: 'text-indigo-500',
-    titleHover: 'group-hover:text-indigo-600 dark:group-hover:text-indigo-400'
+    main: '#6366f1', // Indigo
+    bg: 'rgba(99, 102, 241, 0.05)',
   },
   finance: {
-    bg: 'bg-emerald-50 dark:bg-emerald-500/10',
-    text: 'text-emerald-600 dark:text-emerald-400',
-    border: 'border-emerald-100 dark:border-emerald-500/20',
-    hoverBorder: 'hover:border-emerald-500/50',
-    accent: 'text-emerald-500',
-    titleHover: 'group-hover:text-emerald-600 dark:group-hover:text-emerald-400'
+    main: '#0acaaa',
+    bg: 'rgba(10, 202, 170, 0.05)',
   },
   design: {
-    bg: 'bg-rose-50 dark:bg-rose-500/10',
-    text: 'text-rose-600 dark:text-rose-400',
-    border: 'border-rose-100 dark:border-rose-500/20',
-    hoverBorder: 'hover:border-rose-500/50',
-    accent: 'text-rose-500',
-    titleHover: 'group-hover:text-rose-600 dark:group-hover:text-rose-400'
+    main: '#fa4fc1',
+    bg: 'rgba(250, 79, 193, 0.05)',
   },
   sports: {
-    bg: 'bg-cyan-50 dark:bg-cyan-500/10',
-    text: 'text-cyan-600 dark:text-cyan-400',
-    border: 'border-cyan-100 dark:border-cyan-500/20',
-    hoverBorder: 'hover:border-cyan-500/50',
-    accent: 'text-cyan-500',
-    titleHover: 'group-hover:text-cyan-600 dark:group-hover:text-cyan-400'
+    main: '#5196fd',
+    bg: 'rgba(81, 150, 253, 0.05)',
   }
 }
 
