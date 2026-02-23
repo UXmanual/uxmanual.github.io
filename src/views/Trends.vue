@@ -157,7 +157,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, onMounted, onUnmounted, watch } from 'vue'
+import { ref, computed, onMounted, onUnmounted, watch, nextTick } from 'vue'
 import SiteNavbar from '../components/SiteNavbar.vue'
 
 interface NewsItem {
@@ -179,19 +179,27 @@ const isNavVisible = ref(true)
 const lastScrollY = ref(0)
 const tabsRef = ref<HTMLElement | null>(null)
 
-const changeCategory = (id: string) => {
+const changeCategory = async (id: string) => {
   activeCategory.value = id
   
+  // Wait for the new category content to render (or at least start to)
+  await nextTick()
+  
   if (tabsRef.value) {
-    const rect = tabsRef.value.getBoundingClientRect()
-    const scrollTop = window.pageYOffset || document.documentElement.scrollTop
-    const position = rect.top + scrollTop
-    const offset = isNavVisible.value ? 64 : 0
+    // OffsetTop is much more stable than getBoundingClientRect during transitions
+    const elementTop = tabsRef.value.offsetTop
     
-    window.scrollTo({
-      top: position - offset,
-      behavior: 'smooth'
-    })
+    // We target the position where the tabs are stuck under the navbar (64px)
+    // On mobile, sometimes the navbar reveal state is different, so we ensure a consistent experience
+    const targetScrollY = elementTop - 64
+    
+    // If the window is already past the scroll point, scroll back up smoothly
+    if (window.scrollY > targetScrollY + 10) {
+      window.scrollTo({
+        top: targetScrollY,
+        behavior: 'smooth'
+      })
+    }
   }
 }
 
