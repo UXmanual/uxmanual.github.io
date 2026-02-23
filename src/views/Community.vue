@@ -5,7 +5,7 @@
 
     <!-- Header Section -->
     <header class="pt-40 px-6 md:px-10 max-w-[1000px] mx-auto mb-16">
-      <h1 class="text-5xl font-bold tracking-tight mb-4 text-zinc-900 dark:text-white uppercase tracking-tighter">Community</h1>
+      <h1 class="text-5xl font-bold tracking-tight mb-4 text-zinc-900 dark:text-white tracking-tighter">Community</h1>
       <p class="text-zinc-600 dark:text-zinc-400 text-lg leading-relaxed">
         프로젝트에 대한 의견이나 질문을 남겨주세요. <br class="hidden md:block">
         디자인 아카이브의 성장을 위한 소중한 한마디를 기다립니다.
