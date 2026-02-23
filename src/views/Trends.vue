@@ -136,7 +136,7 @@
             @click="visibleCount += 20"
             class="px-12 py-4 bg-zinc-900 dark:bg-white text-white dark:text-black rounded-2xl font-black text-sm uppercase tracking-widest hover:scale-[1.02] active:scale-[0.98] transition-all"
           >
-            Load More Trends
+            기사 더 보기
           </button>
         </div>
       </div>
