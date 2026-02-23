@@ -29,6 +29,7 @@
 
     <!-- Category Tabs: Sticky Logic -->
     <div 
+      ref="tabsRef"
       class="sticky z-40 bg-zinc-50/90 dark:bg-[#0a0a0c]/90 backdrop-blur-xl border-b border-zinc-200 dark:border-white/10 mb-14 transition-all duration-300 ease-out"
       :style="{ top: isNavVisible ? '64px' : '0px' }"
     >
@@ -47,7 +48,7 @@
             <button 
               v-for="cat in categories" 
               :key="cat.id"
-              @click="activeCategory = cat.id"
+              @click="changeCategory(cat.id)"
               class="relative pt-2 pb-3 text-sm font-bold transition-all whitespace-nowrap flex-shrink-0 tracking-tight"
               :class="activeCategory === cat.id ? 'text-zinc-900 dark:text-white' : 'text-zinc-400 hover:text-zinc-900 dark:hover:text-white'"
             >
@@ -176,6 +177,23 @@ const visibleCount = ref(50)
 // Navigation Visibility (Synced via SiteNavbar)
 const isNavVisible = ref(true)
 const lastScrollY = ref(0)
+const tabsRef = ref<HTMLElement | null>(null)
+
+const changeCategory = (id: string) => {
+  activeCategory.value = id
+  
+  if (tabsRef.value) {
+    const rect = tabsRef.value.getBoundingClientRect()
+    const scrollTop = window.pageYOffset || document.documentElement.scrollTop
+    const position = rect.top + scrollTop
+    const offset = isNavVisible.value ? 64 : 0
+    
+    window.scrollTo({
+      top: position - offset,
+      behavior: 'smooth'
+    })
+  }
+}
 
 const handleScroll = () => {
   const currentScrollY = window.scrollY
