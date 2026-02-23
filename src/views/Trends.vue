@@ -78,13 +78,14 @@
           </TransitionGroup>
         </div>
 
-        <!-- Infinite Scroll Sentinel -->
-        <div ref="sentinel" class="h-20 flex items-center justify-center">
-          <div v-if="filteredNews.length > visibleCount" class="flex gap-1">
-            <div class="w-1.5 h-1.5 bg-indigo-500 rounded-full animate-bounce [animation-delay:-0.3s]"></div>
-            <div class="w-1.5 h-1.5 bg-indigo-500 rounded-full animate-bounce [animation-delay:-0.15s]"></div>
-            <div class="w-1.5 h-1.5 bg-indigo-500 rounded-full animate-bounce"></div>
-          </div>
+        <!-- Load More Button -->
+        <div v-if="filteredNews.length > visibleCount" class="flex justify-center pt-10 pb-20">
+          <button 
+            @click="visibleCount += 20"
+            class="px-12 py-4 bg-zinc-900 dark:bg-white text-white dark:text-black rounded-2xl font-black text-sm uppercase tracking-widest hover:scale-[1.02] active:scale-[0.98] transition-all"
+          >
+            Load More Trends
+          </button>
         </div>
       </div>
 
@@ -119,7 +120,6 @@ const isLoading = ref(true)
 const activeCategory = ref('all')
 const news = ref<NewsItem[]>([])
 const visibleCount = ref(12)
-const sentinel = ref<HTMLElement | null>(null)
 
 const categories = [
   { id: 'all', name: 'All News' },
@@ -270,21 +270,8 @@ const formatDate = (dateStr: string) => {
 onMounted(() => {
   fetchNews()
   
-  // High-performance Infinite Scroll
-  const observer = new IntersectionObserver((entries) => {
-    // Load 1000px BEFORE reaching bottom for instant-feeling loads
-    if (entries[0].isIntersecting && filteredNews.value.length > visibleCount.value) {
-      visibleCount.value += 20
-    }
-  }, { rootMargin: '1000px', threshold: 0.01 })
-
-  if (sentinel.value) {
-    observer.observe(sentinel.value)
-  }
-
   const interval = setInterval(fetchNews, 5 * 60 * 1000) // Refresh every 5 mins
   return () => {
-    observer.disconnect()
     clearInterval(interval)
   }
 })
