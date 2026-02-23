@@ -22,15 +22,15 @@
             v-for="cat in categories" 
             :key="cat.id"
             @click="activeCategory = cat.id"
+            :data-cat="cat.id"
             class="relative pb-2 pt-2 text-sm font-bold transition-all duration-300 whitespace-nowrap flex-shrink-0 tracking-tight"
             :class="activeCategory === cat.id ? 'text-zinc-900 dark:text-white' : 'text-zinc-400 hover:text-zinc-600 dark:hover:text-zinc-200'"
           >
             {{ cat.name }}
             <!-- Active Underline -->
             <div 
-              class="absolute bottom-0 left-0 right-0 h-0.5 transition-all duration-300 transform scale-x-100"
+              class="active-underline absolute bottom-0 left-0 right-0 h-0.5 transition-all duration-300 transform scale-x-100"
               v-if="activeCategory === cat.id"
-              :style="{ backgroundColor: getCategoryTheme(cat.id).main }"
             ></div>
           </button>
         </div>
@@ -54,17 +54,11 @@
                :key="item.link + index" 
                :href="item.link" 
                target="_blank"
-               class="group flex flex-col bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-white/5 rounded-3xl p-6 transition-all duration-300 hover:-translate-y-1"
-               @mouseenter="(e) => (e.currentTarget as HTMLElement).style.borderColor = getCategoryTheme(item.category).main + '80'"
-               @mouseleave="(e) => (e.currentTarget as HTMLElement).style.borderColor = ''"
+               class="news-card group flex flex-col bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-white/5 rounded-3xl p-6 transition-all duration-300 hover:-translate-y-1"
+               :class="`theme-${item.category}`"
             >
               <div class="flex justify-between items-center mb-4">
-                <span class="px-2.5 py-1 rounded-md text-[12px] font-black uppercase tracking-widest border transition-colors"
-                      :style="{ 
-                        backgroundColor: getCategoryTheme(item.category).bg, 
-                        color: getCategoryTheme(item.category).main,
-                        borderColor: getCategoryTheme(item.category).main + '30'
-                      }">
+                <span class="source-badge px-2.5 py-1 rounded-md text-[12px] font-black uppercase tracking-widest border transition-colors">
                   {{ item.source }}
                 </span>
                 <span class="text-[10px] text-zinc-400 font-bold uppercase tracking-tight">{{ item.category }}</span>
@@ -80,8 +74,7 @@
               
               <div class="mt-auto pt-4 border-t border-zinc-100 dark:border-white/5 flex justify-between items-center">
                 <span class="text-xs text-zinc-400 font-medium">{{ formatDate(item.pubDate) }}</span>
-                <span class="text-xs font-bold flex items-center gap-1"
-                      :style="{ color: getCategoryTheme(item.category).main }">
+                <span class="more-link text-xs font-bold flex items-center gap-1">
                   MORE
                   <svg xmlns="http://www.w3.org/2000/svg" class="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
@@ -167,26 +160,8 @@ watch(activeCategory, () => {
   visibleCount.value = 20
 })
 
-const categoryColors: Record<string, any> = {
-  ai: {
-    main: '#6366f1', // Indigo
-    bg: 'rgba(99, 102, 241, 0.05)',
-  },
-  finance: {
-    main: '#0acaaa',
-    bg: 'rgba(10, 202, 170, 0.05)',
-  },
-  design: {
-    main: '#fa4fc1',
-    bg: 'rgba(250, 79, 193, 0.05)',
-  },
-  sports: {
-    main: '#5196fd',
-    bg: 'rgba(81, 150, 253, 0.05)',
-  }
-}
-
-const getCategoryTheme = (cat: string) => categoryColors[cat] || categoryColors.ai
+// Category theme mapping based on CSS classes handled in <style>
+const getCategoryTheme = (cat: string) => cat
 
 const fetchNews = async () => {
   // 1. Initial Cache Load (Instant)
@@ -331,5 +306,53 @@ onMounted(() => {
 .no-scrollbar {
   -ms-overflow-style: none;
   scrollbar-width: none;
+}
+
+/* Category Themes using CSS Variables */
+.theme-ai, button:has(.active-underline) { --brand-color: #6366f1; --brand-bg: rgba(99, 102, 241, 0.05); }
+.theme-finance { --brand-color: #0acaaa; --brand-bg: rgba(10, 202, 170, 0.05); }
+.theme-design { --brand-color: #fa4fc1; --brand-bg: rgba(250, 79, 193, 0.05); }
+.theme-sports { --brand-color: #5196fd; --brand-bg: rgba(81, 150, 253, 0.05); }
+
+/* Apply Theme to Header Tabs */
+button:has(.active-underline) .active-underline {
+  background-color: var(--brand-color);
+}
+
+/* Handle specific tab brands if activeCategory matches */
+button[data-cat="ai"] .active-underline { background-color: #6366f1; }
+button[data-cat="finance"] .active-underline { background-color: #0acaaa; }
+button[data-cat="design"] .active-underline { background-color: #fa4fc1; }
+button[data-cat="sports"] .active-underline { background-color: #5196fd; }
+
+/* Refined News Card Styling */
+.news-card.theme-ai { --brand-color: #6366f1; --brand-bg: rgba(99, 102, 241, 0.05); }
+.news-card.theme-finance { --brand-color: #0acaaa; --brand-bg: rgba(10, 202, 170, 0.05); }
+.news-card.theme-design { --brand-color: #fa4fc1; --brand-bg: rgba(250, 79, 193, 0.05); }
+.news-card.theme-sports { --brand-color: #5196fd; --brand-bg: rgba(81, 150, 253, 0.05); }
+
+.news-card:hover {
+  border-color: rgba(var(--brand-color), 0.5); /* This won't work with hex directly in CSS overlay, using fallbacks */
+}
+
+/* Precision Hex Border for hover */
+.news-card.theme-ai:hover { border-color: #6366f180; }
+.news-card.theme-finance:hover { border-color: #0acaaa80; }
+.news-card.theme-design:hover { border-color: #fa4fc180; }
+.news-card.theme-sports:hover { border-color: #5196fd80; }
+
+.source-badge {
+  background-color: var(--brand-bg);
+  color: var(--brand-color);
+  border-color: rgba(0, 0, 0, 0.05); /* Default */
+}
+
+.news-card.theme-ai .source-badge { border-color: #6366f130; }
+.news-card.theme-finance .source-badge { border-color: #0acaaa30; }
+.news-card.theme-design .source-badge { border-color: #fa4fc130; }
+.news-card.theme-sports .source-badge { border-color: #5196fd30; }
+
+.more-link {
+  color: var(--brand-color);
 }
 </style>
