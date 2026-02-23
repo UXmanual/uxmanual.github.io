@@ -53,7 +53,8 @@
               :key="cat.id"
               @click="changeCategory(cat.id)"
               :data-cat="cat.id"
-              class="category-tab relative pt-2 pb-3 text-sm font-bold transition-all whitespace-nowrap flex-shrink-0 tracking-tight"
+              :data-active="activeCategory === cat.id"
+              class="category-tab relative pt-2 pb-3 text-sm font-bold whitespace-nowrap flex-shrink-0 tracking-tight"
               :class="activeCategory === cat.id ? 'text-zinc-900 dark:text-white' : 'text-zinc-400'"
             >
               {{ cat.name }}
@@ -529,6 +530,11 @@ onUnmounted(() => {
   opacity: 0;
 }
 
+.category-tab {
+  outline: none;
+  -webkit-tap-highlight-color: transparent;
+}
+
 .no-scrollbar::-webkit-scrollbar {
   display: none;
 }
@@ -549,20 +555,20 @@ onUnmounted(() => {
 .dark .category-tab[data-cat="all"] .active-underline { background-color: white !important; }
 
 /* Active Title & Underline Colors */
-.category-tab[data-cat="ai"].text-zinc-900, .category-tab[data-cat="ai"].dark { color: #6366f1 !important; }
-.category-tab[data-cat="ai"] .active-underline { background-color: #6366f1; }
+.category-tab[data-cat="ai"][data-active="true"] { color: #6366f1 !important; }
+.category-tab[data-cat="ai"][data-active="true"] .active-underline { background-color: #6366f1; }
 
-.category-tab[data-cat="finance"].text-zinc-900, .category-tab[data-cat="finance"].dark { color: #0acaaa !important; }
-.category-tab[data-cat="finance"] .active-underline { background-color: #0acaaa; }
+.category-tab[data-cat="finance"][data-active="true"] { color: #0acaaa !important; }
+.category-tab[data-cat="finance"][data-active="true"] .active-underline { background-color: #0acaaa; }
 
-.category-tab[data-cat="design"].text-zinc-900, .category-tab[data-cat="design"].dark { color: #fa4fc1 !important; }
-.category-tab[data-cat="design"] .active-underline { background-color: #fa4fc1; }
+.category-tab[data-cat="design"][data-active="true"] { color: #fa4fc1 !important; }
+.category-tab[data-cat="design"][data-active="true"] .active-underline { background-color: #fa4fc1; }
 
-.category-tab[data-cat="sports"].text-zinc-900, .category-tab[data-cat="sports"].dark { color: #5196fd !important; }
-.category-tab[data-cat="sports"] .active-underline { background-color: #5196fd; }
+.category-tab[data-cat="sports"][data-active="true"] { color: #5196fd !important; }
+.category-tab[data-cat="sports"][data-active="true"] .active-underline { background-color: #5196fd; }
 
-.category-tab[data-cat="game"].text-zinc-900, .category-tab[data-cat="game"].dark { color: #9333ea !important; }
-.category-tab[data-cat="game"] .active-underline { background-color: #9333ea; }
+.category-tab[data-cat="game"][data-active="true"] { color: #9333ea !important; }
+.category-tab[data-cat="game"][data-active="true"] .active-underline { background-color: #9333ea; }
 
 
 /* Refined News Card Styling */
