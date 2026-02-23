@@ -1,5 +1,30 @@
 <template>
-  <div class="min-h-screen bg-zinc-50 dark:bg-[#0a0a0c] text-zinc-900 dark:text-white transition-colors duration-500">
+  <div 
+    class="min-h-screen bg-zinc-50 dark:bg-[#0a0a0c] text-zinc-900 dark:text-white transition-colors duration-500 relative"
+    @touchstart="handleTouchStart"
+    @touchmove="handleTouchMove"
+    @touchend="handleTouchEnd"
+  >
+    <!-- Pull to Refresh Indicator -->
+    <div 
+      class="absolute top-0 left-0 right-0 flex justify-center items-center z-[60] pointer-events-none transition-transform duration-200"
+      :style="{ transform: `translateY(${Math.min(pullDistance, 100)}px)`, opacity: pullingProgress }"
+    >
+      <div class="bg-white dark:bg-zinc-800 p-3 rounded-full shadow-xl border border-zinc-200 dark:border-white/10 mt-20">
+        <svg 
+          xmlns="http://www.w3.org/2000/svg" 
+          class="w-6 h-6 text-indigo-500" 
+          :class="{ 'animate-spin': isLoading && news.length > 0 }"
+          fill="none" 
+          viewBox="0 0 24 24" 
+          stroke="currentColor"
+          :style="{ transform: `rotate(${pullDistance * 2}deg)` }"
+        >
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+        </svg>
+      </div>
+    </div>
+
     <SiteNavbar />
 
     <header class="pt-40 px-6 md:px-10 max-w-[1800px] mx-auto mb-10">
@@ -127,6 +152,55 @@ const isLoading = ref(true)
 const activeCategory = ref('all')
 const news = ref<NewsItem[]>([])
 const visibleCount = ref(20)
+
+// Pull to Refresh Logic
+const startY = ref(0)
+const pullDistance = ref(0)
+const isPulling = ref(false)
+const pullingProgress = computed(() => Math.min(pullDistance.value / 80, 1))
+
+const handleTouchStart = (e: TouchEvent) => {
+  if (window.scrollY <= 0) {
+    startY.value = e.touches[0].pageY
+    isPulling.value = true
+  }
+}
+
+const handleTouchMove = (e: TouchEvent) => {
+  if (!isPulling.value) return
+  const currentY = e.touches[0].pageY
+  const diff = currentY - startY.value
+  
+  if (diff > 0 && window.scrollY <= 0) {
+    // Apply rubber band effect
+    pullDistance.value = Math.pow(diff, 0.85)
+    if (pullDistance.value > 10) {
+      if (e.cancelable) e.preventDefault()
+    }
+  } else {
+    pullDistance.value = 0
+    isPulling.value = false
+  }
+}
+
+const handleTouchEnd = async () => {
+  if (!isPulling.value) return
+  
+  if (pullDistance.value > 60) {
+    await fetchNews()
+  }
+  
+  // Smooth reset
+  const animate = () => {
+    if (pullDistance.value > 0) {
+      pullDistance.value = Math.max(0, pullDistance.value - 10)
+      requestAnimationFrame(animate)
+    } else {
+      isPulling.value = false
+    }
+  }
+  animate()
+}
 
 const categories = [
   { id: 'all', name: 'All News' },
