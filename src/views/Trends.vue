@@ -7,8 +7,6 @@
   >
     <SiteNavbar />
 
-    <SiteNavbar />
-
     <header class="pt-[120px] px-6 md:px-10 max-w-[1800px] mx-auto mb-10 overflow-hidden">
       <!-- Inline Pull to Refresh Area -->
       <div 
@@ -242,8 +240,6 @@ watch(activeCategory, () => {
   visibleCount.value = 20
 })
 
-// Category theme mapping based on CSS classes handled in <style>
-const getCategoryTheme = (cat: string) => cat
 
 const fetchNews = async () => {
   // 1. Initial Cache Load (Instant)

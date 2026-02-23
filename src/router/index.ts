@@ -1,5 +1,4 @@
 import { createRouter, createWebHistory } from 'vue-router'
-import Portfolio from '../views/Portfolio.vue'
 import Community from '../views/Community.vue'
 import Trends from '../views/Trends.vue'
 
