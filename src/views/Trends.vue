@@ -34,11 +34,7 @@
       <div class="flex flex-col md:flex-row md:items-end justify-between gap-6">
         <div>
           <h1 class="text-5xl font-bold tracking-tight mb-4 flex items-center gap-4">
-            Real-time Trends
-            <span class="flex h-3 w-3">
-              <span class="animate-ping absolute inline-flex h-3 w-3 rounded-full bg-indigo-400 opacity-75"></span>
-              <span class="relative inline-flex rounded-full h-3 w-3 bg-indigo-500"></span>
-            </span>
+            News Stand
           </h1>
           <p class="text-zinc-600 dark:text-zinc-400 text-lg leading-relaxed max-w-2xl">
             지금 가장 뜨거운 최신 뉴스 트렌드를 확인하고 새로운 영감을 얻어보세요.
