@@ -5,9 +5,16 @@
     @touchmove="handleTouchMove"
     @touchend="handleTouchEnd"
   >
-    <SiteNavbar />
+    <!-- Navigation Bar: Fixed, Reveal on Scroll Up -->
+    <div 
+      class="fixed top-0 w-full z-50 transition-transform duration-500 ease-in-out"
+      :class="isNavVisible ? 'translate-y-0' : '-translate-y-full'"
+    >
+      <SiteNavbar />
+    </div>
 
-    <header class="pt-[120px] px-6 md:px-10 max-w-[1800px] mx-auto mb-10 overflow-hidden">
+    <!-- Main Header: Title/Description (Scrolls normally) -->
+    <header class="pt-[140px] px-6 md:px-10 max-w-[1800px] mx-auto mb-12">
       <!-- Inline Pull to Refresh Area -->
       <div 
         class="transition-all duration-300 flex items-center justify-center overflow-hidden"
@@ -31,16 +38,22 @@
         </div>
       </div>
 
-      <div class="flex flex-col md:flex-row md:items-end justify-between gap-6">
-        <div>
-          <h1 class="text-5xl font-bold tracking-tight mb-4 flex items-center gap-4">
-            News Stand
-          </h1>
-          <p class="text-zinc-600 dark:text-zinc-400 text-lg leading-relaxed max-w-2xl">
-            지금 가장 뜨거운 최신 뉴스 트렌드를 확인하고 새로운 영감을 얻어보세요.
-          </p>
-        </div>
-        
+      <div class="flex flex-col">
+        <h1 class="text-5xl font-bold tracking-tight mb-4 flex items-center gap-4">
+          News Stand
+        </h1>
+        <p class="text-zinc-600 dark:text-zinc-400 text-lg leading-relaxed max-w-2xl">
+          지금 가장 뜨거운 최신 뉴스 트렌드를 확인하고 새로운 영감을 얻어보세요.
+        </p>
+      </div>
+    </header>
+
+    <!-- Category Tabs Bar: Sticky to Top -->
+    <div 
+      class="sticky z-40 transition-all duration-500 ease-in-out bg-zinc-50/90 dark:bg-[#0a0a0c]/90 backdrop-blur-xl border-b border-zinc-200/50 dark:border-white/5"
+      :style="{ top: isNavVisible ? '73px' : '0px' }"
+    >
+      <div class="px-6 md:px-10 max-w-[1800px] mx-auto py-4">
         <div class="relative max-w-full group/tabs">
           <!-- Left Gradient -->
           <div 
@@ -50,7 +63,7 @@
 
           <div 
             ref="scrollContainer"
-            class="flex items-center gap-8 overflow-x-auto no-scrollbar max-w-full border-b border-zinc-100 dark:border-white/5 touch-pan-x"
+            class="flex items-center gap-8 overflow-x-auto no-scrollbar max-w-full touch-pan-x"
             @scroll="checkScroll"
             @touchstart.stop
             @touchmove.stop
@@ -62,7 +75,7 @@
               @click="activeCategory = cat.id"
               :data-cat="cat.id"
               class="relative pb-2 pt-2 text-sm font-bold transition-all duration-300 whitespace-nowrap flex-shrink-0 tracking-tight"
-              :class="activeCategory === cat.id ? 'text-zinc-900 dark:text-white' : 'text-zinc-400 hover:text-zinc-600 dark:hover:text-zinc-200'"
+              :class="activeCategory === cat.id ? 'text-zinc-900 dark:text-white' : 'text-zinc-400 hover:text-zinc-900 dark:hover:text-white'"
             >
               {{ cat.name }}
               <!-- Active Underline -->
@@ -80,7 +93,8 @@
           ></div>
         </div>
       </div>
-    </header>
+    </div>
+
 
     <main class="px-6 md:px-10 pb-10 max-w-[1800px] mx-auto">
       <div v-if="isLoading && news.length === 0" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-3">
@@ -169,7 +183,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, onMounted, watch } from 'vue'
+import { ref, computed, onMounted, onUnmounted, watch } from 'vue'
 import SiteNavbar from '../components/SiteNavbar.vue'
 
 interface NewsItem {
@@ -185,6 +199,30 @@ const isLoading = ref(true)
 const activeCategory = ref('all')
 const news = ref<NewsItem[]>([])
 const visibleCount = ref(50)
+
+// Navigation Reveal Logic
+const isNavVisible = ref(true)
+const lastScrollY = ref(0)
+
+const handleScroll = () => {
+  const currentScrollY = window.scrollY
+  
+  // Always show nav at the very top
+  if (currentScrollY <= 10) {
+    isNavVisible.value = true
+    lastScrollY.value = currentScrollY
+    return
+  }
+  
+  // Hide on scroll down, show on scroll up
+  if (currentScrollY > lastScrollY.value && currentScrollY > 100) {
+    isNavVisible.value = false
+  } else if (currentScrollY < lastScrollY.value) {
+    isNavVisible.value = true
+  }
+  
+  lastScrollY.value = currentScrollY
+}
 
 // Tab Scroll Indicators logic
 const scrollContainer = ref<HTMLElement | null>(null)
@@ -458,14 +496,21 @@ const formatDate = (dateStr: string) => {
   })
 }
 
+
+const fetchInterval = ref<any>(null)
+
 onMounted(() => {
   fetchNews()
   setTimeout(checkScroll, 500) // Initial scroll check
+  window.addEventListener('scroll', handleScroll, { passive: true })
   
-  const interval = setInterval(fetchNews, 5 * 60 * 1000) // Refresh every 5 mins
-  return () => {
-    clearInterval(interval)
-  }
+  // Refresh every 5 mins
+  fetchInterval.value = setInterval(fetchNews, 5 * 60 * 1000)
+})
+
+onUnmounted(() => {
+  window.removeEventListener('scroll', handleScroll)
+  if (fetchInterval.value) clearInterval(fetchInterval.value)
 })
 </script>
 
