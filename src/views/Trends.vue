@@ -7,18 +7,15 @@
   >
     <SiteNavbar />
 
-    <!-- Integrated Pull to Refresh Area -->
+    <!-- Floating Pull to Refresh Indicator (Native App style) -->
     <div 
-      class="relative z-40 overflow-hidden bg-zinc-100/10 dark:bg-white/5 transition-all duration-300 flex items-center justify-center pt-24"
-      :style="{ height: pullDistance > 0 ? `${Math.min(pullDistance + 60, 120)}px` : '0px' }"
+      class="fixed top-0 left-0 right-0 flex justify-center z-30 pointer-events-none transition-all duration-300"
+      :style="{ transform: `translateY(${Math.min(pullDistance, 90)}px)`, opacity: pullingProgress }"
     >
-      <div 
-        class="flex flex-col items-center transition-all duration-300"
-        :style="{ opacity: pullingProgress, transform: `scale(${0.7 + pullingProgress * 0.3})` }"
-      >
+      <div class="bg-white dark:bg-zinc-800 p-2.5 rounded-full shadow-lg border border-zinc-200 dark:border-white/10 mt-4">
         <svg 
           xmlns="http://www.w3.org/2000/svg" 
-          class="w-6 h-6 text-indigo-500" 
+          class="w-5 h-5 text-indigo-500" 
           :class="{ 'animate-spin': isLoading && news.length > 0 }"
           fill="none" 
           viewBox="0 0 24 24" 
@@ -30,7 +27,7 @@
       </div>
     </div>
 
-    <header class="pt-32 px-6 md:px-10 max-w-[1800px] mx-auto mb-10">
+    <header class="pt-16 px-6 md:px-10 max-w-[1800px] mx-auto mb-10">
       <div class="flex flex-col md:flex-row md:items-end justify-between gap-6">
         <div>
           <h1 class="text-5xl font-bold tracking-tight mb-4 flex items-center gap-4">
