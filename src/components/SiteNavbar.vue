@@ -1,6 +1,7 @@
+```
 <template>
   <nav 
-    class="fixed top-0 left-0 right-0 z-50 border-b border-zinc-200 dark:border-white/10 bg-white/80 dark:bg-[#0a0a0c]/80 backdrop-blur-xl transition-transform duration-200 ease-in-out"
+    class="fixed top-0 left-0 right-0 z-50 border-b border-zinc-200 dark:border-white/10 bg-white/80 dark:bg-[#0a0a0c]/80 backdrop-blur-xl transition-transform duration-0"
     :style="{ transform: `translateY(${navTranslateY}px)` }"
   >
     <div class="site-nav-container px-6 md:px-10 flex justify-between items-center w-full">
@@ -121,8 +122,8 @@ nav::after {
   position: absolute;
   left: 0;
   right: 0;
-  bottom: -2px;
-  height: 2px;
+  bottom: -4px;
+  height: 4px;
   background: inherit;
   backdrop-filter: inherit;
   border-bottom: inherit;
