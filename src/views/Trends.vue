@@ -544,26 +544,28 @@ onUnmounted(() => {
 .category-tab[data-cat="all"].text-zinc-900 .active-underline { background-color: #18181b; }
 .category-tab[data-cat="all"].dark .active-underline { background-color: white; }
 
+/* Active Title & Underline Colors */
+.category-tab[data-cat="ai"].text-zinc-900, .category-tab[data-cat="ai"].dark { color: #6366f1 !important; }
 .category-tab[data-cat="ai"] .active-underline { background-color: #6366f1; }
+
+.category-tab[data-cat="finance"].text-zinc-900, .category-tab[data-cat="finance"].dark { color: #0acaaa !important; }
 .category-tab[data-cat="finance"] .active-underline { background-color: #0acaaa; }
+
+.category-tab[data-cat="design"].text-zinc-900, .category-tab[data-cat="design"].dark { color: #fa4fc1 !important; }
 .category-tab[data-cat="design"] .active-underline { background-color: #fa4fc1; }
+
+.category-tab[data-cat="sports"].text-zinc-900, .category-tab[data-cat="sports"].dark { color: #5196fd !important; }
 .category-tab[data-cat="sports"] .active-underline { background-color: #5196fd; }
+
+.category-tab[data-cat="game"].text-zinc-900, .category-tab[data-cat="game"].dark { color: #9333ea !important; }
 .category-tab[data-cat="game"] .active-underline { background-color: #9333ea; }
 
-/* Inactive category tab hover colors (optional but nice) */
+/* Inactive category tab hover colors */
 .category-tab[data-cat="ai"]:hover { color: #6366f1 !important; }
 .category-tab[data-cat="finance"]:hover { color: #0acaaa !important; }
 .category-tab[data-cat="design"]:hover { color: #fa4fc1 !important; }
 .category-tab[data-cat="sports"]:hover { color: #5196fd !important; }
 .category-tab[data-cat="game"]:hover { color: #9333ea !important; }
-
-/* Handle specific tab brands if activeCategory matches */
-button[data-cat="all"] .active-underline { background-color: currentColor; }
-button[data-cat="ai"] .active-underline { background-color: #6366f1; }
-button[data-cat="finance"] .active-underline { background-color: #0acaaa; }
-button[data-cat="design"] .active-underline { background-color: #fa4fc1; }
-button[data-cat="sports"] .active-underline { background-color: #5196fd; }
-button[data-cat="game"] .active-underline { background-color: #9333ea; }
 
 /* Refined News Card Styling */
 .news-card.theme-ai { --brand-color: #6366f1; --brand-bg: rgba(99, 102, 241, 0.05); }
