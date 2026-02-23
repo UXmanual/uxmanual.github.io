@@ -33,7 +33,7 @@
     <!-- Category Tabs: Sticky Logic -->
     <div 
       ref="tabsRef"
-      class="sticky z-40 bg-zinc-50/90 dark:bg-[#0a0a0c]/90 backdrop-blur-xl border-b border-zinc-200 dark:border-white/10 mb-12 transition-all duration-300 ease-out"
+      class="sticky z-40 bg-zinc-50/90 dark:bg-[#0a0a0c]/90 backdrop-blur-xl border-b border-zinc-200 dark:border-white/10 mb-12 transition-all duration-200 ease-in-out"
       :style="{ top: `max(0px, 56px + var(--nav-y, 0px))` }"
     >
       <div class="px-6 md:px-10 max-w-[1800px] mx-auto pt-4 pb-0">
