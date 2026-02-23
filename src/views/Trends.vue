@@ -318,7 +318,7 @@ onMounted(() => {
 <style scoped>
 .list-enter-active,
 .list-leave-active {
-  transition: opacity 0.3s linear;
+  transition: opacity 0.2s linear;
 }
 .list-enter-from,
 .list-leave-to {
