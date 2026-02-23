@@ -18,7 +18,7 @@
           opacity: pullingProgress || (isLoading && isPulling ? 1 : 0)
         }"
       >
-        <div class="py-5">
+        <div class="pt-0 pb-10">
           <svg 
             xmlns="http://www.w3.org/2000/svg" 
             class="w-6 h-6 text-indigo-500" 
