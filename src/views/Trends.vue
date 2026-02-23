@@ -134,9 +134,9 @@
         <div v-if="filteredNews.length > visibleCount" class="flex justify-center pt-10 pb-20">
           <button 
             @click="visibleCount += 20"
-            class="px-12 py-4 bg-zinc-900 dark:bg-white text-white dark:text-black rounded-2xl font-bold text-base uppercase tracking-widest hover:scale-[1.02] active:scale-[0.98] transition-all"
+            class="px-12 py-4 bg-zinc-900 dark:bg-white text-white dark:text-black rounded-2xl font-semibold text-base leading-normal uppercase tracking-widest hover:scale-[1.02] active:scale-[0.98] transition-all"
           >
-            최신 뉴스 더 보기
+            최신뉴스 더 보기
           </button>
         </div>
       </div>
