@@ -21,8 +21,8 @@
         <div class="pt-0 pb-10">
           <svg 
             xmlns="http://www.w3.org/2000/svg" 
-            class="w-6 h-6 text-indigo-500" 
-            :class="{ 'animate-spin': isLoading }"
+            class="w-6 h-6 text-zinc-400" 
+            :class="{ 'animate-smooth-spin': isLoading }"
             fill="none" 
             viewBox="0 0 24 24" 
             stroke="currentColor"
@@ -437,5 +437,14 @@ button[data-cat="sports"] .active-underline { background-color: #5196fd; }
 
 .more-link {
   color: var(--brand-color);
+}
+
+.animate-smooth-spin {
+  animation: smooth-spin 0.8s linear infinite;
+}
+
+@keyframes smooth-spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
 }
 </style>
