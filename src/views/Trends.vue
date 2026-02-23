@@ -186,27 +186,35 @@ const lastScrollY = ref(0)
 const handleScroll = () => {
   const currentScrollY = window.scrollY
   scrollY.value = currentScrollY
-  const threshold = 180 
   
-  // 1. Top Area: Follow scroll via transform
-  if (currentScrollY < threshold) {
-    if (isFixed.value) isFixed.value = false
+  // 1. At the absolute top: Reset all states to natural scroll
+  if (currentScrollY <= 0) {
+    isFixed.value = false
     isNavVisible.value = true
     lastScrollY.value = currentScrollY
     return
   }
   
-  // 2. Beyond Header: Set Fixed
-  if (!isFixed.value && currentScrollY > threshold + 20) {
-    isFixed.value = true
-  }
+  // 2. Beyond Top Area (Natural Scroll zone or Reveal zone)
   const delta = currentScrollY - lastScrollY.value
   
-  if (delta > 5) {
-    // Scrolling Down -> Hide
-    isNavVisible.value = false
-  } else if (delta < -15) {
-    // Scrolling Up -> Show
+  // Enter fixed mode if we scroll down past a threshold
+  if (currentScrollY > 120 && !isFixed.value) {
+    isFixed.value = true
+    // If scrolling down deep, hide it
+    if (delta > 0) isNavVisible.value = false
+  }
+
+  // Deep scroll logic: Show on scroll up, Hide on scroll down
+  if (isFixed.value) {
+    if (delta > 10) {
+      isNavVisible.value = false
+    } else if (delta < -15) {
+      isNavVisible.value = true
+    }
+  } else {
+    // In natural scroll zone (scrollY < 120)
+    // Always visible, but scrolls away via template style
     isNavVisible.value = true
   }
   
