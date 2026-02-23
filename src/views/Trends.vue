@@ -95,7 +95,7 @@
       <div v-else class="space-y-10">
         <div v-for="group in groupedNews" :key="group.date" class="space-y-6">
           <div class="flex items-center gap-4">
-            <h2 class="text-sm font-semibold text-zinc-400 dark:text-zinc-500 uppercase whitespace-nowrap">{{ group.date }}</h2>
+            <h2 class="text-sm font-semibold text-zinc-400 dark:text-zinc-500 uppercase whitespace-nowrap">📅 {{ group.date }}</h2>
             <div class="h-px w-full bg-zinc-100 dark:bg-white/5"></div>
           </div>
           
