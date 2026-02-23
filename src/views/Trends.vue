@@ -48,16 +48,19 @@
                :key="item.link + index" 
                :href="item.link" 
                target="_blank"
-               class="group flex flex-col bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-white/5 rounded-3xl p-6 transition-all duration-300 hover:border-indigo-500/50 hover:-translate-y-1"
+               class="group flex flex-col bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-white/5 rounded-3xl p-6 transition-all duration-300 hover:-translate-y-1"
+               :class="getCategoryTheme(item.category).hoverBorder"
             >
               <div class="flex justify-between items-center mb-4">
-                <span class="px-2.5 py-1 rounded-md bg-indigo-50 dark:bg-indigo-500/10 text-indigo-600 dark:text-indigo-400 text-[10px] font-black uppercase tracking-widest border border-indigo-100 dark:border-indigo-500/10">
+                <span class="px-2.5 py-1 rounded-md text-[10px] font-black uppercase tracking-widest border transition-colors"
+                      :class="[getCategoryTheme(item.category).bg, getCategoryTheme(item.category).text, getCategoryTheme(item.category).border]">
                   {{ item.source }}
                 </span>
                 <span class="text-[10px] text-zinc-400 font-bold uppercase tracking-tight">{{ item.category }}</span>
               </div>
               
-              <h3 class="text-lg font-bold text-zinc-900 dark:text-white leading-tight mb-3 group-hover:text-indigo-600 dark:group-hover:text-indigo-400 transition-colors line-clamp-2">
+              <h3 class="text-lg font-bold text-zinc-900 dark:text-white leading-tight mb-3 transition-colors line-clamp-2"
+                  :class="getCategoryTheme(item.category).titleHover">
                 {{ item.title }}
               </h3>
               
@@ -67,7 +70,8 @@
               
               <div class="mt-auto pt-4 border-t border-zinc-100 dark:border-white/5 flex justify-between items-center">
                 <span class="text-xs text-zinc-400 font-medium">{{ formatDate(item.pubDate) }}</span>
-                <span class="text-xs font-bold text-indigo-500 flex items-center gap-1">
+                <span class="text-xs font-bold flex items-center gap-1"
+                      :class="getCategoryTheme(item.category).accent">
                   MORE
                   <svg xmlns="http://www.w3.org/2000/svg" class="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
@@ -149,6 +153,35 @@ const displayedNews = computed(() => {
 watch(activeCategory, () => {
   visibleCount.value = 20
 })
+
+const categoryColors: Record<string, any> = {
+  ai: {
+    bg: 'bg-indigo-50 dark:bg-indigo-500/10',
+    text: 'text-indigo-600 dark:text-indigo-400',
+    border: 'border-indigo-100 dark:border-indigo-500/20',
+    hoverBorder: 'hover:border-indigo-500/50',
+    accent: 'text-indigo-500',
+    titleHover: 'group-hover:text-indigo-600 dark:group-hover:text-indigo-400'
+  },
+  finance: {
+    bg: 'bg-emerald-50 dark:bg-emerald-500/10',
+    text: 'text-emerald-600 dark:text-emerald-400',
+    border: 'border-emerald-100 dark:border-emerald-500/20',
+    hoverBorder: 'hover:border-emerald-500/50',
+    accent: 'text-emerald-500',
+    titleHover: 'group-hover:text-emerald-600 dark:group-hover:text-emerald-400'
+  },
+  design: {
+    bg: 'bg-rose-50 dark:bg-rose-500/10',
+    text: 'text-rose-600 dark:text-rose-400',
+    border: 'border-rose-100 dark:border-rose-500/20',
+    hoverBorder: 'hover:border-rose-500/50',
+    accent: 'text-rose-500',
+    titleHover: 'group-hover:text-rose-600 dark:group-hover:text-rose-400'
+  }
+}
+
+const getCategoryTheme = (cat: string) => categoryColors[cat] || categoryColors.ai
 
 const fetchNews = async () => {
   // 1. Initial Cache Load (Instant)
