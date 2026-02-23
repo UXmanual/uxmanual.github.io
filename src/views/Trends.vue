@@ -59,7 +59,7 @@
                @mouseleave="(e) => (e.currentTarget as HTMLElement).style.borderColor = ''"
             >
               <div class="flex justify-between items-center mb-4">
-                <span class="px-2.5 py-1 rounded-md text-[11px] font-black uppercase tracking-widest border transition-colors"
+                <span class="px-2.5 py-1 rounded-md text-[12px] font-black uppercase tracking-widest border transition-colors"
                       :style="{ 
                         backgroundColor: getCategoryTheme(item.category).bg, 
                         color: getCategoryTheme(item.category).main,
