@@ -17,13 +17,13 @@
           </p>
         </div>
         
-        <div class="flex items-center gap-2 bg-white dark:bg-zinc-900 p-1 rounded-2xl border border-zinc-200 dark:border-white/5 shadow-sm overflow-x-auto no-scrollbar max-w-full">
+        <div class="flex items-center gap-2 bg-white dark:bg-zinc-900 p-1 rounded-2xl border border-zinc-200 dark:border-white/5 overflow-x-auto no-scrollbar max-w-full">
           <button 
             v-for="cat in categories" 
             :key="cat.id"
             @click="activeCategory = cat.id"
             class="px-5 py-2 rounded-xl text-sm font-bold transition-all duration-300 whitespace-nowrap flex-shrink-0"
-            :class="activeCategory === cat.id ? 'bg-zinc-900 text-white dark:bg-white dark:text-black shadow-lg shadow-zinc-500/20' : 'text-zinc-500 hover:text-zinc-900 dark:hover:text-white'"
+            :class="activeCategory === cat.id ? 'bg-zinc-900 text-white dark:bg-white dark:text-black' : 'text-zinc-500 hover:text-zinc-900 dark:hover:text-white'"
           >
             {{ cat.name }}
           </button>
@@ -48,7 +48,7 @@
                :key="item.link + index" 
                :href="item.link" 
                target="_blank"
-               class="group flex flex-col bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-white/5 rounded-3xl p-6 transition-all duration-300 hover:border-indigo-500/50 hover:shadow-[0_20px_40px_rgba(79,70,229,0.1)] hover:-translate-y-1"
+               class="group flex flex-col bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-white/5 rounded-3xl p-6 transition-all duration-300 hover:border-indigo-500/50 hover:-translate-y-1"
             >
               <div class="flex justify-between items-center mb-4">
                 <span class="px-2.5 py-1 rounded-md bg-indigo-50 dark:bg-indigo-500/10 text-indigo-600 dark:text-indigo-400 text-[10px] font-black uppercase tracking-widest border border-indigo-100 dark:border-indigo-500/10">

@@ -14,7 +14,7 @@
 
     <main class="px-6 md:px-10 max-w-[1000px] mx-auto pb-40">
       <!-- Input Area -->
-      <div class="mb-20 bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-white/5 rounded-3xl p-8 shadow-xl">
+      <div class="mb-20 bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-white/5 rounded-3xl p-8">
         <div class="flex flex-col gap-6">
           <div class="flex flex-col md:flex-row gap-4">
             <input 
@@ -47,7 +47,7 @@
             <button 
               @click="addPost"
               :disabled="isPosting"
-              class="px-10 py-4 bg-zinc-900 dark:bg-white text-white dark:text-black rounded-2xl font-black text-sm uppercase tracking-widest hover:scale-[1.02] active:scale-[0.98] transition-all shadow-lg shadow-indigo-500/10 disabled:opacity-50 disabled:scale-100"
+              class="px-10 py-4 bg-zinc-900 dark:bg-white text-white dark:text-black rounded-2xl font-black text-sm uppercase tracking-widest hover:scale-[1.02] active:scale-[0.98] transition-all disabled:opacity-50 disabled:scale-100"
             >
               {{ isPosting ? 'Posting...' : 'Post Message' }}
             </button>
@@ -60,7 +60,7 @@
         <CommunitySkeleton v-if="isLoading" />
         <TransitionGroup v-else name="list">
           <div v-for="post in posts" :key="post.id" 
-            class="group relative bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-white/5 rounded-3xl p-8 transition-all duration-300 hover:border-indigo-500 dark:hover:border-indigo-400 hover:ring-2 hover:ring-indigo-500/20 hover:shadow-2xl hover:shadow-indigo-500/10"
+            class="group relative bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-white/5 rounded-3xl p-8 transition-all duration-300 hover:border-indigo-500 dark:hover:border-indigo-400 hover:ring-2 hover:ring-indigo-500/20"
           >
             <div class="flex justify-between items-start mb-6">
               <div class="flex items-center gap-4">

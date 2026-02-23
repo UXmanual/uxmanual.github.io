@@ -5,7 +5,7 @@
       <div class="absolute inset-0 bg-white/90 dark:bg-black/95 backdrop-blur-sm pointer-events-auto" @click="$emit('close')"></div>
       
       <!-- Modal Content -->
-      <div class="relative w-full max-w-5xl max-h-[90vh] bg-white dark:bg-zinc-900 rounded-3xl overflow-hidden shadow-2xl pointer-events-auto transition-colors duration-500">
+      <div class="relative w-full max-w-5xl max-h-[90vh] bg-white dark:bg-zinc-900 rounded-3xl overflow-hidden pointer-events-auto transition-colors duration-500">
         <!-- Close Button -->
         <button @click="$emit('close')" class="absolute top-5 right-5 z-50 p-3 rounded-full bg-black/5 dark:bg-white/10 hover:bg-black/10 dark:hover:bg-white/20 text-zinc-900 dark:text-white transition-all backdrop-blur-md">
           <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
