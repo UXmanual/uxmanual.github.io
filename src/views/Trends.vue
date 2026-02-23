@@ -356,20 +356,51 @@ const fetchNews = async () => {
         
         items.forEach((item, idx) => {
           if (idx >= 30) return 
-          const title = item.querySelector('title')?.textContent || ''
-          const link = item.querySelector('link')?.textContent || ''
-          const pubDate = item.querySelector('pubDate')?.textContent || ''
-          let description = item.querySelector('description')?.textContent || ''
+          const title = (item.querySelector('title')?.textContent || '').trim()
+          const link = (item.querySelector('link')?.textContent || '').trim()
+          const pubDate = (item.querySelector('pubDate')?.textContent || '').trim()
           
-          description = description.replace(/<[^>]*>?/gm, '').trim()
-          description = description.replace(/&nbsp;/g, ' ')
+          // Try to find a meaningful description
+          let description = ''
+          const descNode = item.querySelector('description')
+          const contentNode = item.getElementsByTagName('content:encoded')[0] || item.querySelector('encoded')
+          const summaryNode = item.querySelector('summary')
+          
+          description = (descNode?.textContent || '') || (summaryNode?.textContent || '') || (contentNode?.textContent || '')
+
+          // Clean up HTML
+          let cleanDesc = description.replace(/<[^>]*>?/gm, ' ')
+                                   .replace(/&nbsp;/g, ' ')
+                                   .replace(/&quot;/g, '"')
+                                   .replace(/&amp;/g, '&')
+                                   .replace(/&lt;/g, '<')
+                                   .replace(/&gt;/g, '>')
+                                   .replace(/\s+/g, ' ')
+                                   .trim()
+          
+          // If description starts with title, try to extract the rest
+          if (cleanDesc.toLowerCase().startsWith(title.toLowerCase())) {
+            const snippet = cleanDesc.substring(title.length).trim()
+            if (snippet.length > 5) {
+              cleanDesc = snippet
+            }
+          }
+          
+          // Remove source name if it's appended at the end (common in Google News)
+          const sourceSuffix = ` - ${source.name}`
+          if (cleanDesc.endsWith(sourceSuffix)) {
+            cleanDesc = cleanDesc.substring(0, cleanDesc.length - sourceSuffix.length).trim()
+          }
+
+          // Final cleanup of common leading noise
+          cleanDesc = cleanDesc.replace(/^[:\-\s]+/, '').trim()
           
           if (title && link) {
             parsedItems.push({
               title,
               link,
               pubDate,
-              description: description || '뉴스 본문을 통해 자세한 내용을 확인하세요.',
+              description: cleanDesc || '기사 본문을 통해 자세한 내용을 확인하세요.',
               source: source.name,
               category: source.category
             })
