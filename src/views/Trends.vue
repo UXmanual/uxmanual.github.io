@@ -5,12 +5,12 @@
     @touchmove="handleTouchMove"
     @touchend="handleTouchEnd"
   >
-    <!-- Global Navigation: Reveal on Scroll Up -->
+    <!-- Navigation Area -->
     <div 
-      class="fixed top-0 left-0 right-0 z-50 transition-transform duration-500 ease-in-out"
+      class="fixed top-0 left-0 right-0 z-50 transition-transform duration-300 ease-out"
       :class="isNavVisible ? 'translate-y-0' : '-translate-y-full'"
     >
-      <SiteNavbar />
+      <SiteNavbar class="h-[64px] !py-4" />
     </div>
 
     <!-- Page Header: Title/Description (Scrolls Away) -->
@@ -33,10 +33,10 @@
       </div>
     </header>
 
-    <!-- Sticky Tabs: Moves with Nav Reveal -->
+    <!-- Sticky Category Tabs -->
     <div 
-      class="sticky z-40 bg-zinc-50/80 dark:bg-[#0a0a0c]/80 backdrop-blur-xl border-b border-zinc-200/50 dark:border-white/5 transition-all duration-500 ease-in-out"
-      :style="{ top: isNavVisible ? '72px' : '0px' }"
+      class="sticky z-40 bg-zinc-50/90 dark:bg-[#0a0a0c]/90 backdrop-blur-xl border-b border-zinc-200/50 dark:border-white/5 transition-[top] duration-300 ease-out"
+      :style="{ top: isNavVisible ? '64px' : '0px' }"
     >
       <div class="px-6 md:px-10 max-w-[1800px] mx-auto py-3">
         <div class="relative group/tabs">
@@ -182,19 +182,20 @@ const lastScrollY = ref(0)
 const handleScroll = () => {
   const currentScrollY = window.scrollY
   
-  // Always show nav at the very top or near top
+  // 1. Force visible at the top
   if (currentScrollY <= 20) {
     isNavVisible.value = true
     lastScrollY.value = currentScrollY
     return
   }
   
-  // Scroll Down -> Hide Header
-  if (currentScrollY > lastScrollY.value && currentScrollY > 80) {
+  // 2. Threshold-based reveal/hide
+  const delta = currentScrollY - lastScrollY.value
+  if (delta > 10 && currentScrollY > 100) {
+    // Scrolling Down -> Hide
     isNavVisible.value = false
-  } 
-  // Scroll Up -> Show Header
-  else if (currentScrollY < lastScrollY.value - 5) {
+  } else if (delta < -15) {
+    // Scrolling Up -> Show
     isNavVisible.value = true
   }
   
