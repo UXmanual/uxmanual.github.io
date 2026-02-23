@@ -27,8 +27,11 @@
       </div>
     </header>
 
-    <!-- Category Tabs -->
-    <div class="bg-zinc-50 dark:bg-[#0a0a0c] border-b border-zinc-200 dark:border-white/10 mb-8">
+    <!-- Category Tabs: Sticky Logic -->
+    <div 
+      class="sticky z-40 bg-zinc-50/90 dark:bg-[#0a0a0c]/90 backdrop-blur-xl border-b border-zinc-200 dark:border-white/10 mb-8 transition-all duration-300 ease-out"
+      :style="{ top: isNavVisible ? '64px' : '0px' }"
+    >
       <div class="px-6 md:px-10 max-w-[1800px] mx-auto pt-4 pb-0">
         <div class="relative group/tabs">
           <div 
@@ -175,11 +178,24 @@ const isNavVisible = ref(true)
 const lastScrollY = ref(0)
 
 const handleScroll = () => {
-  // Navigation is now handled globally in SiteNavbar component.
-  // We keep this function if other scroll-linked local effects are needed,
-  // otherwise, we can leave it empty or remove.
   const currentScrollY = window.scrollY
-  isNavVisible.value = currentScrollY < 150 || (currentScrollY < lastScrollY.value)
+  const delta = currentScrollY - lastScrollY.value
+  
+  // Navigation visibility logic for synchronized UI
+  if (currentScrollY < 64 && delta >= 0) {
+    isNavVisible.value = true
+  } else {
+    if (delta > 8) {
+      isNavVisible.value = false
+    } else if (delta < -15) {
+      isNavVisible.value = true
+    }
+    
+    if (currentScrollY <= 0) {
+      isNavVisible.value = true
+    }
+  }
+  
   lastScrollY.value = currentScrollY
 }
 
