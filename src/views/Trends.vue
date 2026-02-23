@@ -102,7 +102,7 @@
                  :key="item.link + index" 
                  :href="item.link" 
                  target="_blank"
-                 class="news-card group flex flex-col bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-white/5 rounded-3xl p-6 transition-all duration-300 hover:-translate-y-1"
+                 class="news-card group flex flex-col bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-white/5 rounded-3xl p-5 transition-all duration-300 hover:-translate-y-1"
                  :class="`theme-${item.category}`"
               >
                 <div class="flex justify-between items-center mb-4">
@@ -112,17 +112,13 @@
                   <span class="text-[10px] text-zinc-400 font-bold uppercase tracking-tight">{{ item.category }}</span>
                 </div>
                 
-                <h3 class="text-lg font-bold text-zinc-900 dark:text-white leading-tight mb-3 transition-colors line-clamp-2 group-hover:opacity-80">
+                <h3 class="text-[15px] font-bold text-zinc-900 dark:text-white leading-snug mb-5 transition-colors line-clamp-3 group-hover:opacity-80">
                   {{ item.title }}
                 </h3>
                 
-                <p class="text-zinc-500 dark:text-zinc-400 text-sm leading-relaxed mb-6 line-clamp-3">
-                  {{ item.description }}
-                </p>
-                
-                <div class="mt-auto pt-4 border-t border-zinc-100 dark:border-white/5 flex justify-between items-center">
-                  <span class="text-xs text-zinc-400 font-medium">{{ formatDate(item.pubDate) }}</span>
-                  <span class="more-link text-xs font-bold flex items-center gap-1">
+                <div class="pt-4 border-t border-zinc-100 dark:border-white/5 flex justify-between items-center">
+                  <span class="text-[11px] text-zinc-400 font-medium">{{ formatDate(item.pubDate) }}</span>
+                  <span class="more-link text-[11px] font-bold flex items-center gap-1">
                     더 보기
                     <svg xmlns="http://www.w3.org/2000/svg" class="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                       <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
