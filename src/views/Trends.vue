@@ -52,14 +52,15 @@
               v-for="cat in categories" 
               :key="cat.id"
               @click="changeCategory(cat.id)"
-              class="relative pt-2 pb-3 text-sm font-bold transition-all whitespace-nowrap flex-shrink-0 tracking-tight"
+              :data-cat="cat.id"
+              class="category-tab relative pt-2 pb-3 text-sm font-bold transition-all whitespace-nowrap flex-shrink-0 tracking-tight"
               :class="activeCategory === cat.id ? 'text-zinc-900 dark:text-white' : 'text-zinc-400 hover:text-zinc-900 dark:hover:text-white'"
             >
               {{ cat.name }}
               <!-- Active Underline: Sharp 2px line above the divider -->
               <div 
                 v-if="activeCategory === cat.id" 
-                class="absolute bottom-0 left-0 right-0 h-[2px] bg-zinc-900 dark:bg-white z-10"
+                class="active-underline absolute bottom-0 left-0 right-0 h-[2px] bg-zinc-900 dark:bg-white z-10"
               ></div>
             </button>
           </div>
@@ -533,16 +534,28 @@ onUnmounted(() => {
 }
 
 /* Category Themes using CSS Variables */
-.theme-ai, button:has(.active-underline) { --brand-color: #6366f1; --brand-bg: rgba(99, 102, 241, 0.05); }
+.theme-ai { --brand-color: #6366f1; --brand-bg: rgba(99, 102, 241, 0.05); }
 .theme-finance { --brand-color: #0acaaa; --brand-bg: rgba(10, 202, 170, 0.05); }
 .theme-design { --brand-color: #fa4fc1; --brand-bg: rgba(250, 79, 193, 0.05); }
 .theme-sports { --brand-color: #5196fd; --brand-bg: rgba(81, 150, 253, 0.05); }
 .theme-game { --brand-color: #9333ea; --brand-bg: rgba(147, 51, 234, 0.05); }
 
 /* Apply Theme to Header Tabs */
-button:has(.active-underline) .active-underline {
-  background-color: var(--brand-color);
-}
+.category-tab[data-cat="all"].text-zinc-900 .active-underline { background-color: #18181b; }
+.category-tab[data-cat="all"].dark .active-underline { background-color: white; }
+
+.category-tab[data-cat="ai"] .active-underline { background-color: #6366f1; }
+.category-tab[data-cat="finance"] .active-underline { background-color: #0acaaa; }
+.category-tab[data-cat="design"] .active-underline { background-color: #fa4fc1; }
+.category-tab[data-cat="sports"] .active-underline { background-color: #5196fd; }
+.category-tab[data-cat="game"] .active-underline { background-color: #9333ea; }
+
+/* Inactive category tab hover colors (optional but nice) */
+.category-tab[data-cat="ai"]:hover { color: #6366f1 !important; }
+.category-tab[data-cat="finance"]:hover { color: #0acaaa !important; }
+.category-tab[data-cat="design"]:hover { color: #fa4fc1 !important; }
+.category-tab[data-cat="sports"]:hover { color: #5196fd !important; }
+.category-tab[data-cat="game"]:hover { color: #9333ea !important; }
 
 /* Handle specific tab brands if activeCategory matches */
 button[data-cat="all"] .active-underline { background-color: currentColor; }
