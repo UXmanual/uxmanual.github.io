@@ -12,7 +12,7 @@
       <!-- Pull to Refresh Icon -->
       <div 
         class="flex items-center justify-center overflow-hidden transition-all duration-300"
-        :style="{ height: (pullDistance > 0 || (isLoading && isPulling)) ? '60px' : '0px' }"
+        :style="{ height: (pullDistance > 0 || isRefreshing) ? '60px' : '0px' }"
       >
         <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6 text-zinc-400" :class="{ 'animate-smooth-spin': isLoading }" fill="none" viewBox="0 0 24 24" stroke="currentColor" :style="{ transform: `rotate(${pullDistance * 2}deg)` }">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
@@ -242,6 +242,7 @@ const checkScroll = () => {
 const startY = ref(0)
 const pullDistance = ref(0)
 const isPulling = ref(false)
+const isRefreshing = ref(false)
 const pullingProgress = computed(() => Math.min(pullDistance.value / 80, 1))
 
 const handleTouchStart = (e: TouchEvent) => {
@@ -274,7 +275,9 @@ const handleTouchEnd = async () => {
   if (pullDistance.value > 60) {
     // Snap to hold position while refreshing
     pullDistance.value = 40
+    isRefreshing.value = true
     await fetchNews()
+    isRefreshing.value = false
   }
   
   // Smooth reset after fetch or if threshold not met
