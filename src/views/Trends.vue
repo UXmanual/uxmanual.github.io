@@ -105,7 +105,7 @@
               <div class="mt-auto pt-4 border-t border-zinc-100 dark:border-white/5 flex justify-between items-center">
                 <span class="text-xs text-zinc-400 font-medium">{{ formatDate(item.pubDate) }}</span>
                 <span class="more-link text-xs font-bold flex items-center gap-1">
-                  MORE
+                  더 보기
                   <svg xmlns="http://www.w3.org/2000/svg" class="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
                   </svg>
@@ -296,6 +296,7 @@ const fetchNews = async () => {
           let description = item.querySelector('description')?.textContent || ''
           
           description = description.replace(/<[^>]*>?/gm, '').trim()
+          description = description.replace(/&nbsp;/g, ' ')
           
           if (title && link) {
             parsedItems.push({
