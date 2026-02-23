@@ -47,7 +47,7 @@
           </p>
         </div>
         
-        <div class="flex items-center gap-8 overflow-x-auto no-scrollbar max-w-full border-b border-zinc-100 dark:border-white/5">
+        <div class="flex items-center gap-8 overflow-x-auto no-scrollbar max-w-full border-b border-zinc-100 dark:border-white/5 touch-pan-x">
           <button 
             v-for="cat in categories" 
             :key="cat.id"
