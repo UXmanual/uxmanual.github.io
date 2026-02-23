@@ -22,7 +22,7 @@
             v-for="cat in categories" 
             :key="cat.id"
             @click="activeCategory = cat.id"
-            class="relative pb-4 pt-2 text-sm font-bold transition-all duration-300 whitespace-nowrap flex-shrink-0 tracking-tight"
+            class="relative pb-2 pt-2 text-sm font-bold transition-all duration-300 whitespace-nowrap flex-shrink-0 tracking-tight"
             :class="activeCategory === cat.id ? 'text-zinc-900 dark:text-white' : 'text-zinc-400 hover:text-zinc-600 dark:hover:text-zinc-200'"
           >
             {{ cat.name }}
