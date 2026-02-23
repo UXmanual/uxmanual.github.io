@@ -59,8 +59,9 @@ const handleScroll = () => {
   if (currentScrollY < 56 && delta >= 0) {
     navTranslateY.value = -currentScrollY
   } else {
+    isNaturalScroll.value = false
     if (delta > 8) {
-      navTranslateY.value = -100 
+      navTranslateY.value = -70 
     } else if (delta < -15) {
       navTranslateY.value = 0
     }
