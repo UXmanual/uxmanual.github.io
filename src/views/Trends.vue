@@ -5,90 +5,65 @@
     @touchmove="handleTouchMove"
     @touchend="handleTouchEnd"
   >
-    <!-- Navigation Bar: Fixed, Reveal on Scroll Up -->
+    <!-- Global Navigation: Reveal on Scroll Up -->
     <div 
-      class="fixed top-0 w-full z-50 transition-transform duration-500 ease-in-out"
+      class="fixed top-0 left-0 right-0 z-50 transition-transform duration-500 ease-in-out"
       :class="isNavVisible ? 'translate-y-0' : '-translate-y-full'"
     >
       <SiteNavbar />
     </div>
 
-    <!-- Main Header: Title/Description (Scrolls normally) -->
-    <header class="pt-[140px] px-6 md:px-10 max-w-[1800px] mx-auto mb-12">
-      <!-- Inline Pull to Refresh Area -->
+    <!-- Page Header: Title/Description (Scrolls Away) -->
+    <header class="pt-32 px-6 md:px-10 max-w-[1800px] mx-auto mb-8 transition-opacity duration-300">
+      <!-- Pull to Refresh Icon -->
       <div 
-        class="transition-all duration-300 flex items-center justify-center overflow-hidden"
-        :style="{ 
-          height: (pullDistance > 0 || (isLoading && isPulling)) ? '64px' : '0px',
-          opacity: pullingProgress || (isLoading && isPulling ? 1 : 0)
-        }"
+        class="flex items-center justify-center overflow-hidden transition-all duration-300"
+        :style="{ height: (pullDistance > 0 || (isLoading && isPulling)) ? '60px' : '0px' }"
       >
-        <div class="pt-0 pb-10">
-          <svg 
-            xmlns="http://www.w3.org/2000/svg" 
-            class="w-6 h-6 text-zinc-400" 
-            :class="{ 'animate-smooth-spin': isLoading }"
-            fill="none" 
-            viewBox="0 0 24 24" 
-            stroke="currentColor"
-            :style="{ transform: `rotate(${pullDistance * 2}deg)` }"
-          >
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
-          </svg>
-        </div>
+        <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6 text-zinc-400" :class="{ 'animate-smooth-spin': isLoading }" fill="none" viewBox="0 0 24 24" stroke="currentColor" :style="{ transform: `rotate(${pullDistance * 2}deg)` }">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+        </svg>
       </div>
 
-      <div class="flex flex-col">
-        <h1 class="text-5xl font-bold tracking-tight mb-4 flex items-center gap-4">
-          News Stand
-        </h1>
-        <p class="text-zinc-600 dark:text-zinc-400 text-lg leading-relaxed max-w-2xl">
+      <div class="space-y-4">
+        <h1 class="text-4xl md:text-5xl font-bold tracking-tight">News Stand</h1>
+        <p class="text-zinc-600 dark:text-zinc-400 text-base md:text-lg max-w-2xl leading-relaxed">
           지금 가장 뜨거운 최신 뉴스 트렌드를 확인하고 새로운 영감을 얻어보세요.
         </p>
       </div>
     </header>
 
-    <!-- Category Tabs Bar: Sticky to Top -->
+    <!-- Sticky Tabs: Moves with Nav Reveal -->
     <div 
-      class="sticky z-40 transition-all duration-500 ease-in-out bg-zinc-50/90 dark:bg-[#0a0a0c]/90 backdrop-blur-xl border-b border-zinc-200/50 dark:border-white/5"
-      :style="{ top: isNavVisible ? '73px' : '0px' }"
+      class="sticky z-40 bg-zinc-50/80 dark:bg-[#0a0a0c]/80 backdrop-blur-xl border-b border-zinc-200/50 dark:border-white/5 transition-all duration-500 ease-in-out"
+      :style="{ top: isNavVisible ? '72px' : '0px' }"
     >
-      <div class="px-6 md:px-10 max-w-[1800px] mx-auto py-4">
-        <div class="relative max-w-full group/tabs">
-          <!-- Left Gradient -->
+      <div class="px-6 md:px-10 max-w-[1800px] mx-auto py-3">
+        <div class="relative group/tabs">
           <div 
-            class="absolute left-0 top-0 bottom-0 w-8 bg-gradient-to-r from-zinc-50 dark:from-[#0a0a0c] to-transparent pointer-events-none z-10 transition-opacity duration-300"
+            class="absolute left-0 top-0 bottom-0 w-8 bg-gradient-to-r from-zinc-50 dark:from-[#0a0a0c] to-transparent pointer-events-none z-10 transition-opacity"
             :class="showLeftGradient ? 'opacity-100' : 'opacity-0'"
           ></div>
 
           <div 
             ref="scrollContainer"
-            class="flex items-center gap-8 overflow-x-auto no-scrollbar max-w-full touch-pan-x"
+            class="flex items-center gap-6 overflow-x-auto no-scrollbar touch-pan-x"
             @scroll="checkScroll"
-            @touchstart.stop
-            @touchmove.stop
-            @touchend.stop
           >
             <button 
               v-for="cat in categories" 
               :key="cat.id"
               @click="activeCategory = cat.id"
-              :data-cat="cat.id"
-              class="relative pb-2 pt-2 text-sm font-bold transition-all duration-300 whitespace-nowrap flex-shrink-0 tracking-tight"
+              class="relative py-2 text-sm font-bold transition-all whitespace-nowrap flex-shrink-0 tracking-tight"
               :class="activeCategory === cat.id ? 'text-zinc-900 dark:text-white' : 'text-zinc-400 hover:text-zinc-900 dark:hover:text-white'"
             >
               {{ cat.name }}
-              <!-- Active Underline -->
-              <div 
-                class="active-underline absolute bottom-0 left-0 right-0 h-0.5 transition-all duration-300 transform scale-x-100"
-                v-if="activeCategory === cat.id"
-              ></div>
+              <div v-if="activeCategory === cat.id" class="absolute bottom-0 left-0 right-0 h-0.5 bg-zinc-900 dark:bg-white rounded-full"></div>
             </button>
           </div>
 
-          <!-- Right Gradient -->
           <div 
-            class="absolute right-0 top-0 bottom-0 w-8 bg-gradient-to-l from-zinc-50 dark:from-[#0a0a0c] to-transparent pointer-events-none z-10 transition-opacity duration-300"
+            class="absolute right-0 top-0 bottom-0 w-8 bg-gradient-to-l from-zinc-50 dark:from-[#0a0a0c] to-transparent pointer-events-none z-10 transition-opacity"
             :class="showRightGradient ? 'opacity-100' : 'opacity-0'"
           ></div>
         </div>
@@ -207,17 +182,19 @@ const lastScrollY = ref(0)
 const handleScroll = () => {
   const currentScrollY = window.scrollY
   
-  // Always show nav at the very top
-  if (currentScrollY <= 10) {
+  // Always show nav at the very top or near top
+  if (currentScrollY <= 20) {
     isNavVisible.value = true
     lastScrollY.value = currentScrollY
     return
   }
   
-  // Hide on scroll down, show on scroll up
-  if (currentScrollY > lastScrollY.value && currentScrollY > 100) {
+  // Scroll Down -> Hide Header
+  if (currentScrollY > lastScrollY.value && currentScrollY > 80) {
     isNavVisible.value = false
-  } else if (currentScrollY < lastScrollY.value) {
+  } 
+  // Scroll Up -> Show Header
+  else if (currentScrollY < lastScrollY.value - 5) {
     isNavVisible.value = true
   }
   
