@@ -5,13 +5,11 @@
     @touchmove="handleTouchMove"
     @touchend="handleTouchEnd"
   >
-    <!-- Navigation Area: Natural scroll at top, Fixed reveal deep down -->
+    <!-- Navigation Area: Fixed with smooth translation -->
     <div 
-      class="z-50 transition-all duration-300 ease-out"
-      :class="[
-        isFixed ? 'fixed top-0 left-0 right-0' : 'absolute top-0 left-0 right-0',
-        isNavVisible ? 'translate-y-0' : '-translate-y-full'
-      ]"
+      class="fixed top-0 left-0 right-0 z-50 transition-transform duration-300 ease-out"
+      :class="isNavVisible ? 'translate-y-0' : '-translate-y-full'"
+      :style="isFixed ? {} : { transform: `translateY(${-Math.min(scrollY, 100)}px)` }"
     >
       <SiteNavbar :isFixed="false" class="h-[64px] !py-4" />
     </div>
@@ -178,30 +176,33 @@ const visibleCount = ref(50)
 // Navigation Reveal Logic
 const isNavVisible = ref(true)
 const isFixed = ref(false)
+const scrollY = ref(0)
 const lastScrollY = ref(0)
 
 const handleScroll = () => {
   const currentScrollY = window.scrollY
-  const headerHeight = 220 // Area where header/title exists
+  scrollY.value = currentScrollY
+  const threshold = 180 
   
-  // 1. Initial/Top Area: Nav scrolls away naturally
-  if (currentScrollY < headerHeight) {
-    isFixed.value = false
-    isNavVisible.value = true // Ensure it's ready when scrolled to top
+  // 1. Top Area: Follow scroll via transform
+  if (currentScrollY < threshold) {
+    if (isFixed.value) isFixed.value = false
+    isNavVisible.value = true
     lastScrollY.value = currentScrollY
     return
   }
   
-  // 2. Deep in the page: Fixed Reveal Logic
+  // 2. Beyond Header: Set Fixed
+  if (!isFixed.value && currentScrollY > threshold + 20) {
+    isFixed.value = true
+  }
   const delta = currentScrollY - lastScrollY.value
   
   if (delta > 5) {
-    // Scrolling Down -> Hide immediately (since it's already off-screen anyway)
-    isFixed.value = true
+    // Scrolling Down -> Hide
     isNavVisible.value = false
   } else if (delta < -15) {
-    // Scrolling Up -> Show (Fixed)
-    isFixed.value = true
+    // Scrolling Up -> Show
     isNavVisible.value = true
   }
   
