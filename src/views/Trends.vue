@@ -545,8 +545,8 @@ onUnmounted(() => {
 .theme-game { --brand-color: #9333ea; --brand-bg: rgba(147, 51, 234, 0.05); }
 
 /* Apply Theme to Header Tabs */
-.category-tab[data-cat="all"].text-zinc-900 .active-underline { background-color: #18181b; }
-.category-tab[data-cat="all"].dark .active-underline { background-color: white; }
+.category-tab[data-cat="all"] .active-underline { background-color: #18181b; }
+.dark .category-tab[data-cat="all"] .active-underline { background-color: white !important; }
 
 /* Active Title & Underline Colors */
 .category-tab[data-cat="ai"].text-zinc-900, .category-tab[data-cat="ai"].dark { color: #6366f1 !important; }
