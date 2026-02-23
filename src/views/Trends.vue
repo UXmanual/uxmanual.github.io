@@ -8,7 +8,7 @@
     <SiteNavbar />
 
     <!-- Page Header: Title/Description (Scrolls Away) -->
-    <header class="pt-32 px-6 md:px-10 max-w-[1800px] mx-auto mb-8 transition-opacity duration-300">
+    <header class="pt-28 px-6 md:px-10 max-w-[1800px] mx-auto mb-8 transition-opacity duration-300">
       <!-- Pull to Refresh Icon -->
       <div 
         class="flex items-center justify-center overflow-hidden transition-all duration-300"
@@ -34,7 +34,7 @@
     <div 
       ref="tabsRef"
       class="sticky z-40 bg-zinc-50/90 dark:bg-[#0a0a0c]/90 backdrop-blur-xl border-b border-zinc-200 dark:border-white/10 mb-12 transition-all duration-300 ease-out"
-      :style="{ top: isNavVisible ? '64px' : '0px' }"
+      :style="{ top: isNavVisible ? '56px' : '0px' }"
     >
       <div class="px-6 md:px-10 max-w-[1800px] mx-auto pt-4 pb-0">
         <div class="relative group/tabs">
@@ -193,7 +193,7 @@ const changeCategory = async (id: string) => {
   
   if (scrollAnchor.value) {
     // We use the Anchor offsetTop which is stable regardless of sticky state
-    const targetScrollY = scrollAnchor.value.offsetTop - 64
+    const targetScrollY = scrollAnchor.value.offsetTop - 56
     
     window.scrollTo({
       top: targetScrollY,
@@ -207,7 +207,7 @@ const handleScroll = () => {
   const delta = currentScrollY - lastScrollY.value
   
   // Navigation visibility logic for synchronized UI
-  if (currentScrollY < 64 && delta >= 0) {
+  if (currentScrollY < 56 && delta >= 0) {
     isNavVisible.value = true
   } else {
     if (delta > 8) {

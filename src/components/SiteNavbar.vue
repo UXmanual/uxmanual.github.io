@@ -3,7 +3,7 @@
     class="fixed top-0 left-0 right-0 z-50 transition-transform duration-300 ease-out border-b border-zinc-200 dark:border-white/10 bg-white/80 dark:bg-[#0a0a0c]/80 backdrop-blur-xl"
     :style="{ transform: `translateY(${navTranslateY}px)` }"
   >
-    <div class="px-6 md:px-10 py-5 flex justify-between items-center w-full">
+    <div class="site-nav-container px-6 md:px-10 flex justify-between items-center w-full">
       <router-link to="/" class="flex items-center gap-3 text-lg font-black uppercase tracking-normal text-zinc-900 dark:text-white transition-colors">
         Todays News
       </router-link>
@@ -55,7 +55,7 @@ const handleScroll = () => {
   const currentScrollY = window.scrollY
   const delta = currentScrollY - lastScrollY.value
   
-  if (currentScrollY < 64 && delta >= 0) {
+  if (currentScrollY < 56 && delta >= 0) {
     navTranslateY.value = -currentScrollY
   } else {
     if (delta > 8) {
@@ -104,3 +104,11 @@ watch(isDark, (newVal) => {
   updateThemeClass(newVal)
 })
 </script>
+
+<style scoped>
+.site-nav-container {
+  padding-block: calc(0.25rem * 3); /* Equivalent to standard spacing unit * 3 if --spacing is 0.25rem */
+  /* If the user specifically wants the CSS variable literal: */
+  padding-block: calc(var(--spacing, 0.25rem) * 3);
+}
+</style>
