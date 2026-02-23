@@ -54,7 +54,7 @@
               @click="changeCategory(cat.id)"
               :data-cat="cat.id"
               class="category-tab relative pt-2 pb-3 text-sm font-bold transition-all whitespace-nowrap flex-shrink-0 tracking-tight"
-              :class="activeCategory === cat.id ? 'text-zinc-900 dark:text-white' : 'text-zinc-400 hover:text-zinc-900 dark:hover:text-white'"
+              :class="activeCategory === cat.id ? 'text-zinc-900 dark:text-white' : 'text-zinc-400'"
             >
               {{ cat.name }}
               <!-- Active Underline: Sharp 2px line above the divider -->
@@ -564,12 +564,6 @@ onUnmounted(() => {
 .category-tab[data-cat="game"].text-zinc-900, .category-tab[data-cat="game"].dark { color: #9333ea !important; }
 .category-tab[data-cat="game"] .active-underline { background-color: #9333ea; }
 
-/* Inactive category tab hover colors */
-.category-tab[data-cat="ai"]:hover { color: #6366f1 !important; }
-.category-tab[data-cat="finance"]:hover { color: #0acaaa !important; }
-.category-tab[data-cat="design"]:hover { color: #fa4fc1 !important; }
-.category-tab[data-cat="sports"]:hover { color: #5196fd !important; }
-.category-tab[data-cat="game"]:hover { color: #9333ea !important; }
 
 /* Refined News Card Styling */
 .news-card.theme-ai { --brand-color: #6366f1; --brand-bg: rgba(99, 102, 241, 0.05); }
