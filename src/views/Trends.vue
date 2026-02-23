@@ -93,41 +93,48 @@
       </div>
 
       <div v-else class="space-y-10">
-        <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-3">
-          <TransitionGroup name="list">
-            <a v-for="(item, index) in displayedNews" 
-               :key="item.link + index" 
-               :href="item.link" 
-               target="_blank"
-               class="news-card group flex flex-col bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-white/5 rounded-3xl p-6 transition-all duration-300 hover:-translate-y-1"
-               :class="`theme-${item.category}`"
-            >
-              <div class="flex justify-between items-center mb-4">
-                <span class="source-badge px-2.5 py-1 rounded-md text-[12px] font-black uppercase tracking-normal border transition-colors">
-                  {{ item.source }}
-                </span>
-                <span class="text-[10px] text-zinc-400 font-bold uppercase tracking-tight">{{ item.category }}</span>
-              </div>
-              
-              <h3 class="text-lg font-bold text-zinc-900 dark:text-white leading-tight mb-3 transition-colors line-clamp-2 group-hover:opacity-80">
-                {{ item.title }}
-              </h3>
-              
-              <p class="text-zinc-500 dark:text-zinc-400 text-sm leading-relaxed mb-6 line-clamp-3">
-                {{ item.description }}
-              </p>
-              
-              <div class="mt-auto pt-4 border-t border-zinc-100 dark:border-white/5 flex justify-between items-center">
-                <span class="text-xs text-zinc-400 font-medium">{{ formatDate(item.pubDate) }}</span>
-                <span class="more-link text-xs font-bold flex items-center gap-1">
-                  더 보기
-                  <svg xmlns="http://www.w3.org/2000/svg" class="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
-                  </svg>
-                </span>
-              </div>
-            </a>
-          </TransitionGroup>
+        <div v-for="group in groupedNews" :key="group.date" class="space-y-6">
+          <div class="flex items-center gap-4">
+            <h2 class="text-sm font-black text-zinc-400 dark:text-zinc-500 uppercase tracking-widest whitespace-nowrap">{{ group.date }}</h2>
+            <div class="h-px w-full bg-zinc-100 dark:bg-white/5"></div>
+          </div>
+          
+          <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-3">
+            <TransitionGroup name="list">
+              <a v-for="(item, index) in group.items" 
+                 :key="item.link + index" 
+                 :href="item.link" 
+                 target="_blank"
+                 class="news-card group flex flex-col bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-white/5 rounded-3xl p-6 transition-all duration-300 hover:-translate-y-1"
+                 :class="`theme-${item.category}`"
+              >
+                <div class="flex justify-between items-center mb-4">
+                  <span class="source-badge px-2.5 py-1 rounded-md text-[12px] font-black uppercase tracking-normal border transition-colors">
+                    {{ item.source }}
+                  </span>
+                  <span class="text-[10px] text-zinc-400 font-bold uppercase tracking-tight">{{ item.category }}</span>
+                </div>
+                
+                <h3 class="text-lg font-bold text-zinc-900 dark:text-white leading-tight mb-3 transition-colors line-clamp-2 group-hover:opacity-80">
+                  {{ item.title }}
+                </h3>
+                
+                <p class="text-zinc-500 dark:text-zinc-400 text-sm leading-relaxed mb-6 line-clamp-3">
+                  {{ item.description }}
+                </p>
+                
+                <div class="mt-auto pt-4 border-t border-zinc-100 dark:border-white/5 flex justify-between items-center">
+                  <span class="text-xs text-zinc-400 font-medium">{{ formatDate(item.pubDate) }}</span>
+                  <span class="more-link text-xs font-bold flex items-center gap-1">
+                    더 보기
+                    <svg xmlns="http://www.w3.org/2000/svg" class="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+                    </svg>
+                  </span>
+                </div>
+              </a>
+            </TransitionGroup>
+          </div>
         </div>
 
         <!-- Load More Button -->
@@ -282,6 +289,24 @@ const filteredNews = computed(() => {
 
 const displayedNews = computed(() => {
   return filteredNews.value.slice(0, visibleCount.value)
+})
+
+const groupedNews = computed(() => {
+  const groups: { date: string, items: NewsItem[] }[] = []
+  
+  displayedNews.value.forEach(item => {
+    const pubDate = new Date(item.pubDate)
+    const dateStr = `${pubDate.getFullYear()}년 ${pubDate.getMonth() + 1}월 ${pubDate.getDate()}일`
+    
+    let group = groups.find(g => g.date === dateStr)
+    if (!group) {
+      group = { date: dateStr, items: [] }
+      groups.push(group)
+    }
+    group.items.push(item)
+  })
+  
+  return groups
 })
 
 watch(activeCategory, () => {
