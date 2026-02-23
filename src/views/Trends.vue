@@ -82,7 +82,7 @@
       </div>
     </header>
 
-    <main class="px-6 md:px-10 pb-32 max-w-[1800px] mx-auto">
+    <main class="px-6 md:px-10 pb-10 max-w-[1800px] mx-auto">
       <div v-if="isLoading && news.length === 0" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-3">
         <div v-for="i in 10" :key="i" class="bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-white/5 rounded-2xl p-4 animate-pulse h-40">
           <div class="h-3 w-16 bg-zinc-200 dark:bg-zinc-800 rounded mb-3"></div>
@@ -156,7 +156,7 @@
     <!-- Footer Section -->
     <footer class="border-t border-zinc-100 dark:border-white/5 py-16 px-6 md:px-10">
       <div class="max-w-[1800px] mx-auto text-left space-y-4">
-        <p class="text-sm font-black text-zinc-900 dark:text-white tracking-tight">
+        <p class="text-sm font-black text-zinc-400 dark:text-zinc-500 tracking-tight">
           @uxmanual
         </p>
         <p class="text-xs leading-relaxed text-zinc-400 dark:text-zinc-500 max-w-2xl">
