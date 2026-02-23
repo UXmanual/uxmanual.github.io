@@ -318,12 +318,11 @@ onMounted(() => {
 <style scoped>
 .list-enter-active,
 .list-leave-active {
-  transition: all 0.5s ease;
+  transition: opacity 0.3s linear;
 }
 .list-enter-from,
 .list-leave-to {
   opacity: 0;
-  transform: translateY(30px);
 }
 
 .no-scrollbar::-webkit-scrollbar {
