@@ -29,7 +29,7 @@
 
     <!-- Category Tabs: Sticky Logic -->
     <div 
-      class="sticky z-40 bg-zinc-50/90 dark:bg-[#0a0a0c]/90 backdrop-blur-xl border-b border-zinc-200 dark:border-white/10 mb-8 transition-all duration-300 ease-out"
+      class="sticky z-40 bg-zinc-50/90 dark:bg-[#0a0a0c]/90 backdrop-blur-xl border-b border-zinc-200 dark:border-white/10 mb-14 transition-all duration-300 ease-out"
       :style="{ top: isNavVisible ? '64px' : '0px' }"
     >
       <div class="px-6 md:px-10 max-w-[1800px] mx-auto pt-4 pb-0">
