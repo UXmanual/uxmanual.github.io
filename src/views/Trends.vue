@@ -35,8 +35,8 @@
     </header>
 
     <!-- Category Tabs -->
-    <div class="bg-zinc-50 dark:bg-[#0a0a0c] border-b border-zinc-200/50 dark:border-white/5 mb-8">
-      <div class="px-6 md:px-10 max-w-[1800px] mx-auto py-3">
+    <div class="bg-zinc-50 dark:bg-[#0a0a0c] border-b border-zinc-200 dark:border-white/10 mb-8">
+      <div class="px-6 md:px-10 max-w-[1800px] mx-auto pt-4 pb-0">
         <div class="relative group/tabs">
           <div 
             class="absolute left-0 top-0 bottom-0 w-8 bg-gradient-to-r from-zinc-50 dark:from-[#0a0a0c] to-transparent pointer-events-none z-10 transition-opacity"
@@ -52,11 +52,16 @@
               v-for="cat in categories" 
               :key="cat.id"
               @click="activeCategory = cat.id"
-              class="relative py-2 text-sm font-bold transition-all whitespace-nowrap flex-shrink-0 tracking-tight"
+              class="relative pt-2 pb-3 text-sm font-bold transition-all whitespace-nowrap flex-shrink-0 tracking-tight"
               :class="activeCategory === cat.id ? 'text-zinc-900 dark:text-white' : 'text-zinc-400 hover:text-zinc-900 dark:hover:text-white'"
             >
               {{ cat.name }}
-              <div v-if="activeCategory === cat.id" class="absolute bottom-0 left-0 right-0 h-0.5 bg-zinc-900 dark:bg-white rounded-full"></div>
+              <!-- Active Underline: Positioned to overlap the divider -->
+              <div 
+                v-if="activeCategory === cat.id" 
+                class="absolute bottom-0 left-0 right-0 h-[2.5px] bg-zinc-900 dark:bg-white rounded-t-full z-10"
+                style="margin-bottom: -1px;"
+              ></div>
             </button>
           </div>
 
