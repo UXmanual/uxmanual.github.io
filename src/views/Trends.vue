@@ -88,7 +88,7 @@
                :class="`theme-${item.category}`"
             >
               <div class="flex justify-between items-center mb-4">
-                <span class="source-badge px-2.5 py-1 rounded-md text-[12px] font-black uppercase tracking-widest border transition-colors">
+                <span class="source-badge px-2.5 py-1 rounded-md text-[12px] font-black uppercase tracking-normal border transition-colors">
                   {{ item.source }}
                 </span>
                 <span class="text-[10px] text-zinc-400 font-bold uppercase tracking-tight">{{ item.category }}</span>
