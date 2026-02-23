@@ -22,7 +22,7 @@
       <div class="space-y-4">
         <h1 class="text-4xl md:text-5xl font-bold tracking-tight">News Stand</h1>
         <p class="text-zinc-600 dark:text-zinc-400 text-base md:text-lg max-w-2xl leading-relaxed">
-          지금 가장 뜨거운 최신 뉴스 트렌드를 확인하고 새로운 영감을 얻어보세요.
+          주요 언론사의 실시간 뉴스 피드를 한곳에서 확인하세요.
         </p>
       </div>
     </header>
