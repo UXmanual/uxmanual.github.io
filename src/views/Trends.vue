@@ -320,6 +320,7 @@ button:has(.active-underline) .active-underline {
 }
 
 /* Handle specific tab brands if activeCategory matches */
+button[data-cat="all"] .active-underline { background-color: currentColor; }
 button[data-cat="ai"] .active-underline { background-color: #6366f1; }
 button[data-cat="finance"] .active-underline { background-color: #0acaaa; }
 button[data-cat="design"] .active-underline { background-color: #fa4fc1; }
