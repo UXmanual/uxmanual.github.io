@@ -94,10 +94,7 @@
 
       <div v-else class="space-y-10">
         <div v-for="group in groupedNews" :key="group.date" class="space-y-6">
-          <div class="flex items-center gap-4">
-            <h2 class="text-sm font-semibold text-zinc-400 dark:text-zinc-500 uppercase whitespace-nowrap">📅 {{ group.date }}</h2>
-            <div class="h-px w-full bg-zinc-100 dark:bg-white/5"></div>
-          </div>
+          <h2 class="text-sm font-semibold text-zinc-400 dark:text-zinc-500 uppercase whitespace-nowrap mb-6">📅 {{ group.date }}</h2>
           
           <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-3">
             <TransitionGroup name="list">
