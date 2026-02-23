@@ -1,6 +1,7 @@
 <template>
   <nav 
-    class="fixed top-0 left-0 right-0 z-50 transition-transform duration-300 ease-out border-b border-zinc-200 dark:border-white/10 bg-white/80 dark:bg-[#0a0a0c]/80 backdrop-blur-xl"
+    class="fixed top-0 left-0 right-0 z-50 border-b border-zinc-200 dark:border-white/10 bg-white dark:bg-[#0a0a0c]"
+    :class="{ 'transition-transform duration-300 ease-out': !isNaturalScroll }"
     :style="{ transform: `translateY(${navTranslateY}px)` }"
   >
     <div class="site-nav-container px-6 md:px-10 flex justify-between items-center w-full">
@@ -50,6 +51,7 @@ const isDark = ref(true)
 // Navigation logic moved to component for global consistency
 const navTranslateY = ref(0)
 const lastScrollY = ref(0)
+const isNaturalScroll = ref(true)
 
 const handleScroll = () => {
   const currentScrollY = window.scrollY
@@ -57,7 +59,9 @@ const handleScroll = () => {
   
   if (currentScrollY < 56 && delta >= 0) {
     navTranslateY.value = -currentScrollY
+    isNaturalScroll.value = true
   } else {
+    isNaturalScroll.value = false
     if (delta > 8) {
       navTranslateY.value = -100 
     } else if (delta < -15) {
