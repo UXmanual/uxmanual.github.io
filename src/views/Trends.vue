@@ -41,27 +41,43 @@
           </p>
         </div>
         
-        <div 
-          class="flex items-center gap-8 overflow-x-auto no-scrollbar max-w-full border-b border-zinc-100 dark:border-white/5 touch-pan-x"
-          @touchstart.stop
-          @touchmove.stop
-          @touchend.stop
-        >
-          <button 
-            v-for="cat in categories" 
-            :key="cat.id"
-            @click="activeCategory = cat.id"
-            :data-cat="cat.id"
-            class="relative pb-2 pt-2 text-sm font-bold transition-all duration-300 whitespace-nowrap flex-shrink-0 tracking-tight"
-            :class="activeCategory === cat.id ? 'text-zinc-900 dark:text-white' : 'text-zinc-400 hover:text-zinc-600 dark:hover:text-zinc-200'"
+        <div class="relative max-w-full group/tabs">
+          <!-- Left Gradient -->
+          <div 
+            class="absolute left-0 top-0 bottom-0 w-8 bg-gradient-to-r from-zinc-50 dark:from-[#0a0a0c] to-transparent pointer-events-none z-10 transition-opacity duration-300"
+            :class="showLeftGradient ? 'opacity-100' : 'opacity-0'"
+          ></div>
+
+          <div 
+            ref="scrollContainer"
+            class="flex items-center gap-8 overflow-x-auto no-scrollbar max-w-full border-b border-zinc-100 dark:border-white/5 touch-pan-x"
+            @scroll="checkScroll"
+            @touchstart.stop
+            @touchmove.stop
+            @touchend.stop
           >
-            {{ cat.name }}
-            <!-- Active Underline -->
-            <div 
-              class="active-underline absolute bottom-0 left-0 right-0 h-0.5 transition-all duration-300 transform scale-x-100"
-              v-if="activeCategory === cat.id"
-            ></div>
-          </button>
+            <button 
+              v-for="cat in categories" 
+              :key="cat.id"
+              @click="activeCategory = cat.id"
+              :data-cat="cat.id"
+              class="relative pb-2 pt-2 text-sm font-bold transition-all duration-300 whitespace-nowrap flex-shrink-0 tracking-tight"
+              :class="activeCategory === cat.id ? 'text-zinc-900 dark:text-white' : 'text-zinc-400 hover:text-zinc-600 dark:hover:text-zinc-200'"
+            >
+              {{ cat.name }}
+              <!-- Active Underline -->
+              <div 
+                class="active-underline absolute bottom-0 left-0 right-0 h-0.5 transition-all duration-300 transform scale-x-100"
+                v-if="activeCategory === cat.id"
+              ></div>
+            </button>
+          </div>
+
+          <!-- Right Gradient -->
+          <div 
+            class="absolute right-0 top-0 bottom-0 w-8 bg-gradient-to-l from-zinc-50 dark:from-[#0a0a0c] to-transparent pointer-events-none z-10 transition-opacity duration-300"
+            :class="showRightGradient ? 'opacity-100' : 'opacity-0'"
+          ></div>
         </div>
       </div>
     </header>
@@ -156,6 +172,18 @@ const isLoading = ref(true)
 const activeCategory = ref('all')
 const news = ref<NewsItem[]>([])
 const visibleCount = ref(20)
+
+// Tab Scroll Indicators logic
+const scrollContainer = ref<HTMLElement | null>(null)
+const showLeftGradient = ref(false)
+const showRightGradient = ref(false)
+
+const checkScroll = () => {
+  if (!scrollContainer.value) return
+  const { scrollLeft, scrollWidth, clientWidth } = scrollContainer.value
+  showLeftGradient.value = scrollLeft > 10
+  showRightGradient.value = scrollLeft < scrollWidth - clientWidth - 10
+}
 
 // Pull to Refresh Logic
 const startY = ref(0)
@@ -367,6 +395,7 @@ const formatDate = (dateStr: string) => {
 
 onMounted(() => {
   fetchNews()
+  setTimeout(checkScroll, 500) // Initial scroll check
   
   const interval = setInterval(fetchNews, 5 * 60 * 1000) // Refresh every 5 mins
   return () => {
