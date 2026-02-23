@@ -180,26 +180,22 @@ const lastScrollY = ref(0)
 const tabsRef = ref<HTMLElement | null>(null)
 
 const changeCategory = async (id: string) => {
+  if (activeCategory.value === id) {
+    // If clicking the already active tab, scroll to top of that category
+  }
   activeCategory.value = id
   
-  // Wait for the new category content to render (or at least start to)
   await nextTick()
   
   if (tabsRef.value) {
-    // OffsetTop is much more stable than getBoundingClientRect during transitions
     const elementTop = tabsRef.value.offsetTop
-    
-    // We target the position where the tabs are stuck under the navbar (64px)
-    // On mobile, sometimes the navbar reveal state is different, so we ensure a consistent experience
+    // Target position: Tabs stuck at the top (64px offset for the navbar)
     const targetScrollY = elementTop - 64
     
-    // If the window is already past the scroll point, scroll back up smoothly
-    if (window.scrollY > targetScrollY + 10) {
-      window.scrollTo({
-        top: targetScrollY,
-        behavior: 'smooth'
-      })
-    }
+    window.scrollTo({
+      top: targetScrollY,
+      behavior: 'smooth'
+    })
   }
 }
 
