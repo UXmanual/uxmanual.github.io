@@ -1,6 +1,6 @@
 <template>
   <div 
-    class="min-h-screen bg-zinc-50 dark:bg-[#0a0a0c] text-zinc-900 dark:text-white transition-colors duration-500 relative"
+    class="min-h-screen bg-zinc-50 dark:bg-[#0a0a0c] text-zinc-900 dark:text-white relative"
     @touchstart="handleTouchStart"
     @touchmove="handleTouchMove"
     @touchend="handleTouchEnd"
@@ -88,23 +88,24 @@
         <div v-for="group in groupedNews" :key="group.date" class="space-y-6">
           <h2 class="text-sm font-semibold text-zinc-400 dark:text-zinc-500 uppercase whitespace-nowrap mb-6">📅 {{ group.date }}</h2>
           
+
           <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-3">
             <TransitionGroup name="list">
-              <a v-for="(item, index) in group.items" 
-                 :key="item.link + index" 
-                 :href="item.link" 
+              <a v-for="(item, index) in group.items"
+                 :key="item.link + index"
+                 :href="item.link"
                  target="_blank"
-                 class="news-card group flex flex-col bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-white/5 rounded-3xl p-5 transition-all duration-300 hover:-translate-y-1"
+                 class="news-card group flex flex-col bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-white/5 rounded-3xl p-5 hover:-translate-y-1 transition-transform duration-300"
                  :class="`theme-${item.category}`"
               >
                 <div class="flex justify-between items-center mb-4">
-                  <span class="source-badge px-2.5 py-1 rounded-md text-[12px] font-black uppercase tracking-normal border transition-colors">
+                  <span class="source-badge px-2.5 py-1 rounded-md text-[12px] font-black uppercase tracking-normal border">
                     {{ item.source }}
                   </span>
                   <span class="text-[10px] text-zinc-400 font-bold uppercase tracking-tight">{{ item.category }}</span>
                 </div>
                 
-                <h3 class="text-lg font-bold text-zinc-900 dark:text-white leading-tight mb-5 transition-colors line-clamp-3 group-hover:opacity-80">
+                <h3 class="text-lg font-bold text-zinc-900 dark:text-white leading-tight mb-5 line-clamp-3 group-hover:opacity-80">
                   {{ item.title }}
                 </h3>
                 
