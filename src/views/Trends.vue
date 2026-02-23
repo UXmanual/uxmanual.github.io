@@ -5,13 +5,7 @@
     @touchmove="handleTouchMove"
     @touchend="handleTouchEnd"
   >
-    <!-- Navigation Area: Seamlessly synced Fixed Nav -->
-    <div 
-      class="fixed top-0 left-0 right-0 z-50 transition-transform duration-300 ease-out"
-      :style="{ transform: `translateY(${navTranslateY}px)` }"
-    >
-      <SiteNavbar :isFixed="false" class="h-[64px] !py-4" />
-    </div>
+    <SiteNavbar />
 
     <!-- Page Header: Title/Description (Scrolls Away) -->
     <header class="pt-32 px-6 md:px-10 max-w-[1800px] mx-auto mb-8 transition-opacity duration-300">
@@ -176,40 +170,16 @@ const activeCategory = ref('all')
 const news = ref<NewsItem[]>([])
 const visibleCount = ref(50)
 
-// Unified Navigation Logic (No Blinking)
-const navTranslateY = ref(0)
+// Navigation Visibility (Synced via SiteNavbar)
 const isNavVisible = ref(true)
 const lastScrollY = ref(0)
 
 const handleScroll = () => {
+  // Navigation is now handled globally in SiteNavbar component.
+  // We keep this function if other scroll-linked local effects are needed,
+  // otherwise, we can leave it empty or remove.
   const currentScrollY = window.scrollY
-  const delta = currentScrollY - lastScrollY.value
-  
-  // 1. Natural Scroll sync (Only when scrolling down from top OR when not "revealed")
-  // If we are near the top and moving down, it should scroll away
-  if (currentScrollY < 64 && delta >= 0) {
-    navTranslateY.value = -currentScrollY
-    isNavVisible.value = true
-  } 
-  // 2. Beyond top or Scrolling Up logic
-  else {
-    if (delta > 8) {
-      // Scrolling Down -> Hide
-      navTranslateY.value = -100 
-      isNavVisible.value = false
-    } else if (delta < -15) {
-      // Scrolling Up -> Show (Reveal)
-      navTranslateY.value = 0
-      isNavVisible.value = true
-    }
-    
-    // Safety: If we reach the very top, ensure it's at 0
-    if (currentScrollY <= 0) {
-      navTranslateY.value = 0
-      isNavVisible.value = true
-    }
-  }
-  
+  isNavVisible.value = currentScrollY < 150 || (currentScrollY < lastScrollY.value)
   lastScrollY.value = currentScrollY
 }
 
