@@ -119,7 +119,7 @@ interface NewsItem {
 const isLoading = ref(true)
 const activeCategory = ref('all')
 const news = ref<NewsItem[]>([])
-const visibleCount = ref(12)
+const visibleCount = ref(20)
 
 const categories = [
   { id: 'all', name: 'All News' },
