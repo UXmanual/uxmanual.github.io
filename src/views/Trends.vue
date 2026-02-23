@@ -5,12 +5,17 @@
     @touchmove="handleTouchMove"
     @touchend="handleTouchEnd"
   >
-    <!-- Pull to Refresh Indicator -->
+    <SiteNavbar />
+
+    <!-- Integrated Pull to Refresh Area -->
     <div 
-      class="absolute top-0 left-0 right-0 flex justify-center items-center z-[60] pointer-events-none transition-transform duration-200"
-      :style="{ transform: `translateY(${Math.min(pullDistance, 100)}px)`, opacity: pullingProgress }"
+      class="overflow-hidden bg-zinc-100/50 dark:bg-white/5 transition-all duration-200 flex items-center justify-center pt-24"
+      :style="{ height: pullDistance > 0 ? `${Math.min(pullDistance + 80, 180)}px` : '0px' }"
     >
-      <div class="bg-white dark:bg-zinc-800 p-3 rounded-full shadow-xl border border-zinc-200 dark:border-white/10 mt-20">
+      <div 
+        class="flex flex-col items-center gap-2 transition-opacity duration-300"
+        :style="{ opacity: pullingProgress, transform: `scale(${0.5 + pullingProgress * 0.5})` }"
+      >
         <svg 
           xmlns="http://www.w3.org/2000/svg" 
           class="w-6 h-6 text-indigo-500" 
@@ -22,12 +27,14 @@
         >
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
         </svg>
+        <span class="text-[10px] font-black uppercase tracking-widest text-zinc-400">
+          <template v-if="isLoading && pullDistance > 0">Refreshing...</template>
+          <template v-else>{{ pullDistance > 60 ? 'Release to update' : 'Pull to refresh' }}</template>
+        </span>
       </div>
     </div>
 
-    <SiteNavbar />
-
-    <header class="pt-40 px-6 md:px-10 max-w-[1800px] mx-auto mb-10">
+    <header class="px-6 md:px-10 max-w-[1800px] mx-auto mb-10 transition-all duration-200" :class="{ 'pt-40': pullDistance === 0 }">
       <div class="flex flex-col md:flex-row md:items-end justify-between gap-6">
         <div>
           <h1 class="text-5xl font-bold tracking-tight mb-4 flex items-center gap-4">
@@ -187,16 +194,19 @@ const handleTouchEnd = async () => {
   if (!isPulling.value) return
   
   if (pullDistance.value > 60) {
+    // Snap to hold position while refreshing
+    pullDistance.value = 60
     await fetchNews()
   }
   
-  // Smooth reset
+  // Smooth reset after fetch or if threshold not met
   const animate = () => {
     if (pullDistance.value > 0) {
-      pullDistance.value = Math.max(0, pullDistance.value - 10)
+      pullDistance.value = Math.max(0, pullDistance.value - 8)
       requestAnimationFrame(animate)
     } else {
       isPulling.value = false
+      pullDistance.value = 0
     }
   }
   animate()
