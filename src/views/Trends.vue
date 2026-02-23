@@ -27,10 +27,13 @@
       </div>
     </header>
 
+    <!-- Stable Anchor for Scroll Positioning -->
+    <div ref="scrollAnchor" class="h-px"></div>
+
     <!-- Category Tabs: Sticky Logic -->
     <div 
       ref="tabsRef"
-      class="sticky z-40 bg-zinc-50/90 dark:bg-[#0a0a0c]/90 backdrop-blur-xl border-b border-zinc-200 dark:border-white/10 mb-14 transition-all duration-300 ease-out"
+      class="sticky z-40 bg-zinc-50/90 dark:bg-[#0a0a0c]/90 backdrop-blur-xl border-b border-zinc-200 dark:border-white/10 mb-8 pb-4 transition-all duration-300 ease-out"
       :style="{ top: isNavVisible ? '64px' : '0px' }"
     >
       <div class="px-6 md:px-10 max-w-[1800px] mx-auto pt-4 pb-0">
@@ -178,19 +181,19 @@ const visibleCount = ref(50)
 const isNavVisible = ref(true)
 const lastScrollY = ref(0)
 const tabsRef = ref<HTMLElement | null>(null)
+const scrollAnchor = ref<HTMLElement | null>(null)
 
 const changeCategory = async (id: string) => {
-  if (activeCategory.value === id) {
-    // If clicking the already active tab, scroll to top of that category
-  }
   activeCategory.value = id
+  
+  // Force Nav visible to make the target offset (64px) predictable
+  isNavVisible.value = true
   
   await nextTick()
   
-  if (tabsRef.value) {
-    const elementTop = tabsRef.value.offsetTop
-    // Target position: Tabs stuck at the top (64px offset for the navbar)
-    const targetScrollY = elementTop - 64
+  if (scrollAnchor.value) {
+    // We use the Anchor offsetTop which is stable regardless of sticky state
+    const targetScrollY = scrollAnchor.value.offsetTop - 64
     
     window.scrollTo({
       top: targetScrollY,
