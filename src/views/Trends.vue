@@ -313,8 +313,9 @@ watch(activeCategory, () => {
 
 const fetchNews = async () => {
   // 1. Initial Cache Load (Instant)
+  const CACHE_KEY = 'uxm_trends_cache_v2' // Incremented version to clear old tainted data
   if (news.value.length === 0) {
-    const cached = localStorage.getItem('uxm_trends_cache')
+    const cached = localStorage.getItem(CACHE_KEY)
     if (cached) {
       const parsed = JSON.parse(cached)
       news.value = parsed.sort((a: NewsItem, b: NewsItem) => new Date(b.pubDate).getTime() - new Date(a.pubDate).getTime())
@@ -378,22 +379,31 @@ const fetchNews = async () => {
                                    .replace(/\s+/g, ' ')
                                    .trim()
           
-          // If description starts with title, try to extract the rest
+          // Smart Headline Extraction: Remove source suffix from title to better match description
+          // Handle "Title - Source", "Title | Source", "Title : Source", "Title(Source)"
+          const headline = title.split(/ - | \| | : /)[0].trim()
+          
+          // If description starts with title or extracted headline, try to extract the rest
           if (cleanDesc.toLowerCase().startsWith(title.toLowerCase())) {
-            const snippet = cleanDesc.substring(title.length).trim()
-            if (snippet.length > 5) {
-              cleanDesc = snippet
-            }
+            cleanDesc = cleanDesc.substring(title.length).trim()
+          } else if (cleanDesc.toLowerCase().startsWith(headline.toLowerCase())) {
+            cleanDesc = cleanDesc.substring(headline.length).trim()
           }
           
-          // Remove source name if it's appended at the end (common in Google News)
+          // Alternative check: See if first 20 chars overlap
+          if (headline.length > 20 && cleanDesc.toLowerCase().startsWith(headline.substring(0, 20).toLowerCase())) {
+             const potentialSnippet = cleanDesc.replace(headline, '').trim()
+             if (potentialSnippet.length > 5) cleanDesc = potentialSnippet
+          }
+          
+          // Remove source name if it's appended at the end
           const sourceSuffix = ` - ${source.name}`
           if (cleanDesc.endsWith(sourceSuffix)) {
             cleanDesc = cleanDesc.substring(0, cleanDesc.length - sourceSuffix.length).trim()
           }
 
-          // Final cleanup of common leading noise
-          cleanDesc = cleanDesc.replace(/^[:\-\s]+/, '').trim()
+          // Final cleanup of common leading noise (commas, dots, dashes, colons)
+          cleanDesc = cleanDesc.replace(/^[:\-\s\.\,]+/, '').trim()
           
           if (title && link) {
             parsedItems.push({
@@ -421,10 +431,7 @@ const fetchNews = async () => {
 
   // 3. Robust Merge & Sort
   if (nextNews.length > 0) {
-    // Merge new items with current ones, prioritize newer versions of the same link
     const combined = [...nextNews, ...news.value]
-    
-    // Use a Map for O(1) deduplication by Link
     const newsMap = new Map()
     combined.forEach(item => {
       const existing = newsMap.get(item.link)
@@ -433,17 +440,12 @@ const fetchNews = async () => {
       }
     })
 
-    // Strict Chronological Sort
     const finalized = Array.from(newsMap.values())
-      .sort((a, b) => {
-        const timeA = new Date(a.pubDate).getTime()
-        const timeB = new Date(b.pubDate).getTime()
-        return timeB - timeA
-      })
-      .slice(0, 500) // Keep more for "All News"
+      .sort((a, b) => new Date(b.pubDate).getTime() - new Date(a.pubDate).getTime())
+      .slice(0, 500)
 
     news.value = finalized
-    localStorage.setItem('uxm_trends_cache', JSON.stringify(finalized))
+    localStorage.setItem(CACHE_KEY, JSON.stringify(finalized))
   }
   
   isLoading.value = false
