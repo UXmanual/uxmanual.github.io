@@ -56,11 +56,10 @@
               :class="activeCategory === cat.id ? 'text-zinc-900 dark:text-white' : 'text-zinc-400 hover:text-zinc-900 dark:hover:text-white'"
             >
               {{ cat.name }}
-              <!-- Active Underline: Positioned to overlap the divider -->
+              <!-- Active Underline: Positioned above the divider -->
               <div 
                 v-if="activeCategory === cat.id" 
                 class="absolute bottom-0 left-0 right-0 h-[2.5px] bg-zinc-900 dark:bg-white rounded-t-full z-10"
-                style="margin-bottom: -1px;"
               ></div>
             </button>
           </div>
