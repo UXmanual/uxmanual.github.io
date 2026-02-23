@@ -182,19 +182,19 @@ const lastScrollY = ref(0)
 const handleScroll = () => {
   const currentScrollY = window.scrollY
   
-  // 1. Force visible at the top
-  if (currentScrollY <= 20) {
+  // 1. Keep nav visible while the main title is still in view
+  if (currentScrollY <= 150) {
     isNavVisible.value = true
     lastScrollY.value = currentScrollY
     return
   }
   
-  // 2. Threshold-based reveal/hide
+  // 2. Beyond the title area, use reveal-on-scroll-up logic
   const delta = currentScrollY - lastScrollY.value
-  if (delta > 10 && currentScrollY > 100) {
+  if (delta > 5) {
     // Scrolling Down -> Hide
     isNavVisible.value = false
-  } else if (delta < -15) {
+  } else if (delta < -10) {
     // Scrolling Up -> Show
     isNavVisible.value = true
   }
