@@ -227,8 +227,10 @@ const RSS_SOURCES = [
   { name: 'UX/UI 디자인', url: 'https://news.google.com/rss/search?q=UX+UI+%EB%94%94%EC%9E%90%EC%9D%B8&hl=ko&gl=KR&ceid=KR:ko', category: 'design' },
   { name: '해외축구', url: 'https://news.google.com/rss/search?q=%ED%95%B4%EC%99%B8%EC%B6%95%EA%B5%AC&hl=ko&gl=KR&ceid=KR:ko', category: 'sports' },
   { name: '유럽 축구', url: 'https://news.google.com/rss/search?q=%EC%9C%A0%EB%9F%BD%EC%B6%95%EA%B5%AC&hl=ko&gl=KR&ceid=KR:ko', category: 'sports' },
-  { name: 'IGN News', url: 'https://feeds.feedburner.com/ign/news', category: 'game' },
-  { name: '게임 최신', url: 'https://news.google.com/rss/search?q=%EA%B2%8C%EC%9E%84+%EC%8B%A0%EC%9E%91+%ED%8A%B8%EB%A0%8C%EB%93%9C&hl=ko&gl=KR&ceid=KR:ko', category: 'game' }
+  { name: '디스이즈게임', url: 'https://news.google.com/rss/search?q=site:thisisgame.com&hl=ko&gl=KR&ceid=KR:ko', category: 'game' },
+  { name: '인벤 뉴스', url: 'https://news.google.com/rss/search?q=site:inven.co.kr&hl=ko&gl=KR&ceid=KR:ko', category: 'game' },
+  { name: '게임메카', url: 'https://news.google.com/rss/search?q=site:gamemeca.com&hl=ko&gl=KR&ceid=KR:ko', category: 'game' },
+  { name: '게임 트렌드', url: 'https://news.google.com/rss/search?q=%EA%B2%8C%EC%9E%84+%EC%8B%A0%EC%9E%91+%ED%8A%B8%EB%A0%8C%EB%93%9C&hl=ko&gl=KR&ceid=KR:ko', category: 'game' }
 ]
 
 const filteredNews = computed(() => {
