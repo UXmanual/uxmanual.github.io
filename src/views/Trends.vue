@@ -27,7 +27,7 @@
       </div>
     </div>
 
-    <header class="pt-16 px-6 md:px-10 max-w-[1800px] mx-auto mb-10">
+    <header class="pt-[120px] px-6 md:px-10 max-w-[1800px] mx-auto mb-10">
       <div class="flex flex-col md:flex-row md:items-end justify-between gap-6">
         <div>
           <h1 class="text-5xl font-bold tracking-tight mb-4 flex items-center gap-4">
