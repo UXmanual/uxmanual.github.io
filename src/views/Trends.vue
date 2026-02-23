@@ -7,10 +7,13 @@
   >
     <!-- Navigation Area -->
     <div 
-      class="fixed top-0 left-0 right-0 z-50 transition-transform duration-300 ease-out"
-      :class="isNavVisible ? 'translate-y-0' : '-translate-y-full'"
+      class="z-50 transition-all duration-300 ease-out h-[64px]"
+      :class="[
+        isFixed ? 'fixed top-0 left-0 right-0' : 'absolute top-0 left-0 right-0',
+        isNavVisible ? 'translate-y-0' : '-translate-y-full'
+      ]"
     >
-      <SiteNavbar class="h-[64px] !py-4" />
+      <SiteNavbar :isFixed="false" class="h-[64px] !py-4" />
     </div>
 
     <!-- Page Header: Title/Description (Scrolls Away) -->
@@ -177,19 +180,23 @@ const visibleCount = ref(50)
 
 // Navigation Reveal Logic
 const isNavVisible = ref(true)
+const isFixed = ref(false)
 const lastScrollY = ref(0)
 
 const handleScroll = () => {
   const currentScrollY = window.scrollY
   
-  // 1. Keep nav visible while the main title is still in view
+  // 1. Initial State: Absolute (Scrolls with page)
   if (currentScrollY <= 150) {
+    isFixed.value = false
     isNavVisible.value = true
     lastScrollY.value = currentScrollY
     return
   }
   
-  // 2. Beyond the title area, use reveal-on-scroll-up logic
+  // 2. Beyond Header: Fixed & Hidden/Reveal
+  isFixed.value = true
+  
   const delta = currentScrollY - lastScrollY.value
   if (delta > 5) {
     // Scrolling Down -> Hide

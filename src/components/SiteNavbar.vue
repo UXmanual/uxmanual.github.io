@@ -1,5 +1,5 @@
 <template>
-  <nav class="fixed top-0 w-full px-6 md:px-10 py-5 flex justify-between items-center z-50 bg-white/80 dark:bg-[#0a0a0c]/80 backdrop-blur-xl border-b border-zinc-200 dark:border-white/10 transition-colors duration-500">
+  <nav :class="[isFixed ? 'fixed top-0' : 'relative', 'w-full px-6 md:px-10 py-5 flex justify-between items-center z-50 bg-white/80 dark:bg-[#0a0a0c]/80 backdrop-blur-xl border-b border-zinc-200 dark:border-white/10 transition-colors duration-500']">
     <router-link to="/" class="flex items-center gap-3 text-lg font-black uppercase tracking-normal text-zinc-900 dark:text-white transition-colors">
       Todays News
     </router-link>
@@ -38,6 +38,12 @@
 <script setup lang="ts">
 import { ref, onMounted, watch } from 'vue'
 import { useRoute } from 'vue-router'
+
+const props = withDefaults(defineProps<{
+  isFixed?: boolean
+}>(), {
+  isFixed: true
+})
 
 const route = useRoute()
 const isDark = ref(true)
