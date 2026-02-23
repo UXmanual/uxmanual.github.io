@@ -9,16 +9,16 @@
 
     <!-- Integrated Pull to Refresh Area -->
     <div 
-      class="overflow-hidden bg-zinc-100/50 dark:bg-white/5 transition-all duration-200 flex items-center justify-center pt-24"
-      :style="{ height: pullDistance > 0 ? `${Math.min(pullDistance + 80, 180)}px` : '0px' }"
+      class="overflow-hidden bg-zinc-100/10 dark:bg-white/5 transition-all duration-300 flex items-end justify-center pb-4"
+      :style="{ height: pullDistance > 0 ? `${Math.min(pullDistance + 40, 100)}px` : '0px' }"
     >
       <div 
-        class="flex flex-col items-center gap-2 transition-opacity duration-300"
-        :style="{ opacity: pullingProgress, transform: `scale(${0.5 + pullingProgress * 0.5})` }"
+        class="flex flex-col items-center transition-opacity duration-300"
+        :style="{ opacity: pullingProgress, transform: `scale(${0.7 + pullingProgress * 0.3})` }"
       >
         <svg 
           xmlns="http://www.w3.org/2000/svg" 
-          class="w-6 h-6 text-indigo-500" 
+          class="w-5 h-5 text-indigo-500" 
           :class="{ 'animate-spin': isLoading && news.length > 0 }"
           fill="none" 
           viewBox="0 0 24 24" 
@@ -27,14 +27,10 @@
         >
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
         </svg>
-        <span class="text-[10px] font-black uppercase tracking-widest text-zinc-400">
-          <template v-if="isLoading && pullDistance > 0">Refreshing...</template>
-          <template v-else>{{ pullDistance > 60 ? 'Release to update' : 'Pull to refresh' }}</template>
-        </span>
       </div>
     </div>
 
-    <header class="px-6 md:px-10 max-w-[1800px] mx-auto mb-10 transition-all duration-200" :class="{ 'pt-40': pullDistance === 0 }">
+    <header class="px-6 md:px-10 max-w-[1800px] mx-auto mb-10 transition-all duration-300" :class="{ 'pt-12': pullDistance === 0 }">
       <div class="flex flex-col md:flex-row md:items-end justify-between gap-6">
         <div>
           <h1 class="text-5xl font-bold tracking-tight mb-4 flex items-center gap-4">
@@ -195,7 +191,7 @@ const handleTouchEnd = async () => {
   
   if (pullDistance.value > 60) {
     // Snap to hold position while refreshing
-    pullDistance.value = 60
+    pullDistance.value = 40
     await fetchNews()
   }
   
