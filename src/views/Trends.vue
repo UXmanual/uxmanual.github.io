@@ -5,9 +5,9 @@
     @touchmove="handleTouchMove"
     @touchend="handleTouchEnd"
   >
-    <!-- Navigation Area -->
+    <!-- Navigation Area: Natural scroll at top, Fixed reveal deep down -->
     <div 
-      class="z-50 transition-all duration-300 ease-out h-[64px]"
+      class="z-50 transition-all duration-300 ease-out"
       :class="[
         isFixed ? 'fixed top-0 left-0 right-0' : 'absolute top-0 left-0 right-0',
         isNavVisible ? 'translate-y-0' : '-translate-y-full'
@@ -185,24 +185,26 @@ const lastScrollY = ref(0)
 
 const handleScroll = () => {
   const currentScrollY = window.scrollY
+  const headerHeight = 220 // Area where header/title exists
   
-  // 1. Initial State: Absolute (Scrolls with page)
-  if (currentScrollY <= 150) {
+  // 1. Initial/Top Area: Nav scrolls away naturally
+  if (currentScrollY < headerHeight) {
     isFixed.value = false
-    isNavVisible.value = true
+    isNavVisible.value = true // Ensure it's ready when scrolled to top
     lastScrollY.value = currentScrollY
     return
   }
   
-  // 2. Beyond Header: Fixed & Hidden/Reveal
-  isFixed.value = true
-  
+  // 2. Deep in the page: Fixed Reveal Logic
   const delta = currentScrollY - lastScrollY.value
+  
   if (delta > 5) {
-    // Scrolling Down -> Hide
+    // Scrolling Down -> Hide immediately (since it's already off-screen anyway)
+    isFixed.value = true
     isNavVisible.value = false
-  } else if (delta < -10) {
-    // Scrolling Up -> Show
+  } else if (delta < -15) {
+    // Scrolling Up -> Show (Fixed)
+    isFixed.value = true
     isNavVisible.value = true
   }
   
