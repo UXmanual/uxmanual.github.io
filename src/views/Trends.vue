@@ -214,7 +214,8 @@ const categories = [
   { id: 'ai', name: 'AI & Tech' },
   { id: 'finance', name: 'Finance' },
   { id: 'design', name: 'Design' },
-  { id: 'sports', name: 'Sports' }
+  { id: 'sports', name: 'Sports' },
+  { id: 'game', name: 'Game' }
 ]
 
 const RSS_SOURCES = [
@@ -225,7 +226,9 @@ const RSS_SOURCES = [
   { name: '디자인 트렌드', url: 'https://news.google.com/rss/search?q=%EB%94%94%EC%9E%90%EC%9D%B8+%ED%8A%B8%EB%A0%8C%EB%93%9C&hl=ko&gl=KR&ceid=KR:ko', category: 'design' },
   { name: 'UX/UI 디자인', url: 'https://news.google.com/rss/search?q=UX+UI+%EB%94%94%EC%9E%90%EC%9D%B8&hl=ko&gl=KR&ceid=KR:ko', category: 'design' },
   { name: '해외축구', url: 'https://news.google.com/rss/search?q=%ED%95%B4%EC%99%B8%EC%B6%95%EA%B5%AC&hl=ko&gl=KR&ceid=KR:ko', category: 'sports' },
-  { name: '유럽 축구', url: 'https://news.google.com/rss/search?q=%EC%9C%A0%EB%9F%BD%EC%B6%95%EA%B5%AC&hl=ko&gl=KR&ceid=KR:ko', category: 'sports' }
+  { name: '유럽 축구', url: 'https://news.google.com/rss/search?q=%EC%9C%A0%EB%9F%BD%EC%B6%95%EA%B5%AC&hl=ko&gl=KR&ceid=KR:ko', category: 'sports' },
+  { name: 'IGN News', url: 'https://feeds.feedburner.com/ign/news', category: 'game' },
+  { name: '게임 최신', url: 'https://news.google.com/rss/search?q=%EA%B2%8C%EC%9E%84+%EC%8B%A0%EC%9E%91+%ED%8A%B8%EB%A0%8C%EB%93%9C&hl=ko&gl=KR&ceid=KR:ko', category: 'game' }
 ]
 
 const filteredNews = computed(() => {
@@ -393,6 +396,7 @@ onMounted(() => {
 .theme-finance { --brand-color: #0acaaa; --brand-bg: rgba(10, 202, 170, 0.05); }
 .theme-design { --brand-color: #fa4fc1; --brand-bg: rgba(250, 79, 193, 0.05); }
 .theme-sports { --brand-color: #5196fd; --brand-bg: rgba(81, 150, 253, 0.05); }
+.theme-game { --brand-color: #9333ea; --brand-bg: rgba(147, 51, 234, 0.05); }
 
 /* Apply Theme to Header Tabs */
 button:has(.active-underline) .active-underline {
@@ -405,12 +409,14 @@ button[data-cat="ai"] .active-underline { background-color: #6366f1; }
 button[data-cat="finance"] .active-underline { background-color: #0acaaa; }
 button[data-cat="design"] .active-underline { background-color: #fa4fc1; }
 button[data-cat="sports"] .active-underline { background-color: #5196fd; }
+button[data-cat="game"] .active-underline { background-color: #9333ea; }
 
 /* Refined News Card Styling */
 .news-card.theme-ai { --brand-color: #6366f1; --brand-bg: rgba(99, 102, 241, 0.05); }
 .news-card.theme-finance { --brand-color: #0acaaa; --brand-bg: rgba(10, 202, 170, 0.05); }
 .news-card.theme-design { --brand-color: #fa4fc1; --brand-bg: rgba(250, 79, 193, 0.05); }
 .news-card.theme-sports { --brand-color: #5196fd; --brand-bg: rgba(81, 150, 253, 0.05); }
+.news-card.theme-game { --brand-color: #9333ea; --brand-bg: rgba(147, 51, 234, 0.05); }
 
 .news-card:hover {
   border-color: rgba(var(--brand-color), 0.5); /* This won't work with hex directly in CSS overlay, using fallbacks */
@@ -421,6 +427,7 @@ button[data-cat="sports"] .active-underline { background-color: #5196fd; }
 .news-card.theme-finance:hover { border-color: #0acaaa80; }
 .news-card.theme-design:hover { border-color: #fa4fc180; }
 .news-card.theme-sports:hover { border-color: #5196fd80; }
+.news-card.theme-game:hover { border-color: #9333ea80; }
 
 .source-badge {
   background-color: var(--brand-bg);
@@ -432,6 +439,7 @@ button[data-cat="sports"] .active-underline { background-color: #5196fd; }
 .news-card.theme-finance .source-badge { border-color: #0acaaa30; }
 .news-card.theme-design .source-badge { border-color: #fa4fc130; }
 .news-card.theme-sports .source-badge { border-color: #5196fd30; }
+.news-card.theme-game .source-badge { border-color: #9333ea30; }
 
 .more-link {
   color: var(--brand-color);
