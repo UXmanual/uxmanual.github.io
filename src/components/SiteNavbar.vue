@@ -1,7 +1,6 @@
 <template>
   <nav 
-    class="fixed top-0 left-0 right-0 z-50 border-b border-zinc-200 dark:border-white/10 bg-white dark:bg-[#0a0a0c]"
-    :class="{ 'transition-transform duration-300 ease-out': !isNaturalScroll }"
+    class="fixed top-0 left-0 right-0 z-50 border-b border-zinc-200 dark:border-white/10 bg-white/80 dark:bg-[#0a0a0c]/80 backdrop-blur-xl transition-transform duration-300 ease-out"
     :style="{ transform: `translateY(${navTranslateY}px)` }"
   >
     <div class="site-nav-container px-6 md:px-10 flex justify-between items-center w-full">
@@ -59,9 +58,7 @@ const handleScroll = () => {
   
   if (currentScrollY < 56 && delta >= 0) {
     navTranslateY.value = -currentScrollY
-    isNaturalScroll.value = true
   } else {
-    isNaturalScroll.value = false
     if (delta > 8) {
       navTranslateY.value = -100 
     } else if (delta < -15) {
@@ -72,6 +69,9 @@ const handleScroll = () => {
       navTranslateY.value = 0
     }
   }
+  
+  // Sync with global CSS variable for other components (like sticky tabs)
+  document.documentElement.style.setProperty('--nav-y', `${navTranslateY.value}px`)
   
   lastScrollY.value = currentScrollY
 }
@@ -111,8 +111,6 @@ watch(isDark, (newVal) => {
 
 <style scoped>
 .site-nav-container {
-  padding-block: calc(0.25rem * 3); /* Equivalent to standard spacing unit * 3 if --spacing is 0.25rem */
-  /* If the user specifically wants the CSS variable literal: */
-  padding-block: calc(var(--spacing, 0.25rem) * 3);
+  padding-block: calc(0.25rem * 3);
 }
 </style>
