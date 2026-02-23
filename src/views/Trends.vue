@@ -185,20 +185,26 @@ const handleScroll = () => {
   const currentScrollY = window.scrollY
   const delta = currentScrollY - lastScrollY.value
   
-  // 1. Natural Scroll Zone (Top of the page)
-  // The nav scrolls away at the same speed as the page until it's hidden (-64px)
-  if (currentScrollY < 64) {
+  // 1. Natural Scroll sync (Only when scrolling down from top OR when not "revealed")
+  // If we are near the top and moving down, it should scroll away
+  if (currentScrollY < 64 && delta >= 0) {
     navTranslateY.value = -currentScrollY
     isNavVisible.value = true
   } 
-  // 2. Beyond Top Area: Reveal on Scroll Up logic
+  // 2. Beyond top or Scrolling Up logic
   else {
-    if (delta > 5) {
-      // Scrolling Down -> Hide fully
+    if (delta > 8) {
+      // Scrolling Down -> Hide
       navTranslateY.value = -100 
       isNavVisible.value = false
-    } else if (delta < -12) {
-      // Scrolling Up -> Show fully at the top of the viewport
+    } else if (delta < -15) {
+      // Scrolling Up -> Show (Reveal)
+      navTranslateY.value = 0
+      isNavVisible.value = true
+    }
+    
+    // Safety: If we reach the very top, ensure it's at 0
+    if (currentScrollY <= 0) {
       navTranslateY.value = 0
       isNavVisible.value = true
     }
