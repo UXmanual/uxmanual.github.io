@@ -298,9 +298,9 @@ const categories = [
   { id: 'all', name: 'All News' },
   { id: 'ai', name: 'AI & Tech' },
   { id: 'finance', name: 'Finance' },
-  { id: 'design', name: 'Design' },
+  { id: 'game', name: 'Game' },
   { id: 'sports', name: 'Sports' },
-  { id: 'game', name: 'Game' }
+  { id: 'design', name: 'Design' }
 ]
 
 const RSS_SOURCES = [
