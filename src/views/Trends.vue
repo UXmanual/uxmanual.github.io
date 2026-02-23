@@ -17,15 +17,20 @@
           </p>
         </div>
         
-        <div class="flex items-center gap-2 bg-white dark:bg-zinc-900 p-1 rounded-2xl border border-zinc-200 dark:border-white/5 overflow-x-auto no-scrollbar max-w-full">
+        <div class="flex items-center gap-8 overflow-x-auto no-scrollbar max-w-full border-b border-zinc-100 dark:border-white/5">
           <button 
             v-for="cat in categories" 
             :key="cat.id"
             @click="activeCategory = cat.id"
-            class="px-5 py-2 rounded-xl text-sm font-bold transition-all duration-300 whitespace-nowrap flex-shrink-0"
-            :class="activeCategory === cat.id ? 'bg-zinc-900 text-white dark:bg-white dark:text-black' : 'text-zinc-500 hover:text-zinc-900 dark:hover:text-white'"
+            class="relative pb-4 pt-2 text-sm font-bold transition-all duration-300 whitespace-nowrap flex-shrink-0 tracking-tight"
+            :class="activeCategory === cat.id ? 'text-zinc-900 dark:text-white' : 'text-zinc-400 hover:text-zinc-600 dark:hover:text-zinc-200'"
           >
             {{ cat.name }}
+            <!-- Active Underline -->
+            <div 
+              class="absolute bottom-0 left-0 right-0 h-0.5 bg-zinc-900 dark:bg-white transition-all duration-300 transform scale-x-100"
+              v-if="activeCategory === cat.id"
+            ></div>
           </button>
         </div>
       </div>
