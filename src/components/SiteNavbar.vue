@@ -54,20 +54,27 @@ const lastScrollY = ref(0)
 const isNaturalScroll = ref(true)
 
 const handleScroll = () => {
-  const currentScrollY = window.scrollY
+  const currentScrollY = Math.max(0, window.scrollY)
   const delta = currentScrollY - lastScrollY.value
   
-  if (currentScrollY < 56 && delta >= 0) {
+  // 1. Top Area Buffer (0-10px): Prevent jittering during momentum scroll / overscroll
+  if (currentScrollY < 10) {
+    navTranslateY.value = 0
+  } 
+  // 2. Natural Scroll sync (Initial scroll away phase)
+  else if (currentScrollY < 56 && delta >= 0) {
     navTranslateY.value = -currentScrollY
-  } else {
-    isNaturalScroll.value = false
+  } 
+  // 3. Beyond top reveal/hide logic
+  else {
     if (delta > 8) {
-      navTranslateY.value = -70 
+      navTranslateY.value = -71 // Fully hide (+1px buffer)
     } else if (delta < -15) {
       navTranslateY.value = 0
     }
     
-    if (currentScrollY <= 0) {
+    // Safety: If we reach near the top, ensure we snap back smoothly
+    if (currentScrollY <= 2) {
       navTranslateY.value = 0
     }
   }
