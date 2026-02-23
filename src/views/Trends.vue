@@ -134,7 +134,8 @@ const categories = [
   { id: 'all', name: 'All News' },
   { id: 'ai', name: 'AI & Tech' },
   { id: 'finance', name: 'Finance' },
-  { id: 'design', name: 'Design' }
+  { id: 'design', name: 'Design' },
+  { id: 'sports', name: 'Sports' }
 ]
 
 const RSS_SOURCES = [
@@ -143,7 +144,9 @@ const RSS_SOURCES = [
   { name: '매경 경제', url: 'https://www.mk.co.kr/rss/30100041/', category: 'finance' },
   { name: '한경 금융', url: 'https://www.hankyung.com/feed/finance', category: 'finance' },
   { name: '디자인 트렌드', url: 'https://news.google.com/rss/search?q=%EB%94%94%EC%9E%90%EC%9D%B8+%ED%8A%B8%EB%A0%8C%EB%93%9C&hl=ko&gl=KR&ceid=KR:ko', category: 'design' },
-  { name: 'UX/UI 디자인', url: 'https://news.google.com/rss/search?q=UX+UI+%EB%94%94%EC%9E%90%EC%9D%B8&hl=ko&gl=KR&ceid=KR:ko', category: 'design' }
+  { name: 'UX/UI 디자인', url: 'https://news.google.com/rss/search?q=UX+UI+%EB%94%94%EC%9E%90%EC%9D%B8&hl=ko&gl=KR&ceid=KR:ko', category: 'design' },
+  { name: '스포츠 뉴스', url: 'https://news.google.com/rss/search?q=%EC%8A%A4%ED%8F%AC%EC%B8%A0&hl=ko&gl=KR&ceid=KR:ko', category: 'sports' },
+  { name: '국내 축구', url: 'https://news.google.com/rss/search?q=%ED%95%9C%EA%B5%AD+%EC%B6%95%EA%B5%AC&hl=ko&gl=KR&ceid=KR:ko', category: 'sports' }
 ]
 
 const filteredNews = computed(() => {
@@ -183,6 +186,14 @@ const categoryColors: Record<string, any> = {
     hoverBorder: 'hover:border-rose-500/50',
     accent: 'text-rose-500',
     titleHover: 'group-hover:text-rose-600 dark:group-hover:text-rose-400'
+  },
+  sports: {
+    bg: 'bg-cyan-50 dark:bg-cyan-500/10',
+    text: 'text-cyan-600 dark:text-cyan-400',
+    border: 'border-cyan-100 dark:border-cyan-500/20',
+    hoverBorder: 'hover:border-cyan-500/50',
+    accent: 'text-cyan-500',
+    titleHover: 'group-hover:text-cyan-600 dark:group-hover:text-cyan-400'
   }
 }
 
