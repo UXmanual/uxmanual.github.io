@@ -91,6 +91,7 @@
           </div>
         </TransitionGroup>
       </div>
+    </main>
     <SiteFooter />
   </div>
 </template>
