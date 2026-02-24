@@ -11,15 +11,31 @@
     <!-- SPA Redirect Handler for GitHub Pages -->
     <script type="text/javascript">
         (function (l) {
-            if (l.search[1] === '/') {
-                var decoded = l.search.slice(1).split('&').map(function (s) {
-                    return s.replace(/~and~/g, '&')
-                }).join('?');
-                window.history.replaceState(null, null,
-                    l.pathname.slice(0, (l.pathname.slice(-1) === '/' ? -1 : undefined)) + decoded + l.hash
-                );
+            var s = l.search;
+            // Clean up any old parameters (p, q, or /) to avoid accumulation
+            if (s.indexOf('p=/') !== -1 || s.indexOf('q=') !== -1 || s[1] === '/') {
+                var path = '/';
+                var query = '';
+                var hash = l.hash;
+
+                if (s[1] === '/') {
+                    // New format: /?/path
+                    path = s.slice(1).split('&')[0].replace(/~and~/g, '&');
+                } else {
+                    // Legacy format: ?p=/path&q=...
+                    var parts = s.slice(1).split('&');
+                    parts.forEach(function (part) {
+                        var pair = part.split('=');
+                        if (pair[0] === 'p') path = pair[1];
+                        else if (pair[0] === 'q') query = pair[1].replace(/~and~/g, '&');
+                    });
+                }
+
+                // Final URL construction: absolute path from root
+                var cleanUrl = l.pathname.replace(/\/$/, '') + path + (query ? '?' + query : '') + hash;
+                window.history.replaceState(null, null, cleanUrl);
             }
-        }(window.location))
+        })(window.location);
     </script>
     <meta name="title" content="Todays News" />
     <meta name="description"
