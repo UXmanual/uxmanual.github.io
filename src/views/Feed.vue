@@ -21,27 +21,27 @@
               v-model="newName" 
               type="text" 
               placeholder="이름" 
-              class="w-full min-w-0 bg-zinc-50 dark:bg-black/50 border-2 border-zinc-200 dark:border-white/10 rounded-2xl px-5 py-4 text-sm focus:outline-none focus:border-zinc-900 dark:focus:border-white transition-all font-bold"
+              class="w-full min-w-0 bg-zinc-50 dark:bg-black/50 border border-zinc-200 dark:border-white/10 rounded-2xl px-5 py-4 text-sm focus:outline-none focus:border-2 focus:border-zinc-900 dark:focus:border-white focus:-m-px transition-all font-bold"
             >
             <input 
               v-model="newTitle" 
               type="text" 
               placeholder="제목" 
-              class="w-full min-w-0 bg-zinc-50 dark:bg-black/50 border-2 border-zinc-200 dark:border-white/10 rounded-2xl px-5 py-4 text-sm focus:outline-none focus:border-zinc-900 dark:focus:border-white transition-all font-bold"
+              class="w-full min-w-0 bg-zinc-50 dark:bg-black/50 border border-zinc-200 dark:border-white/10 rounded-2xl px-5 py-4 text-sm focus:outline-none focus:border-2 focus:border-zinc-900 dark:focus:border-white focus:-m-px transition-all font-bold"
             >
             <input 
               v-model="newPassword" 
               type="password" 
               maxlength="4"
               placeholder="비밀번호 (4자리)" 
-              class="w-full min-w-0 bg-zinc-50 dark:bg-black/50 border-2 border-zinc-200 dark:border-white/10 rounded-2xl px-5 py-4 text-sm focus:outline-none focus:border-zinc-900 dark:focus:border-white transition-all font-bold"
+              class="w-full min-w-0 bg-zinc-50 dark:bg-black/50 border border-zinc-200 dark:border-white/10 rounded-2xl px-5 py-4 text-sm focus:outline-none focus:border-2 focus:border-zinc-900 dark:focus:border-white focus:-m-px transition-all font-bold"
             >
           </div>
           <textarea 
             v-model="newMessage" 
             rows="4" 
             placeholder="내용을 입력해주세요..." 
-            class="w-full bg-zinc-50 dark:bg-black/50 border-2 border-zinc-200 dark:border-white/10 rounded-2xl px-5 py-4 text-sm focus:outline-none focus:border-zinc-900 dark:focus:border-white transition-all resize-none leading-relaxed"
+            class="w-full bg-zinc-50 dark:bg-black/50 border border-zinc-200 dark:border-white/10 rounded-2xl px-5 py-4 text-sm focus:outline-none focus:border-2 focus:border-zinc-900 dark:focus:border-white focus:-m-px transition-all resize-none leading-relaxed"
           ></textarea>
           <div class="flex justify-end">
             <button 
@@ -60,7 +60,7 @@
         <CommunitySkeleton v-if="isLoading" />
         <TransitionGroup v-else name="list">
           <div v-for="post in posts" :key="post.id" 
-            class="group relative bg-white dark:bg-zinc-900 border-2 border-zinc-200 dark:border-white/10 rounded-3xl p-8 transition-all duration-150 hover:border-zinc-900 dark:hover:border-white"
+            class="group relative bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-white/10 rounded-3xl p-8 transition-all duration-150 hover:border-2 hover:border-zinc-900 dark:hover:border-white hover:-m-px"
           >
             <div class="flex justify-between items-start mb-6">
               <div class="flex items-center gap-4">
