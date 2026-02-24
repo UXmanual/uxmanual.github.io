@@ -8,9 +8,10 @@
       description="뉴스보다 더 재밌는 우리들의 이야기 <br class='hidden md:block'> 함께 읽고, 함께 말해요"
       padding-top="pt-32"
       margin-bottom="mb-16"
+      max-width="max-w-[1200px]"
     />
 
-    <main class="px-6 md:px-10 max-w-[1800px] mx-auto pb-[120px]">
+    <main class="px-6 md:px-10 max-w-[1200px] mx-auto pb-[120px]">
       <!-- Input Area -->
       <div class="mb-20 bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-white/5 rounded-3xl p-8">
         <div class="flex flex-col gap-6">
@@ -92,7 +93,7 @@
         </TransitionGroup>
       </div>
     </main>
-    <SiteFooter />
+    <SiteFooter max-width="max-w-[1200px]" />
   </div>
 </template>
 
