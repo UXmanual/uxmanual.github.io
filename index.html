@@ -9,10 +9,14 @@
     <!-- Primary Meta Tags -->
     <title>Todays News</title>
     <script>
-        // Aggressive cleaner: If any legacy SPA parameters or non-hash paths exist, force reset to clean root
-        if (location.search.indexOf('p=/') !== -1 || (location.pathname !== '/' && location.pathname !== '/index.html')) {
-            window.location.replace(location.origin + '/#' + (location.pathname !== '/' ? location.pathname : ''));
-        }
+        // Ultimate URL Cleaner: Strip any legacy SPA/redirect junk and ensure clean hash routing
+        (function () {
+            var s = location.search;
+            if (s.indexOf('p=/') !== -1 || s.indexOf('community') !== -1) {
+                // If we detect old junk, force a jump to the clean root
+                history.replaceState(null, null, location.origin + '/' + location.hash);
+            }
+        })();
     </script>
     <meta name="title" content="Todays News" />
     <meta name="description"
