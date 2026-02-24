@@ -1,5 +1,5 @@
 <template>
-  <div class="bg-zinc-200 dark:bg-zinc-800/40 py-2.5 px-6 md:px-10 overflow-hidden relative">
+  <div class="bg-zinc-100 dark:bg-zinc-900/50 py-3 px-6 md:px-10 overflow-hidden relative">
     <div class="max-w-[1800px] mx-auto flex items-center justify-center text-center">
       <p class="text-[11px] md:text-xs font-medium text-zinc-500 dark:text-zinc-400 tracking-tight leading-none">
         {{ message }}
