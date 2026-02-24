@@ -49,7 +49,7 @@
               :disabled="isPosting"
               class="w-full md:w-auto px-10 py-4 bg-zinc-900 dark:bg-white text-white dark:text-black rounded-2xl font-black text-sm uppercase tracking-widest hover:scale-[1.02] active:scale-[0.98] transition-all disabled:opacity-50 disabled:scale-100"
             >
-              {{ isPosting ? 'Posting...' : 'Post Message' }}
+              {{ isPosting ? '게시 중...' : '피드 글쓰기' }}
             </button>
           </div>
         </div>
@@ -153,12 +153,12 @@ const fetchPosts = async () => {
 
 const addPost = async () => {
   if (!newName.value || !newMessage.value || !newPassword.value) {
-    alert('Please enter your name, message, and a 4-digit password.')
+    alert('이름, 메시지, 그리고 4자리 비밀번호를 입력해주세요.')
     return
   }
   
   if (newPassword.value.length !== 4 || !/^\d+$/.test(newPassword.value)) {
-    alert('Password must be exactly 4 digits.')
+    alert('비밀번호는 반드시 숫자 4자리여야 합니다.')
     return
   }
 
@@ -195,7 +195,7 @@ const addPost = async () => {
 }
 
 const verifyAndDelete = async (post: Post) => {
-  const input = prompt('Enter the 4-digit password to delete this post:')
+  const input = prompt('게시물을 삭제하려면 숫자 4자리 비밀번호를 입력하세요:')
   if (input === null) return
   
   if (input === post.password) {
@@ -205,13 +205,13 @@ const verifyAndDelete = async (post: Post) => {
       .eq('id', post.id)
 
     if (error) {
-      alert('Error deleting post.')
+      alert('게시물 삭제 중 오류가 발생했습니다.')
       console.error(error)
     } else {
       await fetchPosts()
     }
   } else {
-    alert('Incorrect password.')
+    alert('비밀번호가 일치하지 않습니다.')
   }
 }
 
