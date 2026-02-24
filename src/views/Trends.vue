@@ -230,11 +230,10 @@ const RSS_SOURCES = [
   { name: 'AI 트렌드', url: 'https://news.google.com/rss/search?q=AI+%EC%9D%B8%EA%B3%B5%EC%A7%80%EB%8A%A5+%ED%8A%B8%EB%A0%8C%EB%93%9C&hl=ko&gl=KR&ceid=KR:ko', category: 'ai' },
   { name: '매경 경제', url: 'https://www.mk.co.kr/rss/30100041/', category: 'finance' },
   { name: '금융 소식', url: 'https://news.google.com/rss/search?q=%EA%B8%88%EC%9C%B5+%EC%A6%9D%EA%B6%8C&hl=ko&gl=KR&ceid=KR:ko', category: 'finance' },
-  { name: '굿리치 뉴스', url: 'https://news.google.com/rss/search?q=%EA%B3%B3%EB%A0%88%EC%B9%98+%EB%B3%B4%ED%97%98+%EA%B8%88%EC%9C%B5&hl=ko&gl=KR&ceid=KR:ko', category: 'goodrich' },
-  { name: 'GoodRich', url: 'https://news.google.com/rss/search?q=GoodRich+insurance&hl=ko&gl=KR&ceid=KR:ko', category: 'goodrich' },
-  { name: '리치플래닛', url: 'https://news.google.com/rss/search?q=%EB%A6%AC%EC%B9%98%ED%94%8C%EB%9E%98%EB%8B%9B&hl=ko&gl=KR&ceid=KR:ko', category: 'goodrich' },
-  { name: '인슈어테크', url: 'https://news.google.com/rss/search?q=%EC%9D%B8%EC%8A%88%EC%96%B4%ED%85%8C%ED%81%AC+%EB%B3%B4%ED%97%98+%ED%8A%B8%EB%A0%8C%EB%93%9C&hl=ko&gl=KR&ceid=KR:ko', category: 'goodrich' },
-  { name: '보험 혁신', url: 'https://news.google.com/rss/search?q=%EB%B3%B4%ED%97%98+%EB%94%94%EC%A7%80%ED%84%B8+%ED%98%81%EC%8B%A0&hl=ko&gl=KR&ceid=KR:ko', category: 'goodrich' },
+  { name: '굿리치 뉴스', url: 'https://news.google.com/rss/search?q=%EA%B3%B3%EB%A0%88%EC%B9%98&hl=ko&gl=KR&ceid=KR:ko', category: 'goodrich' },
+  { name: 'GoodRich', url: 'https://news.google.com/rss/search?q=GoodRich&hl=ko&gl=KR&ceid=KR:ko', category: 'goodrich' },
+  { name: '굿리치 보험', url: 'https://news.google.com/rss/search?q=%EA%B3%B3%EB%A0%88%EC%B9%98+%EB%B3%B4%ED%97%98&hl=ko&gl=KR&ceid=KR:ko', category: 'goodrich' },
+  { name: '굿리치 금융', url: 'https://news.google.com/rss/search?q=%EA%B3%B3%EB%A0%88%EC%B9%98+%EA%B8%88%EC%9C%B5&hl=ko&gl=KR&ceid=KR:ko', category: 'goodrich' },
   { name: '디자인 트렌드', url: 'https://news.google.com/rss/search?q=%EB%94%94%EC%9E%90%EC%9D%B8+%ED%8A%B8%EB%A0%8C%EB%93%9C&hl=ko&gl=KR&ceid=KR:ko', category: 'design' },
   { name: 'UX/UI 디자인', url: 'https://news.google.com/rss/search?q=UX+UI+%EB%94%94%EC%9E%90%EC%9D%B8&hl=ko&gl=KR&ceid=KR:ko', category: 'design' },
   { name: '해외축구', url: 'https://news.google.com/rss/search?q=%ED%95%B4%EC%99%B8%EC%B6%95%EA%B5%AC&hl=ko&gl=KR&ceid=KR:ko', category: 'sports' },
@@ -322,7 +321,7 @@ const fetchNews = async () => {
         const parsedItems: NewsItem[] = []
         
         items.forEach((item, idx) => {
-          if (idx >= 30) return 
+          if (idx >= 100) return 
           const title = (item.querySelector('title')?.textContent || '').trim()
           const link = (item.querySelector('link')?.textContent || '').trim()
           const pubDate = (item.querySelector('pubDate')?.textContent || '').trim()
