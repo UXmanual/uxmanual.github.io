@@ -26,7 +26,7 @@
             <input 
               v-model="newTitle" 
               type="text" 
-              placeholder="제목 (선택사항)" 
+              placeholder="제목" 
               class="w-full min-w-0 bg-zinc-50 dark:bg-black/50 border border-zinc-200 dark:border-white/10 rounded-2xl px-5 py-4 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 transition-all font-bold"
             >
             <input 
@@ -156,8 +156,8 @@ const fetchPosts = async () => {
 }
 
 const addPost = async () => {
-  if (!newName.value || !newMessage.value || !newPassword.value) {
-    alert('이름, 메시지, 그리고 4자리 비밀번호를 입력해주세요.')
+  if (!newName.value || !newTitle.value || !newMessage.value || !newPassword.value) {
+    alert('이름, 제목, 내용, 그리고 4자리 비밀번호를 모두 입력해주세요.')
     return
   }
   
