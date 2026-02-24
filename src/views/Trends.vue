@@ -222,12 +222,12 @@ const checkScroll = () => {
 
 
 const categories = [
-  { id: 'all', name: '전체 뉴스' },
-  { id: 'ai', name: 'AI & 테크' },
-  { id: 'finance', name: '금융 소식' },
-  { id: 'game', name: '게임 뉴스' },
-  { id: 'sports', name: '스포츠' },
-  { id: 'design', name: '디자인' }
+  { id: 'all', name: 'All News' },
+  { id: 'ai', name: 'AI & Tech' },
+  { id: 'finance', name: 'Finance' },
+  { id: 'game', name: 'Game' },
+  { id: 'sports', name: 'Sports' },
+  { id: 'design', name: 'Design' }
 ]
 
 const RSS_SOURCES = [
