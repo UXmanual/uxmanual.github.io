@@ -3,10 +3,15 @@
     class="min-h-screen bg-zinc-50 dark:bg-[#0a0a0c] text-zinc-900 dark:text-white relative"
   >
     <SiteNavbar />
+    
+    <div class="pt-14">
+      <SiteBanner message="뉴스부터 우리들의 이야기까지, Todays News의 새로운 피드 기능을 만나보세요." />
+    </div>
 
     <SiteHeader 
       title="News Stand" 
       description="주요 언론사의 실시간 뉴스 피드를 한곳에서 확인하세요"
+      padding-top="pt-16"
     />
 
     <!-- Stable Anchor for Scroll Positioning -->
@@ -139,6 +144,7 @@ import { ref, computed, onMounted, onUnmounted, watch, nextTick } from 'vue'
 import SiteNavbar from '../components/SiteNavbar.vue'
 import SiteFooter from '../components/SiteFooter.vue'
 import SiteHeader from '../components/SiteHeader.vue'
+import SiteBanner from '../components/SiteBanner.vue'
 
 interface NewsItem {
   title: string

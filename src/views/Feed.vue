@@ -3,10 +3,14 @@
     <!-- Navbar Component -->
     <SiteNavbar />
 
+    <div class="pt-14">
+      <SiteBanner message="뉴스보다 더 생생한 우리들의 이야기가 시작됩니다. 지금 바로 피드에 참여하세요." />
+    </div>
+
     <SiteHeader 
       title="Feed" 
       description="뉴스보다 더 재밌는 우리들의 이야기 <br> 함께 읽고, 함께 말해요"
-      padding-top="pt-32"
+      padding-top="pt-16"
       margin-bottom="mb-16"
       inner-max-width="max-w-[680px] mx-auto"
     />
@@ -104,6 +108,7 @@ import { ref, onMounted } from 'vue'
 import SiteNavbar from '../components/SiteNavbar.vue'
 import SiteFooter from '../components/SiteFooter.vue'
 import SiteHeader from '../components/SiteHeader.vue'
+import SiteBanner from '../components/SiteBanner.vue'
 import CommunitySkeleton from '../components/CommunitySkeleton.vue'
 import { supabase } from '../lib/supabaseClient'
 
