@@ -9,12 +9,13 @@
     <!-- Primary Meta Tags -->
     <title>Todays News</title>
     <script>
-        // Ultimate URL Cleaner: Strip any legacy SPA/redirect junk and ensure clean hash routing
+        // Nuclear URL Sanitizer: Force-clear legacy parameters and move to hash mode
         (function () {
-            var s = location.search;
-            if (s.indexOf('p=/') !== -1 || s.indexOf('community') !== -1) {
-                // If we detect old junk, force a jump to the clean root
-                history.replaceState(null, null, location.origin + '/' + location.hash);
+            var s = window.location.search;
+            if (s.indexOf('p=/') !== -1) {
+                var p = s.split('p=')[1].split('&')[0];
+                // Force an immediate relocation to the clean hash version
+                window.location.replace(window.location.origin + '/#' + decodeURIComponent(p));
             }
         })();
     </script>
