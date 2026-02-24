@@ -64,7 +64,10 @@
           >
             <div class="flex justify-between items-start mb-6">
               <div class="flex items-center gap-4">
-                <div class="w-10 h-10 rounded-full bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center text-white font-black text-xs">
+                <div 
+                  class="w-10 h-10 rounded-full flex items-center justify-center text-white font-black text-xs shadow-lg"
+                  :class="getAvatarGradient(post.id)"
+                >
                   {{ post.name.charAt(0).toUpperCase() }}
                 </div>
                 <div>
@@ -99,6 +102,20 @@ import { ref, onMounted } from 'vue'
 import SiteNavbar from '../components/SiteNavbar.vue'
 import CommunitySkeleton from '../components/CommunitySkeleton.vue'
 import { supabase } from '../lib/supabaseClient'
+
+const getAvatarGradient = (id: number) => {
+  const gradients = [
+    'bg-gradient-to-br from-indigo-500 to-purple-600',
+    'bg-gradient-to-br from-emerald-400 to-teal-600',
+    'bg-gradient-to-br from-rose-400 to-pink-600',
+    'bg-gradient-to-br from-amber-400 to-orange-600',
+    'bg-gradient-to-br from-blue-400 to-cyan-600',
+    'bg-gradient-to-br from-violet-400 to-fuchsia-600',
+    'bg-gradient-to-br from-orange-400 to-red-600',
+    'bg-gradient-to-br from-lime-400 to-green-600'
+  ]
+  return gradients[id % gradients.length]
+}
 
 interface Post {
   id: number
