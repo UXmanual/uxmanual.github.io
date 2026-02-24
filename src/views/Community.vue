@@ -47,7 +47,7 @@
             <button 
               @click="addPost"
               :disabled="isPosting"
-              class="px-10 py-4 bg-zinc-900 dark:bg-white text-white dark:text-black rounded-2xl font-black text-sm uppercase tracking-widest hover:scale-[1.02] active:scale-[0.98] transition-all disabled:opacity-50 disabled:scale-100"
+              class="w-full md:w-auto px-10 py-4 bg-zinc-900 dark:bg-white text-white dark:text-black rounded-2xl font-black text-sm uppercase tracking-widest hover:scale-[1.02] active:scale-[0.98] transition-all disabled:opacity-50 disabled:scale-100"
             >
               {{ isPosting ? 'Posting...' : 'Post Message' }}
             </button>
@@ -65,7 +65,7 @@
             <div class="flex justify-between items-start mb-6">
               <div class="flex items-center gap-4">
                 <div 
-                  class="w-10 h-10 rounded-full flex items-center justify-center text-white font-black text-xs shadow-lg"
+                  class="w-10 h-10 rounded-full flex items-center justify-center text-white font-black text-xs"
                   :class="getAvatarGradient(post.id)"
                 >
                   {{ post.name.charAt(0).toUpperCase() }}
