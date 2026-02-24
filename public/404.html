@@ -6,12 +6,9 @@
     <title>UXManual</title>
     <script type="text/javascript">
         var l = window.location;
-        l.replace(
-            l.protocol + '//' + l.hostname + (l.port ? ':' + l.port : '') +
-            '/?/' + l.pathname.slice(1).replace(/&/g, '~and~') +
-            (l.search ? '&' + l.search.slice(1).replace(/&/g, '~and~') : '') +
-            l.hash
-        );
+        var path = l.pathname.slice(1).replace(/&/g, '~and~');
+        var query = l.search ? '&' + l.search.slice(1).replace(/&/g, '~and~') : '';
+        l.replace(l.protocol + '//' + l.hostname + (l.port ? ':' + l.port : '') + '/?/' + path + query + l.hash);
     </script>
 </head>
 

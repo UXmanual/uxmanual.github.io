@@ -19,9 +19,9 @@
             Trends
           </router-link>
           <router-link 
-            to="/community" 
+            to="/feed" 
             class="transition-colors"
-            :class="route.path === '/community' ? 'text-zinc-900 dark:text-white' : 'text-zinc-500'"
+            :class="route.path === '/feed' ? 'text-zinc-900 dark:text-white' : 'text-zinc-500'"
           >
             Feed
           </router-link>

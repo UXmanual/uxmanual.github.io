@@ -4,8 +4,9 @@ import Trends from '../views/Trends.vue'
 
 const routes = [
     { path: '/', component: Trends },
-    { path: '/community', component: Community },
+    { path: '/feed', component: Community },
     { path: '/trends', redirect: '/' },
+    { path: '/community', redirect: '/feed' },
     { path: '/:pathMatch(.*)*', redirect: '/' }
 ]
 
