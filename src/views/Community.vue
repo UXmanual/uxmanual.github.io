@@ -5,7 +5,7 @@
 
     <!-- Header Section -->
     <header class="pt-32 px-6 md:px-10 max-w-[1000px] mx-auto mb-16">
-      <h1 class="text-4xl md:text-5xl font-bold tracking-tight mb-4 text-zinc-900 dark:text-white">Community</h1>
+      <h1 class="text-4xl md:text-5xl font-bold tracking-tight mb-4 text-zinc-900 dark:text-white">Feed</h1>
       <p class="text-zinc-600 dark:text-zinc-400 text-base md:text-lg leading-relaxed max-w-2xl">
         함께 읽고, 함께 말해요 <br class="hidden md:block">
         뉴스보다 더 재밌는 우리들의 이야기

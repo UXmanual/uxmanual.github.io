@@ -23,7 +23,7 @@
             class="transition-colors"
             :class="route.path === '/community' ? 'text-zinc-900 dark:text-white' : 'text-zinc-500'"
           >
-            Community
+            Feed
           </router-link>
         </div>
         
