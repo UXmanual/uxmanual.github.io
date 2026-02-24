@@ -3,16 +3,14 @@
     <!-- Navbar Component -->
     <SiteNavbar />
 
-    <!-- Header Section -->
-    <header class="pt-32 px-6 md:px-10 max-w-[1000px] mx-auto mb-16">
-      <h1 class="text-4xl md:text-5xl font-bold tracking-tight mb-4 text-zinc-900 dark:text-white">Feed</h1>
-      <p class="text-zinc-600 dark:text-zinc-400 text-base md:text-lg leading-relaxed max-w-2xl">
-        뉴스보다 더 재밌는 우리들의 이야기 <br class="hidden md:block">
-        함께 읽고, 함께 말해요
-      </p>
-    </header>
+    <SiteHeader 
+      title="Feed" 
+      description="뉴스보다 더 재밌는 우리들의 이야기 <br class='hidden md:block'> 함께 읽고, 함께 말해요"
+      padding-top="pt-32"
+      margin-bottom="mb-16"
+    />
 
-    <main class="px-6 md:px-10 max-w-[1000px] mx-auto pb-[120px]">
+    <main class="px-6 md:px-10 max-w-[1800px] mx-auto pb-[120px]">
       <!-- Input Area -->
       <div class="mb-20 bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-white/5 rounded-3xl p-8">
         <div class="flex flex-col gap-6">
@@ -93,26 +91,15 @@
           </div>
         </TransitionGroup>
       </div>
-    </main>
-    
-    <!-- Footer Section -->
-    <footer class="border-t border-zinc-200 dark:border-white/10 py-10 px-6 md:px-10">
-      <div class="max-w-[1000px] mx-auto text-left space-y-4">
-        <p class="text-sm font-medium text-zinc-400 dark:text-zinc-500 tracking-tight">
-          ⓒtodaysnews
-        </p>
-        <p class="text-xs leading-snug text-zinc-400 dark:text-zinc-500 max-w-2xl">
-          본 사이트에서 제공하는 뉴스 콘텐츠는 각 언론사의 RSS를 통해 수집된 정보이며, <br class="hidden sm:block">
-          기사 본문에 대한 저작권은 해당 언론사에 있습니다. 각 기사는 클릭 시 해당 언론사의 원문 페이지로 연결됩니다.
-        </p>
-      </div>
-    </footer>
+    <SiteFooter />
   </div>
 </template>
 
 <script setup lang="ts">
 import { ref, onMounted } from 'vue'
 import SiteNavbar from '../components/SiteNavbar.vue'
+import SiteFooter from '../components/SiteFooter.vue'
+import SiteHeader from '../components/SiteHeader.vue'
 import CommunitySkeleton from '../components/CommunitySkeleton.vue'
 import { supabase } from '../lib/supabaseClient'
 
