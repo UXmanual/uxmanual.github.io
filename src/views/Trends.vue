@@ -114,7 +114,7 @@
         </div>
 
         <!-- Load More Button -->
-        <div v-if="filteredNews.length > visibleCount" class="flex justify-center pt-10 pb-20">
+        <div v-if="filteredNews.length > visibleCount" class="flex justify-center pt-10 pb-10">
           <button 
             @click="visibleCount += 20"
             class="px-12 py-4 bg-zinc-900 dark:bg-white text-white dark:text-black rounded-xl font-semibold text-base leading-normal tracking-tight hover:scale-[1.02] active:scale-[0.98] transition-all"
@@ -137,7 +137,7 @@
     </main>
 
     <!-- Footer Section -->
-    <footer class="border-t border-zinc-100 dark:border-white/5 py-16 px-6 md:px-10">
+    <footer class="border-t border-zinc-100 dark:border-white/5 py-10 px-6 md:px-10">
       <div class="max-w-[1800px] mx-auto text-left space-y-4">
         <p class="text-sm font-black text-zinc-400 dark:text-zinc-500 tracking-tight">
           @uxmanual

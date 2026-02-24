@@ -12,7 +12,7 @@
       </p>
     </header>
 
-    <main class="px-6 md:px-10 max-w-[1000px] mx-auto pb-40">
+    <main class="px-6 md:px-10 max-w-[1000px] mx-auto pb-10">
       <!-- Input Area -->
       <div class="mb-20 bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-white/5 rounded-3xl p-8">
         <div class="flex flex-col gap-6">
@@ -94,6 +94,19 @@
         </TransitionGroup>
       </div>
     </main>
+    
+    <!-- Footer Section -->
+    <footer class="border-t border-zinc-100 dark:border-white/5 py-10 px-6 md:px-10">
+      <div class="max-w-[1000px] mx-auto text-left space-y-4">
+        <p class="text-sm font-black text-zinc-400 dark:text-zinc-500 tracking-tight">
+          @uxmanual
+        </p>
+        <p class="text-xs leading-snug text-zinc-400 dark:text-zinc-500 max-w-2xl">
+          본 사이트에서 제공하는 뉴스 콘텐츠는 각 언론사의 RSS를 통해 수집된 정보이며, <br class="hidden sm:block">
+          기사 본문에 대한 저작권은 해당 언론사에 있습니다. 각 기사는 클릭 시 해당 언론사의 원문 페이지로 연결됩니다.
+        </p>
+      </div>
+    </footer>
   </div>
 </template>
 
