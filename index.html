@@ -9,15 +9,22 @@
     <!-- Primary Meta Tags -->
     <title>Todays News</title>
     <script>
-        // Universal Invisible URL Sanitizer
+        // Ultimate URL Recovery & Sanitation
         (function (l) {
-            var s = l.search;
-            if (s.indexOf('p=') !== -1) {
-                var p = s.split('p=')[1].split('&')[0];
-                var target = decodeURIComponent(p);
-                history.replaceState(null, null, l.origin + target);
+            if (l.search[0] === '?' && l.search.indexOf('p=/') > -1) {
+                var path = '';
+                var parts = l.search.slice(1).split('&');
+                for (var i = 0; i < parts.length; i++) {
+                    if (parts[i].indexOf('p=') === 0) {
+                        path = decodeURIComponent(parts[i].slice(2));
+                        break;
+                    }
+                }
+                if (path) {
+                    window.history.replaceState(null, null, l.origin + (path.charAt(0) === '/' ? '' : '/') + path + l.hash);
+                }
             }
-        }(window.location))
+        })(window.location);
     </script>
     <meta name="title" content="Todays News" />
     <meta name="description"
