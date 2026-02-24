@@ -12,7 +12,7 @@
       </p>
     </header>
 
-    <main class="px-6 md:px-10 max-w-[1000px] mx-auto pb-10">
+    <main class="px-6 md:px-10 max-w-[1000px] mx-auto pb-[120px]">
       <!-- Input Area -->
       <div class="mb-20 bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-white/5 rounded-3xl p-8">
         <div class="flex flex-col gap-6">
