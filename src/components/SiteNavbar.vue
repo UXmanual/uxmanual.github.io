@@ -1,4 +1,3 @@
-```
 <template>
   <nav 
     class="fixed top-0 left-0 right-0 z-50 border-b border-zinc-200 dark:border-white/10 bg-white/80 dark:bg-[#0a0a0c]/80 backdrop-blur-xl transition-transform duration-0"
