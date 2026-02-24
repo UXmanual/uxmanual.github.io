@@ -3,7 +3,7 @@
     <!-- Navbar Component -->
     <SiteNavbar />
 
-    <div class="pt-20">
+    <div class="pt-16">
       <SiteBanner message="뉴스보다 더 생생한 우리들의 이야기가 시작됩니다. 지금 바로 피드에 참여하세요." />
     </div>
 
