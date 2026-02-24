@@ -86,7 +86,7 @@
                   <span class="source-badge px-2.5 py-1 rounded-md text-[12px] font-black uppercase tracking-normal border">
                     {{ getCategoryName(item.category) }}
                   </span>
-                  <span class="text-[10px] text-zinc-400 font-bold uppercase tracking-tight">{{ item.provider || item.source }}</span>
+                  <span class="text-[11px] text-zinc-400 font-bold uppercase tracking-tight">{{ item.provider || item.source }}</span>
                 </div>
                 
                 <h3 class="text-lg font-bold text-zinc-900 dark:text-white leading-tight mb-4 min-h-[2.8rem] line-clamp-2 group-hover:opacity-80">
