@@ -9,13 +9,27 @@
     <!-- Primary Meta Tags -->
     <title>Todays News</title>
     <script>
-        // Nuclear URL Sanitizer: Force-clear legacy parameters and move to hash mode
+        // Universal URL Sanitizer: Force all legacy paths and params into clean Hash Mode
         (function () {
-            var s = window.location.search;
-            if (s.indexOf('p=/') !== -1) {
-                var p = s.split('p=')[1].split('&')[0];
-                // Force an immediate relocation to the clean hash version
-                window.location.replace(window.location.origin + '/#' + decodeURIComponent(p));
+            var l = window.location;
+            // 1. Force ANY non-root pathname to its hash equivalent immediately
+            if (l.pathname !== '/' && l.pathname !== '/index.html') {
+                var p = l.pathname;
+                if (p.indexOf('/community') === 0) p = '/feed';
+                l.replace(l.origin + '/#' + p + l.search + l.hash);
+                return;
+            }
+            // 2. Clear legacy ?p= parameters (remnant of old 404.html redirects)
+            if (l.search.indexOf('p=/') !== -1) {
+                var p = l.search.split('p=')[1].split('&')[0];
+                var cleanP = decodeURIComponent(p);
+                if (cleanP === '/community' || cleanP === 'community') cleanP = '/feed';
+                l.replace(l.origin + '/#' + (cleanP.charAt(0) === '/' ? '' : '/') + cleanP + l.hash);
+                return;
+            }
+            // 3. Map legacy hash #/community to #/feed if arrived here
+            if (l.hash.indexOf('#/community') === 0) {
+                l.replace(l.origin + '/#/feed' + l.search);
             }
         })();
     </script>
