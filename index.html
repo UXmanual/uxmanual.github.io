@@ -9,8 +9,10 @@
     <!-- Primary Meta Tags -->
     <title>Todays News</title>
     <script>
-        // Clean up legacy SPA parameters if they exist
-        if (location.search.indexOf('p=/') !== -1) history.replaceState(null, null, location.pathname + location.hash);
+        // Aggressive cleaner: If any legacy SPA parameters or non-hash paths exist, force reset to clean root
+        if (location.search.indexOf('p=/') !== -1 || (location.pathname !== '/' && location.pathname !== '/index.html')) {
+            window.location.replace(location.origin + '/#' + (location.pathname !== '/' ? location.pathname : ''));
+        }
     </script>
     <meta name="title" content="Todays News" />
     <meta name="description"
