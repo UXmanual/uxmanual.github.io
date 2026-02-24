@@ -8,6 +8,7 @@
       description="뉴스보다 더 재밌는 우리들의 이야기 <br class='hidden md:block'> 함께 읽고, 함께 말해요"
       padding-top="pt-32"
       margin-bottom="mb-16"
+      max-width="max-w-[1200px]"
     />
 
     <main class="px-6 md:px-10 max-w-[1200px] mx-auto pb-[120px]">
