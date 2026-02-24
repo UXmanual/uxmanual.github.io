@@ -9,18 +9,11 @@
     <!-- Primary Meta Tags -->
     <title>Todays News</title>
     <script>
-        // Clean URL to Hash URL Sanitizer
+        // Clean URL Path to Hash Path Sanitizer
         (function () {
             var l = window.location;
-            if (l.search.indexOf('p=/') !== -1) {
-                var p = l.search.split('p=')[1].split('&')[0];
-                var cleanP = decodeURIComponent(p);
-                if (cleanP === '/community' || cleanP === 'community') cleanP = '/feed';
-                l.replace(l.origin + '/#' + (cleanP.charAt(0) === '/' ? '' : '/') + cleanP + l.hash);
-            } else if (l.pathname !== '/' && l.pathname !== '/index.html') {
-                var p = l.pathname;
-                if (p === '/community' || p === '/community/') p = '/feed';
-                l.replace(l.origin + '/#' + p + l.search + l.hash);
+            if (l.pathname !== '/' && l.pathname !== '/index.html') {
+                l.replace(l.origin + '/#' + l.pathname + l.search + l.hash);
             }
         })();
     </script>
