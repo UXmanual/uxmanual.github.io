@@ -9,22 +9,17 @@
     <!-- Primary Meta Tags -->
     <title>Todays News</title>
     <script>
-        // More robust Clean URL Recovery Logic
+        // Invisible Clean URL Recovery
         (function (l) {
             if (l.search[1] === 'p' && l.search[2] === '=') {
-                var query = {};
+                var q = {};
                 l.search.slice(1).split('&').forEach(function (v) {
                     var a = v.split('=');
-                    if (a.length > 1) {
-                        query[a[0]] = a.slice(1).join('=').replace(/~and~/g, '&');
-                    }
+                    if (a.length > 1) q[a[0]] = a.slice(1).join('=').replace(/~and~/g, '&');
                 });
-                if (query.p !== undefined) {
-                    var path = query.p;
-                    var qString = query.q ? ('?' + query.q) : '';
-                    // Construct absolute URL to avoid relative path issues
-                    var newUrl = l.origin + (path.indexOf('/') === 0 ? '' : '/') + path + qString + l.hash;
-                    window.history.replaceState(null, null, newUrl);
+                if (q.p !== undefined) {
+                    var newUrl = l.origin + (q.p.indexOf('/') === 0 ? '' : '/') + q.p + (q.q ? ('?' + q.q) : '') + l.hash;
+                    history.replaceState(null, null, newUrl);
                 }
             }
         }(window.location))

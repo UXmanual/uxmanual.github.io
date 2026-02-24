@@ -3,22 +3,14 @@
 
 <head>
     <meta charset="utf-8">
-    <title>Todays News</title>
+    <title>UXManual</title>
     <script type="text/javascript">
-        // This script handles SPA routing for GitHub Pages.
-        // It converts a direct URL access into a single parameter that index.html can process.
+        // Standard SPA redirect for GitHub Pages
         var l = window.location;
-        l.replace(
-            l.protocol + '//' + l.hostname + (l.port ? ':' + l.port : '') +
-            l.pathname.split('/').slice(0, 1).join('/') + '/?p=' +
-            l.pathname.slice(1).replace(/&/g, '~and~') +
-            (l.search ? '&q=' + l.search.slice(1).replace(/&/g, '~and~') : '') +
-            l.hash
-        );
+        l.replace(l.protocol + '//' + l.hostname + (l.port ? ':' + l.port : '') + l.pathname.split('/').slice(0, 1).join('/') + '/?p=' + l.pathname.slice(1).replace(/&/g, '~and~') + (l.search ? '&q=' + l.search.slice(1).replace(/&/g, '~and~') : '') + l.hash);
     </script>
 </head>
 
-<body>
-</body>
+<body></body>
 
 </html>
