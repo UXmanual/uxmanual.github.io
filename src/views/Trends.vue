@@ -5,7 +5,7 @@
     <SiteNavbar />
     
     <div class="pt-[60px]">
-      <SiteBanner message="뉴스부터 우리들의 이야기까지, Todays News의 새로운 피드 기능을 만나보세요." />
+      <SiteBanner />
     </div>
 
     <SiteHeader 
