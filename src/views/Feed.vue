@@ -20,34 +20,34 @@
             <input 
               v-model="newName" 
               type="text" 
-              placeholder="Name" 
+              placeholder="이름" 
               class="w-full min-w-0 bg-zinc-50 dark:bg-black/50 border border-zinc-200 dark:border-white/10 rounded-2xl px-5 py-4 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 transition-all font-bold"
             >
             <input 
               v-model="newTitle" 
               type="text" 
-              placeholder="Subject (Optional)" 
+              placeholder="제목 (선택사항)" 
               class="w-full min-w-0 bg-zinc-50 dark:bg-black/50 border border-zinc-200 dark:border-white/10 rounded-2xl px-5 py-4 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 transition-all font-bold"
             >
             <input 
               v-model="newPassword" 
               type="password" 
               maxlength="4"
-              placeholder="Pass (4 digits)" 
+              placeholder="비밀번호 (4자리)" 
               class="w-full min-w-0 bg-zinc-50 dark:bg-black/50 border border-zinc-200 dark:border-white/10 rounded-2xl px-5 py-4 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 transition-all font-bold"
             >
           </div>
           <textarea 
             v-model="newMessage" 
             rows="4" 
-            placeholder="Share your thoughts..." 
+            placeholder="내용을 입력해주세요..." 
             class="w-full bg-zinc-50 dark:bg-black/50 border border-zinc-200 dark:border-white/10 rounded-2xl px-5 py-4 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 transition-all resize-none leading-relaxed"
           ></textarea>
           <div class="flex justify-end">
             <button 
               @click="addPost"
               :disabled="isPosting"
-              class="w-full md:w-auto px-10 py-4 bg-zinc-900 dark:bg-white text-white dark:text-black rounded-2xl font-black text-sm uppercase tracking-widest hover:scale-[1.02] active:scale-[0.98] transition-all disabled:opacity-50 disabled:scale-100"
+              class="w-full md:w-auto px-10 py-4 bg-zinc-900 dark:bg-white text-white dark:text-black rounded-2xl font-black text-sm uppercase tracking-wider hover:scale-[1.02] active:scale-[0.98] transition-all disabled:opacity-50 disabled:scale-100"
             >
               {{ isPosting ? '게시 중...' : '피드 글쓰기' }}
             </button>
