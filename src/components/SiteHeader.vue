@@ -4,9 +4,6 @@
     :class="[paddingTop, marginBottom]"
   >
     <div class="space-y-4" :class="innerMaxWidth">
-      <div v-if="emoji" class="text-4xl md:text-5xl mb-2 -ml-1.5">
-        {{ emoji }}
-      </div>
       <h1 class="text-4xl md:text-5xl font-bold tracking-tight text-zinc-900 dark:text-white">
         {{ title }}
       </h1>
@@ -22,7 +19,6 @@
 interface Props {
   title: string
   description: string
-  emoji?: string
   paddingTop?: string
   marginBottom?: string
   innerMaxWidth?: string

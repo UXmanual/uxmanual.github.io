@@ -4,7 +4,6 @@
     <SiteNavbar />
 
     <SiteHeader 
-      emoji="📋"
       title="Feed" 
       description="뉴스보다 더 재밌는 우리들의 이야기 <br class='hidden md:block'> 함께 읽고, 함께 말해요"
       padding-top="pt-32"
