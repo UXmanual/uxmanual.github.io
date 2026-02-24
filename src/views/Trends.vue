@@ -102,7 +102,7 @@
                   </div>
                 </div>
                 
-                <h3 class="text-lg font-bold text-zinc-900 dark:text-white leading-tight mb-5 line-clamp-3 group-hover:opacity-80">
+                <h3 class="text-lg font-bold text-zinc-900 dark:text-white leading-tight mb-4 min-h-[2.8rem] line-clamp-2 group-hover:opacity-80">
                   {{ item.title }}
                 </h3>
                 
