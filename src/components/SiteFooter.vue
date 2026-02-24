@@ -1,6 +1,6 @@
 <template>
   <footer class="border-t border-zinc-100 dark:border-white/5 py-10 px-6 md:px-10">
-    <div class="mx-auto text-left space-y-4" :class="maxWidth">
+    <div class="max-w-[1800px] mx-auto text-left space-y-4">
       <p class="text-sm font-black text-zinc-400 dark:text-zinc-500 tracking-tight">
         ⓒtodaysnews
       </p>
@@ -13,11 +13,5 @@
 </template>
 
 <script setup lang="ts">
-interface Props {
-  maxWidth?: string
-}
-
-withDefaults(defineProps<Props>(), {
-  maxWidth: 'max-w-[1800px]'
-})
+// SiteFooter is globally fixed to 1800px width alignment
 </script>

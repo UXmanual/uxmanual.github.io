@@ -1,14 +1,14 @@
 <template>
   <header 
-    class="px-6 md:px-10 mx-auto transition-opacity duration-300"
-    :class="[paddingTop, marginBottom, maxWidth]"
+    class="px-6 md:px-10 max-w-[1800px] mx-auto transition-opacity duration-300"
+    :class="[paddingTop, marginBottom]"
   >
-    <div class="space-y-4">
+    <div class="space-y-4" :class="innerMaxWidth">
       <h1 class="text-4xl md:text-5xl font-bold tracking-tight text-zinc-900 dark:text-white">
         {{ title }}
       </h1>
       <p 
-        class="text-zinc-600 dark:text-zinc-400 text-base md:text-lg leading-relaxed max-w-2xl"
+        class="text-zinc-600 dark:text-zinc-400 text-base md:text-lg leading-relaxed"
         v-html="description"
       ></p>
     </div>
@@ -21,12 +21,12 @@ interface Props {
   description: string
   paddingTop?: string
   marginBottom?: string
-  maxWidth?: string
+  innerMaxWidth?: string
 }
 
 withDefaults(defineProps<Props>(), {
   paddingTop: 'pt-28',
   marginBottom: 'mb-8',
-  maxWidth: 'max-w-[1800px]'
+  innerMaxWidth: 'max-w-2xl'
 })
 </script>
