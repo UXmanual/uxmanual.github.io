@@ -84,9 +84,9 @@
               >
                 <div class="flex justify-between items-center mb-4">
                   <span class="source-badge px-2.5 py-1 rounded-md text-[12px] font-black uppercase tracking-normal border">
-                    {{ item.source }}
+                    {{ getCategoryName(item.category) }}
                   </span>
-                  <span class="text-[10px] text-zinc-400 font-bold uppercase tracking-tight">{{ item.category }}</span>
+                  <span class="text-[10px] text-zinc-400 font-bold uppercase tracking-tight">{{ item.provider || item.source }}</span>
                 </div>
                 
                 <h3 class="text-lg font-bold text-zinc-900 dark:text-white leading-tight mb-4 min-h-[2.8rem] line-clamp-2 group-hover:opacity-80">
@@ -147,12 +147,18 @@ interface NewsItem {
   description: string
   source: string
   category: string
+  provider: string
 }
 
 const isLoading = ref(true)
 const activeCategory = ref('all')
 const news = ref<NewsItem[]>([])
 const visibleCount = ref(50)
+
+const getCategoryName = (id: string) => {
+  const cat = categories.find(c => c.id === id)
+  return cat ? cat.name : id
+}
 
 // Navigation Visibility (Synced via SiteNavbar)
 const isNavVisible = ref(true)
@@ -216,12 +222,12 @@ const checkScroll = () => {
 
 
 const categories = [
-  { id: 'all', name: 'All News' },
-  { id: 'ai', name: 'AI & Tech' },
-  { id: 'finance', name: 'Finance' },
-  { id: 'game', name: 'Game' },
-  { id: 'sports', name: 'Sports' },
-  { id: 'design', name: 'Design' }
+  { id: 'all', name: '전체 뉴스' },
+  { id: 'ai', name: 'AI & 테크' },
+  { id: 'finance', name: '금융 소식' },
+  { id: 'game', name: '게임 뉴스' },
+  { id: 'sports', name: '스포츠' },
+  { id: 'design', name: '디자인' }
 ]
 
 const RSS_SOURCES = [
@@ -340,9 +346,11 @@ const fetchNews = async () => {
                                    .replace(/\s+/g, ' ')
                                    .trim()
           
-          // Smart Headline Extraction: Remove source suffix from title to better match description
-          // Handle "Title - Source", "Title | Source", "Title : Source", "Title(Source)"
-          const headline = title.split(/ - | \| | : /)[0].trim()
+          // Smart Headline & Provider Extraction
+          // Google News usually formats as "Headline - Source"
+          const parts = title.split(/ - | \| | : /)
+          const headline = parts[0].trim()
+          const provider = parts.length > 1 ? parts[parts.length - 1].trim() : ''
           
           // If description starts with title or extracted headline, try to extract the rest
           if (cleanDesc.toLowerCase().startsWith(title.toLowerCase())) {
@@ -368,12 +376,13 @@ const fetchNews = async () => {
           
           if (title && link) {
             parsedItems.push({
-              title,
+              title: headline,
               link,
               pubDate,
               description: cleanDesc || '기사 본문을 통해 자세한 내용을 확인하세요.',
               source: source.name,
-              category: source.category
+              category: source.category,
+              provider: provider
             })
           }
         })
