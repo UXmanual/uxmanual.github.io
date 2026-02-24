@@ -11,22 +11,13 @@
     <!-- SPA Redirect Handler for GitHub Pages -->
     <script type="text/javascript">
         (function (l) {
-            if (l.search.indexOf('p=/') !== -1) {
-                var params = {};
-                l.search.slice(1).split('&').forEach(function (pair) {
-                    var parts = pair.split('=');
-                    params[parts[0]] = parts.slice(1).join('=').replace(/~and~/g, '&');
-                });
-                if (params.p) {
-                    var newSearch = '';
-                    if (params.q) {
-                        var searchParts = params.q.split('&').filter(function (part) {
-                            return part.indexOf('p=/') !== 0 && part.indexOf('q=') !== 0;
-                        });
-                        if (searchParts.length) newSearch = '?' + searchParts.join('&');
-                    }
-                    window.history.replaceState(null, null, l.origin + params.p + newSearch + l.hash);
-                }
+            if (l.search[1] === '/') {
+                var decoded = l.search.slice(1).split('&').map(function (s) {
+                    return s.replace(/~and~/g, '&')
+                }).join('?');
+                window.history.replaceState(null, null,
+                    l.pathname.slice(0, -1) + decoded + l.hash
+                );
             }
         }(window.location))
     </script>
