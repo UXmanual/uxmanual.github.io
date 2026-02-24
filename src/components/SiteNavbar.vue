@@ -122,18 +122,4 @@ watch(isDark, (newVal) => {
   padding-block: calc(0.25rem * 3);
 }
 
-/* Gap Filler: Prevents background bleed-through during fast scroll sync */
-nav::after {
-  content: '';
-  position: absolute;
-  left: 0;
-  right: 0;
-  bottom: -4px;
-  height: 4px;
-  background: inherit;
-  backdrop-filter: inherit;
-  border-bottom: inherit;
-  opacity: 1;
-  z-index: -1;
-}
 </style>
