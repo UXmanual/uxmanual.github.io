@@ -114,7 +114,7 @@
         </div>
 
         <!-- Load More Button -->
-        <div v-if="filteredNews.length > visibleCount" class="flex justify-center pt-10 pb-10">
+        <div v-if="filteredNews.length > visibleCount" class="flex justify-center pt-10 pb-20">
           <button 
             @click="visibleCount += 20"
             class="px-12 py-4 bg-zinc-900 dark:bg-white text-white dark:text-black rounded-xl font-semibold text-base leading-normal tracking-tight hover:scale-[1.02] active:scale-[0.98] transition-all"
