@@ -40,6 +40,17 @@
               :class="activeCategory === cat.id ? 'text-zinc-900 dark:text-white' : 'text-zinc-400'"
             >
               {{ cat.name }}
+              
+              <!-- Red Dot for New News since visit -->
+              <div 
+                v-if="cat.id !== 'all' && hasNewItemsByCategory[cat.id]"
+                class="absolute top-1 -right-1 w-1.5 h-1.5 bg-red-500 rounded-full border border-zinc-50 dark:border-zinc-900"
+              ></div>
+              <div 
+                v-else-if="cat.id === 'all' && Object.values(hasNewItemsByCategory).some(v => v)"
+                class="absolute top-1 -right-1 w-1.5 h-1.5 bg-red-500 rounded-full border border-zinc-50 dark:border-zinc-900"
+              ></div>
+
               <!-- Active Underline: Sharp 2px line above the divider -->
               <div 
                 v-if="activeCategory === cat.id" 
@@ -85,7 +96,10 @@
                   <span class="source-badge px-2.5 py-1 rounded-md text-[12px] font-black uppercase tracking-normal border">
                     {{ item.source }}
                   </span>
-                  <span class="text-[10px] text-zinc-400 font-bold uppercase tracking-tight">{{ item.category }}</span>
+                  <div class="flex items-center gap-2">
+                    <span v-if="isNewItem(item)" class="px-1.5 py-0.5 bg-red-500 text-white text-[9px] font-black rounded-sm uppercase leading-none tracking-tighter">New</span>
+                    <span class="text-[10px] text-zinc-400 font-bold uppercase tracking-tight">{{ item.category }}</span>
+                  </div>
                 </div>
                 
                 <h3 class="text-lg font-bold text-zinc-900 dark:text-white leading-tight mb-5 line-clamp-3 group-hover:opacity-80">
@@ -152,6 +166,23 @@ const isLoading = ref(true)
 const activeCategory = ref('all')
 const news = ref<NewsItem[]>([])
 const visibleCount = ref(50)
+const visitTime = ref(Date.now())
+
+// Check if item is new relative to session start
+const isNewItem = (item: NewsItem) => {
+  return new Date(item.pubDate).getTime() > visitTime.value
+}
+
+// Map of categories that have new items
+const hasNewItemsByCategory = computed(() => {
+  const map: Record<string, boolean> = {}
+  news.value.forEach(item => {
+    if (isNewItem(item)) {
+      map[item.category] = true
+    }
+  })
+  return map
+})
 
 // Navigation Visibility (Synced via SiteNavbar)
 const isNavVisible = ref(true)
