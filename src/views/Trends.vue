@@ -5,6 +5,7 @@
     <SiteNavbar />
 
     <SiteHeader 
+      emoji="📰"
       title="News Stand" 
       description="주요 언론사의 실시간 뉴스 피드를 한곳에서 확인하세요"
     />
