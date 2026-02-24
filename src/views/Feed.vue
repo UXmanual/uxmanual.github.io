@@ -60,7 +60,7 @@
         <CommunitySkeleton v-if="isLoading" />
         <TransitionGroup v-else name="list">
           <div v-for="post in posts" :key="post.id" 
-            class="group relative bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-white/5 rounded-3xl p-8 transition-all duration-300 hover:border-[#285AC8] dark:hover:border-[#285AC8]"
+            class="group relative bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-white/5 rounded-3xl p-8 transition-all duration-150 hover:border-zinc-900 dark:hover:border-white"
           >
             <div class="flex justify-between items-start mb-6">
               <div class="flex items-center gap-4">
