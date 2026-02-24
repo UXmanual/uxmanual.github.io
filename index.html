@@ -13,29 +13,23 @@
         (function (l) {
             var s = l.search;
             if (s.indexOf('p=/') !== -1) {
-                var params = s.slice(1).split('&');
-                var path = '/';
-                var q = [];
-                for (var i = 0; i < params.length; i++) {
-                    var pair = params[i].split('=');
-                    if (pair[0] === 'p') {
-                        path = pair.slice(1).join('=');
-                    } else if (pair[0] === 'q') {
-                        var sub = pair.slice(1).join('=').replace(/~and~/g, '&').split('&');
-                        for (var j = 0; j < sub.length; j++) {
-                            var subPair = sub[j].split('=');
-                            if (subPair[0] !== 'p' && subPair[0] !== 'q') {
-                                q.push(sub[j]);
-                            }
-                        }
-                    } else {
-                        q.push(params[i]);
+                var query = {};
+                s.slice(1).split('&').forEach(function (v) {
+                    var a = v.split('=');
+                    query[a[0]] = a.slice(1).join('=').replace(/~and~/g, '&');
+                });
+                if (query.p !== undefined) {
+                    var q = '';
+                    if (query.q) {
+                        var filtered = query.q.split('&').filter(function (pair) {
+                            return pair.indexOf('p=/') !== 0 && pair.indexOf('q=') !== 0;
+                        });
+                        if (filtered.length) q = '?' + filtered.join('&');
                     }
+                    var base = l.pathname.slice(0, l.pathname.lastIndexOf('/') + 1);
+                    var payload = query.p.slice(1);
+                    window.history.replaceState(null, null, base + payload + q + l.hash);
                 }
-                var newUrl = l.pathname.replace(/\/$/, '') + path +
-                    (q.length ? '?' + q.join('&') : '') +
-                    l.hash;
-                window.history.replaceState(null, null, newUrl);
             }
         }(window.location))
     </script>
