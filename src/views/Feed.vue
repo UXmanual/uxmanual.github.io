@@ -16,25 +16,25 @@
       <!-- Input Area -->
       <div class="mb-20 bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-white/5 rounded-3xl p-8">
         <div class="flex flex-col gap-6">
-          <div class="flex flex-col md:flex-row gap-4">
+          <div class="grid grid-cols-1 md:grid-cols-[1fr_1.2fr_0.8fr] gap-4">
             <input 
               v-model="newName" 
               type="text" 
               placeholder="Name" 
-              class="flex-1 bg-zinc-50 dark:bg-black/50 border border-zinc-200 dark:border-white/10 rounded-2xl px-5 py-4 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 transition-all font-bold"
+              class="w-full bg-zinc-50 dark:bg-black/50 border border-zinc-200 dark:border-white/10 rounded-2xl px-5 py-4 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 transition-all font-bold"
             >
             <input 
               v-model="newTitle" 
               type="text" 
               placeholder="Subject (Optional)" 
-              class="flex-1 bg-zinc-50 dark:bg-black/50 border border-zinc-200 dark:border-white/10 rounded-2xl px-5 py-4 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 transition-all font-bold"
+              class="w-full bg-zinc-50 dark:bg-black/50 border border-zinc-200 dark:border-white/10 rounded-2xl px-5 py-4 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 transition-all font-bold"
             >
             <input 
               v-model="newPassword" 
               type="password" 
               maxlength="4"
               placeholder="Pass (4 digits)" 
-              class="flex-[0.5] bg-zinc-50 dark:bg-black/50 border border-zinc-200 dark:border-white/10 rounded-2xl px-5 py-4 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 transition-all font-bold"
+              class="w-full bg-zinc-50 dark:bg-black/50 border border-zinc-200 dark:border-white/10 rounded-2xl px-5 py-4 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 transition-all font-bold"
             >
           </div>
           <textarea 
