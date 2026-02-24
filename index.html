@@ -21,10 +21,6 @@
 
             if (path) {
                 var cleanPath = decodeURIComponent(path);
-                // Force legacy community path to feed
-                if (cleanPath === '/community' || cleanPath === 'community' || cleanPath.startsWith('/community/')) {
-                    cleanPath = '/feed';
-                }
                 // Ensure absolute URL construction
                 var newUrl = l.origin + (cleanPath.charAt(0) === '/' ? '' : '/') + cleanPath + l.hash;
                 window.history.replaceState(null, null, newUrl);

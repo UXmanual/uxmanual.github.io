@@ -93,6 +93,7 @@
           </div>
         </TransitionGroup>
       </div>
+      </div>
     </main>
     <SiteFooter />
   </div>

@@ -17,7 +17,6 @@ const routes = [
         }
     },
     { path: '/feed', component: Feed },
-    { path: '/community', redirect: '/feed' },
     { path: '/:pathMatch(.*)*', redirect: '/' }
 ]
 
