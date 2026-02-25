@@ -9,7 +9,7 @@
     </div>
 
     <SiteHeader 
-      title="News Stand v20" 
+      title="News Stand v21" 
       description="주요 언론사의 실시간 뉴스 피드를 한곳에서 확인하세요"
       padding-top="pt-16"
     />
@@ -243,20 +243,26 @@ const categories = [
 ]
 
 const RSS_SOURCES = [
-  // AI & Tech
+  // AI & Tech (AI 타임스, The AI 등 전문지 위주)
+  { name: 'AI 타임스', url: 'https://news.google.com/rss/search?q=site:aitimes.com+AI&hl=ko&gl=KR&ceid=KR:ko', category: 'ai' },
+  { name: 'The AI', url: 'https://news.google.com/rss/search?q=site:theai.kr&hl=ko&gl=KR&ceid=KR:ko', category: 'ai' },
   { name: '매경 IT', url: 'https://www.mk.co.kr/rss/50300001/', category: 'ai' },
-  { name: 'AI 트렌드', url: 'https://news.google.com/rss/search?q=AI+%ED%8A%B8%EB%A0%8C%EB%93%9C&hl=ko&gl=KR&ceid=KR:ko', category: 'ai' },
-  { name: '연합 테크', url: 'https://www.yna.co.kr/rss/digital.xml', category: 'ai' },
-  { name: '경향 IT', url: 'https://www.khan.co.kr/rss/rssdata/it_news.xml', category: 'ai' },
   
   // Finance
   { name: '매경 경제', url: 'https://www.mk.co.kr/rss/30100041/', category: 'finance' },
   { name: '연합 경제', url: 'https://www.yna.co.kr/rss/economy.xml', category: 'finance' },
-  { name: '연합 증권', url: 'https://www.yna.co.kr/rss/stock.xml', category: 'finance' },
 
-  // Game/Sports
-  { name: '연합 산업', url: 'https://www.yna.co.kr/rss/industry.xml', category: 'game' },
-  { name: '디자인 뉴스', url: 'https://news.google.com/rss/search?q=UX+UI+%EB%94%94%EC%9E%90%EC%9D%B8+%ED%8A%B8%EB%A0%8C%EB%93%9C&hl=ko&gl=KR&ceid=KR:ko', category: 'design' },
+  // Design (디자인정글, 디자인DB 등 전문지 위주)
+  { name: '디자인정글', url: 'https://news.google.com/rss/search?q=site:jungle.co.kr&hl=ko&gl=KR&ceid=KR:ko', category: 'design' },
+  { name: '디자인DB', url: 'https://news.google.com/rss/search?q=site:designdb.com&hl=ko&gl=KR&ceid=KR:ko', category: 'design' },
+  { name: '월간디자인', url: 'https://news.google.com/rss/search?q=site:design.co.kr&hl=ko&gl=KR&ceid=KR:ko', category: 'design' },
+
+  // Game (인벤, 게임메카 등 전문지 위주)
+  { name: '인벤 뉴스', url: 'https://news.google.com/rss/search?q=site:inven.co.kr+게임&hl=ko&gl=KR&ceid=KR:ko', category: 'game' },
+  { name: '게임메카', url: 'https://news.google.com/rss/search?q=site:gamemeca.com&hl=ko&gl=KR&ceid=KR:ko', category: 'game' },
+  { name: '디스이즈게임', url: 'https://news.google.com/rss/search?q=site:thisisgame.com&hl=ko&gl=KR&ceid=KR:ko', category: 'game' },
+
+  // Sports
   { name: '연합 스포츠', url: 'https://www.yna.co.kr/rss/sports.xml', category: 'sports' },
   { name: '매경 스포츠', url: 'https://www.mk.co.kr/rss/71000001/', category: 'sports' }
 ]
@@ -299,7 +305,7 @@ watch(activeCategory, () => {
 
 const fetchNews = async () => {
   // 1. Initial Cache Load
-  const CURRENT_CACHE_VERSION = 'v20'
+  const CURRENT_CACHE_VERSION = 'v21'
   const CACHE_KEY = `uxm_trends_cache_${CURRENT_CACHE_VERSION}`
   
   if (news.value.length === 0) {
@@ -504,7 +510,7 @@ const fetchMissingThumbnails = async () => {
         const idx = news.value.findIndex(n => n.link === targetUrl)
         if (idx !== -1) {
           news.value[idx] = { ...news.value[idx], thumb: imgUrl }
-          localStorage.setItem(`uxm_trends_cache_v20`, JSON.stringify(news.value))
+          localStorage.setItem(`uxm_trends_cache_v21`, JSON.stringify(news.value))
         }
       }
     } catch (e) {}
