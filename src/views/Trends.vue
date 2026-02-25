@@ -9,7 +9,7 @@
     </div>
 
     <SiteHeader 
-      title="News Stand v28" 
+      title="News Stand v29" 
       description="주요 언론사의 실시간 뉴스 피드를 한곳에서 확인하세요"
       padding-top="pt-16"
     />
@@ -301,7 +301,7 @@ watch(activeCategory, () => {
 
 const fetchNews = async () => {
   // 1. Initial Cache Load
-  const CURRENT_CACHE_VERSION = 'v28'
+  const CURRENT_CACHE_VERSION = 'v29'
   const CACHE_KEY = `uxm_trends_cache_${CURRENT_CACHE_VERSION}`
   
   if (news.value.length === 0) {
@@ -363,32 +363,34 @@ const fetchNews = async () => {
           const pubDate = (item.querySelector('pubDate')?.textContent || '').trim()
           const description = (item.querySelector('description')?.textContent || item.getElementsByTagName('content:encoded')[0]?.textContent || '').trim()
 
-          // --- Improved Extraction ---
+          // --- Ultra Robust Extraction ---
           let thumb = ''
-          const allElements = Array.from(item.querySelectorAll('*'))
           
-          // 1. Look for tags by localName (namespace independent)
-          for (const el of allElements) {
-            const name = el.localName.toLowerCase()
-            if (name === 'content' || name === 'thumbnail' || name === 'enclosure' || name === 'image') {
-              const url = el.getAttribute('url') || el.getAttribute('src') || el.getAttribute('href')
-              if (url && (url.startsWith('http') || url.startsWith('//'))) {
-                thumb = url
-                break
+          // 1. Prioritize Description <img> (Often the most accurate in Korean RSS)
+          if (description) {
+            const imgMatch = description.match(/<img[^>]+src=["']([^"'>]+)["']/i) ||
+                             description.match(/<img[^>]+src=([^ >]+)/i)
+            if (imgMatch) thumb = imgMatch[1].replace(/['"]/g, '')
+          }
+
+          // 2. Search all tags for common image attributes (Namespace-safe)
+          if (!thumb) {
+            const allElements = Array.from(item.querySelectorAll('*'))
+            for (const el of allElements) {
+              const name = el.localName.toLowerCase()
+              if (['content', 'thumbnail', 'enclosure', 'image', 'url'].includes(name)) {
+                const url = el.getAttribute('url') || el.getAttribute('src') || el.getAttribute('href') || el.textContent.trim()
+                if (url && (url.startsWith('http') || url.startsWith('//'))) {
+                  thumb = url
+                  break
+                }
               }
             }
           }
 
-          // 2. Scan Description for <img>
-          if (!thumb && description) {
-            const imgMatch = description.match(/<img[^>]+src=["']([^"'>]+)["']/i)
-            if (imgMatch) thumb = imgMatch[1]
-          }
-
           if (thumb) {
             if (thumb.startsWith('//')) thumb = 'https:' + thumb
-            // Filter out favicon/logo/tracking pixels
-            if (thumb.length < 20 || thumb.includes('transparent.gif') || thumb.match(/\.ico$|favicon|google_logo/i)) thumb = ''
+            if (thumb.length < 20 || thumb.match(/\.ico$|favicon|google_logo|tracking|pixel|dot/i)) thumb = ''
           }
           // --- End Extraction ---
 
@@ -444,15 +446,16 @@ const fetchNews = async () => {
 }
 
 const fetchMissingThumbnails = async () => {
-  const pending = news.value.filter(n => !n.thumb).slice(0, 30)
+  const pending = news.value.filter(n => !n.thumb).slice(0, 40)
   if (pending.length === 0) return
 
   pending.forEach(async (item) => {
     try {
       const targetUrl = item.link
       const providers = [
-        `https://api.allorigins.win/get?url=${encodeURIComponent(targetUrl)}&t=${Date.now()}`,
-        `https://api.codetabs.com/v1/proxy?quest=${encodeURIComponent(targetUrl)}`
+        `https://api.codetabs.com/v1/proxy?quest=${encodeURIComponent(targetUrl)}`,
+        `https://corsproxy.io/?url=${encodeURIComponent(targetUrl)}`,
+        `https://api.allorigins.win/get?url=${encodeURIComponent(targetUrl)}&t=${Date.now()}`
       ]
 
       let html = ''
@@ -466,28 +469,32 @@ const fetchMissingThumbnails = async () => {
           } else {
             html = await res.text()
           }
-          if (html) break
+          if (html && html.length > 500) break
         } catch (e) {}
       }
 
       if (!html) return
 
-      // Super Robust OG Image Regex
-      const imgMatch = html.match(/<meta[^>]+property=["']og:image["'][^>]+content=["']([^"'>]+)["']/i) ||
-                      html.match(/<meta[^>]+content=["']([^"'>]+)["'][^>]+property=["']og:image["']/i) ||
-                      html.match(/<meta[^>]+name=["']og:image["'][^>]+content=["']([^"'>]+)["']/i) ||
-                      html.match(/<meta[^>]+content=["']([^"'>]+)["'][^>]+name=["']og:image["']/i) ||
-                      html.match(/<meta[^>]+name=["']twitter:image["'][^>]+content=["']([^"'>]+)["']/i)
+      // Super Robust Extraction Logic
+      const imgMatch = 
+          html.match(/<meta[^>]+property=["']og:image["'][^>]+content=["']([^"'>]+)["']/i) ||
+          html.match(/<meta[^>]+content=["']([^"'>]+)["'][^>]+property=["']og:image["']/i) ||
+          html.match(/<meta[^>]+name=["']og:image["'][^>]+content=["']([^"'>]+)["']/i) ||
+          html.match(/<meta[^>]+content=["']([^"'>]+)["'][^>]+name=["']og:image["']/i) ||
+          html.match(/<link[^>]+rel=["']image_src["'][^>]+href=["']([^"'>]+)["']/i) ||
+          html.match(/<meta[^>]+name=["']twitter:image["'][^>]+content=["']([^"'>]+)["']/i) ||
+          html.match(/<meta[^>]+itemprop=["']image["'][^>]+content=["']([^"'>]+)["']/i) ||
+          html.match(/<img[^>]+id=["']main-image["'][^>]+src=["']([^"'>]+)["']/i)
       
       if (imgMatch && imgMatch[1]) {
         let imgUrl = imgMatch[1]
         if (imgUrl.startsWith('//')) imgUrl = 'https:' + imgUrl
-        if (imgUrl.match(/\.ico$|favicon|google_logo|tracking|pixel/i)) return
+        if (imgUrl.match(/\.ico$|favicon|google_logo|tracking|pixel|transparent/i)) return
         
         const idx = news.value.findIndex(n => n.link === targetUrl)
         if (idx !== -1) {
           news.value[idx] = { ...news.value[idx], thumb: imgUrl }
-          localStorage.setItem(`uxm_trends_cache_v28`, JSON.stringify(news.value))
+          localStorage.setItem(`uxm_trends_cache_v29`, JSON.stringify(news.value))
         }
       }
     } catch (e) {}
