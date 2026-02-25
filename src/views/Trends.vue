@@ -9,7 +9,7 @@
     </div>
 
     <SiteHeader 
-      title="News Stand v16" 
+      title="News Stand v17" 
       description="주요 언론사의 실시간 뉴스 피드를 한곳에서 확인하세요"
       padding-top="pt-16"
     />
@@ -286,7 +286,7 @@ watch(activeCategory, () => {
 
 const fetchNews = async () => {
   // 1. Initial Cache Load
-  const CURRENT_CACHE_VERSION = 'v16'
+  const CURRENT_CACHE_VERSION = 'v17'
   const CACHE_KEY = `uxm_trends_cache_${CURRENT_CACHE_VERSION}`
   
   if (news.value.length === 0) {
@@ -313,9 +313,9 @@ const fetchNews = async () => {
 
   const fetchSource = async (source: typeof RSS_SOURCES[0]) => {
     const proxies = [
-      (url: string) => `https://api.allorigins.win/get?url=${encodeURIComponent(url)}&timestamp=${Date.now()}`,
       (url: string) => `https://api.codetabs.com/v1/proxy?quest=${encodeURIComponent(url)}`,
-      (url: string) => `https://corsproxy.io/?url=${encodeURIComponent(url)}`
+      (url: string) => `https://corsproxy.io/?url=${encodeURIComponent(url)}`,
+      (url: string) => `https://api.allorigins.win/get?url=${encodeURIComponent(url)}&timestamp=${Date.now()}`
     ]
 
     for (const getProxyUrl of proxies) {
@@ -382,20 +382,25 @@ const fetchNews = async () => {
           const headline = parts[0].trim()
           const provider = parts.length > 1 ? parts[parts.length - 1].trim() : ''
           
-          // --- Direct Google News URL Decoding ---
+          // --- Advanced Google News URL Decoding ---
           let finalLink = link
           if (link.includes('news.google.com/rss/articles/')) {
             try {
-              const base64Part = link.split('articles/')[1]?.split('?')[0]
-              if (base64Part) {
-                // Remove padding issues and decode
-                const cleanB64 = base64Part.replace(/-/g, '+').replace(/_/g, '/')
-                const decoded = atob(cleanB64)
-                // Extract original URL from binary/string mess
-                const urlMatch = decoded.match(/https?:\/\/[^\s\u0022\u0027<>]+/)
-                if (urlMatch) finalLink = urlMatch[0]
+              let b64 = link.split('articles/')[1]?.split('?')[0]
+              if (b64) {
+                // Google uses URL-safe base64: - is +, _ is /
+                b64 = b64.replace(/-/g, '+').replace(/_/g, '/')
+                // Padding is required for atob
+                while (b64.length % 4 !== 0) b64 += '='
+                const raw = atob(b64)
+                // The original URL is embedded within the raw binary string.
+                // We look for the first http and stop at common non-URL characters.
+                const m = raw.match(/https?:\/\/[^\s\u0000-\u001F\u007F-\u009F"';<>]+/i)
+                if (m) finalLink = m[0]
               }
-            } catch (e) {}
+            } catch (e) {
+              console.warn('[Trends] Link decoding failed for:', link)
+            }
           }
 
           if (title && finalLink) {
@@ -482,7 +487,7 @@ const fetchMissingThumbnails = async () => {
         const idx = news.value.findIndex(n => n.link === item.link)
         if (idx !== -1) {
           news.value[idx] = { ...news.value[idx], thumb: imgUrl }
-          localStorage.setItem(`uxm_trends_cache_v16`, JSON.stringify(news.value))
+          localStorage.setItem(`uxm_trends_cache_v17`, JSON.stringify(news.value))
         }
       }
     } catch (e) {}
