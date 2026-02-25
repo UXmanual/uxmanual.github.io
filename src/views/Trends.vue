@@ -9,7 +9,7 @@
     </div>
 
     <SiteHeader 
-      title="News Stand v19" 
+      title="News Stand v20" 
       description="주요 언론사의 실시간 뉴스 피드를 한곳에서 확인하세요"
       padding-top="pt-16"
     />
@@ -245,6 +245,7 @@ const categories = [
 const RSS_SOURCES = [
   // AI & Tech
   { name: '매경 IT', url: 'https://www.mk.co.kr/rss/50300001/', category: 'ai' },
+  { name: 'AI 트렌드', url: 'https://news.google.com/rss/search?q=AI+%ED%8A%B8%EB%A0%8C%EB%93%9C&hl=ko&gl=KR&ceid=KR:ko', category: 'ai' },
   { name: '연합 테크', url: 'https://www.yna.co.kr/rss/digital.xml', category: 'ai' },
   { name: '경향 IT', url: 'https://www.khan.co.kr/rss/rssdata/it_news.xml', category: 'ai' },
   
@@ -253,11 +254,9 @@ const RSS_SOURCES = [
   { name: '연합 경제', url: 'https://www.yna.co.kr/rss/economy.xml', category: 'finance' },
   { name: '연합 증권', url: 'https://www.yna.co.kr/rss/stock.xml', category: 'finance' },
 
-  // Game
+  // Game/Sports
   { name: '연합 산업', url: 'https://www.yna.co.kr/rss/industry.xml', category: 'game' },
-  { name: '디자인/IT', url: 'https://news.google.com/rss/search?q=UX+UI+%EB%94%94%EC%9E%90%EC%9D%B8+%ED%8A%B8%EB%A0%8C%EB%93%9C&hl=ko&gl=KR&ceid=KR:ko', category: 'design' },
-
-  // Sports
+  { name: '디자인 뉴스', url: 'https://news.google.com/rss/search?q=UX+UI+%EB%94%94%EC%9E%90%EC%9D%B8+%ED%8A%B8%EB%A0%8C%EB%93%9C&hl=ko&gl=KR&ceid=KR:ko', category: 'design' },
   { name: '연합 스포츠', url: 'https://www.yna.co.kr/rss/sports.xml', category: 'sports' },
   { name: '매경 스포츠', url: 'https://www.mk.co.kr/rss/71000001/', category: 'sports' }
 ]
@@ -276,7 +275,11 @@ const groupedNews = computed(() => {
   
   displayedNews.value.forEach(item => {
     const pubDate = new Date(item.pubDate)
-    const dateStr = `${pubDate.getFullYear()}년 ${pubDate.getMonth() + 1}월 ${pubDate.getDate()}일`
+    let dateStr = '최신 뉴스'
+    
+    if (!isNaN(pubDate.getTime())) {
+      dateStr = `${pubDate.getFullYear()}년 ${pubDate.getMonth() + 1}월 ${pubDate.getDate()}일`
+    }
     
     let group = groups.find(g => g.date === dateStr)
     if (!group) {
@@ -296,7 +299,7 @@ watch(activeCategory, () => {
 
 const fetchNews = async () => {
   // 1. Initial Cache Load
-  const CURRENT_CACHE_VERSION = 'v19'
+  const CURRENT_CACHE_VERSION = 'v20'
   const CACHE_KEY = `uxm_trends_cache_${CURRENT_CACHE_VERSION}`
   
   if (news.value.length === 0) {
@@ -501,7 +504,7 @@ const fetchMissingThumbnails = async () => {
         const idx = news.value.findIndex(n => n.link === targetUrl)
         if (idx !== -1) {
           news.value[idx] = { ...news.value[idx], thumb: imgUrl }
-          localStorage.setItem(`uxm_trends_cache_v19`, JSON.stringify(news.value))
+          localStorage.setItem(`uxm_trends_cache_v20`, JSON.stringify(news.value))
         }
       }
     } catch (e) {}
