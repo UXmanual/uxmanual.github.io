@@ -9,7 +9,7 @@
     </div>
 
     <SiteHeader 
-      title="News Stand v11" 
+      title="News Stand v12" 
       description="주요 언론사의 실시간 뉴스 피드를 한곳에서 확인하세요"
       padding-top="pt-16"
     />
@@ -243,11 +243,11 @@ const categories = [
 ]
 
 const RSS_SOURCES = [
-  { name: '매경 IT', url: 'https://news.google.com/rss/search?q=site:mk.co.kr+IT&hl=ko&gl=KR&ceid=KR:ko', category: 'ai' },
+  { name: '매경 IT', url: 'https://www.mk.co.kr/rss/50300001/', category: 'ai' },
   { name: 'AI 최신', url: 'https://news.google.com/rss/search?q=AI+%ED%8A%B8%EB%A0%8C%EB%93%9C&hl=ko&gl=KR&ceid=KR:ko', category: 'ai' },
-  { name: '경제 최신', url: 'https://news.google.com/rss/search?q=%EA%B8%88%EC%9C%B5+%EC%A6%9D%EA%B6%8C&hl=ko&gl=KR&ceid=KR:ko', category: 'finance' },
+  { name: '매경 경제', url: 'https://www.mk.co.kr/rss/30100041/', category: 'finance' },
+  { name: '금융 소식', url: 'https://news.google.com/rss/search?q=%EA%B8%88%EC%9C%B5+%EC%A6%9D%EA%B6%8C&hl=ko&gl=KR&ceid=KR:ko', category: 'finance' },
   { name: '디자인 뉴스', url: 'https://news.google.com/rss/search?q=%EB%94%94%EC%9E%90%EC%9D%B8+%ED%8A%B8%EB%A0%8C%EB%93%9C&hl=ko&gl=KR&ceid=KR:ko', category: 'design' },
-  { name: 'UX/UI 뉴스', url: 'https://news.google.com/rss/search?q=UX+UI+%EB%94%94%EC%9E%90%EC%9D%B8&hl=ko&gl=KR&ceid=KR:ko', category: 'design' },
   { name: '해외축구', url: 'https://news.google.com/rss/search?q=%ED%95%B4%EC%99%B8%EC%B6%95%EA%B5%AC&hl=ko&gl=KR&ceid=KR:ko', category: 'sports' },
   { name: '게임 뉴스', url: 'https://news.google.com/rss/search?q=%EA%B2%8C%EC%9E%84+%EC%8B%A0%EC%9E%91+%ED%8A%B8%EB%A0%8C%EB%93%9C&hl=ko&gl=KR&ceid=KR:ko', category: 'game' }
 ]
@@ -286,7 +286,7 @@ watch(activeCategory, () => {
 
 const fetchNews = async () => {
   // 1. Initial Cache Load
-  const CURRENT_CACHE_VERSION = 'v11'
+  const CURRENT_CACHE_VERSION = 'v12'
   const CACHE_KEY = `uxm_trends_cache_${CURRENT_CACHE_VERSION}`
   
   if (news.value.length === 0) {
@@ -372,7 +372,8 @@ const fetchNews = async () => {
 
           if (thumb) {
             if (thumb.startsWith('//')) thumb = 'https:' + thumb
-            if (thumb.length < 15 || thumb.includes('transparent.gif')) thumb = ''
+            // Filter out favicon/logo/tracking pixels
+            if (thumb.length < 20 || thumb.includes('transparent.gif') || thumb.match(/\.ico$|favicon|google_logo/i)) thumb = ''
           }
           // --- End Extraction ---
 
@@ -449,11 +450,14 @@ const fetchMissingThumbnails = async () => {
         let imgUrl = imgMatch[1]
         if (imgUrl.startsWith('//')) imgUrl = 'https:' + imgUrl
         
+        // Filter out junk images
+        if (imgUrl.match(/\.ico$|favicon|google_logo|tracking|pixel/i)) return
+        
         const idx = news.value.findIndex(n => n.link === item.link)
         if (idx !== -1) {
           // Deep reactive update
           news.value[idx] = { ...news.value[idx], thumb: imgUrl }
-          localStorage.setItem(`uxm_trends_cache_v11`, JSON.stringify(news.value))
+          localStorage.setItem(`uxm_trends_cache_v12`, JSON.stringify(news.value))
         }
       }
     } catch (e) {}
