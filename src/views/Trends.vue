@@ -279,9 +279,8 @@ const RSS_SOURCES = [
   { name: '지디넷코리아', url: 'https://feeds.feedburner.com/zdkorea', category: 'ai' },
   { name: '매경 IT', url: 'https://www.mk.co.kr/rss/50300001/', category: 'ai' },
   { name: '디지털데일리', url: 'https://www.ddaily.co.kr/rss/all.xml', category: 'ai' },
-  { name: '씨넷코리아', url: 'https://www.cnet.co.kr/rss/all', category: 'ai' },
   
-  // Finance (Extreme Stability)
+  // Finance
   { name: '한경 경제', url: 'https://www.hankyung.com/feed/economy', category: 'finance' },
   { name: '연합 경제', url: 'https://www.yna.co.kr/rss/economy.xml', category: 'finance' },
   { name: '매경 경제', url: 'https://www.mk.co.kr/rss/30100041/', category: 'finance' },
@@ -291,18 +290,17 @@ const RSS_SOURCES = [
   { name: '플래텀', url: 'https://platum.kr/feed', category: 'design' },
   { name: 'UX Collective', url: 'https://uxdesign.cc/feed', category: 'design' },
   { name: 'Design Milk', url: 'https://design-milk.com/feed/', category: 'design' },
-  { name: 'Smashing Magazine', url: 'https://www.smashingmagazine.com/feed', category: 'design' },
 
-  // Game (Diversified for Stability)
+  // Game (Stabilized)
+  { name: '지디넷 게임', url: 'https://www.zdnet.co.kr/rss/zdnet_game.xml', category: 'game' },
+  { name: '게임동아', url: 'https://www.gamedonga.co.kr/rss/all.xml', category: 'game' },
   { name: '인벤 뉴스', url: 'https://www.inven.co.kr/webzine/news/rss.php', category: 'game' },
-  { name: '디스이즈게임', url: 'https://www.thisisgame.com/rss/news.xml', category: 'game' },
-  { name: '게임메카', url: 'https://www.gamemeca.com/rss/news.php', category: 'game' },
-  { name: 'VentureBeat', url: 'https://venturebeat.com/category/games/feed/', category: 'game' },
   { name: '매경 게임', url: 'https://www.mk.co.kr/rss/50700001/', category: 'game' },
 
   // Sports
   { name: '연합 스포츠', url: 'https://www.yna.co.kr/rss/sports.xml', category: 'sports' },
   { name: '매경 스포츠', url: 'https://www.mk.co.kr/rss/71000001/', category: 'sports' },
+  { name: '스포츠동아', url: 'https://rss.donga.com/sports.xml', category: 'sports' },
   { name: '한겨레 스포츠', url: 'https://www.hani.co.kr/rss/sports/', category: 'sports' }
 ]
 
@@ -348,7 +346,7 @@ const decodeHtml = (html: string) => {
 
 const fetchNews = async () => {
   // 1. Initial Cache Load
-  const CURRENT_CACHE_VERSION = 'v2.4'
+  const CURRENT_CACHE_VERSION = 'v2.5'
   const CACHE_KEY = `uxm_trends_cache_${CURRENT_CACHE_VERSION}`
   
   if (news.value.length === 0) {
@@ -374,21 +372,13 @@ const fetchNews = async () => {
   isLoading.value = true
 
   const fetchSource = async (source: typeof RSS_SOURCES[0]) => {
-    // Intelligent Proxy Routing based on source stability
-    const defaultProxies = [
+    // Universal Global Proxies: Aggressive Parallel Fetching
+    const proxies = [
+      (url: string) => `https://api.allorigins.win/get?url=${encodeURIComponent(url)}&timestamp=${Date.now()}`,
       (url: string) => `https://api.codetabs.com/v1/proxy?quest=${encodeURIComponent(url)}`,
       (url: string) => `https://corsproxy.io/?url=${encodeURIComponent(url)}`,
-      (url: string) => `https://api.allorigins.win/get?url=${encodeURIComponent(url)}&timestamp=${Date.now()}`
+      (url: string) => `https://api.allorigins.win/raw?url=${encodeURIComponent(url)}`
     ]
-
-    // Priority routing for known difficult Korean feeds (YNA, Inven, etc.)
-    const prioritizedProxies = source.url.includes('yna.co.kr') || source.url.includes('inven.co.kr') || source.url.includes('mk.co.kr')
-      ? [
-          (url: string) => `https://api.codetabs.com/v1/proxy?quest=${encodeURIComponent(url)}`,
-          (url: string) => `https://corsproxy.io/?url=${encodeURIComponent(url)}`,
-          (url: string) => `https://api.allorigins.win/raw?url=${encodeURIComponent(url)}`
-        ]
-      : defaultProxies
 
     const fetchWithProxy = async (getProxyUrl: (u: string) => string) => {
       const controller = new AbortController()
@@ -397,7 +387,7 @@ const fetchNews = async () => {
       try {
         const response = await fetch(getProxyUrl(source.url), { signal: controller.signal })
         clearTimeout(timeoutId)
-        if (!response.ok) throw new Error('Proxy down')
+        if (!response.ok) throw new Error('Proxy error')
 
         let xmlString = ''
         const urlStr = getProxyUrl(source.url)
@@ -408,9 +398,8 @@ const fetchNews = async () => {
           xmlString = await response.text()
         }
         
-        if (!xmlString || xmlString.length < 100) throw new Error('Data too short')
+        if (!xmlString || xmlString.length < 100) throw new Error('Short payload')
         
-        // Multi-pattern extraction for maximum reliability
         const xmlItems = xmlString.split(/<item>|<entry>/i).slice(1)
         const parsedItems: NewsItem[] = []
 
@@ -466,7 +455,6 @@ const fetchNews = async () => {
             thumb: thumb.startsWith('//') ? 'https:' + thumb : thumb
           }
           parsedItems.push(newItem)
-          // Incremental Push: Show first item immediately
           if (idx === 0) updateNewsList([newItem])
         })
 
@@ -474,7 +462,7 @@ const fetchNews = async () => {
           updateNewsList(parsedItems)
           return parsedItems
         }
-        throw new Error('No items parsed')
+        throw new Error('No valid items')
       } catch (err) {
         clearTimeout(timeoutId)
         throw err
@@ -482,8 +470,8 @@ const fetchNews = async () => {
     }
 
     try {
-      // Racing combined with Intelligent Fallbacks
-      return await Promise.any(prioritizedProxies.map(p => fetchWithProxy(p)))
+      // Parallel Racing Strategy
+      return await Promise.any(proxies.map(p => fetchWithProxy(p)))
     } catch {
       return []
     }
@@ -572,7 +560,7 @@ const fetchMissingThumbnails = async () => {
         const idx = news.value.findIndex(n => n.link === targetUrl)
         if (idx !== -1) {
           news.value[idx] = { ...news.value[idx], thumb: imgUrl }
-          localStorage.setItem(`uxm_trends_cache_v2.4`, JSON.stringify(news.value))
+          localStorage.setItem(`uxm_trends_cache_v2.5`, JSON.stringify(news.value))
         }
       }
     } catch (e) {}
