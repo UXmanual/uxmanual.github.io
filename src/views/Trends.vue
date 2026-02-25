@@ -338,6 +338,7 @@ const groupedNews = computed(() => {
 
 watch(activeCategory, () => {
   visibleCount.value = 50
+  fetchMissingThumbnails()
 })
 
 
@@ -349,7 +350,7 @@ const decodeHtml = (html: string) => {
 
 const fetchNews = async () => {
   // 1. Initial Cache Load
-  const CURRENT_CACHE_VERSION = 'v2.6'
+  const CURRENT_CACHE_VERSION = 'v2.7'
   const CACHE_KEY = `uxm_trends_cache_${CURRENT_CACHE_VERSION}`
   
   if (news.value.length === 0) {
@@ -445,8 +446,7 @@ const fetchNews = async () => {
             if (imgMatch) thumb = imgMatch[1].replace(/['"]/g, '').trim()
           }
           if (!thumb) {
-            const mediaMatch = itemRaw.match(/<(?:media:content|enclosure|thumbnail|image)[^>]+url=["']([^"'>]+)["']/i) ||
-                               itemRaw.match(/<(?:media:content|enclosure|thumbnail|image)[^>]+href=["']([^"'>]+)["']/i)
+            const mediaMatch = itemRaw.match(/<(?:media:content|enclosure|thumbnail|image|media:thumbnail|img)[^>]+(?:url|href|src)=["']([^"'>]+)["']/i)
             if (mediaMatch) thumb = mediaMatch[1]
           }
 
@@ -515,7 +515,19 @@ const fetchNews = async () => {
 }
 
 const fetchMissingThumbnails = async () => {
-  const pending = news.value.filter(n => !n.thumb).slice(0, 40)
+  // 1. Prioritize current category items that lack thumbnails
+  const currentItems = activeCategory.value === 'all' 
+    ? news.value 
+    : news.value.filter(n => n.category === activeCategory.value)
+    
+  let pending = currentItems.filter(n => !n.thumb).slice(0, 30)
+  
+  // 2. If space remains, fill with other categories' items
+  if (pending.length < 30) {
+    const others = news.value.filter(n => !n.thumb && n.category !== activeCategory.value).slice(0, 30 - pending.length)
+    pending = [...pending, ...others]
+  }
+
   if (pending.length === 0) return
 
   pending.forEach(async (item) => {
@@ -563,7 +575,7 @@ const fetchMissingThumbnails = async () => {
         const idx = news.value.findIndex(n => n.link === targetUrl)
         if (idx !== -1) {
           news.value[idx] = { ...news.value[idx], thumb: imgUrl }
-          localStorage.setItem(`uxm_trends_cache_v2.6`, JSON.stringify(news.value))
+          localStorage.setItem(`uxm_trends_cache_v2.7`, JSON.stringify(news.value))
         }
       }
     } catch (e) {}
