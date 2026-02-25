@@ -9,7 +9,7 @@
     </div>
 
     <SiteHeader 
-      title="News Stand v37" 
+      title="News Stand v38" 
       description="주요 언론사의 실시간 뉴스 피드를 한곳에서 확인하세요"
       padding-top="pt-16"
     />
@@ -210,10 +210,14 @@ const changeCategory = async (id: string) => {
   const targetTab = scrollContainer.value?.querySelector(`[data-cat="${id}"]`) as HTMLElement
   if (targetTab && scrollContainer.value) {
     const container = scrollContainer.value
-    // Subtract a small padding (24px) to avoid sticking exactly to the edge
-    const scrollTarget = targetTab.offsetLeft - 24
+    const containerRect = container.getBoundingClientRect()
+    const tabRect = targetTab.getBoundingClientRect()
+    
+    // Calculate precise scroll target relative to container's left edge
+    const scrollAmount = container.scrollLeft + (tabRect.left - containerRect.left) - 24
+    
     container.scrollTo({
-      left: scrollTarget,
+      left: Math.max(0, scrollAmount),
       behavior: 'smooth'
     })
   }
@@ -344,7 +348,7 @@ const decodeHtml = (html: string) => {
 
 const fetchNews = async () => {
   // 1. Initial Cache Load
-  const CURRENT_CACHE_VERSION = 'v37'
+  const CURRENT_CACHE_VERSION = 'v38'
   const CACHE_KEY = `uxm_trends_cache_${CURRENT_CACHE_VERSION}`
   
   if (news.value.length === 0) {
@@ -553,7 +557,7 @@ const fetchMissingThumbnails = async () => {
         const idx = news.value.findIndex(n => n.link === targetUrl)
         if (idx !== -1) {
           news.value[idx] = { ...news.value[idx], thumb: imgUrl }
-          localStorage.setItem(`uxm_trends_cache_v37`, JSON.stringify(news.value))
+          localStorage.setItem(`uxm_trends_cache_v38`, JSON.stringify(news.value))
         }
       }
     } catch (e) {}
