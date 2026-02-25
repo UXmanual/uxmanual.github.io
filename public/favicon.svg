@@ -9,10 +9,10 @@
   <rect width="100" height="100" rx="24" fill="url(#grad1)" />
   
   <!-- 
-    Bolder Vector Path N:
-    - Increased width of all segments for that "Heavy/Black" weight look.
-    - Maintains the y:76 visual balance.
-    - Perfectly fixed as vector outlines.
+    Refined Heavy N Vector Path:
+    - Balanced vertical pillars (width 18 per side)
+    - Uniformly bold diagonal stroke to match the pillars
+    - Fixed at y:76 equivalent position (24-76 range)
   -->
-  <path d="M22 76V24H37.5L62.5 61V24H78V76H62.5L37.5 39V76H22Z" fill="white" />
+  <path d="M20 76V24H38.5L61.5 61.5V24H80V76H61.5L38.5 38.5V76H20Z" fill="white" />
 </svg>
