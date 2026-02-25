@@ -4,8 +4,9 @@
     :style="{ transform: `translateY(${navTranslateY}px)` }"
   >
     <div class="site-nav-container px-6 md:px-10 flex justify-between items-center w-full">
-      <router-link to="/" class="flex items-center gap-3 text-lg font-black uppercase tracking-normal text-zinc-900 dark:text-white transition-colors">
-        Todays News
+      <router-link to="/" class="flex items-center gap-2 text-lg font-black uppercase tracking-tight text-zinc-900 dark:text-white transition-colors group">
+        <img src="/favicon.svg" alt="Logo" class="w-8 h-8 rounded-lg" />
+        <span>Todays News</span>
       </router-link>
       
       <div class="flex items-center gap-4 md:gap-8">
