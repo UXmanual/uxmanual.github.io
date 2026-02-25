@@ -9,7 +9,7 @@
     </div>
 
     <SiteHeader 
-      title="News Stand v27" 
+      title="News Stand v28" 
       description="주요 언론사의 실시간 뉴스 피드를 한곳에서 확인하세요"
       padding-top="pt-16"
     />
@@ -301,7 +301,7 @@ watch(activeCategory, () => {
 
 const fetchNews = async () => {
   // 1. Initial Cache Load
-  const CURRENT_CACHE_VERSION = 'v27'
+  const CURRENT_CACHE_VERSION = 'v28'
   const CACHE_KEY = `uxm_trends_cache_${CURRENT_CACHE_VERSION}`
   
   if (news.value.length === 0) {
@@ -449,38 +449,34 @@ const fetchMissingThumbnails = async () => {
 
   pending.forEach(async (item) => {
     try {
-      let targetUrl = item.link
-      
-      // Force Resolve Google News redirect via proxy if still a Google URL
-      if (targetUrl.includes('news.google.com')) {
-        const resolveProxy = `https://api.codetabs.com/v1/proxy?quest=${encodeURIComponent(targetUrl)}`
-        const resolveRes = await fetch(resolveProxy)
-        if (resolveRes.ok) {
-          const rHtml = await resolveRes.text()
-          const m = rHtml.match(/<meta[^>]+url=([^"'>]+)/i) || 
-                    rHtml.match(/window\.location\.replace\(["']([^"']+)["']\)/i) ||
-                    rHtml.match(/<a[^>]+href="([^"'>]+)"/i)
-          if (m && m[1]) {
-            targetUrl = m[1]
-            // Update the news item link to the real one forever
-            const idx = news.value.findIndex(n => n.link === item.link)
-            if (idx !== -1) {
-              news.value[idx].link = targetUrl
-            }
+      const targetUrl = item.link
+      const providers = [
+        `https://api.allorigins.win/get?url=${encodeURIComponent(targetUrl)}&t=${Date.now()}`,
+        `https://api.codetabs.com/v1/proxy?quest=${encodeURIComponent(targetUrl)}`
+      ]
+
+      let html = ''
+      for (const pUrl of providers) {
+        try {
+          const res = await fetch(pUrl)
+          if (!res.ok) continue
+          if (pUrl.includes('allorigins')) {
+            const data = await res.json()
+            html = data.contents || ''
+          } else {
+            html = await res.text()
           }
-        }
+          if (html) break
+        } catch (e) {}
       }
 
-      const proxyUrl = `https://api.allorigins.win/get?url=${encodeURIComponent(targetUrl)}&t=${Date.now()}`
-      const res = await fetch(proxyUrl)
-      if (!res.ok) return
-      
-      const data = await res.json()
-      const html = data.contents
       if (!html) return
-      
+
+      // Super Robust OG Image Regex
       const imgMatch = html.match(/<meta[^>]+property=["']og:image["'][^>]+content=["']([^"'>]+)["']/i) ||
                       html.match(/<meta[^>]+content=["']([^"'>]+)["'][^>]+property=["']og:image["']/i) ||
+                      html.match(/<meta[^>]+name=["']og:image["'][^>]+content=["']([^"'>]+)["']/i) ||
+                      html.match(/<meta[^>]+content=["']([^"'>]+)["'][^>]+name=["']og:image["']/i) ||
                       html.match(/<meta[^>]+name=["']twitter:image["'][^>]+content=["']([^"'>]+)["']/i)
       
       if (imgMatch && imgMatch[1]) {
@@ -491,7 +487,7 @@ const fetchMissingThumbnails = async () => {
         const idx = news.value.findIndex(n => n.link === targetUrl)
         if (idx !== -1) {
           news.value[idx] = { ...news.value[idx], thumb: imgUrl }
-          localStorage.setItem(`uxm_trends_cache_v27`, JSON.stringify(news.value))
+          localStorage.setItem(`uxm_trends_cache_v28`, JSON.stringify(news.value))
         }
       }
     } catch (e) {}
