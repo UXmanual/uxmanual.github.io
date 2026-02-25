@@ -9,7 +9,7 @@
     </div>
 
     <SiteHeader 
-      title="News Stand v17" 
+      title="News Stand v18" 
       description="주요 언론사의 실시간 뉴스 피드를 한곳에서 확인하세요"
       padding-top="pt-16"
     />
@@ -286,7 +286,7 @@ watch(activeCategory, () => {
 
 const fetchNews = async () => {
   // 1. Initial Cache Load
-  const CURRENT_CACHE_VERSION = 'v17'
+  const CURRENT_CACHE_VERSION = 'v18'
   const CACHE_KEY = `uxm_trends_cache_${CURRENT_CACHE_VERSION}`
   
   if (news.value.length === 0) {
@@ -382,30 +382,9 @@ const fetchNews = async () => {
           const headline = parts[0].trim()
           const provider = parts.length > 1 ? parts[parts.length - 1].trim() : ''
           
-          // --- Advanced Google News URL Decoding ---
-          let finalLink = link
-          if (link.includes('news.google.com/rss/articles/')) {
-            try {
-              let b64 = link.split('articles/')[1]?.split('?')[0]
-              if (b64) {
-                // Google uses URL-safe base64: - is +, _ is /
-                b64 = b64.replace(/-/g, '+').replace(/_/g, '/')
-                // Padding is required for atob
-                while (b64.length % 4 !== 0) b64 += '='
-                const raw = atob(b64)
-                // The original URL is embedded within the raw binary string.
-                // We look for the first http and stop at common non-URL characters.
-                const m = raw.match(/https?:\/\/[^\s\u0000-\u001F\u007F-\u009F"';<>]+/i)
-                if (m) finalLink = m[0]
-              }
-            } catch (e) {
-              console.warn('[Trends] Link decoding failed for:', link)
-            }
-          }
-
-          if (title && finalLink) {
+          if (title && link) {
             parsedItems.push({
-              title: headline, link: finalLink, pubDate,
+              title: headline, link: link, pubDate,
               description: cleanDesc || '기사 본문을 통해 자세한 내용을 확인하세요.',
               source: source.name, category: source.category, provider: provider,
               thumb: thumb
@@ -456,14 +435,24 @@ const fetchMissingThumbnails = async () => {
   pending.forEach(async (item) => {
     try {
       let targetUrl = item.link
+      
+      // Force Resolve Google News redirect via proxy if still a Google URL
       if (targetUrl.includes('news.google.com')) {
-        const resolveProxy = `https://api.allorigins.win/get?url=${encodeURIComponent(targetUrl)}`
+        const resolveProxy = `https://api.codetabs.com/v1/proxy?quest=${encodeURIComponent(targetUrl)}`
         const resolveRes = await fetch(resolveProxy)
         if (resolveRes.ok) {
-          const resolveData = await resolveRes.json()
-          const rHtml = resolveData.contents || ''
-          const m = rHtml.match(/<meta[^>]+url=([^"'>]+)/i) || rHtml.match(/<a[^>]+href="([^"'>]+)"/i)
-          if (m && m[1]) targetUrl = m[1]
+          const rHtml = await resolveRes.text()
+          const m = rHtml.match(/<meta[^>]+url=([^"'>]+)/i) || 
+                    rHtml.match(/window\.location\.replace\(["']([^"']+)["']\)/i) ||
+                    rHtml.match(/<a[^>]+href="([^"'>]+)"/i)
+          if (m && m[1]) {
+            targetUrl = m[1]
+            // Update the news item link to the real one forever
+            const idx = news.value.findIndex(n => n.link === item.link)
+            if (idx !== -1) {
+              news.value[idx].link = targetUrl
+            }
+          }
         }
       }
 
@@ -484,10 +473,10 @@ const fetchMissingThumbnails = async () => {
         if (imgUrl.startsWith('//')) imgUrl = 'https:' + imgUrl
         if (imgUrl.match(/\.ico$|favicon|google_logo|tracking|pixel/i)) return
         
-        const idx = news.value.findIndex(n => n.link === item.link)
+        const idx = news.value.findIndex(n => n.link === targetUrl)
         if (idx !== -1) {
           news.value[idx] = { ...news.value[idx], thumb: imgUrl }
-          localStorage.setItem(`uxm_trends_cache_v17`, JSON.stringify(news.value))
+          localStorage.setItem(`uxm_trends_cache_v18`, JSON.stringify(news.value))
         }
       }
     } catch (e) {}
