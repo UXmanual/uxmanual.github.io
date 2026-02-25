@@ -9,7 +9,7 @@
     </div>
 
     <SiteHeader 
-      title="News Stand v41" 
+      title="News Stand v42" 
       description="주요 언론사의 실시간 뉴스 피드를 한곳에서 확인하세요"
       padding-top="pt-16"
     />
@@ -104,7 +104,7 @@
                  :key="item.link + index"
                  :href="item.link"
                  target="_blank"
-                 class="news-card group flex flex-col bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-white/5 rounded-3xl p-5 hover:-translate-y-1 transition-transform duration-300"
+                 class="news-card group flex flex-col bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-white/5 rounded-3xl p-5 transition-all duration-300"
                  :class="`theme-${item.category}`"
               >
                 <div class="flex justify-between items-center mb-4">
@@ -118,7 +118,7 @@
                   <div v-if="item.thumb" class="flex-shrink-0 w-12 h-12 rounded-lg overflow-hidden border border-zinc-100 dark:border-white/5 bg-zinc-50 dark:bg-zinc-800">
                     <img :src="item.thumb" class="w-full h-full object-cover" alt="" loading="lazy" referrerpolicy="no-referrer" />
                   </div>
-                  <h3 class="text-lg font-bold text-zinc-900 dark:text-white leading-tight line-clamp-2 group-hover:opacity-80 flex-grow">
+                  <h3 class="text-lg font-bold text-zinc-900 dark:text-white leading-tight line-clamp-2 title-element flex-grow">
                     {{ item.title }}
                   </h3>
                 </div>
@@ -141,7 +141,7 @@
         <div v-if="filteredNews.length > visibleCount" class="flex justify-center pt-10 pb-20">
           <button 
             @click="visibleCount += 20"
-            class="px-12 py-4 bg-zinc-900 dark:bg-white text-white dark:text-black rounded-xl font-semibold text-base leading-normal tracking-tight hover:scale-[1.02] active:scale-[0.98] transition-all"
+            class="px-12 py-4 bg-zinc-900 dark:bg-white text-white dark:text-black rounded-xl font-semibold text-base leading-normal tracking-tight active:scale-[0.98] transition-all"
           >
             헤드라인 더보기
           </button>
@@ -343,7 +343,7 @@ const decodeHtml = (html: string) => {
 
 const fetchNews = async () => {
   // 1. Initial Cache Load
-  const CURRENT_CACHE_VERSION = 'v41'
+  const CURRENT_CACHE_VERSION = 'v42'
   const CACHE_KEY = `uxm_trends_cache_${CURRENT_CACHE_VERSION}`
   
   if (news.value.length === 0) {
@@ -552,7 +552,7 @@ const fetchMissingThumbnails = async () => {
         const idx = news.value.findIndex(n => n.link === targetUrl)
         if (idx !== -1) {
           news.value[idx] = { ...news.value[idx], thumb: imgUrl }
-          localStorage.setItem(`uxm_trends_cache_v41`, JSON.stringify(news.value))
+          localStorage.setItem(`uxm_trends_cache_v42`, JSON.stringify(news.value))
         }
       }
     } catch (e) {}
@@ -646,16 +646,26 @@ onUnmounted(() => {
 .news-card.theme-sports { --brand-color: #5196fd; --brand-bg: rgba(81, 150, 253, 0.05); }
 .news-card.theme-game { --brand-color: #9333ea; --brand-bg: rgba(147, 51, 234, 0.05); }
 
-.news-card:hover {
-  border-color: rgba(var(--brand-color), 0.5); /* This won't work with hex directly in CSS overlay, using fallbacks */
-}
+/* Hover Effects: Enabled only for devices that support hover (Mouse) to prevent sticky feel on mobile */
+@media (hover: hover) {
+  .news-card:hover {
+    transform: translateY(-4px);
+  }
+  
+  .news-card.theme-ai:hover { border-color: #6366f180; }
+  .news-card.theme-finance:hover { border-color: #0acaaa80; }
+  .news-card.theme-design:hover { border-color: #fa4fc180; }
+  .news-card.theme-sports:hover { border-color: #5196fd80; }
+  .news-card.theme-game:hover { border-color: #9333ea80; }
 
-/* Precision Hex Border for hover */
-.news-card.theme-ai:hover { border-color: #6366f180; }
-.news-card.theme-finance:hover { border-color: #0acaaa80; }
-.news-card.theme-design:hover { border-color: #fa4fc180; }
-.news-card.theme-sports:hover { border-color: #5196fd80; }
-.news-card.theme-game:hover { border-color: #9333ea80; }
+  .news-card:hover .title-element {
+    opacity: 0.8;
+  }
+
+  button:hover {
+    scale: 1.02;
+  }
+}
 
 .source-badge {
   background-color: var(--brand-bg);
