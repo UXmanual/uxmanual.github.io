@@ -275,10 +275,9 @@ const categories = [
 
 const RSS_SOURCES = [
   // AI & Tech
-  { name: 'AI 타임스', url: 'http://www.aitimes.com/rss/S1N1.xml', category: 'ai' },
-  { name: '지디넷코리아', url: 'http://feeds.feedburner.com/zdkorea', category: 'ai' },
+  { name: 'AI 타임스', url: 'https://www.aitimes.com/rss/S1N1.xml', category: 'ai' },
+  { name: '지디넷코리아', url: 'https://feeds.feedburner.com/zdkorea', category: 'ai' },
   { name: '매경 IT', url: 'https://www.mk.co.kr/rss/50300001/', category: 'ai' },
-  { name: '헬로티 AI', url: 'http://www.hellot.net/rss/S1N22.xml', category: 'ai' },
   { name: '디지털데일리', url: 'https://www.ddaily.co.kr/rss/all.xml', category: 'ai' },
   { name: '씨넷코리아', url: 'https://www.cnet.co.kr/rss/all', category: 'ai' },
   
@@ -294,7 +293,7 @@ const RSS_SOURCES = [
   { name: 'Smashing Magazine', url: 'https://www.smashingmagazine.com/feed', category: 'design' },
 
   // Game
-  { name: '인벤 뉴스', url: 'http://webzine.inven.co.kr/news/rss.php', category: 'game' },
+  { name: '인벤 뉴스', url: 'https://webzine.inven.co.kr/news/rss.php', category: 'game' },
   { name: '매경 게임', url: 'https://www.mk.co.kr/rss/50700001/', category: 'game' },
 
   // Sports
@@ -344,7 +343,7 @@ const decodeHtml = (html: string) => {
 
 const fetchNews = async () => {
   // 1. Initial Cache Load
-  const CURRENT_CACHE_VERSION = 'v1.9'
+  const CURRENT_CACHE_VERSION = 'v2.0'
   const CACHE_KEY = `uxm_trends_cache_${CURRENT_CACHE_VERSION}`
   
   if (news.value.length === 0) {
@@ -370,22 +369,21 @@ const fetchNews = async () => {
   isLoading.value = true
 
   const fetchSource = async (source: typeof RSS_SOURCES[0]) => {
-    // Note: Proxies are essential to bypass Browser CORS blocks.
     const proxies = [
       (url: string) => `https://api.allorigins.win/get?url=${encodeURIComponent(url)}&timestamp=${Date.now()}`,
       (url: string) => `https://api.codetabs.com/v1/proxy?quest=${encodeURIComponent(url)}`,
       (url: string) => `https://corsproxy.io/?url=${encodeURIComponent(url)}`
     ]
 
-    // Racing for stability - take the fastest valid response
+    // Racing implementation that ensures we use the best content while updating UI ASAP
     const fetchWithProxy = async (getProxyUrl: (u: string) => string) => {
       const controller = new AbortController()
-      const timeoutId = setTimeout(() => controller.abort(), 12000)
+      const timeoutId = setTimeout(() => controller.abort(), 15000)
       
       try {
         const response = await fetch(getProxyUrl(source.url), { signal: controller.signal })
         clearTimeout(timeoutId)
-        if (!response.ok) throw new Error('Proxy failed')
+        if (!response.ok) throw new Error('Fetch failed')
 
         let xmlString = ''
         if (getProxyUrl(source.url).includes('allorigins')) {
@@ -395,15 +393,17 @@ const fetchNews = async () => {
           xmlString = await response.text()
         }
         
-        if (!xmlString || xmlString.length < 100) throw new Error('Empty response')
+        if (!xmlString || xmlString.length < 100) throw new Error('Data too short')
         
-        const xmlItems = xmlString.split(/<item>/i).slice(1)
+        // Split by <item> or <entry> to support both RSS and Atom
+        const xmlItems = xmlString.split(/<item>|<entry>/i).slice(1)
         const parsedItems: NewsItem[] = []
 
         xmlItems.forEach((itemRaw, idx) => {
-          if (idx >= 40) return
+          if (idx >= 30) return // Limit items per source for speed
           const titleMatch = itemRaw.match(/<title>(?:<!\[CDATA\[)?([\s\S]*?)(?:\]\]>)?<\/title>/i)
-          const linkMatch = itemRaw.match(/<link>(?:<!\[CDATA\[)?([\s\S]*?)(?:\]\]>)?<\/link>/i)
+          const linkMatch = itemRaw.match(/<link>(?:<!\[CDATA\[)?([\s\S]*?)(?:\]\]>)?<\/link>/i) ||
+                            itemRaw.match(/<link[^>]+href=["']([^"']+)["']/i)
           if (!titleMatch || !linkMatch) return
 
           const title = decodeHtml(titleMatch[1].trim())
@@ -422,8 +422,11 @@ const fetchNews = async () => {
             } catch (e) {}
           }
 
-          const descMatch = itemRaw.match(/<description>(?:<!\[CDATA\[)?([\s\S]*?)(?:\]\]>)?<\/description>/i)
-          const dateMatch = itemRaw.match(/<pubDate>(?:<!\[CDATA\[)?([\s\S]*?)(?:\]\]>)?<\/pubDate>/i)
+          const descMatch = itemRaw.match(/<description>(?:<!\[CDATA\[)?([\s\S]*?)(?:\]\]>)?<\/description>/i) ||
+                            itemRaw.match(/<summary>(?:<!\[CDATA\[)?([\s\S]*?)(?:\]\]>)?<\/summary>/i)
+          const dateMatch = itemRaw.match(/<pubDate>(?:<!\[CDATA\[)?([\s\S]*?)(?:\]\]>)?<\/pubDate>/i) ||
+                            itemRaw.match(/<published>(?:<!\[CDATA\[)?([\s\S]*?)(?:\]\]>)?<\/published>/i)
+          
           const description = descMatch ? descMatch[1].trim() : ''
           const pubDate = dateMatch ? dateMatch[1].trim() : ''
 
@@ -443,15 +446,19 @@ const fetchNews = async () => {
           }
 
           const parts = title.split(/ - | \| | : /)
-          parsedItems.push({
+          const newItem = {
             title: parts[0].trim(), link, pubDate,
-            description: decodeHtml(description.replace(/<[^>]*>?/gm, ' ').replace(/\s+/g, ' ').trim()) || '본문을 확인하세요.',
+            description: decodeHtml(description.replace(/<[^>]*>?/gm, ' ').replace(/\s+/g, ' ').trim()) || '기사 본문을 확인하세요.',
             source: source.name, category: source.category, provider: parts.length > 1 ? parts[parts.length - 1].trim() : '',
             thumb
-          })
+          }
+          parsedItems.push(newItem)
+          
+          // CRITICAL: Instant Reveal of the first item for perceived lightning speed
+          if (idx === 0) updateNewsList([newItem])
         })
 
-        if (parsedItems.length === 0) throw new Error('No items')
+        if (parsedItems.length === 0) throw new Error('No valid items')
         updateNewsList(parsedItems)
         return parsedItems
       } catch (err) {
@@ -461,7 +468,7 @@ const fetchNews = async () => {
     }
 
     try {
-      // Race: Returns the first successful proxy result
+      // Parallel racing for the absolute best proxy speed
       return await Promise.any(proxies.map(p => fetchWithProxy(p)))
     } catch (err) {
       console.warn(`[Trends] All proxies failed for ${source.name}`)
@@ -552,7 +559,7 @@ const fetchMissingThumbnails = async () => {
         const idx = news.value.findIndex(n => n.link === targetUrl)
         if (idx !== -1) {
           news.value[idx] = { ...news.value[idx], thumb: imgUrl }
-          localStorage.setItem(`uxm_trends_cache_v1.9`, JSON.stringify(news.value))
+          localStorage.setItem(`uxm_trends_cache_v2.0`, JSON.stringify(news.value))
         }
       }
     } catch (e) {}
