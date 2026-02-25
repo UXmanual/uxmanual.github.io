@@ -9,7 +9,7 @@
     </div>
 
     <SiteHeader 
-      title="News Stand v31" 
+      title="News Stand v32" 
       description="주요 언론사의 실시간 뉴스 피드를 한곳에서 확인하세요"
       padding-top="pt-16"
     />
@@ -96,7 +96,7 @@
                 
                 <div class="flex gap-4 mb-4 items-center h-12">
                   <div v-if="item.thumb" class="flex-shrink-0 w-12 h-12 rounded-lg overflow-hidden border border-zinc-100 dark:border-white/5 bg-zinc-50 dark:bg-zinc-800">
-                    <img :src="item.thumb" class="w-full h-full object-cover" alt="" loading="lazy" />
+                    <img :src="item.thumb" class="w-full h-full object-cover" alt="" loading="lazy" referrerpolicy="no-referrer" />
                   </div>
                   <h3 class="text-lg font-bold text-zinc-900 dark:text-white leading-tight line-clamp-2 group-hover:opacity-80 flex-grow">
                     {{ item.title }}
@@ -304,7 +304,7 @@ watch(activeCategory, () => {
 
 const fetchNews = async () => {
   // 1. Initial Cache Load
-  const CURRENT_CACHE_VERSION = 'v31'
+  const CURRENT_CACHE_VERSION = 'v32'
   const CACHE_KEY = `uxm_trends_cache_${CURRENT_CACHE_VERSION}`
   
   if (news.value.length === 0) {
@@ -497,7 +497,7 @@ const fetchMissingThumbnails = async () => {
         const idx = news.value.findIndex(n => n.link === targetUrl)
         if (idx !== -1) {
           news.value[idx] = { ...news.value[idx], thumb: imgUrl }
-          localStorage.setItem(`uxm_trends_cache_v31`, JSON.stringify(news.value))
+          localStorage.setItem(`uxm_trends_cache_v32`, JSON.stringify(news.value))
         }
       }
     } catch (e) {}
