@@ -95,7 +95,7 @@
                 </div>
                 
                 <div class="flex gap-4 mb-4 items-center">
-                  <div v-if="item.thumb" class="flex-shrink-0 w-20 h-20 rounded-2xl overflow-hidden border border-zinc-100 dark:border-white/5 bg-zinc-50 dark:bg-zinc-800">
+                  <div v-if="item.thumb" class="flex-shrink-0 w-12 h-12 rounded-lg overflow-hidden border border-zinc-100 dark:border-white/5 bg-zinc-50 dark:bg-zinc-800">
                     <img :src="item.thumb" class="w-full h-full object-cover" alt="" loading="lazy" />
                   </div>
                   <h3 class="text-lg font-bold text-zinc-900 dark:text-white leading-tight line-clamp-2 group-hover:opacity-80 flex-grow">
