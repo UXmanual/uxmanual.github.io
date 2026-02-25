@@ -9,7 +9,7 @@
     </div>
 
     <SiteHeader 
-      title="News Stand v22" 
+      title="News Stand v23" 
       description="주요 언론사의 실시간 뉴스 피드를 한곳에서 확인하세요"
       padding-top="pt-16"
     />
@@ -243,25 +243,26 @@ const categories = [
 ]
 
 const RSS_SOURCES = [
-  // AI & Tech (Direct Sources)
-  { name: '전자신문 AI', url: 'https://www.etnews.com/rss/ai', category: 'ai' },
-  { name: '연합 테크', url: 'https://www.yna.co.kr/rss/digital.xml', category: 'ai' },
-  { name: 'The AI', url: 'http://www.theai.kr/rss/all.xml', category: 'ai' },
+  // AI & Tech (Targeting specified sites via Google News for stability)
+  { name: 'AI 타임스', url: 'https://news.google.com/rss/search?q=site:aitimes.com+AI&hl=ko&gl=KR&ceid=KR:ko', category: 'ai' },
+  { name: '전자신문 AI', url: 'https://news.google.com/rss/search?q=site:etnews.com+AI&hl=ko&gl=KR&ceid=KR:ko', category: 'ai' },
+  { name: 'The AI', url: 'https://news.google.com/rss/search?q=site:theai.kr&hl=ko&gl=KR&ceid=KR:ko', category: 'ai' },
+  { name: '매경 IT', url: 'https://www.mk.co.kr/rss/50300001/', category: 'ai' },
   
-  // Finance (Direct Sources)
+  // Finance
   { name: '매경 경제', url: 'https://www.mk.co.kr/rss/30100041/', category: 'finance' },
   { name: '연합 경제', url: 'https://www.yna.co.kr/rss/economy.xml', category: 'finance' },
 
-  // Design (Direct Sources)
+  // Design
   { name: 'Designboom', url: 'https://www.designboom.com/feed', category: 'design' },
+  { name: '디자인정글', url: 'https://news.google.com/rss/search?q=site:jungle.co.kr&hl=ko&gl=KR&ceid=KR:ko', category: 'design' },
   { name: '엘르 아트', url: 'https://elle.co.kr/rss/art-design', category: 'design' },
-  { name: '디자인정글', url: 'https://www.jungle.co.kr/rss/all.xml', category: 'design' },
 
-  // Game (Direct Sources)
+  // Game
   { name: '인벤 뉴스', url: 'http://webzine.inven.co.kr/news/rss.php', category: 'game' },
-  { name: '연합 산업', url: 'https://www.yna.co.kr/rss/industry.xml', category: 'game' },
+  { name: '게임메카', url: 'https://news.google.com/rss/search?q=site:gamemeca.com&hl=ko&gl=KR&ceid=KR:ko', category: 'game' },
 
-  // Sports (Direct Sources)
+  // Sports
   { name: '연합 스포츠', url: 'https://www.yna.co.kr/rss/sports.xml', category: 'sports' },
   { name: '매경 스포츠', url: 'https://www.mk.co.kr/rss/71000001/', category: 'sports' }
 ]
@@ -304,7 +305,7 @@ watch(activeCategory, () => {
 
 const fetchNews = async () => {
   // 1. Initial Cache Load
-  const CURRENT_CACHE_VERSION = 'v22'
+  const CURRENT_CACHE_VERSION = 'v23'
   const CACHE_KEY = `uxm_trends_cache_${CURRENT_CACHE_VERSION}`
   
   if (news.value.length === 0) {
@@ -400,9 +401,24 @@ const fetchNews = async () => {
           const headline = parts[0].trim()
           const provider = parts.length > 1 ? parts[parts.length - 1].trim() : ''
           
-          if (title && link) {
+          // --- Direct URL Extraction & High-Precision Decoding ---
+          let finalLink = link
+          if (link.includes('news.google.com')) {
+            try {
+              let b64 = link.split('articles/')[1]?.split('?')[0]
+              if (b64) {
+                b64 = b64.replace(/-/g, '+').replace(/_/g, '/')
+                while (b64.length % 4 !== 0) b64 += '='
+                const raw = atob(b64)
+                const m = raw.match(/https?:\/\/[a-zA-Z0-9.\-_~:/?#\[\]@!$&'()*+,;=%]+/i)
+                if (m) finalLink = m[0]
+              }
+            } catch (e) {}
+          }
+
+          if (title && finalLink) {
             parsedItems.push({
-              title: headline, link: link, pubDate,
+              title: headline, link: finalLink, pubDate,
               description: cleanDesc || '기사 본문을 통해 자세한 내용을 확인하세요.',
               source: source.name, category: source.category, provider: provider,
               thumb: thumb
@@ -494,7 +510,7 @@ const fetchMissingThumbnails = async () => {
         const idx = news.value.findIndex(n => n.link === targetUrl)
         if (idx !== -1) {
           news.value[idx] = { ...news.value[idx], thumb: imgUrl }
-          localStorage.setItem(`uxm_trends_cache_v22`, JSON.stringify(news.value))
+          localStorage.setItem(`uxm_trends_cache_v23`, JSON.stringify(news.value))
         }
       }
     } catch (e) {}
