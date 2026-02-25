@@ -280,14 +280,17 @@ const RSS_SOURCES = [
   { name: '매경 IT', url: 'https://www.mk.co.kr/rss/50300001/', category: 'ai' },
   { name: '디지털데일리', url: 'https://www.ddaily.co.kr/rss/all.xml', category: 'ai' },
   
-  // Finance
+  // Finance (Expanded & Stabilized)
   { name: '한경 경제', url: 'https://www.hankyung.com/feed/economy', category: 'finance' },
+  { name: '파이낸셜뉴스', url: 'https://www.fnnews.com/rss/fn_realtime_economy.xml', category: 'finance' },
+  { name: '뉴스1 경제', url: 'https://www.news1.kr/rss/economy/', category: 'finance' },
   { name: '연합 경제', url: 'https://www.yna.co.kr/rss/economy.xml', category: 'finance' },
   { name: '매경 경제', url: 'https://www.mk.co.kr/rss/30100041/', category: 'finance' },
   { name: '동아 경제', url: 'https://rss.donga.com/economy.xml', category: 'finance' },
 
   // Design & Art
   { name: '플래텀', url: 'https://platum.kr/feed', category: 'design' },
+  { name: 'Creative Bloq', url: 'https://www.creativebloq.com/feed', category: 'design' },
   { name: 'UX Collective', url: 'https://uxdesign.cc/feed', category: 'design' },
   { name: 'Design Milk', url: 'https://design-milk.com/feed/', category: 'design' },
 
@@ -346,7 +349,7 @@ const decodeHtml = (html: string) => {
 
 const fetchNews = async () => {
   // 1. Initial Cache Load
-  const CURRENT_CACHE_VERSION = 'v2.5'
+  const CURRENT_CACHE_VERSION = 'v2.6'
   const CACHE_KEY = `uxm_trends_cache_${CURRENT_CACHE_VERSION}`
   
   if (news.value.length === 0) {
@@ -560,7 +563,7 @@ const fetchMissingThumbnails = async () => {
         const idx = news.value.findIndex(n => n.link === targetUrl)
         if (idx !== -1) {
           news.value[idx] = { ...news.value[idx], thumb: imgUrl }
-          localStorage.setItem(`uxm_trends_cache_v2.5`, JSON.stringify(news.value))
+          localStorage.setItem(`uxm_trends_cache_v2.6`, JSON.stringify(news.value))
         }
       }
     } catch (e) {}
