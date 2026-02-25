@@ -578,8 +578,8 @@ onMounted(() => {
   setTimeout(checkScroll, 500) // Initial scroll check
   window.addEventListener('scroll', handleScroll, { passive: true })
   
-  // Refresh every 5 mins
-  fetchInterval.value = setInterval(fetchNews, 5 * 60 * 1000)
+  // Refresh every 10 mins
+  fetchInterval.value = setInterval(fetchNews, 10 * 60 * 1000)
 })
 
 onUnmounted(() => {
