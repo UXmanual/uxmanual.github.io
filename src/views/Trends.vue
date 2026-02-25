@@ -9,7 +9,7 @@
     </div>
 
     <SiteHeader 
-      title="News Stand v18" 
+      title="News Stand v19" 
       description="주요 언론사의 실시간 뉴스 피드를 한곳에서 확인하세요"
       padding-top="pt-16"
     />
@@ -243,13 +243,23 @@ const categories = [
 ]
 
 const RSS_SOURCES = [
+  // AI & Tech
   { name: '매경 IT', url: 'https://www.mk.co.kr/rss/50300001/', category: 'ai' },
-  { name: 'AI 최신', url: 'https://news.google.com/rss/search?q=AI+%ED%8A%B8%EB%A0%8C%EB%93%9C&hl=ko&gl=KR&ceid=KR:ko', category: 'ai' },
+  { name: '연합 테크', url: 'https://www.yna.co.kr/rss/digital.xml', category: 'ai' },
+  { name: '경향 IT', url: 'https://www.khan.co.kr/rss/rssdata/it_news.xml', category: 'ai' },
+  
+  // Finance
   { name: '매경 경제', url: 'https://www.mk.co.kr/rss/30100041/', category: 'finance' },
-  { name: '금융 소식', url: 'https://news.google.com/rss/search?q=%EA%B8%88%EC%9C%B5+%EC%A6%9D%EA%B6%8C&hl=ko&gl=KR&ceid=KR:ko', category: 'finance' },
-  { name: '디자인 뉴스', url: 'https://news.google.com/rss/search?q=%EB%94%94%EC%9E%90%EC%9D%B8+%ED%8A%B8%EB%A0%8C%EB%93%9C&hl=ko&gl=KR&ceid=KR:ko', category: 'design' },
-  { name: '해외축구', url: 'https://news.google.com/rss/search?q=%ED%95%B4%EC%99%B8%EC%B6%95%EA%B5%AC&hl=ko&gl=KR&ceid=KR:ko', category: 'sports' },
-  { name: '게임 뉴스', url: 'https://news.google.com/rss/search?q=%EA%B2%8C%EC%9E%84+%EC%8B%A0%EC%9E%91+%ED%8A%B8%EB%A0%8C%EB%93%9C&hl=ko&gl=KR&ceid=KR:ko', category: 'game' }
+  { name: '연합 경제', url: 'https://www.yna.co.kr/rss/economy.xml', category: 'finance' },
+  { name: '연합 증권', url: 'https://www.yna.co.kr/rss/stock.xml', category: 'finance' },
+
+  // Game
+  { name: '연합 산업', url: 'https://www.yna.co.kr/rss/industry.xml', category: 'game' },
+  { name: '디자인/IT', url: 'https://news.google.com/rss/search?q=UX+UI+%EB%94%94%EC%9E%90%EC%9D%B8+%ED%8A%B8%EB%A0%8C%EB%93%9C&hl=ko&gl=KR&ceid=KR:ko', category: 'design' },
+
+  // Sports
+  { name: '연합 스포츠', url: 'https://www.yna.co.kr/rss/sports.xml', category: 'sports' },
+  { name: '매경 스포츠', url: 'https://www.mk.co.kr/rss/71000001/', category: 'sports' }
 ]
 
 const filteredNews = computed(() => {
@@ -286,7 +296,7 @@ watch(activeCategory, () => {
 
 const fetchNews = async () => {
   // 1. Initial Cache Load
-  const CURRENT_CACHE_VERSION = 'v18'
+  const CURRENT_CACHE_VERSION = 'v19'
   const CACHE_KEY = `uxm_trends_cache_${CURRENT_CACHE_VERSION}`
   
   if (news.value.length === 0) {
@@ -382,9 +392,24 @@ const fetchNews = async () => {
           const headline = parts[0].trim()
           const provider = parts.length > 1 ? parts[parts.length - 1].trim() : ''
           
-          if (title && link) {
+          // --- Direct URL Extraction & Decoding ---
+          let finalLink = link
+          if (link.includes('news.google.com/rss/articles/')) {
+            try {
+              let b64 = link.split('articles/')[1]?.split('?')[0]
+              if (b64) {
+                b64 = b64.replace(/-/g, '+').replace(/_/g, '/')
+                while (b64.length % 4 !== 0) b64 += '='
+                const raw = atob(b64)
+                const m = raw.match(/https?:\/\/[a-zA-Z0-9.\-_~:/?#\[\]@!$&'()*+,;=%]+/i)
+                if (m) finalLink = m[0]
+              }
+            } catch (e) {}
+          }
+
+          if (title && finalLink) {
             parsedItems.push({
-              title: headline, link: link, pubDate,
+              title: headline, link: finalLink, pubDate,
               description: cleanDesc || '기사 본문을 통해 자세한 내용을 확인하세요.',
               source: source.name, category: source.category, provider: provider,
               thumb: thumb
@@ -476,7 +501,7 @@ const fetchMissingThumbnails = async () => {
         const idx = news.value.findIndex(n => n.link === targetUrl)
         if (idx !== -1) {
           news.value[idx] = { ...news.value[idx], thumb: imgUrl }
-          localStorage.setItem(`uxm_trends_cache_v18`, JSON.stringify(news.value))
+          localStorage.setItem(`uxm_trends_cache_v19`, JSON.stringify(news.value))
         }
       }
     } catch (e) {}
