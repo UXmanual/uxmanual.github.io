@@ -9,7 +9,7 @@
     </div>
 
     <SiteHeader 
-      title="News Stand v29" 
+      title="News Stand v30" 
       description="주요 언론사의 실시간 뉴스 피드를 한곳에서 확인하세요"
       padding-top="pt-16"
     />
@@ -243,8 +243,11 @@ const categories = [
 ]
 
 const RSS_SOURCES = [
-  // AI & Tech (Confirmed Direct RSS)
+  // AI & Tech (Expanded Direct Sources)
   { name: 'AI 타임스', url: 'http://www.aitimes.com/rss/S1N1.xml', category: 'ai' },
+  { name: '지디넷코리아', url: 'http://feeds.feedburner.com/zdkorea', category: 'ai' },
+  { name: '매경 IT', url: 'https://www.mk.co.kr/rss/50300001/', category: 'ai' },
+  { name: '헬로티 AI', url: 'http://www.hellot.net/rss/S1N22.xml', category: 'ai' },
   { name: '디지털데일리', url: 'https://www.ddaily.co.kr/rss/all.xml', category: 'ai' },
   { name: '씨넷코리아', url: 'https://www.cnet.co.kr/rss/all', category: 'ai' },
   
@@ -301,7 +304,7 @@ watch(activeCategory, () => {
 
 const fetchNews = async () => {
   // 1. Initial Cache Load
-  const CURRENT_CACHE_VERSION = 'v29'
+  const CURRENT_CACHE_VERSION = 'v30'
   const CACHE_KEY = `uxm_trends_cache_${CURRENT_CACHE_VERSION}`
   
   if (news.value.length === 0) {
@@ -494,7 +497,7 @@ const fetchMissingThumbnails = async () => {
         const idx = news.value.findIndex(n => n.link === targetUrl)
         if (idx !== -1) {
           news.value[idx] = { ...news.value[idx], thumb: imgUrl }
-          localStorage.setItem(`uxm_trends_cache_v29`, JSON.stringify(news.value))
+          localStorage.setItem(`uxm_trends_cache_v30`, JSON.stringify(news.value))
         }
       }
     } catch (e) {}
