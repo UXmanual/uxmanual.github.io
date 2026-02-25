@@ -9,7 +9,7 @@
     </div>
 
     <SiteHeader 
-      title="News Stand v34" 
+      title="News Stand v35" 
       description="주요 언론사의 실시간 뉴스 피드를 한곳에서 확인하세요"
       padding-top="pt-16"
     />
@@ -255,11 +255,11 @@ const RSS_SOURCES = [
   { name: '연합 경제', url: 'https://www.yna.co.kr/rss/economy.xml', category: 'finance' },
   { name: '동아 경제', url: 'https://rss.donga.com/economy.xml', category: 'finance' },
 
-  // Design & Art (Korean Sources)
-  { name: '월간디자인', url: 'https://news.google.com/rss/search?q=site:designhouse.co.kr&hl=ko&gl=KR&ceid=KR:ko', category: 'design' },
-  { name: '디자인정글', url: 'https://news.google.com/rss/search?q=site:jungle.co.kr&hl=ko&gl=KR&ceid=KR:ko', category: 'design' },
-  { name: '플래텀', url: 'https://platum.kr/feed', category: 'design' },
-  { name: '엘르 디자인', url: 'https://elle.co.kr/rss/art-design', category: 'design' },
+  // Design & Art (Global Professional Sources)
+  { name: 'UX Collective', url: 'https://uxdesign.cc/feed', category: 'design' },
+  { name: 'Design Milk', url: 'https://design-milk.com/feed/', category: 'design' },
+  { name: 'Smashing Magazine', url: 'https://www.smashingmagazine.com/feed', category: 'design' },
+  { name: 'Awwwards', url: 'https://www.awwwards.com/blog/feed/', category: 'design' },
 
   // Game (Confirmed Direct RSS)
   { name: '인벤 뉴스', url: 'http://webzine.inven.co.kr/news/rss.php', category: 'game' },
@@ -312,7 +312,7 @@ const decodeHtml = (html: string) => {
 
 const fetchNews = async () => {
   // 1. Initial Cache Load
-  const CURRENT_CACHE_VERSION = 'v34'
+  const CURRENT_CACHE_VERSION = 'v35'
   const CACHE_KEY = `uxm_trends_cache_${CURRENT_CACHE_VERSION}`
   
   if (news.value.length === 0) {
@@ -521,7 +521,7 @@ const fetchMissingThumbnails = async () => {
         const idx = news.value.findIndex(n => n.link === targetUrl)
         if (idx !== -1) {
           news.value[idx] = { ...news.value[idx], thumb: imgUrl }
-          localStorage.setItem(`uxm_trends_cache_v34`, JSON.stringify(news.value))
+          localStorage.setItem(`uxm_trends_cache_v35`, JSON.stringify(news.value))
         }
       }
     } catch (e) {}
