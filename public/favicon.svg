@@ -6,6 +6,8 @@
     </linearGradient>
   </defs>
   <rect x="8" y="8" width="84" height="84" rx="20" fill="url(#grad1)" />
-  <text x="50" y="74" font-family="'Arial Black', 'Inter', sans-serif" font-size="64" font-weight="950" fill="white" text-anchor="middle" stroke="white" stroke-width="1.8">N</text>
-  <circle cx="88" cy="16" r="11" fill="#ef4444" />
+  <!-- Slightly Thinner N: Reduced stroke-width and font-size for better balance as a logo symbol -->
+  <text x="50" y="73" font-family="Inter, system-ui, sans-serif" font-size="62" font-weight="900" fill="white" text-anchor="middle">N</text>
+  <!-- Slightly Larger Red dot overlapping the corner -->
+  <circle cx="88" cy="16" r="13.5" fill="#ef4444" />
 </svg>
