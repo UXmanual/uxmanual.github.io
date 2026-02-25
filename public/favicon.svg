@@ -10,18 +10,19 @@
   
   <!-- 
     Updated to User Specific Requirements:
-    y="58"
+    y="78"
+    font-family="Pretendard"
     font-size="80"
   -->
   <text 
     x="50" 
-    y="58" 
-    font-family="'Arial Black', sans-serif" 
+    y="78" 
+    font-family="Pretendard, -apple-system, BlinkMacSystemFont, system-ui, Roboto, sans-serif" 
     font-size="80" 
     font-weight="900" 
     fill="white" 
     text-anchor="middle" 
     stroke="white" 
-    stroke-width="1.5"
+    stroke-width="1.2"
   >N</text>
 </svg>
