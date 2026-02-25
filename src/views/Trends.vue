@@ -9,7 +9,7 @@
     </div>
 
     <SiteHeader 
-      title="News Stand v30" 
+      title="News Stand v31" 
       description="주요 언론사의 실시간 뉴스 피드를 한곳에서 확인하세요"
       padding-top="pt-16"
     />
@@ -304,7 +304,7 @@ watch(activeCategory, () => {
 
 const fetchNews = async () => {
   // 1. Initial Cache Load
-  const CURRENT_CACHE_VERSION = 'v30'
+  const CURRENT_CACHE_VERSION = 'v31'
   const CACHE_KEY = `uxm_trends_cache_${CURRENT_CACHE_VERSION}`
   
   if (news.value.length === 0) {
@@ -354,65 +354,65 @@ const fetchNews = async () => {
         if (!xmlString || xmlString.length < 100) continue
         
         // Quick thumbnail extraction from description within the XML parsing
-        const parser = new DOMParser()
-        const xmlDoc = parser.parseFromString(xmlString, 'text/xml')
-        const items = xmlDoc.querySelectorAll('item')
+        // Extra robust: Fallback to Regex for entire XML if DOMParser has issues with certain characters
+        const xmlItems = xmlString.split(/<item>/i).slice(1)
         const parsedItems: NewsItem[] = []
-        
-        items.forEach((item, idx) => {
-          if (idx >= 60) return 
-          const title = (item.querySelector('title')?.textContent || '').trim()
-          const link = (item.querySelector('link')?.textContent || '').trim()
-          const pubDate = (item.querySelector('pubDate')?.textContent || '').trim()
-          const description = (item.querySelector('description')?.textContent || item.getElementsByTagName('content:encoded')[0]?.textContent || '').trim()
 
-          // --- Ultra Robust Extraction ---
+        xmlItems.forEach((itemRaw, idx) => {
+          if (idx >= 60) return
+          
+          const titleMatch = itemRaw.match(/<title>(?:<!\[CDATA\[)?([\s\S]*?)(?:\]\]>)?<\/title>/i)
+          const linkMatch = itemRaw.match(/<link>(?:<!\[CDATA\[)?([\s\S]*?)(?:\]\]>)?<\/link>/i)
+          const descMatch = itemRaw.match(/<description>(?:<!\[CDATA\[)?([\s\S]*?)(?:\]\]>)?<\/description>/i)
+          const dateMatch = itemRaw.match(/<pubDate>(?:<!\[CDATA\[)?([\s\S]*?)(?:\]\]>)?<\/pubDate>/i)
+          
+          if (!titleMatch || !linkMatch) return
+
+          const title = titleMatch[1].trim()
+          const link = linkMatch[1].trim()
+          const description = descMatch ? descMatch[1].trim() : ''
+          const pubDate = dateMatch ? dateMatch[1].trim() : ''
+
+          // --- Extraction ---
           let thumb = ''
           
-          // 1. Prioritize Description <img> (Often the most accurate in Korean RSS)
+          // 1. Scan Description for <img> (Best for Inven/MK/YNA)
           if (description) {
             const imgMatch = description.match(/<img[^>]+src=["']([^"'>]+)["']/i) ||
                              description.match(/<img[^>]+src=([^ >]+)/i)
-            if (imgMatch) thumb = imgMatch[1].replace(/['"]/g, '')
+            if (imgMatch) {
+              thumb = imgMatch[1].replace(/['"]/g, '').trim()
+            }
           }
 
-          // 2. Search all tags for common image attributes (Namespace-safe)
+          // 2. Scan raw item for enclosure/media:content/thumbnail tags
           if (!thumb) {
-            const allElements = Array.from(item.querySelectorAll('*'))
-            for (const el of allElements) {
-              const name = el.localName.toLowerCase()
-              if (['content', 'thumbnail', 'enclosure', 'image', 'url'].includes(name)) {
-                const url = el.getAttribute('url') || el.getAttribute('src') || el.getAttribute('href') || el.textContent.trim()
-                if (url && (url.startsWith('http') || url.startsWith('//'))) {
-                  thumb = url
-                  break
-                }
-              }
-            }
+            const mediaMatch = itemRaw.match(/<(?:media:content|enclosure|thumbnail|image)[^>]+url=["']([^"'>]+)["']/i) ||
+                               itemRaw.match(/<(?:media:content|enclosure|thumbnail|image)[^>]+href=["']([^"'>]+)["']/i)
+            if (mediaMatch) thumb = mediaMatch[1]
           }
 
           if (thumb) {
             if (thumb.startsWith('//')) thumb = 'https:' + thumb
             if (thumb.length < 20 || thumb.match(/\.ico$|favicon|google_logo|tracking|pixel|dot/i)) thumb = ''
           }
-          // --- End Extraction ---
 
           let cleanDesc = description.replace(/<[^>]*>?/gm, ' ').replace(/\s+/g, ' ').trim()
           const parts = title.split(/ - | \| | : /)
           const headline = parts[0].trim()
           const provider = parts.length > 1 ? parts[parts.length - 1].trim() : ''
           
-          if (title && link) {
-            parsedItems.push({
-              title: headline, link: link, pubDate,
-              description: cleanDesc || '기사 본문을 통해 자세한 내용을 확인하세요.',
-              source: source.name, category: source.category, provider: provider,
-              thumb: thumb
-            })
-          }
+          parsedItems.push({
+            title: headline, link: link, pubDate,
+            description: cleanDesc || '기사 본문을 통해 자세한 내용을 확인하세요.',
+            source: source.name, category: source.category, provider: provider,
+            thumb: thumb
+          })
         })
         if (parsedItems.length > 0) return parsedItems
-      } catch (err) {}
+      } catch (err) {
+        console.warn(`[Trends] Failed to fetch/parse ${source.name}:`, err)
+      }
     }
     return []
   }
@@ -497,7 +497,7 @@ const fetchMissingThumbnails = async () => {
         const idx = news.value.findIndex(n => n.link === targetUrl)
         if (idx !== -1) {
           news.value[idx] = { ...news.value[idx], thumb: imgUrl }
-          localStorage.setItem(`uxm_trends_cache_v30`, JSON.stringify(news.value))
+          localStorage.setItem(`uxm_trends_cache_v31`, JSON.stringify(news.value))
         }
       }
     } catch (e) {}
