@@ -148,15 +148,21 @@
         </div>
       </div>
 
-      <!-- Empty State -->
-      <div v-if="!isLoading && displayedNews.length === 0" class="flex flex-col items-center justify-center py-40 text-center">
-        <div class="w-16 h-16 bg-zinc-100 dark:bg-zinc-900 rounded-full flex items-center justify-center mb-6 border border-zinc-200 dark:border-white/5">
-          <svg xmlns="http://www.w3.org/2000/svg" class="w-8 h-8 text-zinc-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10l4 4v10a2 2 0 01-2 2z" />
-          </svg>
+      <!-- Empty State / Loading State -->
+      <div v-if="displayedNews.length === 0" class="flex flex-col items-center justify-center py-40 text-center">
+        <div class="relative w-20 h-20 mb-8">
+          <!-- Animated Spinner -->
+          <div class="absolute inset-0 border-4 border-zinc-100 dark:border-zinc-800 rounded-full"></div>
+          <div class="absolute inset-0 border-4 border-t-zinc-900 dark:border-t-white rounded-full animate-spin"></div>
+          <!-- Inner Pulsing Circle -->
+          <div class="absolute inset-4 bg-zinc-100 dark:bg-zinc-800 rounded-full animate-pulse flex items-center justify-center">
+            <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6 text-zinc-400 dark:text-zinc-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10l4 4v10a2 2 0 01-2 2z" />
+            </svg>
+          </div>
         </div>
-        <h3 class="text-xl font-bold mb-2 text-zinc-400">Searching for trends...</h3>
-        <p class="text-zinc-500 text-sm">Please wait while we fetch the latest data.</p>
+        <h3 class="text-xl font-bold mb-2 text-zinc-900 dark:text-white">Searching for trends...</h3>
+        <p class="text-zinc-500 dark:text-zinc-400 text-sm max-w-xs mx-auto">Please wait while we fetch the latest data from top news sources.</p>
       </div>
     </main>
 
@@ -343,7 +349,7 @@ const decodeHtml = (html: string) => {
 
 const fetchNews = async () => {
   // 1. Initial Cache Load
-  const CURRENT_CACHE_VERSION = 'v1.2'
+  const CURRENT_CACHE_VERSION = 'v1.3'
   const CACHE_KEY = `uxm_trends_cache_${CURRENT_CACHE_VERSION}`
   
   if (news.value.length === 0) {
@@ -552,7 +558,7 @@ const fetchMissingThumbnails = async () => {
         const idx = news.value.findIndex(n => n.link === targetUrl)
         if (idx !== -1) {
           news.value[idx] = { ...news.value[idx], thumb: imgUrl }
-          localStorage.setItem(`uxm_trends_cache_v1.2`, JSON.stringify(news.value))
+          localStorage.setItem(`uxm_trends_cache_v1.3`, JSON.stringify(news.value))
         }
       }
     } catch (e) {}
