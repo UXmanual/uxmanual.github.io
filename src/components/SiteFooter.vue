@@ -8,6 +8,11 @@
         본 사이트에서 제공하는 뉴스 콘텐츠는 각 언론사의 RSS를 통해 수집된 정보이며, <br class="hidden sm:block">
         기사 본문에 대한 저작권은 해당 언론사에 있습니다. 각 기사는 클릭 시 해당 언론사의 원문 페이지로 연결됩니다.
       </p>
+      <div class="pt-4 border-t border-zinc-100 dark:border-white/5">
+        <p class="text-[10px] font-bold text-zinc-300 dark:text-zinc-700 uppercase tracking-widest">
+          Version 1.0
+        </p>
+      </div>
     </div>
   </footer>
 </template>

@@ -9,7 +9,7 @@
     </div>
 
     <SiteHeader 
-      title="News Stand v42" 
+      title="News Stand" 
       description="주요 언론사의 실시간 뉴스 피드를 한곳에서 확인하세요"
       padding-top="pt-16"
     />
@@ -343,7 +343,7 @@ const decodeHtml = (html: string) => {
 
 const fetchNews = async () => {
   // 1. Initial Cache Load
-  const CURRENT_CACHE_VERSION = 'v42'
+  const CURRENT_CACHE_VERSION = 'v1.0'
   const CACHE_KEY = `uxm_trends_cache_${CURRENT_CACHE_VERSION}`
   
   if (news.value.length === 0) {
@@ -552,7 +552,7 @@ const fetchMissingThumbnails = async () => {
         const idx = news.value.findIndex(n => n.link === targetUrl)
         if (idx !== -1) {
           news.value[idx] = { ...news.value[idx], thumb: imgUrl }
-          localStorage.setItem(`uxm_trends_cache_v42`, JSON.stringify(news.value))
+          localStorage.setItem(`uxm_trends_cache_v1.0`, JSON.stringify(news.value))
         }
       }
     } catch (e) {}
