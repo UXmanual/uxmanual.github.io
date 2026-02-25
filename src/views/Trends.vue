@@ -293,10 +293,12 @@ const RSS_SOURCES = [
   { name: 'Design Milk', url: 'https://design-milk.com/feed/', category: 'design' },
   { name: 'Smashing Magazine', url: 'https://www.smashingmagazine.com/feed', category: 'design' },
 
-  // Game (Resilient Mix)
+  // Game (Diversified for Stability)
   { name: '인벤 뉴스', url: 'https://www.inven.co.kr/webzine/news/rss.php', category: 'game' },
+  { name: '디스이즈게임', url: 'https://www.thisisgame.com/rss/news.xml', category: 'game' },
+  { name: '게임메카', url: 'https://www.gamemeca.com/rss/news.php', category: 'game' },
+  { name: 'VentureBeat', url: 'https://venturebeat.com/category/games/feed/', category: 'game' },
   { name: '매경 게임', url: 'https://www.mk.co.kr/rss/50700001/', category: 'game' },
-  { name: '지디넷 게임', url: 'https://www.zdnet.co.kr/rss/zdnet_game.xml', category: 'game' },
 
   // Sports
   { name: '연합 스포츠', url: 'https://www.yna.co.kr/rss/sports.xml', category: 'sports' },
@@ -346,7 +348,7 @@ const decodeHtml = (html: string) => {
 
 const fetchNews = async () => {
   // 1. Initial Cache Load
-  const CURRENT_CACHE_VERSION = 'v2.3'
+  const CURRENT_CACHE_VERSION = 'v2.4'
   const CACHE_KEY = `uxm_trends_cache_${CURRENT_CACHE_VERSION}`
   
   if (news.value.length === 0) {
@@ -570,7 +572,7 @@ const fetchMissingThumbnails = async () => {
         const idx = news.value.findIndex(n => n.link === targetUrl)
         if (idx !== -1) {
           news.value[idx] = { ...news.value[idx], thumb: imgUrl }
-          localStorage.setItem(`uxm_trends_cache_v2.3`, JSON.stringify(news.value))
+          localStorage.setItem(`uxm_trends_cache_v2.4`, JSON.stringify(news.value))
         }
       }
     } catch (e) {}
