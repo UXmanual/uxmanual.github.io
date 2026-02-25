@@ -275,8 +275,8 @@ const categories = [
 
 const RSS_SOURCES = [
   // AI & Tech
-  { name: 'AI 타임스', url: 'https://www.aitimes.com/rss/S1N1.xml', category: 'ai' },
-  { name: '지디넷코리아', url: 'https://feeds.feedburner.com/zdkorea', category: 'ai' },
+  { name: 'AI 타임스', url: 'http://www.aitimes.com/rss/S1N1.xml', category: 'ai' },
+  { name: '지디넷코리아', url: 'http://feeds.feedburner.com/zdkorea', category: 'ai' },
   { name: '매경 IT', url: 'https://www.mk.co.kr/rss/50300001/', category: 'ai' },
   { name: '디지털데일리', url: 'https://www.ddaily.co.kr/rss/all.xml', category: 'ai' },
   { name: '씨넷코리아', url: 'https://www.cnet.co.kr/rss/all', category: 'ai' },
@@ -293,7 +293,7 @@ const RSS_SOURCES = [
   { name: 'Smashing Magazine', url: 'https://www.smashingmagazine.com/feed', category: 'design' },
 
   // Game
-  { name: '인벤 뉴스', url: 'https://webzine.inven.co.kr/news/rss.php', category: 'game' },
+  { name: '인벤 뉴스', url: 'http://webzine.inven.co.kr/news/rss.php', category: 'game' },
   { name: '매경 게임', url: 'https://www.mk.co.kr/rss/50700001/', category: 'game' },
 
   // Sports
@@ -343,7 +343,7 @@ const decodeHtml = (html: string) => {
 
 const fetchNews = async () => {
   // 1. Initial Cache Load
-  const CURRENT_CACHE_VERSION = 'v2.0'
+  const CURRENT_CACHE_VERSION = 'v2.1'
   const CACHE_KEY = `uxm_trends_cache_${CURRENT_CACHE_VERSION}`
   
   if (news.value.length === 0) {
@@ -369,21 +369,21 @@ const fetchNews = async () => {
   isLoading.value = true
 
   const fetchSource = async (source: typeof RSS_SOURCES[0]) => {
+    // Priority Proxies for Stability
     const proxies = [
-      (url: string) => `https://api.allorigins.win/get?url=${encodeURIComponent(url)}&timestamp=${Date.now()}`,
       (url: string) => `https://api.codetabs.com/v1/proxy?quest=${encodeURIComponent(url)}`,
+      (url: string) => `https://api.allorigins.win/get?url=${encodeURIComponent(url)}&timestamp=${Date.now()}`,
       (url: string) => `https://corsproxy.io/?url=${encodeURIComponent(url)}`
     ]
 
-    // Racing implementation that ensures we use the best content while updating UI ASAP
-    const fetchWithProxy = async (getProxyUrl: (u: string) => string) => {
+    for (const getProxyUrl of proxies) {
       const controller = new AbortController()
-      const timeoutId = setTimeout(() => controller.abort(), 15000)
+      const timeoutId = setTimeout(() => controller.abort(), 10000)
       
       try {
         const response = await fetch(getProxyUrl(source.url), { signal: controller.signal })
         clearTimeout(timeoutId)
-        if (!response.ok) throw new Error('Fetch failed')
+        if (!response.ok) continue
 
         let xmlString = ''
         if (getProxyUrl(source.url).includes('allorigins')) {
@@ -393,14 +393,13 @@ const fetchNews = async () => {
           xmlString = await response.text()
         }
         
-        if (!xmlString || xmlString.length < 100) throw new Error('Data too short')
+        if (!xmlString || xmlString.length < 100) continue
         
-        // Split by <item> or <entry> to support both RSS and Atom
         const xmlItems = xmlString.split(/<item>|<entry>/i).slice(1)
         const parsedItems: NewsItem[] = []
 
         xmlItems.forEach((itemRaw, idx) => {
-          if (idx >= 30) return // Limit items per source for speed
+          if (idx >= 30) return 
           const titleMatch = itemRaw.match(/<title>(?:<!\[CDATA\[)?([\s\S]*?)(?:\]\]>)?<\/title>/i)
           const linkMatch = itemRaw.match(/<link>(?:<!\[CDATA\[)?([\s\S]*?)(?:\]\]>)?<\/link>/i) ||
                             itemRaw.match(/<link[^>]+href=["']([^"']+)["']/i)
@@ -453,27 +452,18 @@ const fetchNews = async () => {
             thumb
           }
           parsedItems.push(newItem)
-          
-          // CRITICAL: Instant Reveal of the first item for perceived lightning speed
           if (idx === 0) updateNewsList([newItem])
         })
 
-        if (parsedItems.length === 0) throw new Error('No valid items')
-        updateNewsList(parsedItems)
-        return parsedItems
+        if (parsedItems.length > 0) {
+          updateNewsList(parsedItems)
+          return parsedItems
+        }
       } catch (err) {
         clearTimeout(timeoutId)
-        throw err
       }
     }
-
-    try {
-      // Parallel racing for the absolute best proxy speed
-      return await Promise.any(proxies.map(p => fetchWithProxy(p)))
-    } catch (err) {
-      console.warn(`[Trends] All proxies failed for ${source.name}`)
-      return []
-    }
+    return []
   }
 
   const updateNewsList = (newItems: NewsItem[]) => {
@@ -559,7 +549,7 @@ const fetchMissingThumbnails = async () => {
         const idx = news.value.findIndex(n => n.link === targetUrl)
         if (idx !== -1) {
           news.value[idx] = { ...news.value[idx], thumb: imgUrl }
-          localStorage.setItem(`uxm_trends_cache_v2.0`, JSON.stringify(news.value))
+          localStorage.setItem(`uxm_trends_cache_v2.1`, JSON.stringify(news.value))
         }
       }
     } catch (e) {}
