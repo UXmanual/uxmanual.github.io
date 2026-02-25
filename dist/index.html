@@ -3,11 +3,27 @@
 
 <head>
     <meta charset="UTF-8" />
-    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
     <!-- Primary Meta Tags -->
     <title>Todays News</title>
+
+    <!-- Favicons & Mobile App Icons -->
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" sizes="any" />
+    <link rel="apple-touch-icon" href="/favicon.svg">
+    <link rel="mask-icon" href="/favicon.svg" color="#0a0a0c">
+    <link rel="manifest" href="/site.webmanifest">
+
+    <!-- Mobile App Appearance -->
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="Todays News">
+    <meta name="application-name" content="Todays News">
+    <meta name="theme-color" content="#0a0a0c">
+
+    <!-- Windows Specific -->
+    <meta name="msapplication-TileColor" content="#0a0a0c">
+    <meta name="msapplication-config" content="none">
     <script>
         // Universal URL Recovery & Sanitation
         (function (l) {
@@ -21,10 +37,6 @@
 
             if (path) {
                 var cleanPath = decodeURIComponent(path);
-                // Force legacy community path to feed
-                if (cleanPath === '/community' || cleanPath === 'community' || cleanPath.startsWith('/community/')) {
-                    cleanPath = '/feed';
-                }
                 // Ensure absolute URL construction
                 var newUrl = l.origin + (cleanPath.charAt(0) === '/' ? '' : '/') + cleanPath + l.hash;
                 window.history.replaceState(null, null, newUrl);
@@ -50,8 +62,8 @@
     <meta property="twitter:description" content="글로벌 최신 뉴스와 실시간 트렌드를 한눈에. Todays News에서 확인하세요." />
     <meta property="twitter:image"
         content="https://images.unsplash.com/photo-1495020689067-958852a7765e?q=80&w=1200&h=630&auto=format&fit=crop" />
-  <script type="module" crossorigin src="/assets/index-BQngrXNI.js"></script>
-  <link rel="stylesheet" crossorigin href="/assets/index-YaQqctiV.css">
+  <script type="module" crossorigin src="/assets/index-xQ1mMFSk.js"></script>
+  <link rel="stylesheet" crossorigin href="/assets/index-DeZyIgKB.css">
 </head>
 
 <body>

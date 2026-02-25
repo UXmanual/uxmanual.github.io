@@ -94,9 +94,14 @@
                   <span class="text-[11px] text-zinc-400 font-bold uppercase tracking-tight">{{ item.provider || item.source }}</span>
                 </div>
                 
-                <h3 class="text-lg font-bold text-zinc-900 dark:text-white leading-tight mb-4 min-h-[2.8rem] line-clamp-2 group-hover:opacity-80">
-                  {{ item.title }}
-                </h3>
+                <div class="flex gap-4 mb-4 items-start">
+                  <div v-if="item.thumb" class="flex-shrink-0 w-20 h-20 rounded-2xl overflow-hidden border border-zinc-100 dark:border-white/5 bg-zinc-50 dark:bg-zinc-800">
+                    <img :src="item.thumb" class="w-full h-full object-cover" alt="" loading="lazy" />
+                  </div>
+                  <h3 class="text-lg font-bold text-zinc-900 dark:text-white leading-tight min-h-[2.8rem] line-clamp-2 group-hover:opacity-80 flex-grow">
+                    {{ item.title }}
+                  </h3>
+                </div>
                 
                 <div class="pt-4 border-t border-zinc-100 dark:border-white/5 flex justify-between items-center">
                   <span class="text-[11px] text-zinc-400 font-medium">{{ formatDate(item.pubDate) }}</span>
@@ -154,6 +159,7 @@ interface NewsItem {
   source: string
   category: string
   provider: string
+  thumb?: string
 }
 
 const isLoading = ref(true)
@@ -238,18 +244,12 @@ const categories = [
 
 const RSS_SOURCES = [
   { name: '매경 IT', url: 'https://www.mk.co.kr/rss/50300001/', category: 'ai' },
-  { name: 'ZDNet IT', url: 'https://zdnet.co.kr/rss/all.xml', category: 'ai' },
-  { name: 'AI 트렌드', url: 'https://news.google.com/rss/search?q=AI+%EC%9D%B8%EA%B3%B5%EC%A7%80%EB%8A%A5+%ED%8A%B8%EB%A0%8C%EB%93%9C&hl=ko&gl=KR&ceid=KR:ko', category: 'ai' },
-  { name: '매경 경제', url: 'https://www.mk.co.kr/rss/30100041/', category: 'finance' },
-  { name: '금융 소식', url: 'https://news.google.com/rss/search?q=%EA%B8%88%EC%9C%B5+%EC%A6%9D%EA%B6%8C&hl=ko&gl=KR&ceid=KR:ko', category: 'finance' },
-  { name: '디자인 트렌드', url: 'https://news.google.com/rss/search?q=%EB%94%94%EC%9E%90%EC%9D%B8+%ED%8A%B8%EB%A0%8C%EB%93%9C&hl=ko&gl=KR&ceid=KR:ko', category: 'design' },
-  { name: 'UX/UI 디자인', url: 'https://news.google.com/rss/search?q=UX+UI+%EB%94%94%EC%9E%90%EC%9D%B8&hl=ko&gl=KR&ceid=KR:ko', category: 'design' },
+  { name: 'AI 최신', url: 'https://news.google.com/rss/search?q=AI+%ED%8A%B8%EB%A0%8C%EB%93%9C&hl=ko&gl=KR&ceid=KR:ko', category: 'ai' },
+  { name: '경제 최신', url: 'https://news.google.com/rss/search?q=%EA%B8%88%EC%9C%B5+%EC%A6%9D%EA%B6%8C&hl=ko&gl=KR&ceid=KR:ko', category: 'finance' },
+  { name: '디자인 뉴스', url: 'https://news.google.com/rss/search?q=%EB%94%94%EC%9E%90%EC%9D%B8+%ED%8A%B8%EB%A0%8C%EB%93%9C&hl=ko&gl=KR&ceid=KR:ko', category: 'design' },
+  { name: 'UX/UI 뉴스', url: 'https://news.google.com/rss/search?q=UX+UI+%EB%94%94%EC%9E%90%EC%9D%B8&hl=ko&gl=KR&ceid=KR:ko', category: 'design' },
   { name: '해외축구', url: 'https://news.google.com/rss/search?q=%ED%95%B4%EC%99%B8%EC%B6%95%EA%B5%AC&hl=ko&gl=KR&ceid=KR:ko', category: 'sports' },
-  { name: '유럽 축구', url: 'https://news.google.com/rss/search?q=%EC%9C%A0%EB%9F%BD%EC%B6%95%EA%B5%AC&hl=ko&gl=KR&ceid=KR:ko', category: 'sports' },
-  { name: '디스이즈게임', url: 'https://news.google.com/rss/search?q=site:thisisgame.com&hl=ko&gl=KR&ceid=KR:ko', category: 'game' },
-  { name: '인벤 뉴스', url: 'https://news.google.com/rss/search?q=site:inven.co.kr&hl=ko&gl=KR&ceid=KR:ko', category: 'game' },
-  { name: '게임메카', url: 'https://news.google.com/rss/search?q=site:gamemeca.com&hl=ko&gl=KR&ceid=KR:ko', category: 'game' },
-  { name: '게임 트렌드', url: 'https://news.google.com/rss/search?q=%EA%B2%8C%EC%9E%84+%EC%8B%A0%EC%9E%91+%ED%8A%B8%EB%A0%8C%EB%93%9C&hl=ko&gl=KR&ceid=KR:ko', category: 'game' }
+  { name: '게임 뉴스', url: 'https://news.google.com/rss/search?q=%EA%B2%8C%EC%9E%84+%EC%8B%A0%EC%9E%91+%ED%8A%B8%EB%A0%8C%EB%93%9C&hl=ko&gl=KR&ceid=KR:ko', category: 'game' }
 ]
 
 const filteredNews = computed(() => {
@@ -285,13 +285,27 @@ watch(activeCategory, () => {
 
 
 const fetchNews = async () => {
-  // 1. Initial Cache Load (Instant)
-  const CACHE_KEY = 'uxm_trends_cache_v2' // Incremented version to clear old tainted data
+  // 1. Initial Cache Load
+  const CURRENT_CACHE_VERSION = 'v9'
+  const CACHE_KEY = `uxm_trends_cache_${CURRENT_CACHE_VERSION}`
+  
   if (news.value.length === 0) {
-    const cached = localStorage.getItem(CACHE_KEY)
-    if (cached) {
-      const parsed = JSON.parse(cached)
-      news.value = parsed.sort((a: NewsItem, b: NewsItem) => new Date(b.pubDate).getTime() - new Date(a.pubDate).getTime())
+    try {
+      const keys = Object.keys(localStorage)
+      keys.forEach(key => {
+        if (key.startsWith('uxm_trends_cache_') && key !== CACHE_KEY) {
+          localStorage.removeItem(key)
+        }
+      })
+      const cached = localStorage.getItem(CACHE_KEY)
+      if (cached) {
+        const parsed = JSON.parse(cached)
+        if (Array.isArray(parsed)) {
+          news.value = parsed.sort((a: NewsItem, b: NewsItem) => new Date(b.pubDate).getTime() - new Date(a.pubDate).getTime())
+        }
+      }
+    } catch (e) {
+      localStorage.removeItem(CACHE_KEY)
     }
   }
   
@@ -299,18 +313,17 @@ const fetchNews = async () => {
 
   const fetchSource = async (source: typeof RSS_SOURCES[0]) => {
     const proxies = [
-      (url: string) => `https://corsproxy.io/?url=${encodeURIComponent(url)}`,
-      (url: string) => `https://api.allorigins.win/get?url=${encodeURIComponent(url)}&timestamp=${Date.now()}`
+      (url: string) => `https://api.allorigins.win/get?url=${encodeURIComponent(url)}&timestamp=${Date.now()}`,
+      (url: string) => `https://api.codetabs.com/v1/proxy?quest=${encodeURIComponent(url)}`,
+      (url: string) => `https://corsproxy.io/?url=${encodeURIComponent(url)}`
     ]
 
     for (const getProxyUrl of proxies) {
       try {
         const controller = new AbortController()
-        const timeoutId = setTimeout(() => controller.abort(), 4000) // Reduced timeout for speed
-        
+        const timeoutId = setTimeout(() => controller.abort(), 8000)
         const response = await fetch(getProxyUrl(source.url), { signal: controller.signal })
         clearTimeout(timeoutId)
-        
         if (!response.ok) continue
 
         let xmlString = ''
@@ -320,7 +333,6 @@ const fetchNews = async () => {
         } else {
           xmlString = await response.text()
         }
-
         if (!xmlString) continue
 
         const parser = new DOMParser()
@@ -329,102 +341,122 @@ const fetchNews = async () => {
         const parsedItems: NewsItem[] = []
         
         items.forEach((item, idx) => {
-          if (idx >= 100) return 
+          if (idx >= 60) return 
           const title = (item.querySelector('title')?.textContent || '').trim()
           const link = (item.querySelector('link')?.textContent || '').trim()
           const pubDate = (item.querySelector('pubDate')?.textContent || '').trim()
-          
-          // Try to find a meaningful description
-          let description = ''
-          const descNode = item.querySelector('description')
-          const contentNode = item.getElementsByTagName('content:encoded')[0] || item.querySelector('encoded')
-          const summaryNode = item.querySelector('summary')
-          
-          description = (descNode?.textContent || '') || (summaryNode?.textContent || '') || (contentNode?.textContent || '')
+          const description = (item.querySelector('description')?.textContent || item.getElementsByTagName('content:encoded')[0]?.textContent || '').trim()
 
-          // Clean up HTML
-          let cleanDesc = description.replace(/<[^>]*>?/gm, ' ')
-                                   .replace(/&nbsp;/g, ' ')
-                                   .replace(/&quot;/g, '"')
-                                   .replace(/&amp;/g, '&')
-                                   .replace(/&lt;/g, '<')
-                                   .replace(/&gt;/g, '>')
-                                   .replace(/\s+/g, ' ')
-                                   .trim()
+          // --- Improved Extraction ---
+          let thumb = ''
+          const allElements = Array.from(item.querySelectorAll('*'))
           
-          // Smart Headline & Provider Extraction
-          // Google News usually formats as "Headline - Source"
+          // 1. Look for tags by localName (namespace independent)
+          for (const el of allElements) {
+            const name = el.localName.toLowerCase()
+            if (name === 'content' || name === 'thumbnail' || name === 'enclosure' || name === 'image') {
+              const url = el.getAttribute('url') || el.getAttribute('src') || el.getAttribute('href')
+              if (url && (url.startsWith('http') || url.startsWith('//'))) {
+                thumb = url
+                break
+              }
+            }
+          }
+
+          // 2. Scan Description for <img>
+          if (!thumb && description) {
+            const imgMatch = description.match(/<img[^>]+src=["']([^"'>]+)["']/i)
+            if (imgMatch) thumb = imgMatch[1]
+          }
+
+          if (thumb) {
+            if (thumb.startsWith('//')) thumb = 'https:' + thumb
+            if (thumb.length < 15 || thumb.includes('transparent.gif')) thumb = ''
+          }
+          // --- End Extraction ---
+
+          let cleanDesc = description.replace(/<[^>]*>?/gm, ' ').replace(/\s+/g, ' ').trim()
           const parts = title.split(/ - | \| | : /)
           const headline = parts[0].trim()
           const provider = parts.length > 1 ? parts[parts.length - 1].trim() : ''
           
-          // If description starts with title or extracted headline, try to extract the rest
-          if (cleanDesc.toLowerCase().startsWith(title.toLowerCase())) {
-            cleanDesc = cleanDesc.substring(title.length).trim()
-          } else if (cleanDesc.toLowerCase().startsWith(headline.toLowerCase())) {
-            cleanDesc = cleanDesc.substring(headline.length).trim()
-          }
-          
-          // Alternative check: See if first 20 chars overlap
-          if (headline.length > 20 && cleanDesc.toLowerCase().startsWith(headline.substring(0, 20).toLowerCase())) {
-             const potentialSnippet = cleanDesc.replace(headline, '').trim()
-             if (potentialSnippet.length > 5) cleanDesc = potentialSnippet
-          }
-          
-          // Remove source name if it's appended at the end
-          const sourceSuffix = ` - ${source.name}`
-          if (cleanDesc.endsWith(sourceSuffix)) {
-            cleanDesc = cleanDesc.substring(0, cleanDesc.length - sourceSuffix.length).trim()
-          }
-
-          // Final cleanup of common leading noise (commas, dots, dashes, colons)
-          cleanDesc = cleanDesc.replace(/^[:\-\s\.\,]+/, '').trim()
-          
           if (title && link) {
             parsedItems.push({
-              title: headline,
-              link,
-              pubDate,
+              title: headline, link, pubDate,
               description: cleanDesc || '기사 본문을 통해 자세한 내용을 확인하세요.',
-              source: source.name,
-              category: source.category,
-              provider: provider
+              source: source.name, category: source.category, provider: provider,
+              thumb: thumb
             })
           }
         })
-
         if (parsedItems.length > 0) return parsedItems
-      } catch (err) {
-        // Silent fail for individual proxy
-      }
+      } catch (err) {}
     }
     return []
   }
 
-  // 2. Fetch all in parallel for maximum speed
-  const results = await Promise.all(RSS_SOURCES.map(source => fetchSource(source)))
-  const nextNews = results.flat()
+  try {
+    const results = await Promise.all(RSS_SOURCES.map(source => fetchSource(source)))
+    const nextNews = results.flat()
 
-  // 3. Robust Merge & Sort
-  if (nextNews.length > 0) {
-    const combined = [...nextNews, ...news.value]
-    const newsMap = new Map()
-    combined.forEach(item => {
-      const existing = newsMap.get(item.link)
-      if (!existing || new Date(item.pubDate) > new Date(existing.pubDate)) {
-        newsMap.set(item.link, item)
-      }
-    })
+    if (nextNews.length > 0) {
+      const combined = [...nextNews, ...news.value]
+      const newsMap = new Map()
+      combined.forEach(item => {
+        const existing = newsMap.get(item.link)
+        if (!existing || new Date(item.pubDate) > new Date(existing.pubDate)) {
+          newsMap.set(item.link, item)
+        }
+      })
 
-    const finalized = Array.from(newsMap.values())
-      .sort((a, b) => new Date(b.pubDate).getTime() - new Date(a.pubDate).getTime())
-      .slice(0, 500)
+      const finalized = Array.from(newsMap.values())
+        .sort((a, b) => new Date(b.pubDate).getTime() - new Date(a.pubDate).getTime())
+        .slice(0, 500)
 
-    news.value = finalized
-    localStorage.setItem(CACHE_KEY, JSON.stringify(finalized))
+      news.value = finalized
+      localStorage.setItem(CACHE_KEY, JSON.stringify(finalized))
+      
+      console.log(`[Trends] Loaded ${finalized.length} news items. Initial thumbnails: ${finalized.filter(n => n.thumb).length}`)
+      fetchMissingThumbnails()
+    }
+  } catch (err) {
+    console.error('Fetch news error:', err)
+  } finally {
+    isLoading.value = false
   }
-  
-  isLoading.value = false
+}
+
+const fetchMissingThumbnails = async () => {
+  const pending = news.value.filter(n => !n.thumb).slice(0, 15)
+  if (pending.length === 0) return
+
+  pending.forEach(async (item) => {
+    try {
+      const proxyUrl = `https://api.allorigins.win/get?url=${encodeURIComponent(item.link)}`
+      const res = await fetch(proxyUrl)
+      if (!res.ok) return
+      
+      const data = await res.json()
+      const html = data.contents
+      if (!html) return
+      
+      const imgMatch = html.match(/<meta[^>]+property=["']og:image["'][^>]+content=["']([^"'>]+)["']/i) ||
+                      html.match(/<meta[^>]+content=["']([^"'>]+)["'][^>]+property=["']og:image["']/i) ||
+                      html.match(/<meta[^>]+name=["']twitter:image["'][^>]+content=["']([^"'>]+)["']/i)
+      
+      if (imgMatch && imgMatch[1]) {
+        let imgUrl = imgMatch[1]
+        if (imgUrl.startsWith('//')) imgUrl = 'https:' + imgUrl
+        
+        const idx = news.value.findIndex(n => n.link === item.link)
+        if (idx !== -1) {
+          // Deep reactive update
+          news.value[idx] = { ...news.value[idx], thumb: imgUrl }
+          localStorage.setItem(`uxm_trends_cache_v9`, JSON.stringify(news.value))
+        }
+      }
+    } catch (e) {}
+  })
 }
 
 const formatDate = (dateStr: string) => {
