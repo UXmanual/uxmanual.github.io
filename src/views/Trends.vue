@@ -9,7 +9,7 @@
     </div>
 
     <SiteHeader 
-      title="News Stand v24" 
+      title="News Stand v25" 
       description="주요 언론사의 실시간 뉴스 피드를 한곳에서 확인하세요"
       padding-top="pt-16"
     />
@@ -243,25 +243,26 @@ const categories = [
 ]
 
 const RSS_SOURCES = [
-  // AI & Tech (Pure Direct RSS)
+  // AI & Tech
+  { name: 'AI 타임스', url: 'https://news.google.com/rss/search?q=site:aitimes.com&hl=ko&gl=KR&ceid=KR:ko', category: 'ai' },
   { name: '매경 IT', url: 'https://www.mk.co.kr/rss/50300001/', category: 'ai' },
   { name: '경향 IT', url: 'https://www.khan.co.kr/rss/rssdata/it_news.xml', category: 'ai' },
   { name: '동아 IT', url: 'https://rss.donga.com/it.xml', category: 'ai' },
   
-  // Finance (Pure Direct RSS)
+  // Finance
   { name: '매경 경제', url: 'https://www.mk.co.kr/rss/30100041/', category: 'finance' },
   { name: '경향 경제', url: 'https://www.khan.co.kr/rss/rssdata/economy.xml', category: 'finance' },
   { name: '동아 경제', url: 'https://rss.donga.com/economy.xml', category: 'finance' },
 
-  // Design & Art (Pure Direct RSS)
+  // Design & Art
   { name: 'Designboom', url: 'https://www.designboom.com/feed', category: 'design' },
   { name: '엘르 아트', url: 'https://elle.co.kr/rss/art-design', category: 'design' },
 
-  // Game (Pure Direct RSS)
+  // Game
   { name: '인벤 뉴스', url: 'http://webzine.inven.co.kr/news/rss.php', category: 'game' },
   { name: '매경 게임', url: 'https://www.mk.co.kr/rss/50700001/', category: 'game' },
 
-  // Sports (Pure Direct RSS)
+  // Sports
   { name: '매경 스포츠', url: 'https://www.mk.co.kr/rss/71000001/', category: 'sports' },
   { name: '동아 스포츠', url: 'https://rss.donga.com/sports.xml', category: 'sports' }
 ]
@@ -280,11 +281,9 @@ const groupedNews = computed(() => {
   
   displayedNews.value.forEach(item => {
     const pubDate = new Date(item.pubDate)
-    let dateStr = '최신 뉴스'
+    if (isNaN(pubDate.getTime())) return
     
-    if (!isNaN(pubDate.getTime())) {
-      dateStr = `${pubDate.getFullYear()}년 ${pubDate.getMonth() + 1}월 ${pubDate.getDate()}일`
-    }
+    const dateStr = `${pubDate.getFullYear()}년 ${pubDate.getMonth() + 1}월 ${pubDate.getDate()}일`
     
     let group = groups.find(g => g.date === dateStr)
     if (!group) {
@@ -304,7 +303,7 @@ watch(activeCategory, () => {
 
 const fetchNews = async () => {
   // 1. Initial Cache Load
-  const CURRENT_CACHE_VERSION = 'v24'
+  const CURRENT_CACHE_VERSION = 'v25'
   const CACHE_KEY = `uxm_trends_cache_${CURRENT_CACHE_VERSION}`
   
   if (news.value.length === 0) {
@@ -400,9 +399,24 @@ const fetchNews = async () => {
           const headline = parts[0].trim()
           const provider = parts.length > 1 ? parts[parts.length - 1].trim() : ''
           
-          if (title && link) {
+          // --- Direct URL & Decoding for Google News ---
+          let finalLink = link
+          if (link.includes('news.google.com')) {
+            try {
+              let b64 = link.split('articles/')[1]?.split('?')[0]
+              if (b64) {
+                b64 = b64.replace(/-/g, '+').replace(/_/g, '/')
+                while (b64.length % 4 !== 0) b64 += '='
+                const raw = atob(b64)
+                const m = raw.match(/https?:\/\/[a-zA-Z0-9.\-_~:/?#\[\]@!$&'()*+,;=%]+/i)
+                if (m) finalLink = m[0]
+              }
+            } catch (e) {}
+          }
+
+          if (title && finalLink) {
             parsedItems.push({
-              title: headline, link: link, pubDate,
+              title: headline, link: finalLink, pubDate,
               description: cleanDesc || '기사 본문을 통해 자세한 내용을 확인하세요.',
               source: source.name, category: source.category, provider: provider,
               thumb: thumb
@@ -494,7 +508,7 @@ const fetchMissingThumbnails = async () => {
         const idx = news.value.findIndex(n => n.link === targetUrl)
         if (idx !== -1) {
           news.value[idx] = { ...news.value[idx], thumb: imgUrl }
-          localStorage.setItem(`uxm_trends_cache_v24`, JSON.stringify(news.value))
+          localStorage.setItem(`uxm_trends_cache_v25`, JSON.stringify(news.value))
         }
       }
     } catch (e) {}
