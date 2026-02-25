@@ -9,7 +9,7 @@
     </div>
 
     <SiteHeader 
-      title="News Stand v15" 
+      title="News Stand v16" 
       description="주요 언론사의 실시간 뉴스 피드를 한곳에서 확인하세요"
       padding-top="pt-16"
     />
@@ -286,7 +286,7 @@ watch(activeCategory, () => {
 
 const fetchNews = async () => {
   // 1. Initial Cache Load
-  const CURRENT_CACHE_VERSION = 'v15'
+  const CURRENT_CACHE_VERSION = 'v16'
   const CACHE_KEY = `uxm_trends_cache_${CURRENT_CACHE_VERSION}`
   
   if (news.value.length === 0) {
@@ -382,9 +382,25 @@ const fetchNews = async () => {
           const headline = parts[0].trim()
           const provider = parts.length > 1 ? parts[parts.length - 1].trim() : ''
           
-          if (title && link) {
+          // --- Direct Google News URL Decoding ---
+          let finalLink = link
+          if (link.includes('news.google.com/rss/articles/')) {
+            try {
+              const base64Part = link.split('articles/')[1]?.split('?')[0]
+              if (base64Part) {
+                // Remove padding issues and decode
+                const cleanB64 = base64Part.replace(/-/g, '+').replace(/_/g, '/')
+                const decoded = atob(cleanB64)
+                // Extract original URL from binary/string mess
+                const urlMatch = decoded.match(/https?:\/\/[^\s\u0022\u0027<>]+/)
+                if (urlMatch) finalLink = urlMatch[0]
+              }
+            } catch (e) {}
+          }
+
+          if (title && finalLink) {
             parsedItems.push({
-              title: headline, link, pubDate,
+              title: headline, link: finalLink, pubDate,
               description: cleanDesc || '기사 본문을 통해 자세한 내용을 확인하세요.',
               source: source.name, category: source.category, provider: provider,
               thumb: thumb
@@ -466,7 +482,7 @@ const fetchMissingThumbnails = async () => {
         const idx = news.value.findIndex(n => n.link === item.link)
         if (idx !== -1) {
           news.value[idx] = { ...news.value[idx], thumb: imgUrl }
-          localStorage.setItem(`uxm_trends_cache_v15`, JSON.stringify(news.value))
+          localStorage.setItem(`uxm_trends_cache_v16`, JSON.stringify(news.value))
         }
       }
     } catch (e) {}
