@@ -9,7 +9,7 @@
     </div>
 
     <SiteHeader 
-      title="News Stand v13" 
+      title="News Stand v14" 
       description="주요 언론사의 실시간 뉴스 피드를 한곳에서 확인하세요"
       padding-top="pt-16"
     />
@@ -286,7 +286,7 @@ watch(activeCategory, () => {
 
 const fetchNews = async () => {
   // 1. Initial Cache Load
-  const CURRENT_CACHE_VERSION = 'v13'
+  const CURRENT_CACHE_VERSION = 'v14'
   const CACHE_KEY = `uxm_trends_cache_${CURRENT_CACHE_VERSION}`
   
   if (news.value.length === 0) {
@@ -429,12 +429,12 @@ const fetchNews = async () => {
 }
 
 const fetchMissingThumbnails = async () => {
-  const pending = news.value.filter(n => !n.thumb).slice(0, 15)
+  const pending = news.value.filter(n => !n.thumb).slice(0, 30)
   if (pending.length === 0) return
 
   pending.forEach(async (item) => {
     try {
-      const proxyUrl = `https://api.allorigins.win/get?url=${encodeURIComponent(item.link)}`
+      const proxyUrl = `https://api.allorigins.win/get?url=${encodeURIComponent(item.link)}&t=${Date.now()}`
       const res = await fetch(proxyUrl)
       if (!res.ok) return
       
@@ -450,14 +450,12 @@ const fetchMissingThumbnails = async () => {
         let imgUrl = imgMatch[1]
         if (imgUrl.startsWith('//')) imgUrl = 'https:' + imgUrl
         
-        // Filter out junk images
         if (imgUrl.match(/\.ico$|favicon|google_logo|tracking|pixel/i)) return
         
         const idx = news.value.findIndex(n => n.link === item.link)
         if (idx !== -1) {
-          // Deep reactive update
           news.value[idx] = { ...news.value[idx], thumb: imgUrl }
-          localStorage.setItem(`uxm_trends_cache_v13`, JSON.stringify(news.value))
+          localStorage.setItem(`uxm_trends_cache_v14`, JSON.stringify(news.value))
         }
       }
     } catch (e) {}
