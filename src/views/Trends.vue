@@ -282,24 +282,22 @@ const RSS_SOURCES = [
   { name: '디지털데일리', url: 'https://www.ddaily.co.kr/rss/all.xml', category: 'ai' },
   { name: '씨넷코리아', url: 'https://www.cnet.co.kr/rss/all', category: 'ai' },
   
-  // Finance (Enhanced Stability)
-  { name: 'Google 경제', url: 'https://news.google.com/rss/search?q=경제&hl=ko&gl=KR&ceid=KR:ko', category: 'finance' },
+  // Finance
   { name: '연합 경제', url: 'https://www.yna.co.kr/rss/economy.xml', category: 'finance' },
+  { name: '매경 경제', url: 'https://www.mk.co.kr/rss/30100041/', category: 'finance' },
   { name: '동아 경제', url: 'https://rss.donga.com/economy.xml', category: 'finance' },
 
-  // Design & Art (Added Platum)
+  // Design & Art
   { name: '플래텀', url: 'https://platum.kr/feed', category: 'design' },
   { name: 'UX Collective', url: 'https://uxdesign.cc/feed', category: 'design' },
   { name: 'Design Milk', url: 'https://design-milk.com/feed/', category: 'design' },
   { name: 'Smashing Magazine', url: 'https://www.smashingmagazine.com/feed', category: 'design' },
 
-  // Game (Reliable Source)
-  { name: 'Google 게임', url: 'https://news.google.com/rss/search?q=게임&hl=ko&gl=KR&ceid=KR:ko', category: 'game' },
+  // Game
   { name: '인벤 뉴스', url: 'http://webzine.inven.co.kr/news/rss.php', category: 'game' },
   { name: '매경 게임', url: 'https://www.mk.co.kr/rss/50700001/', category: 'game' },
 
-  // Sports (Reliable Source)
-  { name: 'Google 스포츠', url: 'https://news.google.com/rss/search?q=스포츠&hl=ko&gl=KR&ceid=KR:ko', category: 'sports' },
+  // Sports
   { name: '연합 스포츠', url: 'https://www.yna.co.kr/rss/sports.xml', category: 'sports' },
   { name: '매경 스포츠', url: 'https://www.mk.co.kr/rss/71000001/', category: 'sports' }
 ]
@@ -346,7 +344,7 @@ const decodeHtml = (html: string) => {
 
 const fetchNews = async () => {
   // 1. Initial Cache Load
-  const CURRENT_CACHE_VERSION = 'v1.7'
+  const CURRENT_CACHE_VERSION = 'v1.8'
   const CACHE_KEY = `uxm_trends_cache_${CURRENT_CACHE_VERSION}`
   
   if (news.value.length === 0) {
@@ -373,9 +371,9 @@ const fetchNews = async () => {
 
   const fetchSource = async (source: typeof RSS_SOURCES[0]) => {
     const proxies = [
-      (url: string) => `https://api.allorigins.win/get?url=${encodeURIComponent(url)}&timestamp=${Date.now()}`,
+      (url: string) => `https://api.codetabs.com/v1/proxy?quest=${encodeURIComponent(url)}`,
       (url: string) => `https://corsproxy.io/?url=${encodeURIComponent(url)}`,
-      (url: string) => `https://api.codetabs.com/v1/proxy?quest=${encodeURIComponent(url)}`
+      (url: string) => `https://api.allorigins.win/get?url=${encodeURIComponent(url)}&timestamp=${Date.now()}`
     ]
 
     for (const getProxyUrl of proxies) {
@@ -452,7 +450,7 @@ const fetchNews = async () => {
             thumb
           }
           parsedItems.push(newItem)
-          if (idx === 0) updateNewsList([newItem])
+          if (idx === 0 && news.value.length === 0) updateNewsList([newItem])
         })
 
         if (parsedItems.length > 0) {
@@ -549,7 +547,7 @@ const fetchMissingThumbnails = async () => {
         const idx = news.value.findIndex(n => n.link === targetUrl)
         if (idx !== -1) {
           news.value[idx] = { ...news.value[idx], thumb: imgUrl }
-          localStorage.setItem(`uxm_trends_cache_v1.7`, JSON.stringify(news.value))
+          localStorage.setItem(`uxm_trends_cache_v1.8`, JSON.stringify(news.value))
         }
       }
     } catch (e) {}
