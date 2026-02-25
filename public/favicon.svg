@@ -6,31 +6,23 @@
     </linearGradient>
   </defs>
   
-  <!-- Reverting black box to full original size (100x100) -->
+  <!-- Full Black Background Box -->
   <rect width="100" height="100" rx="24" fill="url(#grad1)" />
   
   <!-- 
-    N perfectly centered: 
-    x=50, y=50 with dominant-baseline="central" for absolute optical center 
-    Reduced size slightly for better framing inside the box.
+    Perfectly Centered Bold N:
+    x=50, y=50 with dominant-baseline="central" ensures absolute mathematical centering.
   -->
   <text 
     x="50" 
-    y="52" 
+    y="50" 
     font-family="'Inter', 'Arial Black', sans-serif" 
-    font-size="58" 
+    font-size="60" 
     font-weight="950" 
     fill="white" 
     text-anchor="middle" 
-    dominant-baseline="middle"
+    dominant-baseline="central"
     stroke="white" 
     stroke-width="1.2"
   >N</text>
-  
-  <!-- 
-    Red dot "overlapping" the corner from INSIDE:
-    Positioned at the very edge (cx=90, cy=10, r=10) to touch 0 and 100 coordinates.
-    This ensures no clipping while still sitting right on the corner.
-  -->
-  <circle cx="89" cy="11" r="11" fill="#ef4444" />
 </svg>
