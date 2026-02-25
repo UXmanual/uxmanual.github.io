@@ -9,7 +9,7 @@
     </div>
 
     <SiteHeader 
-      title="News Stand v12" 
+      title="News Stand v13" 
       description="주요 언론사의 실시간 뉴스 피드를 한곳에서 확인하세요"
       padding-top="pt-16"
     />
@@ -94,11 +94,11 @@
                   <span class="text-[11px] text-zinc-400 font-bold uppercase tracking-tight">{{ item.provider || item.source }}</span>
                 </div>
                 
-                <div class="flex gap-4 mb-4 items-start">
+                <div class="flex gap-4 mb-4 items-center">
                   <div v-if="item.thumb" class="flex-shrink-0 w-20 h-20 rounded-2xl overflow-hidden border border-zinc-100 dark:border-white/5 bg-zinc-50 dark:bg-zinc-800">
                     <img :src="item.thumb" class="w-full h-full object-cover" alt="" loading="lazy" />
                   </div>
-                  <h3 class="text-lg font-bold text-zinc-900 dark:text-white leading-tight min-h-[2.8rem] line-clamp-2 group-hover:opacity-80 flex-grow">
+                  <h3 class="text-lg font-bold text-zinc-900 dark:text-white leading-tight line-clamp-2 group-hover:opacity-80 flex-grow">
                     {{ item.title }}
                   </h3>
                 </div>
@@ -286,7 +286,7 @@ watch(activeCategory, () => {
 
 const fetchNews = async () => {
   // 1. Initial Cache Load
-  const CURRENT_CACHE_VERSION = 'v12'
+  const CURRENT_CACHE_VERSION = 'v13'
   const CACHE_KEY = `uxm_trends_cache_${CURRENT_CACHE_VERSION}`
   
   if (news.value.length === 0) {
@@ -457,7 +457,7 @@ const fetchMissingThumbnails = async () => {
         if (idx !== -1) {
           // Deep reactive update
           news.value[idx] = { ...news.value[idx], thumb: imgUrl }
-          localStorage.setItem(`uxm_trends_cache_v12`, JSON.stringify(news.value))
+          localStorage.setItem(`uxm_trends_cache_v13`, JSON.stringify(news.value))
         }
       }
     } catch (e) {}
