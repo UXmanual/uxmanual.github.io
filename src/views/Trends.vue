@@ -280,7 +280,7 @@ const RSS_SOURCES = [
   { name: '매경 IT', url: 'https://www.mk.co.kr/rss/50300001/', category: 'ai' },
   { name: '디지털데일리', url: 'https://www.ddaily.co.kr/rss/all.xml', category: 'ai' },
   
-  // Finance (Optimized & Verified)
+  // Finance (Verified High-Priority)
   { name: '한경 경제', url: 'https://www.hankyung.com/feed/economy', category: 'finance' },
   { name: '파이낸셜뉴스', url: 'https://www.fnnews.com/rss/fn_realtime_economy.xml', category: 'finance' },
   { name: '연합 경제', url: 'https://www.yna.co.kr/rss/economy.xml', category: 'finance' },
@@ -294,13 +294,11 @@ const RSS_SOURCES = [
   { name: 'UX Collective', url: 'https://uxdesign.cc/feed', category: 'design' },
   { name: 'Design Milk', url: 'https://design-milk.com/feed/', category: 'design' },
 
-  // Game (Diversified & Robust)
+  // Game (Diversified for Stability)
   { name: '게임메카', url: 'https://www.gamemeca.com/rss/news.php', category: 'game' },
   { name: '지디넷 게임', url: 'https://www.zdnet.co.kr/rss/zdnet_game.xml', category: 'game' },
-  { name: '게임동아', url: 'https://www.gamedonga.co.kr/rss/all.xml', category: 'game' },
-  { name: '게임포커스', url: 'http://www.gamefocus.co.kr/rss/all.xml', category: 'game' },
-  { name: '게임샷', url: 'http://www.gameshot.net/rss/news.xml', category: 'game' },
   { name: '인벤 뉴스', url: 'https://www.inven.co.kr/webzine/news/rss.php', category: 'game' },
+  { name: '게임동아', url: 'https://www.gamedonga.co.kr/rss/all.xml', category: 'game' },
   { name: '매경 게임', url: 'https://www.mk.co.kr/rss/50700001/', category: 'game' },
 
   // Sports
@@ -353,7 +351,7 @@ const decodeHtml = (html: string) => {
 
 const fetchNews = async () => {
   // 1. Initial Cache Load
-  const CURRENT_CACHE_VERSION = 'v2.9'
+  const CURRENT_CACHE_VERSION = 'v3.1'
   const CACHE_KEY = `uxm_trends_cache_${CURRENT_CACHE_VERSION}`
   
   if (news.value.length === 0) {
@@ -379,32 +377,35 @@ const fetchNews = async () => {
   isLoading.value = true
 
   const fetchSource = async (source: typeof RSS_SOURCES[0]) => {
-    // Stability First: Sequential Failover Strategy
-    const proxies = [
+    // Smart Racing: Standard proxies first, heavyweight fallbacks only if needed
+    const primaryProxies = [
       (url: string) => `https://api.codetabs.com/v1/proxy?quest=${encodeURIComponent(url)}`,
-      (url: string) => `https://corsproxy.io/?url=${encodeURIComponent(url)}`,
-      (url: string) => `https://api.allorigins.win/get?url=${encodeURIComponent(url)}&timestamp=${Date.now()}`
+      (url: string) => `https://corsproxy.io/?url=${encodeURIComponent(url)}`
+    ]
+    const backupProxies = [
+      (url: string) => `https://api.allorigins.win/get?url=${encodeURIComponent(url)}&t=${Date.now()}`,
+      (url: string) => `https://api.allorigins.win/raw?url=${encodeURIComponent(url)}`
     ]
 
-    for (const getProxyUrl of proxies) {
+    const fetchWithProxy = async (getProxyUrl: (u: string) => string, timeout = 10000) => {
       const controller = new AbortController()
-      const timeoutId = setTimeout(() => controller.abort(), 8000)
+      const timeoutId = setTimeout(() => controller.abort(), timeout)
       
       try {
         const response = await fetch(getProxyUrl(source.url), { signal: controller.signal })
         clearTimeout(timeoutId)
-        if (!response.ok) continue
+        if (!response.ok) throw new Error('Proxy failed')
 
         let xmlString = ''
         const urlStr = getProxyUrl(source.url)
-        if (urlStr.includes('allorigins')) {
+        if (urlStr.includes('allorigins') && !urlStr.includes('raw')) {
           const data = await response.json()
           xmlString = data.contents || ''
         } else {
           xmlString = await response.text()
         }
         
-        if (!xmlString || xmlString.length < 100) continue
+        if (!xmlString || xmlString.length < 100) throw new Error('Short payload')
         
         const xmlItems = xmlString.split(/<item>|<entry>/i).slice(1)
         const parsedItems: NewsItem[] = []
@@ -466,11 +467,24 @@ const fetchNews = async () => {
           updateNewsList(parsedItems)
           return parsedItems
         }
+        throw new Error('No items')
       } catch (err) {
         clearTimeout(timeoutId)
+        throw err
       }
     }
-    return []
+
+    try {
+      // Step 1: Racing the fastest primary proxies
+      return await Promise.any(primaryProxies.map(p => fetchWithProxy(p, 8000)))
+    } catch {
+      try {
+        // Step 2: Fallback to heavier proxies if primary fails
+        return await Promise.any(backupProxies.map(p => fetchWithProxy(p, 12000)))
+      } catch {
+        return []
+      }
+    }
   }
 
   const updateNewsList = (newItems: NewsItem[]) => {
@@ -492,11 +506,19 @@ const fetchNews = async () => {
   }
 
   try {
-    // Fire all fetches in parallel
-    const fetchPromises = RSS_SOURCES.map(source => fetchSource(source))
+    // 1. Prioritize current category sources
+    const prioritySources = activeCategory.value === 'all' 
+      ? RSS_SOURCES 
+      : RSS_SOURCES.filter(s => s.category === activeCategory.value)
     
-    // We still await but news.value is updated incrementally inside fetchSource
-    await Promise.all(fetchPromises)
+    const otherSources = RSS_SOURCES.filter(s => !prioritySources.includes(s))
+    
+    // Fire priority sources immediately
+    const priorityPromises = prioritySources.map(source => fetchSource(source))
+    await Promise.all(priorityPromises)
+    
+    // Fire background sources but don't strictly await them before ending main loading
+    const otherPromises = otherSources.map(source => fetchSource(source))
     
     // Final check for thumbnails
     fetchMissingThumbnails()
@@ -568,7 +590,7 @@ const fetchMissingThumbnails = async () => {
         const idx = news.value.findIndex(n => n.link === targetUrl)
         if (idx !== -1) {
           news.value[idx] = { ...news.value[idx], thumb: imgUrl }
-          localStorage.setItem(`uxm_trends_cache_v2.9`, JSON.stringify(news.value))
+          localStorage.setItem(`uxm_trends_cache_v3.1`, JSON.stringify(news.value))
         }
       }
     } catch (e) {}
