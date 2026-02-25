@@ -344,7 +344,7 @@ const decodeHtml = (html: string) => {
 
 const fetchNews = async () => {
   // 1. Initial Cache Load
-  const CURRENT_CACHE_VERSION = 'v1.8'
+  const CURRENT_CACHE_VERSION = 'v1.9'
   const CACHE_KEY = `uxm_trends_cache_${CURRENT_CACHE_VERSION}`
   
   if (news.value.length === 0) {
@@ -370,20 +370,22 @@ const fetchNews = async () => {
   isLoading.value = true
 
   const fetchSource = async (source: typeof RSS_SOURCES[0]) => {
+    // Note: Proxies are essential to bypass Browser CORS blocks.
     const proxies = [
+      (url: string) => `https://api.allorigins.win/get?url=${encodeURIComponent(url)}&timestamp=${Date.now()}`,
       (url: string) => `https://api.codetabs.com/v1/proxy?quest=${encodeURIComponent(url)}`,
-      (url: string) => `https://corsproxy.io/?url=${encodeURIComponent(url)}`,
-      (url: string) => `https://api.allorigins.win/get?url=${encodeURIComponent(url)}&timestamp=${Date.now()}`
+      (url: string) => `https://corsproxy.io/?url=${encodeURIComponent(url)}`
     ]
 
-    for (const getProxyUrl of proxies) {
+    // Racing for stability - take the fastest valid response
+    const fetchWithProxy = async (getProxyUrl: (u: string) => string) => {
       const controller = new AbortController()
-      const timeoutId = setTimeout(() => controller.abort(), 8000)
+      const timeoutId = setTimeout(() => controller.abort(), 12000)
       
       try {
         const response = await fetch(getProxyUrl(source.url), { signal: controller.signal })
         clearTimeout(timeoutId)
-        if (!response.ok) continue
+        if (!response.ok) throw new Error('Proxy failed')
 
         let xmlString = ''
         if (getProxyUrl(source.url).includes('allorigins')) {
@@ -393,13 +395,13 @@ const fetchNews = async () => {
           xmlString = await response.text()
         }
         
-        if (!xmlString || xmlString.length < 100) continue
+        if (!xmlString || xmlString.length < 100) throw new Error('Empty response')
         
         const xmlItems = xmlString.split(/<item>/i).slice(1)
         const parsedItems: NewsItem[] = []
 
         xmlItems.forEach((itemRaw, idx) => {
-          if (idx >= 30) return // Reduced from 60 to 30 for speed
+          if (idx >= 40) return
           const titleMatch = itemRaw.match(/<title>(?:<!\[CDATA\[)?([\s\S]*?)(?:\]\]>)?<\/title>/i)
           const linkMatch = itemRaw.match(/<link>(?:<!\[CDATA\[)?([\s\S]*?)(?:\]\]>)?<\/link>/i)
           if (!titleMatch || !linkMatch) return
@@ -440,28 +442,31 @@ const fetchNews = async () => {
             if (thumb.length < 20 || thumb.match(/\.ico$|favicon|google_logo|tracking|pixel|dot/i)) thumb = ''
           }
 
-          let cleanDesc = decodeHtml(description.replace(/<[^>]*>?/gm, ' ').replace(/\s+/g, ' ').trim())
           const parts = title.split(/ - | \| | : /)
-          
-          const newItem = {
+          parsedItems.push({
             title: parts[0].trim(), link, pubDate,
-            description: cleanDesc || '기사 본문을 통해 자세한 내용을 확인하세요.',
+            description: decodeHtml(description.replace(/<[^>]*>?/gm, ' ').replace(/\s+/g, ' ').trim()) || '본문을 확인하세요.',
             source: source.name, category: source.category, provider: parts.length > 1 ? parts[parts.length - 1].trim() : '',
             thumb
-          }
-          parsedItems.push(newItem)
-          if (idx === 0 && news.value.length === 0) updateNewsList([newItem])
+          })
         })
 
-        if (parsedItems.length > 0) {
-          updateNewsList(parsedItems)
-          return parsedItems
-        }
+        if (parsedItems.length === 0) throw new Error('No items')
+        updateNewsList(parsedItems)
+        return parsedItems
       } catch (err) {
         clearTimeout(timeoutId)
+        throw err
       }
     }
-    return []
+
+    try {
+      // Race: Returns the first successful proxy result
+      return await Promise.any(proxies.map(p => fetchWithProxy(p)))
+    } catch (err) {
+      console.warn(`[Trends] All proxies failed for ${source.name}`)
+      return []
+    }
   }
 
   const updateNewsList = (newItems: NewsItem[]) => {
@@ -547,7 +552,7 @@ const fetchMissingThumbnails = async () => {
         const idx = news.value.findIndex(n => n.link === targetUrl)
         if (idx !== -1) {
           news.value[idx] = { ...news.value[idx], thumb: imgUrl }
-          localStorage.setItem(`uxm_trends_cache_v1.8`, JSON.stringify(news.value))
+          localStorage.setItem(`uxm_trends_cache_v1.9`, JSON.stringify(news.value))
         }
       }
     } catch (e) {}
