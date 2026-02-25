@@ -10,7 +10,7 @@
       </p>
       <div class="pt-4 border-t border-zinc-100 dark:border-white/5">
         <p class="text-[10px] font-bold text-zinc-300 dark:text-zinc-700 uppercase">
-          Version 1.1
+          Version 1.2
         </p>
       </div>
     </div>

@@ -343,7 +343,7 @@ const decodeHtml = (html: string) => {
 
 const fetchNews = async () => {
   // 1. Initial Cache Load
-  const CURRENT_CACHE_VERSION = 'v1.1'
+  const CURRENT_CACHE_VERSION = 'v1.2'
   const CACHE_KEY = `uxm_trends_cache_${CURRENT_CACHE_VERSION}`
   
   if (news.value.length === 0) {
@@ -375,13 +375,14 @@ const fetchNews = async () => {
       (url: string) => `https://api.allorigins.win/get?url=${encodeURIComponent(url)}&timestamp=${Date.now()}`
     ]
 
-    for (const getProxyUrl of proxies) {
+    // Concurrent Proxy Racing: Try all proxies at once and take the fastest successful one
+    const fetchWithProxy = async (getProxyUrl: (u: string) => string) => {
+      const controller = new AbortController()
+      const timeoutId = setTimeout(() => controller.abort(), 10000) // 10s for stability
       try {
-        const controller = new AbortController()
-        const timeoutId = setTimeout(() => controller.abort(), 4000) // Reduced to 4s for faster failover
         const response = await fetch(getProxyUrl(source.url), { signal: controller.signal })
         clearTimeout(timeoutId)
-        if (!response.ok) continue
+        if (!response.ok) throw new Error('Proxy error')
 
         let xmlString = ''
         if (getProxyUrl(source.url).includes('allorigins')) {
@@ -390,29 +391,22 @@ const fetchNews = async () => {
         } else {
           xmlString = await response.text()
         }
-        if (!xmlString || xmlString.length < 100) continue
         
-        // Quick thumbnail extraction from description within the XML parsing
-        // Extra robust: Fallback to Regex for entire XML if DOMParser has issues with certain characters
+        if (!xmlString || xmlString.length < 100) throw new Error('Invalid content')
+        
         const xmlItems = xmlString.split(/<item>/i).slice(1)
         const parsedItems: NewsItem[] = []
 
         xmlItems.forEach((itemRaw, idx) => {
           if (idx >= 60) return
-          
           const titleMatch = itemRaw.match(/<title>(?:<!\[CDATA\[)?([\s\S]*?)(?:\]\]>)?<\/title>/i)
           const linkMatch = itemRaw.match(/<link>(?:<!\[CDATA\[)?([\s\S]*?)(?:\]\]>)?<\/link>/i)
-          const descMatch = itemRaw.match(/<description>(?:<!\[CDATA\[)?([\s\S]*?)(?:\]\]>)?<\/description>/i)
-          const dateMatch = itemRaw.match(/<pubDate>(?:<!\[CDATA\[)?([\s\S]*?)(?:\]\]>)?<\/pubDate>/i)
-          
           if (!titleMatch || !linkMatch) return
 
           const title = decodeHtml(titleMatch[1].trim())
           let link = linkMatch[1].trim()
-          const description = descMatch ? descMatch[1].trim() : ''
-          const pubDate = dateMatch ? dateMatch[1].trim() : ''
-
-          // Decode Google News links more robustly
+          
+          // Decode Google News links
           if (link.includes('news.google.com/articles/')) {
             try {
               let b64 = link.split('articles/')[1]?.split('?')[0]
@@ -421,32 +415,26 @@ const fetchNews = async () => {
                 while (b64.length % 4 !== 0) b64 += '='
                 const decoded = atob(b64)
                 const urlMatch = decoded.match(/https?:\/\/[^\s\u0000-\u001F"<>\\^`{|}]+/g)
-                if (urlMatch && urlMatch.length > 0) {
-                  link = urlMatch[0]
-                }
+                if (urlMatch && urlMatch.length > 0) link = urlMatch[0]
               }
             } catch (e) {}
           }
 
-          // --- Extraction ---
-          let thumb = ''
-          
-          // 1. Scan Description for <img> (Best for Inven/MK/YNA/Design)
-          if (description) {
-            const imgMatch = description.match(/<img[^>]+src=["']([^"'>]+)["']/i) ||
-                             description.match(/<img[^>]+src=([^ >]+)/i)
-            if (imgMatch) {
-              thumb = imgMatch[1].replace(/['"]/g, '').trim()
-            }
-          }
+          const descMatch = itemRaw.match(/<description>(?:<!\[CDATA\[)?([\s\S]*?)(?:\]\]>)?<\/description>/i)
+          const dateMatch = itemRaw.match(/<pubDate>(?:<!\[CDATA\[)?([\s\S]*?)(?:\]\]>)?<\/pubDate>/i)
+          const description = descMatch ? descMatch[1].trim() : ''
+          const pubDate = dateMatch ? dateMatch[1].trim() : ''
 
-          // 2. Scan raw item for enclosure/media:content/thumbnail tags
+          let thumb = ''
+          if (description) {
+            const imgMatch = description.match(/<img[^>]+src=["']([^"'>]+)["']/i) || description.match(/<img[^>]+src=([^ >]+)/i)
+            if (imgMatch) thumb = imgMatch[1].replace(/['"]/g, '').trim()
+          }
           if (!thumb) {
             const mediaMatch = itemRaw.match(/<(?:media:content|enclosure|thumbnail|image)[^>]+url=["']([^"'>]+)["']/i) ||
                                itemRaw.match(/<(?:media:content|enclosure|thumbnail|image)[^>]+href=["']([^"'>]+)["']/i)
             if (mediaMatch) thumb = mediaMatch[1]
           }
-
           if (thumb) {
             if (thumb.startsWith('//')) thumb = 'https:' + thumb
             if (thumb.length < 20 || thumb.match(/\.ico$|favicon|google_logo|tracking|pixel|dot/i)) thumb = ''
@@ -454,26 +442,31 @@ const fetchNews = async () => {
 
           let cleanDesc = decodeHtml(description.replace(/<[^>]*>?/gm, ' ').replace(/\s+/g, ' ').trim())
           const parts = title.split(/ - | \| | : /)
-          const headline = parts[0].trim()
-          const provider = parts.length > 1 ? parts[parts.length - 1].trim() : ''
-          
           parsedItems.push({
-            title: headline, link: link, pubDate,
+            title: parts[0].trim(), link, pubDate,
             description: cleanDesc || '기사 본문을 통해 자세한 내용을 확인하세요.',
-            source: source.name, category: source.category, provider: provider,
-            thumb: thumb
+            source: source.name, category: source.category, provider: parts.length > 1 ? parts[parts.length - 1].trim() : '',
+            thumb
           })
         })
-        if (parsedItems.length > 0) {
-          // Update news incrementally instead of waiting for all sources
-          updateNewsList(parsedItems)
-          return parsedItems
-        }
+
+        if (parsedItems.length === 0) throw new Error('No items parsed')
+        
+        updateNewsList(parsedItems)
+        return parsedItems
       } catch (err) {
-        // Continue to next proxy
+        clearTimeout(timeoutId)
+        throw err
       }
     }
-    return []
+
+    try {
+      // Race! First successful proxy wins
+      return await Promise.any(proxies.map(p => fetchWithProxy(p)))
+    } catch (err) {
+      console.warn(`[Trends] All proxies failed for ${source.name}`)
+      return []
+    }
   }
 
   const updateNewsList = (newItems: NewsItem[]) => {
@@ -559,7 +552,7 @@ const fetchMissingThumbnails = async () => {
         const idx = news.value.findIndex(n => n.link === targetUrl)
         if (idx !== -1) {
           news.value[idx] = { ...news.value[idx], thumb: imgUrl }
-          localStorage.setItem(`uxm_trends_cache_v1.1`, JSON.stringify(news.value))
+          localStorage.setItem(`uxm_trends_cache_v1.2`, JSON.stringify(news.value))
         }
       }
     } catch (e) {}
