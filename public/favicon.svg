@@ -6,24 +6,31 @@
     </linearGradient>
   </defs>
   
-  <!-- 
-    1. Overall Breathing Room: 
-       Reduced the main box size (90x90 -> 76x76) and centered it (x=12, y=14) 
-       to ensure NO clipping occurs for the overhanging dot.
-  -->
-  <rect x="12" y="14" width="76" height="76" rx="18" fill="url(#grad1)" />
+  <!-- Reverting black box to full original size (100x100) -->
+  <rect width="100" height="100" rx="24" fill="url(#grad1)" />
   
   <!-- 
-    2. Scaled Down N: 
-       Reduced font-size (64 -> 54) to create more whitespace inside the box, 
-       while keeping the boldness you liked.
+    N perfectly centered: 
+    x=50, y=50 with dominant-baseline="central" for absolute optical center 
+    Reduced size slightly for better framing inside the box.
   -->
-  <text x="50" y="68" font-family="'Inter', 'Arial Black', sans-serif" font-size="54" font-weight="950" fill="white" text-anchor="middle" stroke="white" stroke-width="1">N</text>
+  <text 
+    x="50" 
+    y="52" 
+    font-family="'Inter', 'Arial Black', sans-serif" 
+    font-size="58" 
+    font-weight="950" 
+    fill="white" 
+    text-anchor="middle" 
+    dominant-baseline="middle"
+    stroke="white" 
+    stroke-width="1.2"
+  >N</text>
   
   <!-- 
-    3. Safe Overlapping Dot: 
-       Positioned at 88,20 with radius 13. 
-       This provides a 1px safety margin (88+13=101, adjusted to 87,20) from the edge.
+    Red dot "overlapping" the corner from INSIDE:
+    Positioned at the very edge (cx=90, cy=10, r=10) to touch 0 and 100 coordinates.
+    This ensures no clipping while still sitting right on the corner.
   -->
-  <circle cx="87" cy="20" r="12" fill="#ef4444" />
+  <circle cx="89" cy="11" r="11" fill="#ef4444" />
 </svg>
