@@ -9,7 +9,7 @@
     </div>
 
     <SiteHeader 
-      title="News Stand" 
+      title="News Stand v11" 
       description="주요 언론사의 실시간 뉴스 피드를 한곳에서 확인하세요"
       padding-top="pt-16"
     />
@@ -243,7 +243,7 @@ const categories = [
 ]
 
 const RSS_SOURCES = [
-  { name: '매경 IT', url: 'https://www.mk.co.kr/rss/50300001/', category: 'ai' },
+  { name: '매경 IT', url: 'https://news.google.com/rss/search?q=site:mk.co.kr+IT&hl=ko&gl=KR&ceid=KR:ko', category: 'ai' },
   { name: 'AI 최신', url: 'https://news.google.com/rss/search?q=AI+%ED%8A%B8%EB%A0%8C%EB%93%9C&hl=ko&gl=KR&ceid=KR:ko', category: 'ai' },
   { name: '경제 최신', url: 'https://news.google.com/rss/search?q=%EA%B8%88%EC%9C%B5+%EC%A6%9D%EA%B6%8C&hl=ko&gl=KR&ceid=KR:ko', category: 'finance' },
   { name: '디자인 뉴스', url: 'https://news.google.com/rss/search?q=%EB%94%94%EC%9E%90%EC%9D%B8+%ED%8A%B8%EB%A0%8C%EB%93%9C&hl=ko&gl=KR&ceid=KR:ko', category: 'design' },
@@ -286,7 +286,7 @@ watch(activeCategory, () => {
 
 const fetchNews = async () => {
   // 1. Initial Cache Load
-  const CURRENT_CACHE_VERSION = 'v10'
+  const CURRENT_CACHE_VERSION = 'v11'
   const CACHE_KEY = `uxm_trends_cache_${CURRENT_CACHE_VERSION}`
   
   if (news.value.length === 0) {
@@ -313,9 +313,9 @@ const fetchNews = async () => {
 
   const fetchSource = async (source: typeof RSS_SOURCES[0]) => {
     const proxies = [
+      (url: string) => `https://api.allorigins.win/get?url=${encodeURIComponent(url)}&timestamp=${Date.now()}`,
       (url: string) => `https://api.codetabs.com/v1/proxy?quest=${encodeURIComponent(url)}`,
-      (url: string) => `https://api.allorigins.win/raw?url=${encodeURIComponent(url + (url.includes('?') ? '&' : '?') + 't=' + Date.now())}`,
-      (url: string) => `https://cors-proxy.htmldriven.com/?url=${encodeURIComponent(url)}`
+      (url: string) => `https://corsproxy.io/?url=${encodeURIComponent(url)}`
     ]
 
     for (const getProxyUrl of proxies) {
@@ -326,9 +326,16 @@ const fetchNews = async () => {
         clearTimeout(timeoutId)
         if (!response.ok) continue
 
-        const xmlString = await response.text()
+        let xmlString = ''
+        if (getProxyUrl(source.url).includes('allorigins')) {
+          const data = await response.json()
+          xmlString = data.contents
+        } else {
+          xmlString = await response.text()
+        }
         if (!xmlString || xmlString.length < 100) continue
-
+        
+        // Quick thumbnail extraction from description within the XML parsing
         const parser = new DOMParser()
         const xmlDoc = parser.parseFromString(xmlString, 'text/xml')
         const items = xmlDoc.querySelectorAll('item')
@@ -446,7 +453,7 @@ const fetchMissingThumbnails = async () => {
         if (idx !== -1) {
           // Deep reactive update
           news.value[idx] = { ...news.value[idx], thumb: imgUrl }
-          localStorage.setItem(`uxm_trends_cache_v10`, JSON.stringify(news.value))
+          localStorage.setItem(`uxm_trends_cache_v11`, JSON.stringify(news.value))
         }
       }
     } catch (e) {}
