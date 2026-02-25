@@ -94,7 +94,7 @@
                   <span class="text-[11px] text-zinc-400 font-bold uppercase tracking-tight">{{ item.provider || item.source }}</span>
                 </div>
                 
-                <div class="flex gap-4 mb-4 items-center">
+                <div class="flex gap-4 mb-4 items-center h-12">
                   <div v-if="item.thumb" class="flex-shrink-0 w-12 h-12 rounded-lg overflow-hidden border border-zinc-100 dark:border-white/5 bg-zinc-50 dark:bg-zinc-800">
                     <img :src="item.thumb" class="w-full h-full object-cover" alt="" loading="lazy" />
                   </div>
