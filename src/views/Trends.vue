@@ -343,7 +343,7 @@ const decodeHtml = (html: string) => {
 
 const fetchNews = async () => {
   // 1. Initial Cache Load
-  const CURRENT_CACHE_VERSION = 'v1.0'
+  const CURRENT_CACHE_VERSION = 'v1.1'
   const CACHE_KEY = `uxm_trends_cache_${CURRENT_CACHE_VERSION}`
   
   if (news.value.length === 0) {
@@ -378,7 +378,7 @@ const fetchNews = async () => {
     for (const getProxyUrl of proxies) {
       try {
         const controller = new AbortController()
-        const timeoutId = setTimeout(() => controller.abort(), 8000)
+        const timeoutId = setTimeout(() => controller.abort(), 4000) // Reduced to 4s for faster failover
         const response = await fetch(getProxyUrl(source.url), { signal: controller.signal })
         clearTimeout(timeoutId)
         if (!response.ok) continue
@@ -464,38 +464,45 @@ const fetchNews = async () => {
             thumb: thumb
           })
         })
-        if (parsedItems.length > 0) return parsedItems
+        if (parsedItems.length > 0) {
+          // Update news incrementally instead of waiting for all sources
+          updateNewsList(parsedItems)
+          return parsedItems
+        }
       } catch (err) {
-        console.warn(`[Trends] Failed to fetch/parse ${source.name}:`, err)
+        // Continue to next proxy
       }
     }
     return []
   }
 
+  const updateNewsList = (newItems: NewsItem[]) => {
+    const combined = [...newItems, ...news.value]
+    const newsMap = new Map()
+    combined.forEach(item => {
+      const existing = newsMap.get(item.link)
+      if (!existing || new Date(item.pubDate) > new Date(existing.pubDate)) {
+        newsMap.set(item.link, item)
+      }
+    })
+
+    const finalized = Array.from(newsMap.values())
+      .sort((a, b) => new Date(b.pubDate).getTime() - new Date(a.pubDate).getTime())
+      .slice(0, 500)
+
+    news.value = finalized
+    localStorage.setItem(CACHE_KEY, JSON.stringify(finalized))
+  }
+
   try {
-    const results = await Promise.all(RSS_SOURCES.map(source => fetchSource(source)))
-    const nextNews = results.flat()
-
-    if (nextNews.length > 0) {
-      const combined = [...nextNews, ...news.value]
-      const newsMap = new Map()
-      combined.forEach(item => {
-        const existing = newsMap.get(item.link)
-        if (!existing || new Date(item.pubDate) > new Date(existing.pubDate)) {
-          newsMap.set(item.link, item)
-        }
-      })
-
-      const finalized = Array.from(newsMap.values())
-        .sort((a, b) => new Date(b.pubDate).getTime() - new Date(a.pubDate).getTime())
-        .slice(0, 500)
-
-      news.value = finalized
-      localStorage.setItem(CACHE_KEY, JSON.stringify(finalized))
-      
-      console.log(`[Trends] Loaded ${finalized.length} news items. Initial thumbnails: ${finalized.filter(n => n.thumb).length}`)
-      fetchMissingThumbnails()
-    }
+    // Fire all fetches in parallel
+    const fetchPromises = RSS_SOURCES.map(source => fetchSource(source))
+    
+    // We still await but news.value is updated incrementally inside fetchSource
+    await Promise.all(fetchPromises)
+    
+    // Final check for thumbnails
+    fetchMissingThumbnails()
   } catch (err) {
     console.error('Fetch news error:', err)
   } finally {
@@ -552,7 +559,7 @@ const fetchMissingThumbnails = async () => {
         const idx = news.value.findIndex(n => n.link === targetUrl)
         if (idx !== -1) {
           news.value[idx] = { ...news.value[idx], thumb: imgUrl }
-          localStorage.setItem(`uxm_trends_cache_v1.0`, JSON.stringify(news.value))
+          localStorage.setItem(`uxm_trends_cache_v1.1`, JSON.stringify(news.value))
         }
       }
     } catch (e) {}
