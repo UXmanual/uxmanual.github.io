@@ -9,7 +9,7 @@
     </div>
 
     <SiteHeader 
-      title="News Stand v33" 
+      title="News Stand v34" 
       description="주요 언론사의 실시간 뉴스 피드를 한곳에서 확인하세요"
       padding-top="pt-16"
     />
@@ -304,9 +304,15 @@ watch(activeCategory, () => {
 })
 
 
+const decodeHtml = (html: string) => {
+  const txt = document.createElement('textarea')
+  txt.innerHTML = html
+  return txt.value
+}
+
 const fetchNews = async () => {
   // 1. Initial Cache Load
-  const CURRENT_CACHE_VERSION = 'v33'
+  const CURRENT_CACHE_VERSION = 'v34'
   const CACHE_KEY = `uxm_trends_cache_${CURRENT_CACHE_VERSION}`
   
   if (news.value.length === 0) {
@@ -370,12 +376,12 @@ const fetchNews = async () => {
           
           if (!titleMatch || !linkMatch) return
 
-          const title = titleMatch[1].trim()
+          const title = decodeHtml(titleMatch[1].trim())
           let link = linkMatch[1].trim()
           const description = descMatch ? descMatch[1].trim() : ''
           const pubDate = dateMatch ? dateMatch[1].trim() : ''
 
-          // Decode Google News links if any (used for Designhouse/Designjungle)
+          // Decode Google News links more robustly
           if (link.includes('news.google.com/articles/')) {
             try {
               let b64 = link.split('articles/')[1]?.split('?')[0]
@@ -383,8 +389,10 @@ const fetchNews = async () => {
                 b64 = b64.replace(/-/g, '+').replace(/_/g, '/')
                 while (b64.length % 4 !== 0) b64 += '='
                 const decoded = atob(b64)
-                const urlMatch = decoded.match(/https?:\/\/[^\s\u0000-\u001F"<>\\^`{|}]+/)
-                if (urlMatch) link = urlMatch[0]
+                const urlMatch = decoded.match(/https?:\/\/[^\s\u0000-\u001F"<>\\^`{|}]+/g)
+                if (urlMatch && urlMatch.length > 0) {
+                  link = urlMatch[0]
+                }
               }
             } catch (e) {}
           }
@@ -392,7 +400,7 @@ const fetchNews = async () => {
           // --- Extraction ---
           let thumb = ''
           
-          // 1. Scan Description for <img> (Best for Inven/MK/YNA)
+          // 1. Scan Description for <img> (Best for Inven/MK/YNA/Design)
           if (description) {
             const imgMatch = description.match(/<img[^>]+src=["']([^"'>]+)["']/i) ||
                              description.match(/<img[^>]+src=([^ >]+)/i)
@@ -413,7 +421,7 @@ const fetchNews = async () => {
             if (thumb.length < 20 || thumb.match(/\.ico$|favicon|google_logo|tracking|pixel|dot/i)) thumb = ''
           }
 
-          let cleanDesc = description.replace(/<[^>]*>?/gm, ' ').replace(/\s+/g, ' ').trim()
+          let cleanDesc = decodeHtml(description.replace(/<[^>]*>?/gm, ' ').replace(/\s+/g, ' ').trim())
           const parts = title.split(/ - | \| | : /)
           const headline = parts[0].trim()
           const provider = parts.length > 1 ? parts[parts.length - 1].trim() : ''
@@ -513,7 +521,7 @@ const fetchMissingThumbnails = async () => {
         const idx = news.value.findIndex(n => n.link === targetUrl)
         if (idx !== -1) {
           news.value[idx] = { ...news.value[idx], thumb: imgUrl }
-          localStorage.setItem(`uxm_trends_cache_v33`, JSON.stringify(news.value))
+          localStorage.setItem(`uxm_trends_cache_v34`, JSON.stringify(news.value))
         }
       }
     } catch (e) {}
