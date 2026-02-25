@@ -346,7 +346,7 @@ const decodeHtml = (html: string) => {
 
 const fetchNews = async () => {
   // 1. Initial Cache Load
-  const CURRENT_CACHE_VERSION = 'v2.2'
+  const CURRENT_CACHE_VERSION = 'v2.3'
   const CACHE_KEY = `uxm_trends_cache_${CURRENT_CACHE_VERSION}`
   
   if (news.value.length === 0) {
@@ -372,13 +372,21 @@ const fetchNews = async () => {
   isLoading.value = true
 
   const fetchSource = async (source: typeof RSS_SOURCES[0]) => {
-    // Multi-proxy Racing Strategy for Maximum Survival
-    const proxies = [
-      (url: string) => `https://api.allorigins.win/get?url=${encodeURIComponent(url)}&timestamp=${Date.now()}`,
+    // Intelligent Proxy Routing based on source stability
+    const defaultProxies = [
       (url: string) => `https://api.codetabs.com/v1/proxy?quest=${encodeURIComponent(url)}`,
       (url: string) => `https://corsproxy.io/?url=${encodeURIComponent(url)}`,
-      (url: string) => `https://api.allorigins.win/raw?url=${encodeURIComponent(url)}` // Raw fallback
+      (url: string) => `https://api.allorigins.win/get?url=${encodeURIComponent(url)}&timestamp=${Date.now()}`
     ]
+
+    // Priority routing for known difficult Korean feeds (YNA, Inven, etc.)
+    const prioritizedProxies = source.url.includes('yna.co.kr') || source.url.includes('inven.co.kr') || source.url.includes('mk.co.kr')
+      ? [
+          (url: string) => `https://api.codetabs.com/v1/proxy?quest=${encodeURIComponent(url)}`,
+          (url: string) => `https://corsproxy.io/?url=${encodeURIComponent(url)}`,
+          (url: string) => `https://api.allorigins.win/raw?url=${encodeURIComponent(url)}`
+        ]
+      : defaultProxies
 
     const fetchWithProxy = async (getProxyUrl: (u: string) => string) => {
       const controller = new AbortController()
@@ -387,7 +395,7 @@ const fetchNews = async () => {
       try {
         const response = await fetch(getProxyUrl(source.url), { signal: controller.signal })
         clearTimeout(timeoutId)
-        if (!response.ok) throw new Error('Network error')
+        if (!response.ok) throw new Error('Proxy down')
 
         let xmlString = ''
         const urlStr = getProxyUrl(source.url)
@@ -398,8 +406,9 @@ const fetchNews = async () => {
           xmlString = await response.text()
         }
         
-        if (!xmlString || xmlString.length < 50) throw new Error('Payload too small')
+        if (!xmlString || xmlString.length < 100) throw new Error('Data too short')
         
+        // Multi-pattern extraction for maximum reliability
         const xmlItems = xmlString.split(/<item>|<entry>/i).slice(1)
         const parsedItems: NewsItem[] = []
 
@@ -427,9 +436,11 @@ const fetchNews = async () => {
           }
 
           const descMatch = itemRaw.match(/<description>(?:<!\[CDATA\[)?([\s\S]*?)(?:\]\]>)?<\/description>/i) ||
+                            itemRaw.match(/<summary>(?:<!\[CDATA\[)?([\s\S]*?)(?:\]\]>)?<\/summary>/i) ||
                             itemRaw.match(/<content[^>]*>(?:<!\[CDATA\[)?([\s\S]*?)(?:\]\]>)?<\/content>/i)
           const dateMatch = itemRaw.match(/<pubDate>(?:<!\[CDATA\[)?([\s\S]*?)(?:\]\]>)?<\/pubDate>/i) ||
-                            itemRaw.match(/<published>(?:<!\[CDATA\[)?([\s\S]*?)(?:\]\]>)?<\/published>/i)
+                            itemRaw.match(/<published>(?:<!\[CDATA\[)?([\s\S]*?)(?:\]\]>)?<\/published>/i) ||
+                            itemRaw.match(/<updated>(?:<!\[CDATA\[)?([\s\S]*?)(?:\]\]>)?<\/updated>/i)
           
           const description = descMatch ? descMatch[1].trim() : ''
           const pubDate = dateMatch ? dateMatch[1].trim() : ''
@@ -453,6 +464,7 @@ const fetchNews = async () => {
             thumb: thumb.startsWith('//') ? 'https:' + thumb : thumb
           }
           parsedItems.push(newItem)
+          // Incremental Push: Show first item immediately
           if (idx === 0) updateNewsList([newItem])
         })
 
@@ -468,8 +480,8 @@ const fetchNews = async () => {
     }
 
     try {
-      // Race for the fastest successful fetch
-      return await Promise.any(proxies.map(p => fetchWithProxy(p)))
+      // Racing combined with Intelligent Fallbacks
+      return await Promise.any(prioritizedProxies.map(p => fetchWithProxy(p)))
     } catch {
       return []
     }
@@ -558,7 +570,7 @@ const fetchMissingThumbnails = async () => {
         const idx = news.value.findIndex(n => n.link === targetUrl)
         if (idx !== -1) {
           news.value[idx] = { ...news.value[idx], thumb: imgUrl }
-          localStorage.setItem(`uxm_trends_cache_v2.2`, JSON.stringify(news.value))
+          localStorage.setItem(`uxm_trends_cache_v2.3`, JSON.stringify(news.value))
         }
       }
     } catch (e) {}
