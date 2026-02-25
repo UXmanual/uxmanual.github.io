@@ -9,7 +9,7 @@
     </div>
 
     <SiteHeader 
-      title="News Stand v39" 
+      title="News Stand v40" 
       description="주요 언론사의 실시간 뉴스 피드를 한곳에서 확인하세요"
       padding-top="pt-16"
     />
@@ -206,22 +206,28 @@ const changeCategory = async (id: string) => {
   
   await nextTick()
 
-  // Horizontal scroll logic for tabs: Align clicked tab to the left
-  // Robust approach using offsetLeft which is immune to layout shifts of the parent
-  const targetTab = scrollContainer.value?.querySelector(`[data-cat="${id}"]`) as HTMLElement
-  if (targetTab && scrollContainer.value) {
+  // Horizontal scroll logic: Unified Bidirectional Alignment
+  // Use a tiny timeout to ensure sticky header and nav stability
+  setTimeout(() => {
     const container = scrollContainer.value
-    // Scroll so that the tab is at the left with a small offset (24px)
-    container.scrollTo({
-      left: targetTab.offsetLeft - 24,
-      behavior: 'smooth'
-    })
-  }
+    const targetTab = container?.querySelector(`[data-cat="${id}"]`) as HTMLElement
+    if (container && targetTab) {
+      const containerRect = container.getBoundingClientRect()
+      const tabRect = targetTab.getBoundingClientRect()
+      
+      // Calculate relative distance from container's left edge to tab's left edge
+      const relativeLeft = tabRect.left - containerRect.left
+      
+      // Scroll by the difference to bring tab to the left (minus 24px padding)
+      container.scrollBy({
+        left: relativeLeft - 24,
+        behavior: 'smooth'
+      })
+    }
+  }, 50)
   
   if (scrollAnchor.value) {
-    // We use the Anchor offsetTop which is stable regardless of sticky state
     const targetScrollY = scrollAnchor.value.offsetTop - 56
-    
     window.scrollTo({
       top: targetScrollY,
       behavior: 'smooth'
@@ -344,7 +350,7 @@ const decodeHtml = (html: string) => {
 
 const fetchNews = async () => {
   // 1. Initial Cache Load
-  const CURRENT_CACHE_VERSION = 'v39'
+  const CURRENT_CACHE_VERSION = 'v40'
   const CACHE_KEY = `uxm_trends_cache_${CURRENT_CACHE_VERSION}`
   
   if (news.value.length === 0) {
@@ -553,7 +559,7 @@ const fetchMissingThumbnails = async () => {
         const idx = news.value.findIndex(n => n.link === targetUrl)
         if (idx !== -1) {
           news.value[idx] = { ...news.value[idx], thumb: imgUrl }
-          localStorage.setItem(`uxm_trends_cache_v39`, JSON.stringify(news.value))
+          localStorage.setItem(`uxm_trends_cache_v40`, JSON.stringify(news.value))
         }
       }
     } catch (e) {}
