@@ -9,7 +9,7 @@
     </div>
 
     <SiteHeader 
-      title="News Stand v26" 
+      title="News Stand v27" 
       description="주요 언론사의 실시간 뉴스 피드를 한곳에서 확인하세요"
       padding-top="pt-16"
     />
@@ -243,31 +243,26 @@ const categories = [
 ]
 
 const RSS_SOURCES = [
-  // AI & Tech (Pure Direct RSS Only)
-  { name: '매경 IT', url: 'https://www.mk.co.kr/rss/50300001/', category: 'ai' },
-  { name: '경향 IT', url: 'https://www.khan.co.kr/rss/rssdata/it_news.xml', category: 'ai' },
-  { name: '동아 IT', url: 'https://rss.donga.com/it.xml', category: 'ai' },
-  { name: '아주 IT', url: 'https://www.ajunews.com/rss/it.xml', category: 'ai' },
-  { name: '연합 테크', url: 'https://www.yna.co.kr/rss/digital.xml', category: 'ai' },
+  // AI & Tech (Confirmed Direct RSS)
+  { name: 'AI 타임스', url: 'http://www.aitimes.com/rss/S1N1.xml', category: 'ai' },
+  { name: '디지털데일리', url: 'https://www.ddaily.co.kr/rss/all.xml', category: 'ai' },
+  { name: '씨넷코리아', url: 'https://www.cnet.co.kr/rss/all', category: 'ai' },
   
-  // Finance (Pure Direct RSS Only)
-  { name: '매경 경제', url: 'https://www.mk.co.kr/rss/30100041/', category: 'finance' },
+  // Finance (Confirmed Direct RSS)
   { name: '연합 경제', url: 'https://www.yna.co.kr/rss/economy.xml', category: 'finance' },
   { name: '동아 경제', url: 'https://rss.donga.com/economy.xml', category: 'finance' },
-  { name: '경향 경제', url: 'https://www.khan.co.kr/rss/rssdata/economy.xml', category: 'finance' },
 
-  // Design & Art (Pure Direct RSS Only)
+  // Design & Art (Confirmed Direct RSS)
   { name: 'Designboom', url: 'https://www.designboom.com/feed', category: 'design' },
   { name: '엘르 디자인', url: 'https://elle.co.kr/rss/art-design', category: 'design' },
 
-  // Game (Pure Direct RSS Only)
+  // Game (Confirmed Direct RSS)
   { name: '인벤 뉴스', url: 'http://webzine.inven.co.kr/news/rss.php', category: 'game' },
   { name: '매경 게임', url: 'https://www.mk.co.kr/rss/50700001/', category: 'game' },
 
-  // Sports (Pure Direct RSS Only)
+  // Sports (Confirmed Direct RSS)
   { name: '연합 스포츠', url: 'https://www.yna.co.kr/rss/sports.xml', category: 'sports' },
-  { name: '매경 스포츠', url: 'https://www.mk.co.kr/rss/71000001/', category: 'sports' },
-  { name: '동아 스포츠', url: 'https://rss.donga.com/sports.xml', category: 'sports' }
+  { name: '매경 스포츠', url: 'https://www.mk.co.kr/rss/71000001/', category: 'sports' }
 ]
 
 const filteredNews = computed(() => {
@@ -306,7 +301,7 @@ watch(activeCategory, () => {
 
 const fetchNews = async () => {
   // 1. Initial Cache Load
-  const CURRENT_CACHE_VERSION = 'v26'
+  const CURRENT_CACHE_VERSION = 'v27'
   const CACHE_KEY = `uxm_trends_cache_${CURRENT_CACHE_VERSION}`
   
   if (news.value.length === 0) {
@@ -496,7 +491,7 @@ const fetchMissingThumbnails = async () => {
         const idx = news.value.findIndex(n => n.link === targetUrl)
         if (idx !== -1) {
           news.value[idx] = { ...news.value[idx], thumb: imgUrl }
-          localStorage.setItem(`uxm_trends_cache_v26`, JSON.stringify(news.value))
+          localStorage.setItem(`uxm_trends_cache_v27`, JSON.stringify(news.value))
         }
       }
     } catch (e) {}
