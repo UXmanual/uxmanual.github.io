@@ -6,23 +6,23 @@
     </linearGradient>
   </defs>
   
-  <!-- Full Black Background Box -->
   <rect width="100" height="100" rx="24" fill="url(#grad1)" />
   
   <!-- 
-    Perfectly Centered Bold N:
-    x=50, y=50 with dominant-baseline="central" ensures absolute mathematical centering.
+    Manually adjusting Y coordinate to 48 
+    to compensate for the visual 'downward' bias 
+    often seen with bold capital letters in SVG rendering.
   -->
   <text 
     x="50" 
-    y="50" 
-    font-family="'Inter', 'Arial Black', sans-serif" 
+    y="48" 
+    font-family="'Arial Black', sans-serif" 
     font-size="60" 
-    font-weight="950" 
+    font-weight="900" 
     fill="white" 
     text-anchor="middle" 
-    dominant-baseline="central"
+    dominant-baseline="middle"
     stroke="white" 
-    stroke-width="1.2"
+    stroke-width="1.5"
   >N</text>
 </svg>
