@@ -9,7 +9,7 @@
     </div>
 
     <SiteHeader 
-      title="News Stand v40" 
+      title="News Stand v41" 
       description="주요 언론사의 실시간 뉴스 피드를 한곳에서 확인하세요"
       padding-top="pt-16"
     />
@@ -206,25 +206,18 @@ const changeCategory = async (id: string) => {
   
   await nextTick()
 
-  // Horizontal scroll logic: Unified Bidirectional Alignment
-  // Use a tiny timeout to ensure sticky header and nav stability
+  // Horizontal scroll: Use native scrollIntoView for the most "native-like" smooth centering
   setTimeout(() => {
     const container = scrollContainer.value
     const targetTab = container?.querySelector(`[data-cat="${id}"]`) as HTMLElement
-    if (container && targetTab) {
-      const containerRect = container.getBoundingClientRect()
-      const tabRect = targetTab.getBoundingClientRect()
-      
-      // Calculate relative distance from container's left edge to tab's left edge
-      const relativeLeft = tabRect.left - containerRect.left
-      
-      // Scroll by the difference to bring tab to the left (minus 24px padding)
-      container.scrollBy({
-        left: relativeLeft - 24,
-        behavior: 'smooth'
+    if (targetTab) {
+      targetTab.scrollIntoView({
+        behavior: 'smooth',
+        block: 'nearest',
+        inline: 'center'
       })
     }
-  }, 50)
+  }, 100)
   
   if (scrollAnchor.value) {
     const targetScrollY = scrollAnchor.value.offsetTop - 56
@@ -350,7 +343,7 @@ const decodeHtml = (html: string) => {
 
 const fetchNews = async () => {
   // 1. Initial Cache Load
-  const CURRENT_CACHE_VERSION = 'v40'
+  const CURRENT_CACHE_VERSION = 'v41'
   const CACHE_KEY = `uxm_trends_cache_${CURRENT_CACHE_VERSION}`
   
   if (news.value.length === 0) {
@@ -559,7 +552,7 @@ const fetchMissingThumbnails = async () => {
         const idx = news.value.findIndex(n => n.link === targetUrl)
         if (idx !== -1) {
           news.value[idx] = { ...news.value[idx], thumb: imgUrl }
-          localStorage.setItem(`uxm_trends_cache_v40`, JSON.stringify(news.value))
+          localStorage.setItem(`uxm_trends_cache_v41`, JSON.stringify(news.value))
         }
       }
     } catch (e) {}
