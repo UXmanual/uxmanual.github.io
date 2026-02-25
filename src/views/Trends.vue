@@ -343,7 +343,7 @@ const decodeHtml = (html: string) => {
 
 const fetchNews = async () => {
   // 1. Initial Cache Load
-  const CURRENT_CACHE_VERSION = 'v1.5'
+  const CURRENT_CACHE_VERSION = 'v1.6'
   const CACHE_KEY = `uxm_trends_cache_${CURRENT_CACHE_VERSION}`
   
   if (news.value.length === 0) {
@@ -370,19 +370,19 @@ const fetchNews = async () => {
 
   const fetchSource = async (source: typeof RSS_SOURCES[0]) => {
     const proxies = [
+      (url: string) => `https://api.allorigins.win/get?url=${encodeURIComponent(url)}&timestamp=${Date.now()}`,
       (url: string) => `https://api.codetabs.com/v1/proxy?quest=${encodeURIComponent(url)}`,
-      (url: string) => `https://corsproxy.io/?url=${encodeURIComponent(url)}`,
-      (url: string) => `https://api.allorigins.win/get?url=${encodeURIComponent(url)}&timestamp=${Date.now()}`
+      (url: string) => `https://corsproxy.io/?url=${encodeURIComponent(url)}`
     ]
 
-    // Concurrent Proxy Racing: Try all proxies at once and take the fastest successful one
-    const fetchWithProxy = async (getProxyUrl: (u: string) => string) => {
+    for (const getProxyUrl of proxies) {
       const controller = new AbortController()
-      const timeoutId = setTimeout(() => controller.abort(), 10000) // 10s for stability
+      const timeoutId = setTimeout(() => controller.abort(), 8000)
+      
       try {
         const response = await fetch(getProxyUrl(source.url), { signal: controller.signal })
         clearTimeout(timeoutId)
-        if (!response.ok) throw new Error('Proxy error')
+        if (!response.ok) continue
 
         let xmlString = ''
         if (getProxyUrl(source.url).includes('allorigins')) {
@@ -392,7 +392,7 @@ const fetchNews = async () => {
           xmlString = await response.text()
         }
         
-        if (!xmlString || xmlString.length < 100) throw new Error('Invalid content')
+        if (!xmlString || xmlString.length < 100) continue
         
         const xmlItems = xmlString.split(/<item>/i).slice(1)
         const parsedItems: NewsItem[] = []
@@ -449,29 +449,18 @@ const fetchNews = async () => {
             thumb
           }
           parsedItems.push(newItem)
-          
-          // Show the very first item as soon as it's parsed for lightning-fast feedback
           if (idx === 0) updateNewsList([newItem])
         })
 
-        if (parsedItems.length === 0) throw new Error('No items parsed')
-        
-        // Then update the full list for this source
-        updateNewsList(parsedItems)
-        return parsedItems
+        if (parsedItems.length > 0) {
+          updateNewsList(parsedItems)
+          return parsedItems
+        }
       } catch (err) {
         clearTimeout(timeoutId)
-        throw err
       }
     }
-
-    try {
-      // Race! First successful proxy wins
-      return await Promise.any(proxies.map(p => fetchWithProxy(p)))
-    } catch (err) {
-      console.warn(`[Trends] All proxies failed for ${source.name}`)
-      return []
-    }
+    return []
   }
 
   const updateNewsList = (newItems: NewsItem[]) => {
@@ -557,7 +546,7 @@ const fetchMissingThumbnails = async () => {
         const idx = news.value.findIndex(n => n.link === targetUrl)
         if (idx !== -1) {
           news.value[idx] = { ...news.value[idx], thumb: imgUrl }
-          localStorage.setItem(`uxm_trends_cache_v1.5`, JSON.stringify(news.value))
+          localStorage.setItem(`uxm_trends_cache_v1.6`, JSON.stringify(news.value))
         }
       }
     } catch (e) {}
