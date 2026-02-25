@@ -9,7 +9,7 @@
     </div>
 
     <SiteHeader 
-      title="News Stand v38" 
+      title="News Stand v39" 
       description="주요 언론사의 실시간 뉴스 피드를 한곳에서 확인하세요"
       padding-top="pt-16"
     />
@@ -207,17 +207,13 @@ const changeCategory = async (id: string) => {
   await nextTick()
 
   // Horizontal scroll logic for tabs: Align clicked tab to the left
+  // Robust approach using offsetLeft which is immune to layout shifts of the parent
   const targetTab = scrollContainer.value?.querySelector(`[data-cat="${id}"]`) as HTMLElement
   if (targetTab && scrollContainer.value) {
     const container = scrollContainer.value
-    const containerRect = container.getBoundingClientRect()
-    const tabRect = targetTab.getBoundingClientRect()
-    
-    // Calculate precise scroll target relative to container's left edge
-    const scrollAmount = container.scrollLeft + (tabRect.left - containerRect.left) - 24
-    
+    // Scroll so that the tab is at the left with a small offset (24px)
     container.scrollTo({
-      left: Math.max(0, scrollAmount),
+      left: targetTab.offsetLeft - 24,
       behavior: 'smooth'
     })
   }
@@ -348,7 +344,7 @@ const decodeHtml = (html: string) => {
 
 const fetchNews = async () => {
   // 1. Initial Cache Load
-  const CURRENT_CACHE_VERSION = 'v38'
+  const CURRENT_CACHE_VERSION = 'v39'
   const CACHE_KEY = `uxm_trends_cache_${CURRENT_CACHE_VERSION}`
   
   if (news.value.length === 0) {
@@ -557,7 +553,7 @@ const fetchMissingThumbnails = async () => {
         const idx = news.value.findIndex(n => n.link === targetUrl)
         if (idx !== -1) {
           news.value[idx] = { ...news.value[idx], thumb: imgUrl }
-          localStorage.setItem(`uxm_trends_cache_v38`, JSON.stringify(news.value))
+          localStorage.setItem(`uxm_trends_cache_v39`, JSON.stringify(news.value))
         }
       }
     } catch (e) {}
