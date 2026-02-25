@@ -294,9 +294,12 @@ const RSS_SOURCES = [
   { name: 'UX Collective', url: 'https://uxdesign.cc/feed', category: 'design' },
   { name: 'Design Milk', url: 'https://design-milk.com/feed/', category: 'design' },
 
-  // Game (Stabilized)
+  // Game (Diversified & Robust)
+  { name: '게임메카', url: 'https://www.gamemeca.com/rss/news.php', category: 'game' },
   { name: '지디넷 게임', url: 'https://www.zdnet.co.kr/rss/zdnet_game.xml', category: 'game' },
   { name: '게임동아', url: 'https://www.gamedonga.co.kr/rss/all.xml', category: 'game' },
+  { name: '게임포커스', url: 'http://www.gamefocus.co.kr/rss/all.xml', category: 'game' },
+  { name: '게임샷', url: 'http://www.gameshot.net/rss/news.xml', category: 'game' },
   { name: '인벤 뉴스', url: 'https://www.inven.co.kr/webzine/news/rss.php', category: 'game' },
   { name: '매경 게임', url: 'https://www.mk.co.kr/rss/50700001/', category: 'game' },
 
@@ -350,7 +353,7 @@ const decodeHtml = (html: string) => {
 
 const fetchNews = async () => {
   // 1. Initial Cache Load
-  const CURRENT_CACHE_VERSION = 'v2.8'
+  const CURRENT_CACHE_VERSION = 'v2.9'
   const CACHE_KEY = `uxm_trends_cache_${CURRENT_CACHE_VERSION}`
   
   if (news.value.length === 0) {
@@ -565,7 +568,7 @@ const fetchMissingThumbnails = async () => {
         const idx = news.value.findIndex(n => n.link === targetUrl)
         if (idx !== -1) {
           news.value[idx] = { ...news.value[idx], thumb: imgUrl }
-          localStorage.setItem(`uxm_trends_cache_v2.8`, JSON.stringify(news.value))
+          localStorage.setItem(`uxm_trends_cache_v2.9`, JSON.stringify(news.value))
         }
       }
     } catch (e) {}
