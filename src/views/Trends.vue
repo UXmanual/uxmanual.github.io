@@ -148,21 +148,15 @@
         </div>
       </div>
 
-      <!-- Empty State / Loading State -->
+      <!-- Empty State / Loading State (Wavy Dots) -->
       <div v-if="displayedNews.length === 0" class="flex flex-col items-center justify-center py-40 text-center">
-        <div class="relative w-20 h-20 mb-8">
-          <!-- Animated Spinner -->
-          <div class="absolute inset-0 border-4 border-zinc-100 dark:border-zinc-800 rounded-full"></div>
-          <div class="absolute inset-0 border-4 border-t-zinc-900 dark:border-t-white rounded-full animate-spin"></div>
-          <!-- Inner Pulsing Circle -->
-          <div class="absolute inset-4 bg-zinc-100 dark:bg-zinc-800 rounded-full animate-pulse flex items-center justify-center">
-            <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6 text-zinc-400 dark:text-zinc-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10l4 4v10a2 2 0 01-2 2z" />
-            </svg>
-          </div>
+        <div class="flex items-center gap-2 mb-8">
+          <div class="w-3 h-3 bg-zinc-900 dark:bg-white rounded-full animate-wave" style="animation-delay: 0s"></div>
+          <div class="w-3 h-3 bg-zinc-900 dark:bg-white rounded-full animate-wave" style="animation-delay: 0.2s"></div>
+          <div class="w-3 h-3 bg-zinc-900 dark:bg-white rounded-full animate-wave" style="animation-delay: 0.4s"></div>
         </div>
-        <h3 class="text-xl font-bold mb-2 text-zinc-900 dark:text-white">Searching for trends...</h3>
-        <p class="text-zinc-500 dark:text-zinc-400 text-sm max-w-xs mx-auto">Please wait while we fetch the latest data from top news sources.</p>
+        <h3 class="text-xl font-bold mb-2 text-zinc-900 dark:text-white">Searching for trends</h3>
+        <p class="text-zinc-500 dark:text-zinc-400 text-sm max-w-xs mx-auto">Please wait while we fetch the latest data.</p>
       </div>
     </main>
 
@@ -349,7 +343,7 @@ const decodeHtml = (html: string) => {
 
 const fetchNews = async () => {
   // 1. Initial Cache Load
-  const CURRENT_CACHE_VERSION = 'v1.3'
+  const CURRENT_CACHE_VERSION = 'v1.4'
   const CACHE_KEY = `uxm_trends_cache_${CURRENT_CACHE_VERSION}`
   
   if (news.value.length === 0) {
@@ -558,7 +552,7 @@ const fetchMissingThumbnails = async () => {
         const idx = news.value.findIndex(n => n.link === targetUrl)
         if (idx !== -1) {
           news.value[idx] = { ...news.value[idx], thumb: imgUrl }
-          localStorage.setItem(`uxm_trends_cache_v1.3`, JSON.stringify(news.value))
+          localStorage.setItem(`uxm_trends_cache_v1.4`, JSON.stringify(news.value))
         }
       }
     } catch (e) {}
@@ -602,6 +596,14 @@ onUnmounted(() => {
 .list-enter-from,
 .list-leave-to {
   opacity: 0;
+}
+
+@keyframes wave {
+  0%, 100% { transform: translateY(0); opacity: 0.3; }
+  50% { transform: translateY(-10px); opacity: 1; }
+}
+.animate-wave {
+  animation: wave 1.2s ease-in-out infinite;
 }
 
 .category-tab {
