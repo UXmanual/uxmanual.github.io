@@ -280,12 +280,12 @@ const RSS_SOURCES = [
   { name: '매경 IT', url: 'https://www.mk.co.kr/rss/50300001/', category: 'ai' },
   { name: '디지털데일리', url: 'https://www.ddaily.co.kr/rss/all.xml', category: 'ai' },
   
-  // Finance (Expanded & Stabilized)
+  // Finance (Optimized & Verified)
   { name: '한경 경제', url: 'https://www.hankyung.com/feed/economy', category: 'finance' },
   { name: '파이낸셜뉴스', url: 'https://www.fnnews.com/rss/fn_realtime_economy.xml', category: 'finance' },
-  { name: '뉴스1 경제', url: 'https://www.news1.kr/rss/economy/', category: 'finance' },
   { name: '연합 경제', url: 'https://www.yna.co.kr/rss/economy.xml', category: 'finance' },
   { name: '매경 경제', url: 'https://www.mk.co.kr/rss/30100041/', category: 'finance' },
+  { name: '뉴스1 경제', url: 'https://www.news1.kr/rss/economy', category: 'finance' },
   { name: '동아 경제', url: 'https://rss.donga.com/economy.xml', category: 'finance' },
 
   // Design & Art
@@ -350,7 +350,7 @@ const decodeHtml = (html: string) => {
 
 const fetchNews = async () => {
   // 1. Initial Cache Load
-  const CURRENT_CACHE_VERSION = 'v2.7'
+  const CURRENT_CACHE_VERSION = 'v2.8'
   const CACHE_KEY = `uxm_trends_cache_${CURRENT_CACHE_VERSION}`
   
   if (news.value.length === 0) {
@@ -376,33 +376,32 @@ const fetchNews = async () => {
   isLoading.value = true
 
   const fetchSource = async (source: typeof RSS_SOURCES[0]) => {
-    // Universal Global Proxies: Aggressive Parallel Fetching
+    // Stability First: Sequential Failover Strategy
     const proxies = [
-      (url: string) => `https://api.allorigins.win/get?url=${encodeURIComponent(url)}&timestamp=${Date.now()}`,
       (url: string) => `https://api.codetabs.com/v1/proxy?quest=${encodeURIComponent(url)}`,
       (url: string) => `https://corsproxy.io/?url=${encodeURIComponent(url)}`,
-      (url: string) => `https://api.allorigins.win/raw?url=${encodeURIComponent(url)}`
+      (url: string) => `https://api.allorigins.win/get?url=${encodeURIComponent(url)}&timestamp=${Date.now()}`
     ]
 
-    const fetchWithProxy = async (getProxyUrl: (u: string) => string) => {
+    for (const getProxyUrl of proxies) {
       const controller = new AbortController()
-      const timeoutId = setTimeout(() => controller.abort(), 12000)
+      const timeoutId = setTimeout(() => controller.abort(), 8000)
       
       try {
         const response = await fetch(getProxyUrl(source.url), { signal: controller.signal })
         clearTimeout(timeoutId)
-        if (!response.ok) throw new Error('Proxy error')
+        if (!response.ok) continue
 
         let xmlString = ''
         const urlStr = getProxyUrl(source.url)
-        if (urlStr.includes('allorigins') && !urlStr.includes('raw')) {
+        if (urlStr.includes('allorigins')) {
           const data = await response.json()
-          xmlString = data.contents
+          xmlString = data.contents || ''
         } else {
           xmlString = await response.text()
         }
         
-        if (!xmlString || xmlString.length < 100) throw new Error('Short payload')
+        if (!xmlString || xmlString.length < 100) continue
         
         const xmlItems = xmlString.split(/<item>|<entry>/i).slice(1)
         const parsedItems: NewsItem[] = []
@@ -441,10 +440,9 @@ const fetchNews = async () => {
           const pubDate = dateMatch ? dateMatch[1].trim() : ''
 
           let thumb = ''
-          if (description) {
-            const imgMatch = description.match(/<img[^>]+src=["']([^"'>]+)["']/i) || description.match(/<img[^>]+src=([^ >]+)/i)
-            if (imgMatch) thumb = imgMatch[1].replace(/['"]/g, '').trim()
-          }
+          const imgMatch = description.match(/<img[^>]+src=["']([^"'>]+)["']/i) || description.match(/<img[^>]+src=([^ >]+)/i)
+          if (imgMatch) thumb = imgMatch[1].replace(/['"]/g, '').trim()
+          
           if (!thumb) {
             const mediaMatch = itemRaw.match(/<(?:media:content|enclosure|thumbnail|image|media:thumbnail|img)[^>]+(?:url|href|src)=["']([^"'>]+)["']/i)
             if (mediaMatch) thumb = mediaMatch[1]
@@ -465,19 +463,11 @@ const fetchNews = async () => {
           updateNewsList(parsedItems)
           return parsedItems
         }
-        throw new Error('No valid items')
       } catch (err) {
         clearTimeout(timeoutId)
-        throw err
       }
     }
-
-    try {
-      // Parallel Racing Strategy
-      return await Promise.any(proxies.map(p => fetchWithProxy(p)))
-    } catch {
-      return []
-    }
+    return []
   }
 
   const updateNewsList = (newItems: NewsItem[]) => {
@@ -575,7 +565,7 @@ const fetchMissingThumbnails = async () => {
         const idx = news.value.findIndex(n => n.link === targetUrl)
         if (idx !== -1) {
           news.value[idx] = { ...news.value[idx], thumb: imgUrl }
-          localStorage.setItem(`uxm_trends_cache_v2.7`, JSON.stringify(news.value))
+          localStorage.setItem(`uxm_trends_cache_v2.8`, JSON.stringify(news.value))
         }
       }
     } catch (e) {}
