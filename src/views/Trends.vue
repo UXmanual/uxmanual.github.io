@@ -9,7 +9,7 @@
     </div>
 
     <SiteHeader 
-      title="News Stand v32" 
+      title="News Stand v33" 
       description="주요 언론사의 실시간 뉴스 피드를 한곳에서 확인하세요"
       padding-top="pt-16"
     />
@@ -255,8 +255,10 @@ const RSS_SOURCES = [
   { name: '연합 경제', url: 'https://www.yna.co.kr/rss/economy.xml', category: 'finance' },
   { name: '동아 경제', url: 'https://rss.donga.com/economy.xml', category: 'finance' },
 
-  // Design & Art (Confirmed Direct RSS)
-  { name: 'Designboom', url: 'https://www.designboom.com/feed', category: 'design' },
+  // Design & Art (Korean Sources)
+  { name: '월간디자인', url: 'https://news.google.com/rss/search?q=site:designhouse.co.kr&hl=ko&gl=KR&ceid=KR:ko', category: 'design' },
+  { name: '디자인정글', url: 'https://news.google.com/rss/search?q=site:jungle.co.kr&hl=ko&gl=KR&ceid=KR:ko', category: 'design' },
+  { name: '플래텀', url: 'https://platum.kr/feed', category: 'design' },
   { name: '엘르 디자인', url: 'https://elle.co.kr/rss/art-design', category: 'design' },
 
   // Game (Confirmed Direct RSS)
@@ -304,7 +306,7 @@ watch(activeCategory, () => {
 
 const fetchNews = async () => {
   // 1. Initial Cache Load
-  const CURRENT_CACHE_VERSION = 'v32'
+  const CURRENT_CACHE_VERSION = 'v33'
   const CACHE_KEY = `uxm_trends_cache_${CURRENT_CACHE_VERSION}`
   
   if (news.value.length === 0) {
@@ -369,9 +371,23 @@ const fetchNews = async () => {
           if (!titleMatch || !linkMatch) return
 
           const title = titleMatch[1].trim()
-          const link = linkMatch[1].trim()
+          let link = linkMatch[1].trim()
           const description = descMatch ? descMatch[1].trim() : ''
           const pubDate = dateMatch ? dateMatch[1].trim() : ''
+
+          // Decode Google News links if any (used for Designhouse/Designjungle)
+          if (link.includes('news.google.com/articles/')) {
+            try {
+              let b64 = link.split('articles/')[1]?.split('?')[0]
+              if (b64) {
+                b64 = b64.replace(/-/g, '+').replace(/_/g, '/')
+                while (b64.length % 4 !== 0) b64 += '='
+                const decoded = atob(b64)
+                const urlMatch = decoded.match(/https?:\/\/[^\s\u0000-\u001F"<>\\^`{|}]+/)
+                if (urlMatch) link = urlMatch[0]
+              }
+            } catch (e) {}
+          }
 
           // --- Extraction ---
           let thumb = ''
@@ -497,7 +513,7 @@ const fetchMissingThumbnails = async () => {
         const idx = news.value.findIndex(n => n.link === targetUrl)
         if (idx !== -1) {
           news.value[idx] = { ...news.value[idx], thumb: imgUrl }
-          localStorage.setItem(`uxm_trends_cache_v32`, JSON.stringify(news.value))
+          localStorage.setItem(`uxm_trends_cache_v33`, JSON.stringify(news.value))
         }
       }
     } catch (e) {}
