@@ -343,7 +343,7 @@ const decodeHtml = (html: string) => {
 
 const fetchNews = async () => {
   // 1. Initial Cache Load
-  const CURRENT_CACHE_VERSION = 'v1.4'
+  const CURRENT_CACHE_VERSION = 'v1.5'
   const CACHE_KEY = `uxm_trends_cache_${CURRENT_CACHE_VERSION}`
   
   if (news.value.length === 0) {
@@ -406,7 +406,6 @@ const fetchNews = async () => {
           const title = decodeHtml(titleMatch[1].trim())
           let link = linkMatch[1].trim()
           
-          // Decode Google News links
           if (link.includes('news.google.com/articles/')) {
             try {
               let b64 = link.split('articles/')[1]?.split('?')[0]
@@ -442,16 +441,22 @@ const fetchNews = async () => {
 
           let cleanDesc = decodeHtml(description.replace(/<[^>]*>?/gm, ' ').replace(/\s+/g, ' ').trim())
           const parts = title.split(/ - | \| | : /)
-          parsedItems.push({
+          
+          const newItem = {
             title: parts[0].trim(), link, pubDate,
             description: cleanDesc || '기사 본문을 통해 자세한 내용을 확인하세요.',
             source: source.name, category: source.category, provider: parts.length > 1 ? parts[parts.length - 1].trim() : '',
             thumb
-          })
+          }
+          parsedItems.push(newItem)
+          
+          // Show the very first item as soon as it's parsed for lightning-fast feedback
+          if (idx === 0) updateNewsList([newItem])
         })
 
         if (parsedItems.length === 0) throw new Error('No items parsed')
         
+        // Then update the full list for this source
         updateNewsList(parsedItems)
         return parsedItems
       } catch (err) {
@@ -552,7 +557,7 @@ const fetchMissingThumbnails = async () => {
         const idx = news.value.findIndex(n => n.link === targetUrl)
         if (idx !== -1) {
           news.value[idx] = { ...news.value[idx], thumb: imgUrl }
-          localStorage.setItem(`uxm_trends_cache_v1.4`, JSON.stringify(news.value))
+          localStorage.setItem(`uxm_trends_cache_v1.5`, JSON.stringify(news.value))
         }
       }
     } catch (e) {}
