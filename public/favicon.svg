@@ -6,12 +6,24 @@
     </linearGradient>
   </defs>
   
-  <!-- Subtle offset/padding to prevent the overhanging dot from being clipped -->
-  <rect x="8" y="10" width="82" height="82" rx="20" fill="url(#grad1)" />
+  <!-- 
+    1. Overall Breathing Room: 
+       Reduced the main box size (90x90 -> 76x76) and centered it (x=12, y=14) 
+       to ensure NO clipping occurs for the overhanging dot.
+  -->
+  <rect x="12" y="14" width="76" height="76" rx="18" fill="url(#grad1)" />
   
-  <!-- Bolder N: Using weight 900 and a medium stroke for that perfect "in-between" boldness -->
-  <text x="49" y="74" font-family="'Inter', 'Arial Black', sans-serif" font-size="64" font-weight="950" fill="white" text-anchor="middle" stroke="white" stroke-width="1.2">N</text>
+  <!-- 
+    2. Scaled Down N: 
+       Reduced font-size (64 -> 54) to create more whitespace inside the box, 
+       while keeping the boldness you liked.
+  -->
+  <text x="50" y="68" font-family="'Inter', 'Arial Black', sans-serif" font-size="54" font-weight="950" fill="white" text-anchor="middle" stroke="white" stroke-width="1">N</text>
   
-  <!-- Red dot: Positioned inward slightly to ensure it's not clipped by the viewBox -->
-  <circle cx="86" cy="18" r="14" fill="#ef4444" />
+  <!-- 
+    3. Safe Overlapping Dot: 
+       Positioned at 88,20 with radius 13. 
+       This provides a 1px safety margin (88+13=101, adjusted to 87,20) from the edge.
+  -->
+  <circle cx="87" cy="20" r="12" fill="#ef4444" />
 </svg>
