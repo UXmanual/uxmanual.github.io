@@ -253,7 +253,22 @@ const handleTouchMove = (e: TouchEvent) => {
   }
 }
 
-const handleTouchEnd = () => {
+const handleTouchEnd = (e: TouchEvent) => {
+  // If not already triggered during move (less than 50%), check for terminal swipe intent
+  if (!hasTriggeredSwipe.value) {
+    const deltaX = e.changedTouches[0].clientX - touchStartX.value
+    const deltaY = e.changedTouches[0].clientY - touchStartY.value
+    
+    // Subtle release trigger (60px) for quick flicks
+    if (Math.abs(deltaX) > 60 && Math.abs(deltaX) > Math.abs(deltaY) * 1.5) {
+      const currentIndex = categories.findIndex(c => c.id === activeCategory.value)
+      if (deltaX > 0) {
+        if (currentIndex > 0) changeCategory(categories[currentIndex - 1].id)
+      } else {
+        if (currentIndex < categories.length - 1) changeCategory(categories[currentIndex + 1].id)
+      }
+    }
+  }
   hasTriggeredSwipe.value = false
 }
 
@@ -413,7 +428,7 @@ const decodeHtml = (html: string) => {
 
 const fetchNews = async () => {
   // 1. Initial Cache Load
-  const CURRENT_CACHE_VERSION = 'v5.3'
+  const CURRENT_CACHE_VERSION = 'v5.4'
   const CACHE_KEY = `uxm_trends_cache_${CURRENT_CACHE_VERSION}`
   
   if (news.value.length === 0) {
@@ -652,7 +667,7 @@ const fetchMissingThumbnails = async () => {
         const idx = news.value.findIndex(n => n.link === targetUrl)
         if (idx !== -1) {
           news.value[idx] = { ...news.value[idx], thumb: imgUrl }
-          localStorage.setItem(`uxm_trends_cache_v5.3`, JSON.stringify(news.value))
+          localStorage.setItem(`uxm_trends_cache_v5.4`, JSON.stringify(news.value))
         }
       }
     } catch (e) {}
