@@ -8,15 +8,9 @@
         class="text-4xl md:text-5xl font-extrabold tracking-tight"
         style="font-family: 'Pretendard Variable', 'Pretendard', sans-serif; font-weight: 800 !important;"
       >
-        <template v-if="enableGradient && title.includes(' ')">
-          <span class="text-zinc-900 dark:text-white">{{ title.split(' ')[0] }}</span>
-          <span class="gradient-text ml-3">{{ title.split(' ').slice(1).join(' ') }}</span>
-        </template>
-        <template v-else>
-          <span :class="{ 'gradient-text': enableGradient }" class="text-zinc-900 dark:text-white">
-            {{ title }}
-          </span>
-        </template>
+        <span :class="{ 'gradient-text': enableGradient }" class="text-zinc-900 dark:text-white">
+          {{ title }}
+        </span>
       </h1>
       <p 
         class="text-zinc-600 dark:text-zinc-400 text-base md:text-lg leading-relaxed"
@@ -47,22 +41,22 @@ withDefaults(defineProps<Props>(), {
 <style scoped>
 .gradient-text {
   background: linear-gradient(
-    120deg, 
-    #6366f1, 
-    #8b5cf6, 
-    #a78bfa, 
-    #7c3aed, 
-    #6366f1
+    110deg,
+    #6366f1 20%,
+    #a855f7 40%,
+    #ec4899 60%,
+    #a855f7 80%,
+    #6366f1 100%
   );
   background-size: 200% auto;
   -webkit-background-clip: text;
   background-clip: text;
   -webkit-text-fill-color: transparent;
-  animation: shimmer 10s ease-in-out infinite;
+  animation: shimmer 3s linear infinite;
 }
 
 @keyframes shimmer {
-  0% { background-position: 200% center; }
-  100% { background-position: -200% center; }
+  0% { background-position: 0% center; }
+  100% { background-position: 200% center; }
 }
 </style>

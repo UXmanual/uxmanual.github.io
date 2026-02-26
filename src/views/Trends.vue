@@ -179,6 +179,9 @@ import SiteFooter from '../components/SiteFooter.vue'
 import SiteHeader from '../components/SiteHeader.vue'
 import SiteBanner from '../components/SiteBanner.vue'
 
+const CURRENT_CACHE_VERSION = 'v10.8'
+const CACHE_KEY = `uxm_trends_cache_${CURRENT_CACHE_VERSION}`
+
 interface NewsItem {
   title: string
   link: string
@@ -416,10 +419,10 @@ const RSS_SOURCES = [
   { name: '유튜브 화제 영상', url: 'https://news.google.com/rss/search?q=site:youtube.com+지금이시각+화제+when:24h&hl=ko&gl=KR&ceid=KR:ko', category: 'youtube' },
   { name: '유튜브 속보/단독', url: 'https://news.google.com/rss/search?q=site:youtube.com+속보+단독+영상+when:24h&hl=ko&gl=KR&ceid=KR:ko', category: 'youtube' },
 
-  // GoodRich (Corporate & Insurance News)
-  { name: '굿리치 투데이', url: 'https://news.google.com/rss/search?q=굿리치+OR+GoodRich+when:7d&hl=ko&gl=KR&ceid=KR:ko', category: 'goodrich' },
-  { name: '보험업계 동향', url: 'https://news.google.com/rss/search?q=보험+뉴스+when:24h&hl=ko&gl=KR&ceid=KR:ko', category: 'goodrich' },
-  { name: '인슈어테크 소식', url: 'https://news.google.com/rss/search?q=인슈어테크+보험+when:7d&hl=ko&gl=KR&ceid=KR:ko', category: 'goodrich' }
+  // GoodRich (Corporate & Insurance News - Direct Sources for Thumbnails)
+  { name: '굿리치 공식 블로그', url: 'https://rss.blog.naver.com/goodrich_official.xml', category: 'goodrich' },
+  { name: '플래텀 (Insurtech)', url: 'https://platum.kr/feed', category: 'goodrich' },
+  { name: '보험신보', url: 'http://www.insweek.co.kr/rss/all.xml', category: 'goodrich' }
 ]
 
 const filteredNews = computed(() => {
@@ -459,8 +462,6 @@ const decodeHtml = (html: string) => {
 
 const fetchNews = async () => {
   // 1. Initial Cache Load
-  const CURRENT_CACHE_VERSION = 'v10.6'
-  const CACHE_KEY = `uxm_trends_cache_${CURRENT_CACHE_VERSION}`
   
   if (news.value.length === 0) {
     try {
@@ -772,7 +773,7 @@ const fetchMissingThumbnails = async () => {
         const idx = news.value.findIndex(n => n.link === targetUrl)
         if (idx !== -1) {
           news.value[idx] = { ...news.value[idx], thumb: imgUrl }
-          localStorage.setItem(`uxm_trends_cache_v10.6`, JSON.stringify(news.value))
+          localStorage.setItem(CACHE_KEY, JSON.stringify(news.value))
         }
       }
     } catch (e) {}
