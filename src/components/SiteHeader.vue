@@ -40,21 +40,20 @@ withDefaults(defineProps<Props>(), {
 <style scoped>
 .gradient-text {
   background: linear-gradient(
-    to right, 
-    #00AF50, 
-    #34d399, 
-    #10b981, 
-    #00AF50
+    120deg, 
+    #00AF50 25%, 
+    #86efac 50%, 
+    #00AF50 75%
   );
   background-size: 200% auto;
   -webkit-background-clip: text;
   background-clip: text;
   -webkit-text-fill-color: transparent;
-  animation: flow 8s linear infinite;
+  animation: shimmer 5s ease-in-out infinite;
 }
 
-@keyframes flow {
-  0% { background-position: 0% center; }
-  100% { background-position: 200% center; }
+@keyframes shimmer {
+  0% { background-position: 200% center; }
+  100% { background-position: -200% center; }
 }
 </style>
