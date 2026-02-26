@@ -30,7 +30,9 @@ html.dark {
 
 body {
     @apply bg-zinc-50 text-zinc-900 antialiased transition-colors duration-500;
-    font-family: 'Inter', 'Pretendard', system-ui, -apple-system, sans-serif;
+    font-family: 'Pretendard', 'Inter', system-ui, -apple-system, sans-serif;
+    font-weight: 450;
+    /* Base weight refined */
 }
 
 html.dark body {
@@ -69,4 +71,12 @@ html.dark ::-webkit-scrollbar-thumb:hover {
 * {
     scrollbar-width: thin;
     scrollbar-color: rgba(0, 0, 0, 0.1) transparent;
+}
+
+/* Typography Polish: Explicit weight for high-end titles */
+h1,
+h2,
+h3,
+.font-extrabold {
+    font-weight: 800 !important;
 }
