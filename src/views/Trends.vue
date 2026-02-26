@@ -429,7 +429,7 @@ const decodeHtml = (html: string) => {
 
 const fetchNews = async () => {
   // 1. Initial Cache Load
-  const CURRENT_CACHE_VERSION = 'v7.7'
+  const CURRENT_CACHE_VERSION = 'v7.8'
   const CACHE_KEY = `uxm_trends_cache_${CURRENT_CACHE_VERSION}`
   
   if (news.value.length === 0) {
@@ -552,17 +552,30 @@ const fetchNews = async () => {
       }
     }
 
-    try {
-      // Step 1: Racing the fastest primary proxies
-      return await Promise.any(primaryProxies.map(p => fetchWithProxy(p, 8000)))
-    } catch {
+    let retryCount = 0
+    const maxRetries = 2 // Total 3 attempts
+
+    const attemptFetch = async (): Promise<NewsItem[]> => {
       try {
-        // Step 2: Fallback to heavier proxies if primary fails
-        return await Promise.any(backupProxies.map(p => fetchWithProxy(p, 12000)))
+        // Step 1: Racing the fastest primary proxies
+        return await Promise.any(primaryProxies.map(p => fetchWithProxy(p, 8000)))
       } catch {
-        return []
+        try {
+          // Step 2: Fallback to heavier proxies if primary fails
+          return await Promise.any(backupProxies.map(p => fetchWithProxy(p, 12000)))
+        } catch (e) {
+          if (retryCount < maxRetries) {
+            retryCount++
+            // Small delay before retry
+            await new Promise(resolve => setTimeout(resolve, 1000 * retryCount))
+            return attemptFetch()
+          }
+          return []
+        }
       }
     }
+
+    return attemptFetch()
   }
 
   const updateNewsList = (newItems: NewsItem[]) => {
@@ -595,15 +608,20 @@ const fetchNews = async () => {
     const priorityPromises = prioritySources.map(source => fetchSource(source))
     await Promise.all(priorityPromises)
     
-    // Fire background sources but don't strictly await them before ending main loading
+    // 2. Fire background sources: Don't strictly await them before ending main loading
     const otherPromises = otherSources.map(source => fetchSource(source))
     
-    // Final check for thumbnails
+    // final safety: ensure loading ends eventually if something hangs
+    setTimeout(() => { isLoading.value = false }, 15000)
+
     fetchMissingThumbnails()
   } catch (err) {
     console.error('Fetch news error:', err)
   } finally {
-    isLoading.value = false
+    // Only set loading false if we HAVE data (either from cache or priority fetch)
+    if (news.value.length > 0) {
+      isLoading.value = false
+    }
   }
 }
 
@@ -668,7 +686,7 @@ const fetchMissingThumbnails = async () => {
         const idx = news.value.findIndex(n => n.link === targetUrl)
         if (idx !== -1) {
           news.value[idx] = { ...news.value[idx], thumb: imgUrl }
-          localStorage.setItem(`uxm_trends_cache_v7.7`, JSON.stringify(news.value))
+          localStorage.setItem(`uxm_trends_cache_v7.8`, JSON.stringify(news.value))
         }
       }
     } catch (e) {}
