@@ -88,7 +88,7 @@
                    :key="item.link + index"
                    :href="item.link"
                    target="_blank"
-                   class="news-card group flex flex-col bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-white/5 rounded-3xl p-5 transition-all duration-300"
+                   class="news-card group flex flex-col bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-white/5 rounded-2xl p-5 transition-all duration-300"
                    :class="`theme-${item.category}`"
                 >
                   <div class="flex justify-between items-center mb-4">
@@ -124,7 +124,7 @@
             <div v-if="filteredNews.length > visibleCount" class="flex justify-center pt-10">
               <button 
                 @click="visibleCount += 20"
-                class="px-12 py-4 bg-zinc-900 dark:bg-white text-white dark:text-black rounded-xl font-semibold text-base leading-normal tracking-tight active:scale-[0.98] transition-all"
+                class="px-12 py-4 bg-zinc-900 dark:bg-white text-white dark:text-black rounded-lg font-semibold text-base leading-normal tracking-tight active:scale-[0.98] transition-all"
               >
                 헤드라인 더보기
               </button>
@@ -133,7 +133,7 @@
 
           <!-- Skeletons: Show when loading or no data yet -->
           <div v-else class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-3">
-            <div v-for="i in 10" :key="i" class="bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-white/5 rounded-3xl p-5 animate-pulse flex flex-col h-[280px]">
+            <div v-for="i in 10" :key="i" class="bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-white/5 rounded-2xl p-5 animate-pulse flex flex-col h-[280px]">
               <div class="flex justify-between items-center mb-4">
                 <div class="h-6 w-16 bg-zinc-200 dark:bg-zinc-800 rounded-md"></div>
                 <div class="h-3 w-20 bg-zinc-100 dark:bg-zinc-800/50 rounded"></div>
@@ -418,7 +418,7 @@ const decodeHtml = (html: string) => {
 
 const fetchNews = async () => {
   // 1. Initial Cache Load
-  const CURRENT_CACHE_VERSION = 'v6.6'
+  const CURRENT_CACHE_VERSION = 'v6.7'
   const CACHE_KEY = `uxm_trends_cache_${CURRENT_CACHE_VERSION}`
   
   if (news.value.length === 0) {
@@ -657,7 +657,7 @@ const fetchMissingThumbnails = async () => {
         const idx = news.value.findIndex(n => n.link === targetUrl)
         if (idx !== -1) {
           news.value[idx] = { ...news.value[idx], thumb: imgUrl }
-          localStorage.setItem(`uxm_trends_cache_v6.6`, JSON.stringify(news.value))
+          localStorage.setItem(`uxm_trends_cache_v6.7`, JSON.stringify(news.value))
         }
       }
     } catch (e) {}

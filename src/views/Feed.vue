@@ -18,7 +18,7 @@
     <main class="px-6 md:px-10 max-w-[1800px] mx-auto pb-20">
       <div class="max-w-[680px] mx-auto">
       <!-- Input Area -->
-      <div class="mb-20 bg-white dark:bg-zinc-900 border-2 border-zinc-200 dark:border-white/5 rounded-3xl p-8">
+      <div class="mb-20 bg-white dark:bg-zinc-900 border-2 border-zinc-200 dark:border-white/5 rounded-2xl p-8">
         <div class="flex flex-col gap-6">
           <div class="grid grid-cols-1 md:grid-cols-[1fr_1.2fr_0.8fr] gap-4">
             <input 
@@ -51,7 +51,7 @@
             <button 
               @click="addPost"
               :disabled="isPosting"
-              class="w-full md:w-auto px-10 py-4 bg-zinc-900 dark:bg-white text-white dark:text-black rounded-2xl font-black text-sm uppercase tracking-wider hover:scale-[1.02] active:scale-[0.98] transition-all disabled:opacity-50 disabled:scale-100"
+              class="w-full md:w-auto px-10 py-4 bg-zinc-900 dark:bg-white text-white dark:text-black rounded-lg font-black text-sm uppercase tracking-wider hover:scale-[1.02] active:scale-[0.98] transition-all disabled:opacity-50 disabled:scale-100"
             >
               {{ isPosting ? '게시 중...' : '피드 글쓰기' }}
             </button>
@@ -64,7 +64,7 @@
         <CommunitySkeleton v-if="isLoading" />
         <TransitionGroup v-else name="list">
           <div v-for="post in posts" :key="post.id" 
-            class="group relative bg-white dark:bg-zinc-900 border-2 border-zinc-200 dark:border-white/10 rounded-3xl p-8 transition-all duration-150 hover:border-zinc-800 dark:hover:border-zinc-500"
+            class="group relative bg-white dark:bg-zinc-900 border-2 border-zinc-200 dark:border-white/10 rounded-2xl p-8 transition-all duration-150 hover:border-zinc-800 dark:hover:border-zinc-500"
           >
             <div class="flex justify-between items-start mb-6">
               <div class="flex items-center gap-4">
@@ -82,7 +82,7 @@
               <div class="flex items-center gap-2">
                 <button 
                   @click="verifyAndDelete(post)"
-                  class="p-2 rounded-xl hover:bg-red-500/10 text-zinc-400 hover:text-red-500 transition-all opacity-0 group-hover:opacity-100"
+                  class="p-2 rounded-lg hover:bg-red-500/10 text-zinc-400 hover:text-red-500 transition-all opacity-0 group-hover:opacity-100"
                   title="Delete Post"
                 >
                   <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">

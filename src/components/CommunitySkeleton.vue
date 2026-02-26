@@ -1,6 +1,6 @@
 <template>
   <div class="space-y-6">
-    <div v-for="i in 3" :key="i" class="bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-white/5 rounded-3xl p-8 animate-pulse">
+    <div v-for="i in 3" :key="i" class="bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-white/5 rounded-2xl p-8 animate-pulse">
       <div class="flex justify-between items-start mb-6">
         <div class="flex items-center gap-4">
           <!-- Avatar Skeleton -->
