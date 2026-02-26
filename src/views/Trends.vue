@@ -64,12 +64,12 @@
 
 
     <main 
-      class="px-6 md:px-10 pb-10 max-w-[1800px] mx-auto overflow-hidden touch-pan-y"
+      class="px-6 md:px-10 pb-10 max-w-[1800px] mx-auto overflow-hidden touch-pan-y relative"
       @touchstart="handleTouchStart"
       @touchend="handleTouchEnd"
     >
-      <Transition :name="transitionName" mode="out-in">
-        <div :key="activeCategory" class="content-wrapper">
+      <Transition :name="transitionName">
+        <div :key="activeCategory" class="content-wrapper transition-wrapper">
           <div v-if="isLoading && news.length === 0" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-3">
             <div v-for="i in 10" :key="i" class="bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-white/5 rounded-3xl p-5 animate-pulse flex flex-col h-[280px]">
               <!-- Header skeleton -->
@@ -396,7 +396,7 @@ const decodeHtml = (html: string) => {
 
 const fetchNews = async () => {
   // 1. Initial Cache Load
-  const CURRENT_CACHE_VERSION = 'v3.7'
+  const CURRENT_CACHE_VERSION = 'v3.8'
   const CACHE_KEY = `uxm_trends_cache_${CURRENT_CACHE_VERSION}`
   
   if (news.value.length === 0) {
@@ -635,7 +635,7 @@ const fetchMissingThumbnails = async () => {
         const idx = news.value.findIndex(n => n.link === targetUrl)
         if (idx !== -1) {
           news.value[idx] = { ...news.value[idx], thumb: imgUrl }
-          localStorage.setItem(`uxm_trends_cache_v3.7`, JSON.stringify(news.value))
+          localStorage.setItem(`uxm_trends_cache_v3.8`, JSON.stringify(news.value))
         }
       }
     } catch (e) {}
@@ -689,26 +689,39 @@ onUnmounted(() => {
   animation: wave 1.2s ease-in-out infinite;
 }
 
-/* Dynamic Slide Transitions */
+/* Dynamic Slide Transitions (Seamless Parallel) */
 .slide-left-enter-active,
 .slide-left-leave-active,
 .slide-right-enter-active,
 .slide-right-leave-active {
-  transition: all 0.4s cubic-bezier(0.2, 0, 0.2, 1);
+  transition: transform 0.4s cubic-bezier(0.2, 0, 0.2, 1);
+  width: 100%;
+}
+
+.slide-left-leave-active,
+.slide-right-leave-active {
+  position: absolute;
+  top: 0;
+  left: 0;
+  pointer-events: none;
 }
 
 .slide-left-enter-from {
-  transform: translateX(60px);
+  transform: translateX(100%);
 }
 .slide-left-leave-to {
-  transform: translateX(-60px);
+  transform: translateX(-100%);
 }
 
 .slide-right-enter-from {
-  transform: translateX(-60px);
+  transform: translateX(-100%);
 }
 .slide-right-leave-to {
-  transform: translateX(60px);
+  transform: translateX(100%);
+}
+
+.transition-wrapper {
+  will-change: transform;
 }
 
 .category-tab {
