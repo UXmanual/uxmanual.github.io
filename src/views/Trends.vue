@@ -437,7 +437,7 @@ const decodeHtml = (html: string) => {
 
 const fetchNews = async () => {
   // 1. Initial Cache Load
-  const CURRENT_CACHE_VERSION = 'v9.0'
+  const CURRENT_CACHE_VERSION = 'v9.1'
   const CACHE_KEY = `uxm_trends_cache_${CURRENT_CACHE_VERSION}`
   
   if (news.value.length === 0) {
@@ -505,6 +505,7 @@ const fetchNews = async () => {
 
           const title = decodeHtml(titleMatch[1].trim())
           let link = linkMatch[1].trim()
+          let ytId = ''
           
           if (link.includes('news.google.com/articles/')) {
             try {
@@ -514,12 +515,13 @@ const fetchNews = async () => {
                 while (b64.length % 4 !== 0) b64 += '='
                 const decoded = atob(b64)
                 
-                // Enhanced Detection: Prioritize YouTube video links
-                const ytMatch = decoded.match(/https?:\/\/(?:www\.)?youtube\.com\/watch\?v=[^"'\s\u0000-\u001F]+/i) ||
-                                 decoded.match(/https?:\/\/youtu\.be\/[^"'\s\u0000-\u001F]+/i)
+                // Enhanced Detection + ID Extraction
+                const ytIdMatch = decoded.match(/https?:\/\/(?:www\.)?youtube\.com\/watch\?v=([A-Za-z0-9_-]+)/i) ||
+                                  decoded.match(/https?:\/\/youtu\.be\/([A-Za-z0-9_-]+)/i)
                 
-                if (ytMatch) {
-                  link = ytMatch[0]
+                if (ytIdMatch) {
+                  ytId = ytIdMatch[1]
+                  link = `https://www.youtube.com/watch?v=${ytId}`
                 } else {
                   const urlMatch = decoded.match(/https?:\/\/[^\s\u0000-\u001F"<>\\^`{|}]+/g)
                   if (urlMatch && urlMatch.length > 0) link = urlMatch[0]
@@ -538,19 +540,22 @@ const fetchNews = async () => {
           const description = descMatch ? descMatch[1].trim() : ''
           const pubDate = dateMatch ? dateMatch[1].trim() : ''
           
-          // YouTube Specific: Use yt:videoId for reliable thumbnails
-          const ytIdMatch = itemRaw.match(/<yt:videoId>(?:<!\[CDATA\[)?([\s\S]*?)(?:\]\]>)?<\/yt:videoId>/i)
+          // Improved Thumbnail Logic: Use ytId if available, then parsed tags
           let thumb = ''
-          
-          if (ytIdMatch) {
-            thumb = `https://i.ytimg.com/vi/${ytIdMatch[1].trim()}/mqdefault.jpg`
+          if (ytId) {
+            thumb = `https://i.ytimg.com/vi/${ytId}/mqdefault.jpg`
           } else {
-            const imgMatch = description.match(/<img[^>]+src=["']([^"'>]+)["']/i) || description.match(/<img[^>]+src=([^ >]+)/i)
-            if (imgMatch) thumb = imgMatch[1].replace(/['"]/g, '').trim()
-            
-            if (!thumb) {
-              const mediaMatch = itemRaw.match(/<(?:media:content|enclosure|thumbnail|image|media:thumbnail|img)[^>]+(?:url|href|src)=["']([^"'>]+)["']/i)
-              if (mediaMatch) thumb = mediaMatch[1]
+            const ytIdInRaw = itemRaw.match(/<yt:videoId>(?:<!\[CDATA\[)?([\s\S]*?)(?:\]\]>)?<\/yt:videoId>/i)
+            if (ytIdInRaw) {
+              thumb = `https://i.ytimg.com/vi/${ytIdInRaw[1].trim()}/mqdefault.jpg`
+            } else {
+              const imgMatch = description.match(/<img[^>]+src=["']([^"'>]+)["']/i) || description.match(/<img[^>]+src=([^ >]+)/i)
+              if (imgMatch) thumb = imgMatch[1].replace(/['"]/g, '').trim()
+              
+              if (!thumb) {
+                const mediaMatch = itemRaw.match(/<(?:media:content|enclosure|thumbnail|image|media:thumbnail|img)[^>]+(?:url|href|src)=["']([^"'>]+)["']/i)
+                if (mediaMatch) thumb = mediaMatch[1]
+              }
             }
           }
 
@@ -720,7 +725,7 @@ const fetchMissingThumbnails = async () => {
         const idx = news.value.findIndex(n => n.link === targetUrl)
         if (idx !== -1) {
           news.value[idx] = { ...news.value[idx], thumb: imgUrl }
-          localStorage.setItem(`uxm_trends_cache_v9.0`, JSON.stringify(news.value))
+          localStorage.setItem(`uxm_trends_cache_v9.1`, JSON.stringify(news.value))
         }
       }
     } catch (e) {}
