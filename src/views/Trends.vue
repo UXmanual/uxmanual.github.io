@@ -343,7 +343,7 @@ const categories = [
   { id: 'game', name: 'Game' },
   { id: 'sports', name: 'Sports' },
   { id: 'design', name: 'Design' },
-  { id: 'vlog', name: 'Vlog' }
+  { id: 'blog', name: 'Blog' }
 ]
 
 const RSS_SOURCES = [
@@ -381,13 +381,15 @@ const RSS_SOURCES = [
   { name: '스포츠동아', url: 'https://rss.donga.com/sports.xml', category: 'sports' },
   { name: '한겨레 스포츠', url: 'https://www.hani.co.kr/rss/sports/', category: 'sports' },
 
-  // Vlog (Tech Blogs)
-  { name: '토스 테크', url: 'https://toss.tech/rss.xml', category: 'vlog' },
-  { name: '카카오 테크', url: 'https://tech.kakao.com/feed/', category: 'vlog' },
-  { name: '우아한형제들', url: 'https://techblog.woowahan.com/feed/', category: 'vlog' },
-  { name: '네이버 D2', url: 'https://d2.naver.com/d2.atom', category: 'vlog' },
-  { name: 'Medium Tech', url: 'https://medium.com/feed/tag/technology', category: 'vlog' },
-  { name: '라인 엔지니어링', url: 'https://engineering.linecorp.com/ko/feed/', category: 'vlog' }
+  // Blog (Tech Blogs - Korean Domestic Focused)
+  { name: '토스 테크', url: 'https://toss.tech/rss.xml', category: 'blog' },
+  { name: '카카오 테크', url: 'https://tech.kakao.com/feed/', category: 'blog' },
+  { name: '우아한형제들', url: 'https://techblog.woowahan.com/feed/', category: 'blog' },
+  { name: '네이버 D2', url: 'https://d2.naver.com/d2.atom', category: 'blog' },
+  { name: '라인 엔지니어링', url: 'https://engineering.linecorp.com/ko/feed/', category: 'blog' },
+  { name: '쏘카 테크', url: 'https://tech.socarcorp.kr/feed', category: 'blog' },
+  { name: '올리브영 테크', url: 'https://tech.oliveyoung.co.kr/feed/', category: 'blog' },
+  { name: '당근 테크', url: 'https://medium.com/daangn/feed', category: 'blog' }
 ]
 
 const filteredNews = computed(() => {
@@ -427,7 +429,7 @@ const decodeHtml = (html: string) => {
 
 const fetchNews = async () => {
   // 1. Initial Cache Load
-  const CURRENT_CACHE_VERSION = 'v7.5'
+  const CURRENT_CACHE_VERSION = 'v7.6'
   const CACHE_KEY = `uxm_trends_cache_${CURRENT_CACHE_VERSION}`
   
   if (news.value.length === 0) {
@@ -666,7 +668,7 @@ const fetchMissingThumbnails = async () => {
         const idx = news.value.findIndex(n => n.link === targetUrl)
         if (idx !== -1) {
           news.value[idx] = { ...news.value[idx], thumb: imgUrl }
-          localStorage.setItem(`uxm_trends_cache_v7.5`, JSON.stringify(news.value))
+          localStorage.setItem(`uxm_trends_cache_v7.6`, JSON.stringify(news.value))
         }
       }
     } catch (e) {}
@@ -759,7 +761,7 @@ onUnmounted(() => {
 .theme-design { --brand-color: #fa4fc1; --brand-bg: rgba(250, 79, 193, 0.05); }
 .theme-sports { --brand-color: #5196fd; --brand-bg: rgba(81, 150, 253, 0.05); }
 .theme-game { --brand-color: #9333ea; --brand-bg: rgba(147, 51, 234, 0.05); }
-.theme-vlog { --brand-color: #f59e0b; --brand-bg: rgba(245, 158, 11, 0.05); }
+.theme-blog { --brand-color: #f59e0b; --brand-bg: rgba(245, 158, 11, 0.05); }
 
 /* Apply Theme to Header Tabs */
 .category-tab[data-cat="all"] .active-underline { background-color: #18181b; }
@@ -781,8 +783,8 @@ onUnmounted(() => {
 .category-tab[data-cat="game"][data-active="true"] { color: #9333ea !important; }
 .category-tab[data-cat="game"][data-active="true"] .active-underline { background-color: #9333ea; }
 
-.category-tab[data-cat="vlog"][data-active="true"] { color: #f59e0b !important; }
-.category-tab[data-cat="vlog"][data-active="true"] .active-underline { background-color: #f59e0b; }
+.category-tab[data-cat="blog"][data-active="true"] { color: #f59e0b !important; }
+.category-tab[data-cat="blog"][data-active="true"] .active-underline { background-color: #f59e0b; }
 
 /* Refined News Card Styling */
 .news-card.theme-ai { --brand-color: #6366f1; --brand-bg: rgba(99, 102, 241, 0.05); }
@@ -790,7 +792,7 @@ onUnmounted(() => {
 .news-card.theme-design { --brand-color: #fa4fc1; --brand-bg: rgba(250, 79, 193, 0.05); }
 .news-card.theme-sports { --brand-color: #5196fd; --brand-bg: rgba(81, 150, 253, 0.05); }
 .news-card.theme-game { --brand-color: #9333ea; --brand-bg: rgba(147, 51, 234, 0.05); }
-.news-card.theme-vlog { --brand-color: #f59e0b; --brand-bg: rgba(245, 158, 11, 0.05); }
+.news-card.theme-blog { --brand-color: #f59e0b; --brand-bg: rgba(245, 158, 11, 0.05); }
 
 /* Hover Effects: Enabled only for devices that support hover (Mouse) to prevent sticky feel on mobile */
 @media (hover: hover) {
