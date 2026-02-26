@@ -437,7 +437,7 @@ const decodeHtml = (html: string) => {
 
 const fetchNews = async () => {
   // 1. Initial Cache Load
-  const CURRENT_CACHE_VERSION = 'v8.8'
+  const CURRENT_CACHE_VERSION = 'v8.9'
   const CACHE_KEY = `uxm_trends_cache_${CURRENT_CACHE_VERSION}`
   
   if (news.value.length === 0) {
@@ -513,8 +513,17 @@ const fetchNews = async () => {
                 b64 = b64.replace(/-/g, '+').replace(/_/g, '/')
                 while (b64.length % 4 !== 0) b64 += '='
                 const decoded = atob(b64)
-                const urlMatch = decoded.match(/https?:\/\/[^\s\u0000-\u001F"<>\\^`{|}]+/g)
-                if (urlMatch && urlMatch.length > 0) link = urlMatch[0]
+                
+                // Enhanced Detection: Prioritize YouTube video links
+                const ytMatch = decoded.match(/https?:\/\/(?:www\.)?youtube\.com\/watch\?v=[^"'\s\u0000-\u001F]+/i) ||
+                                 decoded.match(/https?:\/\/youtu\.be\/[^"'\s\u0000-\u001F]+/i)
+                
+                if (ytMatch) {
+                  link = ytMatch[0]
+                } else {
+                  const urlMatch = decoded.match(/https?:\/\/[^\s\u0000-\u001F"<>\\^`{|}]+/g)
+                  if (urlMatch && urlMatch.length > 0) link = urlMatch[0]
+                }
               }
             } catch (e) {}
           }
@@ -711,7 +720,7 @@ const fetchMissingThumbnails = async () => {
         const idx = news.value.findIndex(n => n.link === targetUrl)
         if (idx !== -1) {
           news.value[idx] = { ...news.value[idx], thumb: imgUrl }
-          localStorage.setItem(`uxm_trends_cache_v8.6`, JSON.stringify(news.value))
+          localStorage.setItem(`uxm_trends_cache_v8.9`, JSON.stringify(news.value))
         }
       }
     } catch (e) {}
