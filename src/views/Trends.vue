@@ -74,31 +74,7 @@
           :key="activeCategory" 
           class="content-wrapper"
         >
-          <!-- Content: List or Skeleton -->
-          <div v-if="isLoading && filteredNews.length === 0" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-3">
-            <div v-for="i in 10" :key="i" class="bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-white/5 rounded-3xl p-5 animate-pulse flex flex-col h-[280px]">
-              <div class="flex justify-between items-center mb-4">
-                <div class="h-6 w-16 bg-zinc-200 dark:bg-zinc-800 rounded-md"></div>
-                <div class="h-3 w-20 bg-zinc-100 dark:bg-zinc-800/50 rounded"></div>
-              </div>
-              <div class="flex gap-4 mb-4 items-center h-12">
-                <div class="w-12 h-12 bg-zinc-200 dark:bg-zinc-800 rounded-lg flex-shrink-0"></div>
-                <div class="flex-grow space-y-2">
-                  <div class="h-4 w-full bg-zinc-200 dark:bg-zinc-800 rounded"></div>
-                  <div class="h-4 w-2/3 bg-zinc-200 dark:bg-zinc-800 rounded"></div>
-                </div>
-              </div>
-              <div class="space-y-2 mb-6">
-                <div class="h-3 w-full bg-zinc-100 dark:bg-zinc-800/50 rounded"></div>
-                <div class="h-3 w-4/5 bg-zinc-100 dark:bg-zinc-800/50 rounded"></div>
-              </div>
-              <div class="mt-auto pt-4 border-t border-zinc-100 dark:border-white/5 flex justify-between">
-                <div class="h-3 w-24 bg-zinc-100 dark:bg-zinc-800/50 rounded"></div>
-              </div>
-            </div>
-          </div>
-
-          <div v-else-if="groupedNews.length > 0" class="space-y-10">
+          <div v-if="groupedNews.length > 0" class="space-y-10">
             <div v-for="group in groupedNews" :key="group.date" class="space-y-6">
               <h2 class="text-sm font-semibold text-zinc-400 dark:text-zinc-500 uppercase whitespace-nowrap mb-6">📅 {{ group.date }}</h2>
               
@@ -154,15 +130,28 @@
             </div>
           </div>
 
-          <!-- Empty State -->
-          <div v-else class="flex flex-col items-center justify-center py-40 text-center">
-            <div class="flex items-center gap-2 mb-8">
-              <div class="w-3 h-3 bg-zinc-900 dark:bg-white rounded-full animate-wave" style="animation-delay: 0s"></div>
-              <div class="w-3 h-3 bg-zinc-900 dark:bg-white rounded-full animate-wave" style="animation-delay: 0.2s"></div>
-              <div class="w-3 h-3 bg-zinc-900 dark:bg-white rounded-full animate-wave" style="animation-delay: 0.4s"></div>
+          <!-- Skeletons: Show when loading or no data yet -->
+          <div v-else class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-3">
+            <div v-for="i in 10" :key="i" class="bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-white/5 rounded-3xl p-5 animate-pulse flex flex-col h-[280px]">
+              <div class="flex justify-between items-center mb-4">
+                <div class="h-6 w-16 bg-zinc-200 dark:bg-zinc-800 rounded-md"></div>
+                <div class="h-3 w-20 bg-zinc-100 dark:bg-zinc-800/50 rounded"></div>
+              </div>
+              <div class="flex gap-4 mb-4 items-center h-12">
+                <div class="w-12 h-12 bg-zinc-200 dark:bg-zinc-800 rounded-lg flex-shrink-0"></div>
+                <div class="flex-grow space-y-2">
+                  <div class="h-4 w-full bg-zinc-200 dark:bg-zinc-800 rounded"></div>
+                  <div class="h-4 w-2/3 bg-zinc-200 dark:bg-zinc-800 rounded"></div>
+                </div>
+              </div>
+              <div class="space-y-2 mb-6">
+                <div class="h-3 w-full bg-zinc-100 dark:bg-zinc-800/50 rounded"></div>
+                <div class="h-3 w-4/5 bg-zinc-100 dark:bg-zinc-800/50 rounded"></div>
+              </div>
+              <div class="mt-auto pt-4 border-t border-zinc-100 dark:border-white/5 flex justify-between">
+                <div class="h-3 w-24 bg-zinc-100 dark:bg-zinc-800/50 rounded"></div>
+              </div>
             </div>
-            <h3 class="text-xl font-bold mb-2 text-zinc-900 dark:text-white">Searching for trends</h3>
-            <p class="text-zinc-500 dark:text-zinc-400 text-sm max-w-xs mx-auto">Please wait while we fetch the latest data.</p>
           </div>
         </div>
       </Transition>
@@ -428,7 +417,7 @@ const decodeHtml = (html: string) => {
 
 const fetchNews = async () => {
   // 1. Initial Cache Load
-  const CURRENT_CACHE_VERSION = 'v5.4'
+  const CURRENT_CACHE_VERSION = 'v5.5'
   const CACHE_KEY = `uxm_trends_cache_${CURRENT_CACHE_VERSION}`
   
   if (news.value.length === 0) {
@@ -667,7 +656,7 @@ const fetchMissingThumbnails = async () => {
         const idx = news.value.findIndex(n => n.link === targetUrl)
         if (idx !== -1) {
           news.value[idx] = { ...news.value[idx], thumb: imgUrl }
-          localStorage.setItem(`uxm_trends_cache_v5.4`, JSON.stringify(news.value))
+          localStorage.setItem(`uxm_trends_cache_v5.5`, JSON.stringify(news.value))
         }
       }
     } catch (e) {}
