@@ -265,9 +265,10 @@ const changeCategory = async (id: string) => {
   
   if (scrollAnchor.value) {
     const targetScrollY = scrollAnchor.value.offsetTop - 56
+    // Instant jump to top to avoid 'upward bounce' during horizontal slide
     window.scrollTo({
       top: targetScrollY,
-      behavior: 'smooth'
+      behavior: 'auto'
     })
   }
 }
@@ -396,7 +397,7 @@ const decodeHtml = (html: string) => {
 
 const fetchNews = async () => {
   // 1. Initial Cache Load
-  const CURRENT_CACHE_VERSION = 'v3.8'
+  const CURRENT_CACHE_VERSION = 'v3.9'
   const CACHE_KEY = `uxm_trends_cache_${CURRENT_CACHE_VERSION}`
   
   if (news.value.length === 0) {
@@ -635,7 +636,7 @@ const fetchMissingThumbnails = async () => {
         const idx = news.value.findIndex(n => n.link === targetUrl)
         if (idx !== -1) {
           news.value[idx] = { ...news.value[idx], thumb: imgUrl }
-          localStorage.setItem(`uxm_trends_cache_v3.8`, JSON.stringify(news.value))
+          localStorage.setItem(`uxm_trends_cache_v3.9`, JSON.stringify(news.value))
         }
       }
     } catch (e) {}
