@@ -9,7 +9,7 @@
     </div>
 
     <SiteHeader 
-      title="News Stand" 
+      title="NEWS STAND" 
       description="주요 언론사의 실시간 뉴스 피드를 한곳에서 확인하세요"
       padding-top="pt-16"
     />

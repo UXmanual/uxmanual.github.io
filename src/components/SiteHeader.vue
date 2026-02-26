@@ -4,7 +4,7 @@
     :class="[paddingTop, marginBottom]"
   >
     <div class="space-y-4" :class="innerMaxWidth">
-      <h1 class="text-4xl md:text-5xl font-bold tracking-tight text-zinc-900 dark:text-white">
+      <h1 class="text-4xl md:text-5xl font-extrabold tracking-tight text-zinc-900 dark:text-white" style="font-family: 'Pretendard', sans-serif;">
         {{ title }}
       </h1>
       <p 
