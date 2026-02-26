@@ -68,100 +68,103 @@
       @touchstart="handleTouchStart"
       @touchend="handleTouchEnd"
     >
-      <div v-if="isLoading && news.length === 0" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-3">
-        <div v-for="i in 10" :key="i" class="bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-white/5 rounded-3xl p-5 animate-pulse flex flex-col h-[280px]">
-          <!-- Header skeleton -->
-          <div class="flex justify-between items-center mb-4">
-            <div class="h-6 w-16 bg-zinc-200 dark:bg-zinc-800 rounded-md"></div>
-            <div class="h-3 w-20 bg-zinc-100 dark:bg-zinc-800/50 rounded"></div>
-          </div>
-          <!-- Title skeleton -->
-          <div class="flex gap-4 mb-4 items-center h-12">
-            <div class="w-12 h-12 bg-zinc-200 dark:bg-zinc-800 rounded-lg flex-shrink-0"></div>
-            <div class="flex-grow space-y-2">
-              <div class="h-4 w-full bg-zinc-200 dark:bg-zinc-800 rounded"></div>
-              <div class="h-4 w-2/3 bg-zinc-200 dark:bg-zinc-800 rounded"></div>
+      <Transition :name="transitionName" mode="out-in">
+        <div :key="activeCategory" class="content-wrapper">
+          <div v-if="isLoading && news.length === 0" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-3">
+            <div v-for="i in 10" :key="i" class="bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-white/5 rounded-3xl p-5 animate-pulse flex flex-col h-[280px]">
+              <!-- Header skeleton -->
+              <div class="flex justify-between items-center mb-4">
+                <div class="h-6 w-16 bg-zinc-200 dark:bg-zinc-800 rounded-md"></div>
+                <div class="h-3 w-20 bg-zinc-100 dark:bg-zinc-800/50 rounded"></div>
+              </div>
+              <!-- Title skeleton -->
+              <div class="flex gap-4 mb-4 items-center h-12">
+                <div class="w-12 h-12 bg-zinc-200 dark:bg-zinc-800 rounded-lg flex-shrink-0"></div>
+                <div class="flex-grow space-y-2">
+                  <div class="h-4 w-full bg-zinc-200 dark:bg-zinc-800 rounded"></div>
+                  <div class="h-4 w-2/3 bg-zinc-200 dark:bg-zinc-800 rounded"></div>
+                </div>
+              </div>
+              <!-- Description skeleton -->
+              <div class="space-y-2 mb-6">
+                <div class="h-3 w-full bg-zinc-100 dark:bg-zinc-800/50 rounded"></div>
+                <div class="h-3 w-full bg-zinc-100 dark:bg-zinc-800/50 rounded"></div>
+                <div class="h-3 w-4/5 bg-zinc-100 dark:bg-zinc-800/50 rounded"></div>
+              </div>
+              <!-- Footer skeleton -->
+              <div class="mt-auto pt-4 border-t border-zinc-100 dark:border-white/5 flex justify-between">
+                <div class="h-3 w-24 bg-zinc-100 dark:bg-zinc-800/50 rounded"></div>
+                <div class="h-3 w-8 bg-zinc-100 dark:bg-zinc-800/50 rounded"></div>
+              </div>
             </div>
           </div>
-          <!-- Description skeleton -->
-          <div class="space-y-2 mb-6">
-            <div class="h-3 w-full bg-zinc-100 dark:bg-zinc-800/50 rounded"></div>
-            <div class="h-3 w-full bg-zinc-100 dark:bg-zinc-800/50 rounded"></div>
-            <div class="h-3 w-4/5 bg-zinc-100 dark:bg-zinc-800/50 rounded"></div>
-          </div>
-          <!-- Footer skeleton -->
-          <div class="mt-auto pt-4 border-t border-zinc-100 dark:border-white/5 flex justify-between">
-            <div class="h-3 w-24 bg-zinc-100 dark:bg-zinc-800/50 rounded"></div>
-            <div class="h-3 w-8 bg-zinc-100 dark:bg-zinc-800/50 rounded"></div>
-          </div>
-        </div>
-      </div>
 
-      <div v-else class="space-y-10">
-        <div v-for="group in groupedNews" :key="group.date" class="space-y-6">
-          <h2 class="text-sm font-semibold text-zinc-400 dark:text-zinc-500 uppercase whitespace-nowrap mb-6">📅 {{ group.date }}</h2>
-          
+          <div v-else-if="displayedNews.length > 0" class="space-y-10">
+            <div v-for="group in groupedNews" :key="group.date" class="space-y-6">
+              <h2 class="text-sm font-semibold text-zinc-400 dark:text-zinc-500 uppercase whitespace-nowrap mb-6">📅 {{ group.date }}</h2>
+              
+              <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-3">
+                <TransitionGroup name="list">
+                  <a v-for="(item, index) in group.items"
+                     :key="item.link + index"
+                     :href="item.link"
+                     target="_blank"
+                     class="news-card group flex flex-col bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-white/5 rounded-3xl p-5 transition-all duration-300"
+                     :class="`theme-${item.category}`"
+                  >
+                    <div class="flex justify-between items-center mb-4">
+                      <span class="source-badge px-2.5 py-1 rounded-md text-[12px] font-black uppercase tracking-normal border">
+                        {{ getCategoryName(item.category) }}
+                      </span>
+                      <span class="text-[11px] text-zinc-400 font-bold uppercase tracking-tight">{{ item.provider || item.source }}</span>
+                    </div>
+                    
+                    <div class="flex gap-4 mb-4 items-center h-12">
+                      <div v-if="item.thumb" class="flex-shrink-0 w-12 h-12 rounded-lg overflow-hidden border border-zinc-100 dark:border-white/5 bg-zinc-50 dark:bg-zinc-800">
+                        <img :src="item.thumb" class="w-full h-full object-cover" alt="" loading="lazy" referrerpolicy="no-referrer" />
+                      </div>
+                      <h3 class="text-lg font-bold text-zinc-900 dark:text-white leading-tight line-clamp-2 title-element flex-grow">
+                        {{ item.title }}
+                      </h3>
+                    </div>
+                    
+                    <div class="pt-4 border-t border-zinc-100 dark:border-white/5 flex justify-between items-center">
+                      <span class="text-[11px] text-zinc-400 font-medium">{{ formatDate(item.pubDate) }}</span>
+                      <span class="more-link text-[11px] font-bold flex items-center gap-1">
+                        더 보기
+                        <svg xmlns="http://www.w3.org/2000/svg" class="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+                        </svg>
+                      </span>
+                    </div>
+                  </a>
+                </TransitionGroup>
+              </div>
+            </div>
 
-          <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-3">
-            <TransitionGroup name="list">
-              <a v-for="(item, index) in group.items"
-                 :key="item.link + index"
-                 :href="item.link"
-                 target="_blank"
-                 class="news-card group flex flex-col bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-white/5 rounded-3xl p-5 transition-all duration-300"
-                 :class="`theme-${item.category}`"
+            <!-- Load More Button -->
+            <div v-if="filteredNews.length > visibleCount" class="flex justify-center pt-10 pb-20">
+              <button 
+                @click="visibleCount += 20"
+                class="px-12 py-4 bg-zinc-900 dark:bg-white text-white dark:text-black rounded-xl font-semibold text-base leading-normal tracking-tight active:scale-[0.98] transition-all"
               >
-                <div class="flex justify-between items-center mb-4">
-                  <span class="source-badge px-2.5 py-1 rounded-md text-[12px] font-black uppercase tracking-normal border">
-                    {{ getCategoryName(item.category) }}
-                  </span>
-                  <span class="text-[11px] text-zinc-400 font-bold uppercase tracking-tight">{{ item.provider || item.source }}</span>
-                </div>
-                
-                <div class="flex gap-4 mb-4 items-center h-12">
-                  <div v-if="item.thumb" class="flex-shrink-0 w-12 h-12 rounded-lg overflow-hidden border border-zinc-100 dark:border-white/5 bg-zinc-50 dark:bg-zinc-800">
-                    <img :src="item.thumb" class="w-full h-full object-cover" alt="" loading="lazy" referrerpolicy="no-referrer" />
-                  </div>
-                  <h3 class="text-lg font-bold text-zinc-900 dark:text-white leading-tight line-clamp-2 title-element flex-grow">
-                    {{ item.title }}
-                  </h3>
-                </div>
-                
-                <div class="pt-4 border-t border-zinc-100 dark:border-white/5 flex justify-between items-center">
-                  <span class="text-[11px] text-zinc-400 font-medium">{{ formatDate(item.pubDate) }}</span>
-                  <span class="more-link text-[11px] font-bold flex items-center gap-1">
-                    더 보기
-                    <svg xmlns="http://www.w3.org/2000/svg" class="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
-                    </svg>
-                  </span>
-                </div>
-              </a>
-            </TransitionGroup>
+                헤드라인 더보기
+              </button>
+            </div>
+          </div>
+
+          <!-- Empty State / Loading State (Wavy Dots) -->
+          <div v-else class="flex flex-col items-center justify-center py-40 text-center">
+            <div class="flex items-center gap-2 mb-8">
+              <div class="w-3 h-3 bg-zinc-900 dark:bg-white rounded-full animate-wave" style="animation-delay: 0s"></div>
+              <div class="w-3 h-3 bg-zinc-900 dark:bg-white rounded-full animate-wave" style="animation-delay: 0.2s"></div>
+              <div class="w-3 h-3 bg-zinc-900 dark:bg-white rounded-full animate-wave" style="animation-delay: 0.4s"></div>
+            </div>
+            <h3 class="text-xl font-bold mb-2 text-zinc-900 dark:text-white">Searching for trends</h3>
+            <p class="text-zinc-500 dark:text-zinc-400 text-sm max-w-xs mx-auto">Please wait while we fetch the latest data.</p>
           </div>
         </div>
-
-        <!-- Load More Button -->
-        <div v-if="filteredNews.length > visibleCount" class="flex justify-center pt-10 pb-20">
-          <button 
-            @click="visibleCount += 20"
-            class="px-12 py-4 bg-zinc-900 dark:bg-white text-white dark:text-black rounded-xl font-semibold text-base leading-normal tracking-tight active:scale-[0.98] transition-all"
-          >
-            헤드라인 더보기
-          </button>
-        </div>
-      </div>
-
-      <!-- Empty State / Loading State (Wavy Dots) -->
-      <div v-if="displayedNews.length === 0" class="flex flex-col items-center justify-center py-40 text-center">
-        <div class="flex items-center gap-2 mb-8">
-          <div class="w-3 h-3 bg-zinc-900 dark:bg-white rounded-full animate-wave" style="animation-delay: 0s"></div>
-          <div class="w-3 h-3 bg-zinc-900 dark:bg-white rounded-full animate-wave" style="animation-delay: 0.2s"></div>
-          <div class="w-3 h-3 bg-zinc-900 dark:bg-white rounded-full animate-wave" style="animation-delay: 0.4s"></div>
-        </div>
-        <h3 class="text-xl font-bold mb-2 text-zinc-900 dark:text-white">Searching for trends</h3>
-        <p class="text-zinc-500 dark:text-zinc-400 text-sm max-w-xs mx-auto">Please wait while we fetch the latest data.</p>
-      </div>
+      </Transition>
     </main>
 
     <SiteFooter />
@@ -201,6 +204,7 @@ const isNavVisible = ref(true)
 const lastScrollY = ref(0)
 const tabsRef = ref<HTMLElement | null>(null)
 const scrollAnchor = ref<HTMLElement | null>(null)
+const transitionName = ref('slide-left')
 
 const touchStartX = ref(0)
 const touchStartY = ref(0)
@@ -232,6 +236,13 @@ const handleTouchEnd = (e: TouchEvent) => {
 }
 
 const changeCategory = async (id: string) => {
+  const currentIndex = categories.findIndex(c => c.id === activeCategory.value)
+  const targetIndex = categories.findIndex(c => c.id === id)
+  
+  if (targetIndex !== -1 && currentIndex !== -1) {
+    transitionName.value = targetIndex > currentIndex ? 'slide-left' : 'slide-right'
+  }
+
   activeCategory.value = id
   
   // Force Nav visible to make the target offset (56px) predictable
@@ -385,7 +396,7 @@ const decodeHtml = (html: string) => {
 
 const fetchNews = async () => {
   // 1. Initial Cache Load
-  const CURRENT_CACHE_VERSION = 'v3.5'
+  const CURRENT_CACHE_VERSION = 'v3.6'
   const CACHE_KEY = `uxm_trends_cache_${CURRENT_CACHE_VERSION}`
   
   if (news.value.length === 0) {
@@ -624,7 +635,7 @@ const fetchMissingThumbnails = async () => {
         const idx = news.value.findIndex(n => n.link === targetUrl)
         if (idx !== -1) {
           news.value[idx] = { ...news.value[idx], thumb: imgUrl }
-          localStorage.setItem(`uxm_trends_cache_v3.5`, JSON.stringify(news.value))
+          localStorage.setItem(`uxm_trends_cache_v3.6`, JSON.stringify(news.value))
         }
       }
     } catch (e) {}
@@ -676,6 +687,32 @@ onUnmounted(() => {
 }
 .animate-wave {
   animation: wave 1.2s ease-in-out infinite;
+}
+
+/* Dynamic Slide Transitions */
+.slide-left-enter-active,
+.slide-left-leave-active,
+.slide-right-enter-active,
+.slide-right-leave-active {
+  transition: all 0.4s cubic-bezier(0.2, 0, 0.2, 1);
+}
+
+.slide-left-enter-from {
+  transform: translateX(30px);
+  opacity: 0;
+}
+.slide-left-leave-to {
+  transform: translateX(-30px);
+  opacity: 0;
+}
+
+.slide-right-enter-from {
+  transform: translateX(-30px);
+  opacity: 0;
+}
+.slide-right-leave-to {
+  transform: translateX(30px);
+  opacity: 0;
 }
 
 .category-tab {
