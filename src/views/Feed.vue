@@ -13,6 +13,7 @@
       padding-top="pt-16"
       margin-bottom="mb-16"
       inner-max-width="max-w-[680px] mx-auto"
+      :enable-gradient="true"
     />
 
     <main class="px-6 md:px-10 max-w-[1800px] mx-auto pb-20">
@@ -25,27 +26,27 @@
               v-model="newName" 
               type="text" 
               placeholder="이름" 
-              class="w-full min-w-0 bg-zinc-50 dark:bg-black/50 border-2 border-zinc-200 dark:border-white/10 rounded-2xl px-5 py-4 text-base focus:outline-none focus:border-zinc-800 dark:focus:border-zinc-400 transition-all font-bold"
+              class="w-full min-w-0 bg-zinc-50 dark:bg-black/50 border-2 border-zinc-200 dark:border-white/10 rounded-lg px-5 py-4 text-base focus:outline-none focus:border-zinc-800 dark:focus:border-zinc-400 transition-all font-bold"
             >
             <input 
               v-model="newTitle" 
               type="text" 
               placeholder="제목" 
-              class="w-full min-w-0 bg-zinc-50 dark:bg-black/50 border-2 border-zinc-200 dark:border-white/10 rounded-2xl px-5 py-4 text-base focus:outline-none focus:border-zinc-800 dark:focus:border-zinc-400 transition-all font-bold"
+              class="w-full min-w-0 bg-zinc-50 dark:bg-black/50 border-2 border-zinc-200 dark:border-white/10 rounded-lg px-5 py-4 text-base focus:outline-none focus:border-zinc-800 dark:focus:border-zinc-400 transition-all font-bold"
             >
             <input 
               v-model="newPassword" 
               type="password" 
               maxlength="4"
               placeholder="비밀번호 (4자리)" 
-              class="w-full min-w-0 bg-zinc-50 dark:bg-black/50 border-2 border-zinc-200 dark:border-white/10 rounded-2xl px-5 py-4 text-base focus:outline-none focus:border-zinc-800 dark:focus:border-zinc-400 transition-all font-bold"
+              class="w-full min-w-0 bg-zinc-50 dark:bg-black/50 border-2 border-zinc-200 dark:border-white/10 rounded-lg px-5 py-4 text-base focus:outline-none focus:border-zinc-800 dark:focus:border-zinc-400 transition-all font-bold"
             >
           </div>
           <textarea 
             v-model="newMessage" 
             rows="4" 
             placeholder="내용을 입력해주세요..." 
-            class="w-full bg-zinc-50 dark:bg-black/50 border-2 border-zinc-200 dark:border-white/10 rounded-2xl px-5 py-4 text-base focus:outline-none focus:border-zinc-800 dark:focus:border-zinc-400 transition-all resize-none leading-relaxed px-5 py-4"
+            class="w-full bg-zinc-50 dark:bg-black/50 border-2 border-zinc-200 dark:border-white/10 rounded-lg px-5 py-4 text-base focus:outline-none focus:border-zinc-800 dark:focus:border-zinc-400 transition-all resize-none leading-relaxed px-5 py-4"
           ></textarea>
           <div class="flex justify-end">
             <button 
