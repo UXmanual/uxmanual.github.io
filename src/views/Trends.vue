@@ -96,43 +96,46 @@
             <div v-for="group in allGroupedNews[cat.id]" :key="group.date" class="space-y-6">
               <h2 class="text-sm font-semibold text-zinc-400 dark:text-zinc-500 uppercase whitespace-nowrap mb-6">📅 {{ group.date }}</h2>
               
-              <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-3">
-                <component :is="isDragging ? 'div' : 'TransitionGroup'" :name="isDragging ? '' : 'list'">
-                  <a v-for="(item, index) in group.items"
-                     :key="item.link + index"
-                     :href="item.link"
-                     target="_blank"
-                     class="news-card group flex flex-col bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-white/5 rounded-3xl p-5 transition-all duration-300"
-                     :class="`theme-${item.category}`"
-                  >
-                    <div class="flex justify-between items-center mb-4">
-                      <span class="source-badge px-2.5 py-1 rounded-md text-[12px] font-black uppercase tracking-normal border">
-                        {{ getCategoryName(item.category) }}
-                      </span>
-                      <span class="text-[11px] text-zinc-400 font-bold uppercase tracking-tight">{{ item.provider || item.source }}</span>
+              <component 
+                :is="isDragging ? 'div' : 'TransitionGroup'" 
+                :name="isDragging ? '' : 'list'"
+                tag="div"
+                class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-3"
+              >
+                <a v-for="(item, index) in group.items"
+                   :key="item.link + index"
+                   :href="item.link"
+                   target="_blank"
+                   class="news-card group flex flex-col bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-white/5 rounded-3xl p-5 transition-all duration-300"
+                   :class="`theme-${item.category}`"
+                >
+                  <div class="flex justify-between items-center mb-4">
+                    <span class="source-badge px-2.5 py-1 rounded-md text-[12px] font-black uppercase tracking-normal border">
+                      {{ getCategoryName(item.category) }}
+                    </span>
+                    <span class="text-[11px] text-zinc-400 font-bold uppercase tracking-tight">{{ item.provider || item.source }}</span>
+                  </div>
+                  
+                  <div class="flex gap-4 mb-4 items-center h-12">
+                    <div v-if="item.thumb" class="flex-shrink-0 w-12 h-12 rounded-lg overflow-hidden border border-zinc-100 dark:border-white/5 bg-zinc-50 dark:bg-zinc-800">
+                      <img :src="item.thumb" class="w-full h-full object-cover" alt="" loading="lazy" referrerpolicy="no-referrer" />
                     </div>
-                    
-                    <div class="flex gap-4 mb-4 items-center h-12">
-                      <div v-if="item.thumb" class="flex-shrink-0 w-12 h-12 rounded-lg overflow-hidden border border-zinc-100 dark:border-white/5 bg-zinc-50 dark:bg-zinc-800">
-                        <img :src="item.thumb" class="w-full h-full object-cover" alt="" loading="lazy" referrerpolicy="no-referrer" />
-                      </div>
-                      <h3 class="text-lg font-bold text-zinc-900 dark:text-white leading-tight line-clamp-2 title-element flex-grow">
-                        {{ item.title }}
-                      </h3>
-                    </div>
-                    
-                    <div class="pt-4 border-t border-zinc-100 dark:border-white/5 flex justify-between items-center">
-                      <span class="text-[11px] text-zinc-400 font-medium">{{ formatDate(item.pubDate) }}</span>
-                      <span class="more-link text-[11px] font-bold flex items-center gap-1">
-                        더 보기
-                        <svg xmlns="http://www.w3.org/2000/svg" class="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
-                        </svg>
-                      </span>
-                    </div>
-                  </a>
-                </component>
-              </div>
+                    <h3 class="text-lg font-bold text-zinc-900 dark:text-white leading-tight line-clamp-2 title-element flex-grow">
+                      {{ item.title }}
+                    </h3>
+                  </div>
+                  
+                  <div class="pt-4 border-t border-zinc-100 dark:border-white/5 flex justify-between items-center">
+                    <span class="text-[11px] text-zinc-400 font-medium">{{ formatDate(item.pubDate) }}</span>
+                    <span class="more-link text-[11px] font-bold flex items-center gap-1">
+                      더 보기
+                      <svg xmlns="http://www.w3.org/2000/svg" class="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+                      </svg>
+                    </span>
+                  </div>
+                </a>
+              </component>
             </div>
 
             <!-- Page Load More -->
@@ -436,7 +439,7 @@ const decodeHtml = (html: string) => {
 
 const fetchNews = async () => {
   // 1. Initial Cache Load
-  const CURRENT_CACHE_VERSION = 'v4.6'
+  const CURRENT_CACHE_VERSION = 'v4.7'
   const CACHE_KEY = `uxm_trends_cache_${CURRENT_CACHE_VERSION}`
   
   if (news.value.length === 0) {
@@ -675,7 +678,7 @@ const fetchMissingThumbnails = async () => {
         const idx = news.value.findIndex(n => n.link === targetUrl)
         if (idx !== -1) {
           news.value[idx] = { ...news.value[idx], thumb: imgUrl }
-          localStorage.setItem(`uxm_trends_cache_v4.6`, JSON.stringify(news.value))
+          localStorage.setItem(`uxm_trends_cache_v4.7`, JSON.stringify(news.value))
         }
       }
     } catch (e) {}
