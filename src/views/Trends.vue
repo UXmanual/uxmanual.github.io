@@ -394,10 +394,10 @@ const RSS_SOURCES = [
   { name: '올리브영 테크', url: 'https://tech.oliveyoung.co.kr/feed/', category: 'blog' },
   { name: '당근 테크', url: 'https://medium.com/daangn/feed', category: 'blog' },
 
-  // YouTube (Video-Direct Sourcing via Google News Search)
-  { name: '유튜브 인기 영상', url: 'https://news.google.com/rss/search?q=site:youtube.com+trending+korea+when:24h&hl=ko&gl=KR&ceid=KR:ko', category: 'youtube' },
-  { name: '유튜브 화제 영상', url: 'https://news.google.com/rss/search?q=site:youtube.com+hot+issue+korea+when:24h&hl=ko&gl=KR&ceid=KR:ko', category: 'youtube' },
-  { name: '유튜브 대세 소식', url: 'https://news.google.com/rss/search?q=site:youtube.com+대세+영상+when:24h&hl=ko&gl=KR&ceid=KR:ko', category: 'youtube' }
+  // YouTube (Keyword-Based Video Sourcing via Google News Search)
+  { name: '유튜브 뉴스 이슈', url: 'https://news.google.com/rss/search?q=site:youtube.com+뉴스+이슈+when:24h&hl=ko&gl=KR&ceid=KR:ko', category: 'youtube' },
+  { name: '유튜브 실시간 화제', url: 'https://news.google.com/rss/search?q=site:youtube.com+실시간+화제+when:24h&hl=ko&gl=KR&ceid=KR:ko', category: 'youtube' },
+  { name: '유튜브 오늘 영상', url: 'https://news.google.com/rss/search?q=site:youtube.com+화제의영상+when:24h&hl=ko&gl=KR&ceid=KR:ko', category: 'youtube' }
 ]
 
 const filteredNews = computed(() => {
@@ -437,7 +437,7 @@ const decodeHtml = (html: string) => {
 
 const fetchNews = async () => {
   // 1. Initial Cache Load
-  const CURRENT_CACHE_VERSION = 'v8.7'
+  const CURRENT_CACHE_VERSION = 'v8.8'
   const CACHE_KEY = `uxm_trends_cache_${CURRENT_CACHE_VERSION}`
   
   if (news.value.length === 0) {
@@ -449,27 +449,11 @@ const fetchNews = async () => {
         }
       })
       const cached = localStorage.getItem(CACHE_KEY)
-      // 2. Inject Direct YouTube Video Structure (Ensures tab is never empty and links to VIDEOS)
-      if (activeCategory.value === 'youtube' || activeCategory.value === 'all') {
-        const youtubeHotLinks: NewsItem[] = [
-          {
-            title: "🔥 YouTube 대한민국 실시간 인기 영상 보러가기",
-            link: "https://www.youtube.com/feed/trending?gl=KR",
-            pubDate: new Date().toISOString(),
-            description: "지금 대한민국에서 가장 화제가 되고 있는 인기 급상승 동영상을 유튜브 앱/웹에서 직접 확인하세요.",
-            source: "YouTube Trending",
-            category: "youtube",
-            provider: "YouTube",
-            thumb: "https://www.gstatic.com/youtube/img/branding/youtubelogo/svg/youtubelogo.svg"
-          }
-        ]
-        
-        // Merge without duplicates
-        youtubeHotLinks.forEach(hot => {
-          if (!news.value.find(n => n.link === hot.link)) {
-            news.value.unshift(hot)
-          }
-        })
+      if (cached) {
+        const parsed = JSON.parse(cached)
+        if (Array.isArray(parsed)) {
+          news.value = parsed.sort((a: NewsItem, b: NewsItem) => new Date(b.pubDate).getTime() - new Date(a.pubDate).getTime())
+        }
       }
     } catch (e) {
       localStorage.removeItem(CACHE_KEY)
