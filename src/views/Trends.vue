@@ -68,6 +68,7 @@
       @touchstart="handleTouchStart"
       @touchmove="handleTouchMove"
       @touchend="handleTouchEnd"
+      :style="{ minHeight: isDragging ? '100vh' : 'auto' }"
     >
       <!-- Carousel Rail -->
       <div 
@@ -81,17 +82,22 @@
         <div 
           v-for="(cat, index) in categories" 
           :key="cat.id" 
-          class="w-full flex-shrink-0 px-6 md:px-10 min-h-[100px] mb-10"
+          class="w-full flex-shrink-0 px-6 md:px-10"
+          :class="{ 'opacity-0 h-0 overflow-hidden': !isDragging && index !== activeIndex }"
+          :style="{ 
+            minHeight: index === activeIndex ? '200px' : '0',
+            visibility: Math.abs(index - activeIndex) <= 1 || isDragging ? 'visible' : 'hidden'
+          }"
         >
           <!-- Only render content for visible or neighbor tabs for performance -->
-          <template v-if="Math.abs(index - activeIndex) <= 1">
+          <template v-if="Math.abs(index - activeIndex) <= 1 || isDragging">
           <!-- Content: List or Skeleton -->
           <div v-if="allGroupedNews[cat.id]?.length > 0" class="space-y-10">
             <div v-for="group in allGroupedNews[cat.id]" :key="group.date" class="space-y-6">
               <h2 class="text-sm font-semibold text-zinc-400 dark:text-zinc-500 uppercase whitespace-nowrap mb-6">📅 {{ group.date }}</h2>
               
               <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-3">
-                <TransitionGroup name="list">
+                <component :is="isDragging ? 'div' : 'TransitionGroup'" :name="isDragging ? '' : 'list'">
                   <a v-for="(item, index) in group.items"
                      :key="item.link + index"
                      :href="item.link"
@@ -125,12 +131,12 @@
                       </span>
                     </div>
                   </a>
-                </TransitionGroup>
+                </component>
               </div>
             </div>
 
             <!-- Page Load More -->
-            <div v-if="(cat.id === 'all' ? news.length : news.filter(n => n.category === cat.id).length) > visibleCount" class="flex justify-center pt-10">
+            <div v-if="(cat.id === 'all' ? news.length : news.filter(n => n.category === cat.id).length) > visibleCount" class="flex justify-center pt-6 pb-20">
               <button 
                 @click="visibleCount += 20"
                 class="px-12 py-4 bg-zinc-900 dark:bg-white text-white dark:text-black rounded-xl font-semibold text-base leading-normal tracking-tight active:scale-[0.98] transition-all"
@@ -429,7 +435,7 @@ const decodeHtml = (html: string) => {
 
 const fetchNews = async () => {
   // 1. Initial Cache Load
-  const CURRENT_CACHE_VERSION = 'v4.4'
+  const CURRENT_CACHE_VERSION = 'v4.5'
   const CACHE_KEY = `uxm_trends_cache_${CURRENT_CACHE_VERSION}`
   
   if (news.value.length === 0) {
@@ -668,7 +674,7 @@ const fetchMissingThumbnails = async () => {
         const idx = news.value.findIndex(n => n.link === targetUrl)
         if (idx !== -1) {
           news.value[idx] = { ...news.value[idx], thumb: imgUrl }
-          localStorage.setItem(`uxm_trends_cache_v4.4`, JSON.stringify(news.value))
+          localStorage.setItem(`uxm_trends_cache_v4.5`, JSON.stringify(news.value))
         }
       }
     } catch (e) {}
