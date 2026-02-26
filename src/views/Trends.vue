@@ -12,6 +12,7 @@
       title="NEWS STAND" 
       description="주요 언론사의 실시간 뉴스 피드를 한곳에서 확인하세요"
       padding-top="pt-16"
+      :enable-gradient="true"
     />
 
     <!-- Stable Anchor for Scroll Positioning -->
@@ -417,7 +418,7 @@ const decodeHtml = (html: string) => {
 
 const fetchNews = async () => {
   // 1. Initial Cache Load
-  const CURRENT_CACHE_VERSION = 'v6.1'
+  const CURRENT_CACHE_VERSION = 'v6.2'
   const CACHE_KEY = `uxm_trends_cache_${CURRENT_CACHE_VERSION}`
   
   if (news.value.length === 0) {
@@ -656,7 +657,7 @@ const fetchMissingThumbnails = async () => {
         const idx = news.value.findIndex(n => n.link === targetUrl)
         if (idx !== -1) {
           news.value[idx] = { ...news.value[idx], thumb: imgUrl }
-          localStorage.setItem(`uxm_trends_cache_v6.1`, JSON.stringify(news.value))
+          localStorage.setItem(`uxm_trends_cache_v6.2`, JSON.stringify(news.value))
         }
       }
     } catch (e) {}

@@ -4,7 +4,11 @@
     :class="[paddingTop, marginBottom]"
   >
     <div class="space-y-4" :class="innerMaxWidth">
-      <h1 class="text-4xl md:text-5xl font-extrabold tracking-tight text-zinc-900 dark:text-white" style="font-family: 'Pretendard Variable', 'Pretendard', sans-serif; font-weight: 800 !important;">
+      <h1 
+        class="text-4xl md:text-5xl font-extrabold tracking-tight text-zinc-900 dark:text-white" 
+        :class="{ 'gradient-text': enableGradient }"
+        style="font-family: 'Pretendard Variable', 'Pretendard', sans-serif; font-weight: 800 !important;"
+      >
         {{ title }}
       </h1>
       <p 
@@ -22,11 +26,35 @@ interface Props {
   paddingTop?: string
   marginBottom?: string
   innerMaxWidth?: string
+  enableGradient?: boolean
 }
 
 withDefaults(defineProps<Props>(), {
   paddingTop: 'pt-28',
   marginBottom: 'mb-8',
-  innerMaxWidth: 'max-w-2xl'
+  innerMaxWidth: 'max-w-2xl',
+  enableGradient: false
 })
 </script>
+
+<style scoped>
+.gradient-text {
+  background: linear-gradient(
+    to right, 
+    #00AF50, 
+    #34d399, 
+    #10b981, 
+    #00AF50
+  );
+  background-size: 200% auto;
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  animation: flow 8s linear infinite;
+}
+
+@keyframes flow {
+  0% { background-position: 0% center; }
+  100% { background-position: 200% center; }
+}
+</style>
