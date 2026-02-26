@@ -429,7 +429,7 @@ const decodeHtml = (html: string) => {
 
 const fetchNews = async () => {
   // 1. Initial Cache Load
-  const CURRENT_CACHE_VERSION = 'v7.9'
+  const CURRENT_CACHE_VERSION = 'v8.0'
   const CACHE_KEY = `uxm_trends_cache_${CURRENT_CACHE_VERSION}`
   
   if (news.value.length === 0) {
@@ -597,19 +597,22 @@ const fetchNews = async () => {
   }
 
   try {
-    // 1. Prioritize current category sources
+    // 1. Fire priority sources immediately without awaiting ALL of them (Incremental UI)
     const prioritySources = activeCategory.value === 'all' 
       ? RSS_SOURCES 
       : RSS_SOURCES.filter(s => s.category === activeCategory.value)
     
     const otherSources = RSS_SOURCES.filter(s => !prioritySources.includes(s))
     
-    // Fire priority sources immediately
-    const priorityPromises = prioritySources.map(source => fetchSource(source))
-    await Promise.all(priorityPromises)
+    // Each source updates the list independently as it finishes
+    prioritySources.forEach(source => {
+      fetchSource(source).finally(() => {
+        if (news.value.length > 0) isLoading.value = false
+      })
+    })
     
-    // 2. Fire background sources: Don't strictly await them before ending main loading
-    const otherPromises = otherSources.map(source => fetchSource(source))
+    // 2. Fire background sources: No-wait background update
+    otherSources.forEach(source => fetchSource(source))
     
     // final safety: ensure loading ends eventually if something hangs
     setTimeout(() => { isLoading.value = false }, 15000)
@@ -686,7 +689,7 @@ const fetchMissingThumbnails = async () => {
         const idx = news.value.findIndex(n => n.link === targetUrl)
         if (idx !== -1) {
           news.value[idx] = { ...news.value[idx], thumb: imgUrl }
-          localStorage.setItem(`uxm_trends_cache_v7.9`, JSON.stringify(news.value))
+          localStorage.setItem(`uxm_trends_cache_v8.0`, JSON.stringify(news.value))
         }
       }
     } catch (e) {}
