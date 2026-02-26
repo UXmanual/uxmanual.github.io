@@ -49,8 +49,8 @@ withDefaults(defineProps<Props>(), {
   background: linear-gradient(
     120deg, 
     #6366f1, 
-    #a855f7, 
-    #c7d2fe, 
+    #8b5cf6, 
+    #a78bfa, 
     #7c3aed, 
     #6366f1
   );
