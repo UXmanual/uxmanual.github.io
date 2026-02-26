@@ -359,7 +359,8 @@ const categories = [
   { id: 'sports', name: 'Sports' },
   { id: 'design', name: 'Design' },
   { id: 'blog', name: 'Blog' },
-  { id: 'youtube', name: 'YouTube' }
+  { id: 'youtube', name: 'YouTube' },
+  { id: 'goodrich', name: 'GoodRich' }
 ]
 
 const RSS_SOURCES = [
@@ -413,7 +414,12 @@ const RSS_SOURCES = [
   { name: '유튜브 실시간 뉴스', url: 'https://news.google.com/rss/search?q=site:youtube.com+뉴스+이슈+when:24h&hl=ko&gl=KR&ceid=KR:ko', category: 'youtube' },
   { name: 'Youtube Global News', url: 'https://news.google.com/rss/search?q=site:youtube.com+News+Trends+when:24h&hl=ko&gl=KR&ceid=KR:ko', category: 'youtube' },
   { name: '유튜브 화제 영상', url: 'https://news.google.com/rss/search?q=site:youtube.com+지금이시각+화제+when:24h&hl=ko&gl=KR&ceid=KR:ko', category: 'youtube' },
-  { name: '유튜브 속보/단독', url: 'https://news.google.com/rss/search?q=site:youtube.com+속보+단독+영상+when:24h&hl=ko&gl=KR&ceid=KR:ko', category: 'youtube' }
+  { name: '유튜브 속보/단독', url: 'https://news.google.com/rss/search?q=site:youtube.com+속보+단독+영상+when:24h&hl=ko&gl=KR&ceid=KR:ko', category: 'youtube' },
+
+  // GoodRich (Corporate & Insurance News)
+  { name: '굿리치 투데이', url: 'https://news.google.com/rss/search?q=굿리치+OR+GoodRich+when:7d&hl=ko&gl=KR&ceid=KR:ko', category: 'goodrich' },
+  { name: '보험업계 동향', url: 'https://news.google.com/rss/search?q=보험+뉴스+when:24h&hl=ko&gl=KR&ceid=KR:ko', category: 'goodrich' },
+  { name: '인슈어테크 소식', url: 'https://news.google.com/rss/search?q=인슈어테크+보험+when:7d&hl=ko&gl=KR&ceid=KR:ko', category: 'goodrich' }
 ]
 
 const filteredNews = computed(() => {
@@ -453,7 +459,7 @@ const decodeHtml = (html: string) => {
 
 const fetchNews = async () => {
   // 1. Initial Cache Load
-  const CURRENT_CACHE_VERSION = 'v10.4'
+  const CURRENT_CACHE_VERSION = 'v10.6'
   const CACHE_KEY = `uxm_trends_cache_${CURRENT_CACHE_VERSION}`
   
   if (news.value.length === 0) {
@@ -766,7 +772,7 @@ const fetchMissingThumbnails = async () => {
         const idx = news.value.findIndex(n => n.link === targetUrl)
         if (idx !== -1) {
           news.value[idx] = { ...news.value[idx], thumb: imgUrl }
-          localStorage.setItem(`uxm_trends_cache_v10.4`, JSON.stringify(news.value))
+          localStorage.setItem(`uxm_trends_cache_v10.6`, JSON.stringify(news.value))
         }
       }
     } catch (e) {}
@@ -859,8 +865,9 @@ onUnmounted(() => {
 .theme-design { --brand-color: #fa4fc1; --brand-bg: rgba(250, 79, 193, 0.05); }
 .theme-sports { --brand-color: #5196fd; --brand-bg: rgba(81, 150, 253, 0.05); }
 .theme-game { --brand-color: #9333ea; --brand-bg: rgba(147, 51, 234, 0.05); }
-.theme-blog { --brand-color: #f59e0b; --brand-bg: rgba(245, 158, 11, 0.05); }
+.theme-blog { --brand-color: #10b981; --brand-bg: rgba(16, 185, 129, 0.05); }
 .theme-youtube { --brand-color: #ef4444; --brand-bg: rgba(239, 68, 68, 0.05); }
+.theme-goodrich { --brand-color: #f97316; --brand-bg: rgba(249, 115, 22, 0.05); }
 
 /* Apply Theme to Header Tabs */
 .category-tab[data-cat="all"] .active-underline { background-color: #18181b; }
@@ -882,11 +889,14 @@ onUnmounted(() => {
 .category-tab[data-cat="game"][data-active="true"] { color: #9333ea !important; }
 .category-tab[data-cat="game"][data-active="true"] .active-underline { background-color: #9333ea; }
 
-.category-tab[data-cat="blog"][data-active="true"] { color: #f59e0b !important; }
-.category-tab[data-cat="blog"][data-active="true"] .active-underline { background-color: #f59e0b; }
+.category-tab[data-cat="blog"][data-active="true"] { color: #10b981 !important; }
+.category-tab[data-cat="blog"][data-active="true"] .active-underline { background-color: #10b981; }
 
 .category-tab[data-cat="youtube"][data-active="true"] { color: #ef4444 !important; }
 .category-tab[data-cat="youtube"][data-active="true"] .active-underline { background-color: #ef4444; }
+
+.category-tab[data-cat="goodrich"][data-active="true"] { color: #f97316 !important; }
+.category-tab[data-cat="goodrich"][data-active="true"] .active-underline { background-color: #f97316; }
 
 /* Refined News Card Styling */
 .news-card.theme-ai { --brand-color: #6366f1; --brand-bg: rgba(99, 102, 241, 0.05); }
@@ -894,8 +904,9 @@ onUnmounted(() => {
 .news-card.theme-design { --brand-color: #fa4fc1; --brand-bg: rgba(250, 79, 193, 0.05); }
 .news-card.theme-sports { --brand-color: #5196fd; --brand-bg: rgba(81, 150, 253, 0.05); }
 .news-card.theme-game { --brand-color: #9333ea; --brand-bg: rgba(147, 51, 234, 0.05); }
-.news-card.theme-blog { --brand-color: #f59e0b; --brand-bg: rgba(245, 158, 11, 0.05); }
+.news-card.theme-blog { --brand-color: #10b981; --brand-bg: rgba(16, 185, 129, 0.05); }
 .news-card.theme-youtube { --brand-color: #ef4444; --brand-bg: rgba(239, 68, 68, 0.05); }
+.news-card.theme-goodrich { --brand-color: #f97316; --brand-bg: rgba(249, 115, 22, 0.05); }
 
 /* Hover Effects: Enabled only for devices that support hover (Mouse) to prevent sticky feel on mobile */
 @media (hover: hover) {
