@@ -66,10 +66,19 @@
     <main 
       class="px-6 md:px-10 pb-10 max-w-[1800px] mx-auto overflow-hidden touch-pan-y relative"
       @touchstart="handleTouchStart"
+      @touchmove="handleTouchMove"
       @touchend="handleTouchEnd"
     >
       <Transition :name="transitionName" mode="out-in">
-        <div :key="activeCategory" class="content-wrapper">
+        <div 
+          :key="activeCategory" 
+          class="content-wrapper transition-transform duration-300"
+          :class="{ 'ease-out': !isDragging }"
+          :style="{ 
+            transform: isDragging ? `translateX(${dragOffset}px)` : 'none',
+            transition: isDragging ? 'none' : 'transform 0.4s cubic-bezier(0.2, 0, 0.2, 1), opacity 0.3s ease'
+          }"
+        >
           <!-- Content: List or Skeleton -->
           <div v-if="isLoading && filteredNews.length === 0" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-3">
             <div v-for="i in 10" :key="i" class="bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-white/5 rounded-3xl p-5 animate-pulse flex flex-col h-[280px]">
@@ -209,24 +218,49 @@ const activeIndex = computed(() => {
 
 const touchStartX = ref(0)
 const touchStartY = ref(0)
+const dragOffset = ref(0)
+const isDragging = ref(false)
 
 const handleTouchStart = (e: TouchEvent) => {
   touchStartX.value = e.touches[0].clientX
   touchStartY.value = e.touches[0].clientY
+  isDragging.value = false
+  dragOffset.value = 0
+}
+
+const handleTouchMove = (e: TouchEvent) => {
+  const currentX = e.touches[0].clientX
+  const currentY = e.touches[0].clientY
+  const deltaX = currentX - touchStartX.value
+  const deltaY = currentY - touchStartY.value
+
+  // Horizontal intent check
+  if (!isDragging.value && Math.abs(deltaX) > 10 && Math.abs(deltaX) > Math.abs(deltaY) * 1.5) {
+    isDragging.value = true
+  }
+
+  if (isDragging.value) {
+    // Prevent default scroll only when dragging horizontally
+    if (e.cancelable) e.preventDefault()
+    dragOffset.value = deltaX
+  }
 }
 
 const handleTouchEnd = (e: TouchEvent) => {
-  const deltaX = e.changedTouches[0].clientX - touchStartX.value
-  const deltaY = e.changedTouches[0].clientY - touchStartY.value
+  if (!isDragging.value) return
   
-  // Minimal distance for swipe (60px) and vertical barrier
-  if (Math.abs(deltaX) > 60 && Math.abs(deltaX) > Math.abs(deltaY) * 1.5) {
+  const finalDeltaX = dragOffset.value
+  const viewportWidth = window.innerWidth
+  const threshold = viewportWidth * 0.5 // 50% Threshold as requested
+  
+  isDragging.value = false
+  dragOffset.value = 0
+
+  if (Math.abs(finalDeltaX) > threshold) {
     const currentIndex = categories.findIndex(c => c.id === activeCategory.value)
-    if (deltaX > 0) {
-      // Swipe Right -> Go to Previous Tab
+    if (finalDeltaX > 0) {
       if (currentIndex > 0) changeCategory(categories[currentIndex - 1].id)
     } else {
-      // Swipe Left -> Go to Next Tab
       if (currentIndex < categories.length - 1) changeCategory(categories[currentIndex + 1].id)
     }
   }
@@ -388,7 +422,7 @@ const decodeHtml = (html: string) => {
 
 const fetchNews = async () => {
   // 1. Initial Cache Load
-  const CURRENT_CACHE_VERSION = 'v5.1'
+  const CURRENT_CACHE_VERSION = 'v5.2'
   const CACHE_KEY = `uxm_trends_cache_${CURRENT_CACHE_VERSION}`
   
   if (news.value.length === 0) {
@@ -627,7 +661,7 @@ const fetchMissingThumbnails = async () => {
         const idx = news.value.findIndex(n => n.link === targetUrl)
         if (idx !== -1) {
           news.value[idx] = { ...news.value[idx], thumb: imgUrl }
-          localStorage.setItem(`uxm_trends_cache_v5.1`, JSON.stringify(news.value))
+          localStorage.setItem(`uxm_trends_cache_v5.2`, JSON.stringify(news.value))
         }
       }
     } catch (e) {}
