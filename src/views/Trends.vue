@@ -438,7 +438,7 @@ const decodeHtml = (html: string) => {
 
 const fetchNews = async () => {
   // 1. Initial Cache Load
-  const CURRENT_CACHE_VERSION = 'v10.1'
+  const CURRENT_CACHE_VERSION = 'v10.2'
   const CACHE_KEY = `uxm_trends_cache_${CURRENT_CACHE_VERSION}`
   
   if (news.value.length === 0) {
@@ -508,15 +508,15 @@ const fetchNews = async () => {
           let link = linkMatch[1].trim()
           let ytId = ''
           
-          if (link.includes('news.google.com/articles/')) {
+          if (link.includes('news.google.com/')) {
             try {
-              let b64 = link.split('articles/')[1]?.split('?')[0]
+              let b64 = link.split('articles/')[1]?.split('?')[0] || link.split('rss/articles/')[1]?.split('?')[0]
               if (b64) {
                 b64 = b64.replace(/-/g, '+').replace(/_/g, '/')
                 while (b64.length % 4 !== 0) b64 += '='
                 const decoded = atob(b64)
                 
-                // Robust ID Extraction: Support for watch?v=, v/, embed/, youtu.be, and attribution_links
+                // Aggressive ID Extraction: Handle nested trackers and multiple YouTube formats
                 const idRegex = /(?:v=|v\/|embed\/|youtu\.be\/|watch\?v%3D|watch\?v=)([A-Za-z0-9_-]{11})/i
                 const ytMatch = decoded.match(idRegex)
                 
@@ -524,8 +524,17 @@ const fetchNews = async () => {
                   ytId = ytMatch[1]
                   link = `https://www.youtube.com/watch?v=${ytId}`
                 } else {
+                  // Fallback: extract the deepest URL possible
                   const urlMatch = decoded.match(/https?:\/\/[^\s\u0000-\u001F"<>\\^`{|}]+/g)
-                  if (urlMatch && urlMatch.length > 0) link = urlMatch[0]
+                  if (urlMatch && urlMatch.length > 0) {
+                    link = urlMatch[0]
+                    // Second pass if the extracted URL is also a YouTube link but not processed
+                    const innerYtMatch = link.match(idRegex)
+                    if (innerYtMatch) {
+                      ytId = innerYtMatch[1]
+                      link = `https://www.youtube.com/watch?v=${ytId}`
+                    }
+                  }
                 }
               }
             } catch (e) {}
@@ -732,7 +741,7 @@ const fetchMissingThumbnails = async () => {
         const idx = news.value.findIndex(n => n.link === targetUrl)
         if (idx !== -1) {
           news.value[idx] = { ...news.value[idx], thumb: imgUrl }
-          localStorage.setItem(`uxm_trends_cache_v10.1`, JSON.stringify(news.value))
+          localStorage.setItem(`uxm_trends_cache_v10.2`, JSON.stringify(news.value))
         }
       }
     } catch (e) {}
