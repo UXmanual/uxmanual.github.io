@@ -15,7 +15,7 @@
       inner-max-width="max-w-[680px] mx-auto"
     />
 
-    <main class="px-6 md:px-10 max-w-[1800px] mx-auto pb-[120px]">
+    <main class="px-6 md:px-10 max-w-[1800px] mx-auto pb-20">
       <div class="max-w-[680px] mx-auto">
       <!-- Input Area -->
       <div class="mb-20 bg-white dark:bg-zinc-900 border-2 border-zinc-200 dark:border-white/5 rounded-3xl p-8">
