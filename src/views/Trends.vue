@@ -1,6 +1,6 @@
 <template>
   <div 
-    class="min-h-screen bg-zinc-50 dark:bg-[#0a0a0c] text-zinc-900 dark:text-white relative"
+    class="min-h-screen bg-zinc-50 dark:bg-[#0a0a0c] text-zinc-900 dark:text-white relative transition-colors duration-200"
   >
     <SiteNavbar />
     
@@ -21,7 +21,7 @@
     <!-- Category Tabs: Sticky Logic -->
     <div 
       ref="tabsRef"
-      class="sticky z-40 bg-zinc-50/90 dark:bg-[#0a0a0c]/90 backdrop-blur-xl border-b border-zinc-200 dark:border-white/10 mb-12 transition-all duration-0"
+      class="sticky z-40 bg-zinc-50/90 dark:bg-[#0a0a0c]/90 backdrop-blur-xl border-b border-zinc-200 dark:border-white/10 mb-12 transition-all duration-200"
       :style="{ top: `max(0px, 56px + var(--nav-y, 0px))` }"
     >
       <div class="px-6 md:px-10 max-w-[1800px] mx-auto pt-4 pb-0">
@@ -418,7 +418,7 @@ const decodeHtml = (html: string) => {
 
 const fetchNews = async () => {
   // 1. Initial Cache Load
-  const CURRENT_CACHE_VERSION = 'v7.0'
+  const CURRENT_CACHE_VERSION = 'v7.1'
   const CACHE_KEY = `uxm_trends_cache_${CURRENT_CACHE_VERSION}`
   
   if (news.value.length === 0) {
@@ -657,7 +657,7 @@ const fetchMissingThumbnails = async () => {
         const idx = news.value.findIndex(n => n.link === targetUrl)
         if (idx !== -1) {
           news.value[idx] = { ...news.value[idx], thumb: imgUrl }
-          localStorage.setItem(`uxm_trends_cache_v7.0`, JSON.stringify(news.value))
+          localStorage.setItem(`uxm_trends_cache_v7.1`, JSON.stringify(news.value))
         }
       }
     } catch (e) {}

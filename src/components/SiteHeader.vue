@@ -50,7 +50,7 @@ withDefaults(defineProps<Props>(), {
     120deg, 
     #6366f1, 
     #a855f7, 
-    #ddd6fe, 
+    #c7d2fe, 
     #7c3aed, 
     #6366f1
   );

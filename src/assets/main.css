@@ -18,7 +18,7 @@
 
 /* Ensure body and html follow the theme */
 html {
-    @apply transition-colors duration-500;
+    @apply transition-colors duration-200;
     /* 스크롤바가 콘텐츠 위에 뜨도록 설정 (Windows에서도 컨텐츠 밀림 방지) */
     overflow-y: overlay;
 }
@@ -28,7 +28,7 @@ html.dark {
 }
 
 body {
-    @apply bg-zinc-50 text-zinc-900 transition-colors duration-500;
+    @apply bg-zinc-50 text-zinc-900 transition-colors duration-200;
     font-family: "Pretendard Variable", "Pretendard", -apple-system, BlinkMacSystemFont, "Apple SD Gothic Neo", "Inter", sans-serif;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
