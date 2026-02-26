@@ -48,11 +48,11 @@ withDefaults(defineProps<Props>(), {
 .gradient-text {
   background: linear-gradient(
     120deg, 
-    #00C63C, 
-    #4ade80, 
-    #a7f3d0, 
-    #22c55e, 
-    #00C63C
+    #6366f1, 
+    #a855f7, 
+    #ddd6fe, 
+    #7c3aed, 
+    #6366f1
   );
   background-size: 200% auto;
   -webkit-background-clip: text;
