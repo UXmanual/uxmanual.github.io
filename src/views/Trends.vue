@@ -68,7 +68,7 @@
       @touchstart="handleTouchStart"
       @touchend="handleTouchEnd"
     >
-      <Transition name="fade" mode="out-in">
+      <Transition :name="transitionName" mode="out-in">
         <div :key="activeCategory" class="content-wrapper">
           <!-- Content: List or Skeleton -->
           <div v-if="isLoading && filteredNews.length === 0" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-3">
@@ -388,7 +388,7 @@ const decodeHtml = (html: string) => {
 
 const fetchNews = async () => {
   // 1. Initial Cache Load
-  const CURRENT_CACHE_VERSION = 'v5.0'
+  const CURRENT_CACHE_VERSION = 'v5.1'
   const CACHE_KEY = `uxm_trends_cache_${CURRENT_CACHE_VERSION}`
   
   if (news.value.length === 0) {
@@ -627,7 +627,7 @@ const fetchMissingThumbnails = async () => {
         const idx = news.value.findIndex(n => n.link === targetUrl)
         if (idx !== -1) {
           news.value[idx] = { ...news.value[idx], thumb: imgUrl }
-          localStorage.setItem(`uxm_trends_cache_v5.0`, JSON.stringify(news.value))
+          localStorage.setItem(`uxm_trends_cache_v5.1`, JSON.stringify(news.value))
         }
       }
     } catch (e) {}
@@ -681,19 +681,24 @@ onUnmounted(() => {
   animation: wave 1.2s ease-in-out infinite;
 }
 
-/* Stable Fade Transition */
-.fade-enter-active,
-.fade-leave-active {
-  transition: opacity 0.3s ease;
+/* Cinematic Slide-Fade Transitions */
+.slide-left-enter-active,
+.slide-left-leave-active,
+.slide-right-enter-active,
+.slide-right-leave-active {
+  transition: opacity 0.3s ease, transform 0.3s cubic-bezier(0.2, 0, 0.2, 1);
 }
 
-.fade-enter-from,
-.fade-leave-to {
-  opacity: 0;
-}
+/* Moving Forward (Next Tab) */
+.slide-left-enter-from { opacity: 0; transform: translateX(20px); }
+.slide-left-leave-to { opacity: 0; transform: translateX(-20px); }
+
+/* Moving Backward (Prev Tab) */
+.slide-right-enter-from { opacity: 0; transform: translateX(-20px); }
+.slide-right-leave-to { opacity: 0; transform: translateX(20px); }
 
 .transition-wrapper {
-  will-change: opacity;
+  will-change: opacity, transform;
 }
 
 .category-tab {
