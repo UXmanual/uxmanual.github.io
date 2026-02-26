@@ -1,5 +1,5 @@
 <template>
-  <div class="min-h-screen bg-zinc-50 dark:bg-[#0a0a0c] text-zinc-900 dark:text-white transition-colors duration-500">
+  <div class="min-h-screen bg-zinc-50 dark:bg-[#0a0a0c] text-zinc-900 dark:text-white transition-colors duration-200">
     <!-- Navbar Component -->
     <SiteNavbar />
 
