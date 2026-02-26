@@ -144,7 +144,8 @@
                 헤드라인 더보기
               </button>
             </div>
-          </template>
+          </div>
+        </template>
 
           <!-- Page Skeleton (When loading or no data yet) -->
           <div v-else class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-3">
@@ -435,7 +436,7 @@ const decodeHtml = (html: string) => {
 
 const fetchNews = async () => {
   // 1. Initial Cache Load
-  const CURRENT_CACHE_VERSION = 'v4.5'
+  const CURRENT_CACHE_VERSION = 'v4.6'
   const CACHE_KEY = `uxm_trends_cache_${CURRENT_CACHE_VERSION}`
   
   if (news.value.length === 0) {
@@ -674,7 +675,7 @@ const fetchMissingThumbnails = async () => {
         const idx = news.value.findIndex(n => n.link === targetUrl)
         if (idx !== -1) {
           news.value[idx] = { ...news.value[idx], thumb: imgUrl }
-          localStorage.setItem(`uxm_trends_cache_v4.5`, JSON.stringify(news.value))
+          localStorage.setItem(`uxm_trends_cache_v4.6`, JSON.stringify(news.value))
         }
       }
     } catch (e) {}
