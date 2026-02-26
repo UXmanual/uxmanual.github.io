@@ -5,11 +5,18 @@
   >
     <div class="space-y-4" :class="innerMaxWidth">
       <h1 
-        class="text-4xl md:text-5xl font-extrabold tracking-tight text-zinc-900 dark:text-white" 
-        :class="{ 'gradient-text': enableGradient }"
+        class="text-4xl md:text-5xl font-extrabold tracking-tight"
         style="font-family: 'Pretendard Variable', 'Pretendard', sans-serif; font-weight: 800 !important;"
       >
-        {{ title }}
+        <template v-if="enableGradient && title.includes(' ')">
+          <span class="text-zinc-900 dark:text-white">{{ title.split(' ')[0] }}</span>
+          <span class="gradient-text ml-3">{{ title.split(' ').slice(1).join(' ') }}</span>
+        </template>
+        <template v-else>
+          <span :class="{ 'gradient-text': enableGradient }" class="text-zinc-900 dark:text-white">
+            {{ title }}
+          </span>
+        </template>
       </h1>
       <p 
         class="text-zinc-600 dark:text-zinc-400 text-base md:text-lg leading-relaxed"
