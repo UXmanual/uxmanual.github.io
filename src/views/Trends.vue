@@ -72,12 +72,7 @@
       <Transition :name="transitionName" mode="out-in">
         <div 
           :key="activeCategory" 
-          class="content-wrapper transition-transform duration-300"
-          :class="{ 'ease-out': !isDragging }"
-          :style="{ 
-            transform: isDragging ? `translateX(${dragOffset}px)` : 'none',
-            transition: isDragging ? 'none' : 'transform 0.4s cubic-bezier(0.2, 0, 0.2, 1), opacity 0.3s ease'
-          }"
+          class="content-wrapper"
         >
           <!-- Content: List or Skeleton -->
           <div v-if="isLoading && filteredNews.length === 0" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-3">
@@ -218,52 +213,48 @@ const activeIndex = computed(() => {
 
 const touchStartX = ref(0)
 const touchStartY = ref(0)
-const dragOffset = ref(0)
-const isDragging = ref(false)
+const hasTriggeredSwipe = ref(false)
 
 const handleTouchStart = (e: TouchEvent) => {
   touchStartX.value = e.touches[0].clientX
   touchStartY.value = e.touches[0].clientY
-  isDragging.value = false
-  dragOffset.value = 0
+  hasTriggeredSwipe.value = false
 }
 
 const handleTouchMove = (e: TouchEvent) => {
+  if (hasTriggeredSwipe.value) return
+
   const currentX = e.touches[0].clientX
   const currentY = e.touches[0].clientY
   const deltaX = currentX - touchStartX.value
   const deltaY = currentY - touchStartY.value
 
-  // Horizontal intent check
-  if (!isDragging.value && Math.abs(deltaX) > 10 && Math.abs(deltaX) > Math.abs(deltaY) * 1.5) {
-    isDragging.value = true
-  }
+  // Horizontal intent check & 50% Threshold Check
+  if (Math.abs(deltaX) > Math.abs(deltaY) * 1.5) {
+    const viewportWidth = window.innerWidth
+    const threshold = viewportWidth * 0.5 // 50% Threshold
 
-  if (isDragging.value) {
-    // Prevent default scroll only when dragging horizontally
-    if (e.cancelable) e.preventDefault()
-    dragOffset.value = deltaX
+    if (Math.abs(deltaX) > threshold) {
+      const currentIndex = categories.findIndex(c => c.id === activeCategory.value)
+      if (deltaX > 0) {
+        // Swipe Right -> Prev
+        if (currentIndex > 0) {
+          changeCategory(categories[currentIndex - 1].id)
+          hasTriggeredSwipe.value = true
+        }
+      } else {
+        // Swipe Left -> Next
+        if (currentIndex < categories.length - 1) {
+          changeCategory(categories[currentIndex + 1].id)
+          hasTriggeredSwipe.value = true
+        }
+      }
+    }
   }
 }
 
-const handleTouchEnd = (e: TouchEvent) => {
-  if (!isDragging.value) return
-  
-  const finalDeltaX = dragOffset.value
-  const viewportWidth = window.innerWidth
-  const threshold = viewportWidth * 0.5 // 50% Threshold as requested
-  
-  isDragging.value = false
-  dragOffset.value = 0
-
-  if (Math.abs(finalDeltaX) > threshold) {
-    const currentIndex = categories.findIndex(c => c.id === activeCategory.value)
-    if (finalDeltaX > 0) {
-      if (currentIndex > 0) changeCategory(categories[currentIndex - 1].id)
-    } else {
-      if (currentIndex < categories.length - 1) changeCategory(categories[currentIndex + 1].id)
-    }
-  }
+const handleTouchEnd = () => {
+  hasTriggeredSwipe.value = false
 }
 
 const changeCategory = async (id: string) => {
@@ -422,7 +413,7 @@ const decodeHtml = (html: string) => {
 
 const fetchNews = async () => {
   // 1. Initial Cache Load
-  const CURRENT_CACHE_VERSION = 'v5.2'
+  const CURRENT_CACHE_VERSION = 'v5.3'
   const CACHE_KEY = `uxm_trends_cache_${CURRENT_CACHE_VERSION}`
   
   if (news.value.length === 0) {
@@ -661,7 +652,7 @@ const fetchMissingThumbnails = async () => {
         const idx = news.value.findIndex(n => n.link === targetUrl)
         if (idx !== -1) {
           news.value[idx] = { ...news.value[idx], thumb: imgUrl }
-          localStorage.setItem(`uxm_trends_cache_v5.2`, JSON.stringify(news.value))
+          localStorage.setItem(`uxm_trends_cache_v5.3`, JSON.stringify(news.value))
         }
       }
     } catch (e) {}
