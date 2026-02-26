@@ -91,11 +91,11 @@
                    class="news-card group flex flex-col bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-white/5 rounded-2xl p-5 transition-all duration-300"
                    :class="`theme-${item.category}`"
                 >
-                  <div class="flex justify-between items-center mb-4">
-                    <span class="source-badge px-2.5 py-1 rounded-md text-[12px] font-black uppercase tracking-normal border">
+                  <div class="flex justify-between items-center mb-4 gap-2">
+                    <span class="source-badge px-2.5 py-1 rounded-md text-[12px] font-black uppercase tracking-normal border flex-shrink-0">
                       {{ getCategoryName(item.category) }}
                     </span>
-                    <span class="text-[11px] text-zinc-400 font-bold uppercase tracking-tight">{{ item.provider || item.source }}</span>
+                    <span class="text-[11px] text-zinc-400 font-bold uppercase tracking-tight truncate text-right flex-grow min-w-0">{{ item.provider || item.source }}</span>
                   </div>
                   
                   <div class="flex gap-4 mb-4 items-center h-12">
@@ -179,7 +179,7 @@ import SiteFooter from '../components/SiteFooter.vue'
 import SiteHeader from '../components/SiteHeader.vue'
 import SiteBanner from '../components/SiteBanner.vue'
 
-const CURRENT_CACHE_VERSION = 'v10.8'
+const CURRENT_CACHE_VERSION = 'v10.9'
 const CACHE_KEY = `uxm_trends_cache_${CURRENT_CACHE_VERSION}`
 
 interface NewsItem {
