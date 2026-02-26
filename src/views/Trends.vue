@@ -64,48 +64,33 @@
 
 
     <main 
-      class="px-6 md:px-10 pb-10 max-w-[1800px] mx-auto overflow-hidden touch-pan-y relative"
+      class="pb-10 overflow-hidden touch-pan-y relative"
       @touchstart="handleTouchStart"
       @touchmove="handleTouchMove"
       @touchend="handleTouchEnd"
     >
-      <Transition :name="transitionName">
+      <!-- Carousel Rail -->
+      <div 
+        class="flex transition-transform duration-300 ease-out rail-container"
+        :style="{ 
+          width: '100%',
+          transform: `translateX(calc(-${activeIndex * 100}% + ${dragOffset}px))`,
+          transition: isDragging ? 'none' : 'transform 0.5s cubic-bezier(0.2, 0, 0.2, 1)'
+        }"
+      >
         <div 
-          :key="activeCategory" 
-          class="content-wrapper transition-wrapper"
-          :style="isDragging ? { transform: `translateX(${dragOffset}px)`, transition: 'none' } : {}"
+          v-for="cat in categories" 
+          :key="cat.id" 
+          class="w-full flex-shrink-0 px-6 md:px-10 min-h-[400px]"
         >
-          <div v-if="isLoading && news.length === 0" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-3">
-            <div v-for="i in 10" :key="i" class="bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-white/5 rounded-3xl p-5 animate-pulse flex flex-col h-[280px]">
-              <!-- Header skeleton -->
-              <div class="flex justify-between items-center mb-4">
-                <div class="h-6 w-16 bg-zinc-200 dark:bg-zinc-800 rounded-md"></div>
-                <div class="h-3 w-20 bg-zinc-100 dark:bg-zinc-800/50 rounded"></div>
-              </div>
-              <!-- Title skeleton -->
-              <div class="flex gap-4 mb-4 items-center h-12">
-                <div class="w-12 h-12 bg-zinc-200 dark:bg-zinc-800 rounded-lg flex-shrink-0"></div>
-                <div class="flex-grow space-y-2">
-                  <div class="h-4 w-full bg-zinc-200 dark:bg-zinc-800 rounded"></div>
-                  <div class="h-4 w-2/3 bg-zinc-200 dark:bg-zinc-800 rounded"></div>
-                </div>
-              </div>
-              <!-- Description skeleton -->
-              <div class="space-y-2 mb-6">
-                <div class="h-3 w-full bg-zinc-100 dark:bg-zinc-800/50 rounded"></div>
-                <div class="h-3 w-full bg-zinc-100 dark:bg-zinc-800/50 rounded"></div>
-                <div class="h-3 w-4/5 bg-zinc-100 dark:bg-zinc-800/50 rounded"></div>
-              </div>
-              <!-- Footer skeleton -->
-              <div class="mt-auto pt-4 border-t border-zinc-100 dark:border-white/5 flex justify-between">
-                <div class="h-3 w-24 bg-zinc-100 dark:bg-zinc-800/50 rounded"></div>
-                <div class="h-3 w-8 bg-zinc-100 dark:bg-zinc-800/50 rounded"></div>
-              </div>
-            </div>
+          <!-- Category Title (Mobile Only peek) -->
+          <div class="sm:hidden mb-6">
+            <h2 class="text-2xl font-black text-zinc-900 dark:text-white">{{ cat.name }}</h2>
           </div>
 
-          <div v-else-if="displayedNews.length > 0" class="space-y-10">
-            <div v-for="group in groupedNews" :key="group.date" class="space-y-6">
+          <!-- Content: List or Skeleton -->
+          <div v-if="getGroupedNews(cat.id).length > 0" class="space-y-10">
+            <div v-for="group in getGroupedNews(cat.id)" :key="group.date" class="space-y-6">
               <h2 class="text-sm font-semibold text-zinc-400 dark:text-zinc-500 uppercase whitespace-nowrap mb-6">📅 {{ group.date }}</h2>
               
               <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-3">
@@ -147,8 +132,8 @@
               </div>
             </div>
 
-            <!-- Load More Button -->
-            <div v-if="filteredNews.length > visibleCount" class="flex justify-center pt-10 pb-20">
+            <!-- Page Load More -->
+            <div v-if="(cat.id === 'all' ? news.length : news.filter(n => n.category === cat.id).length) > visibleCount" class="flex justify-center pt-10 pb-20">
               <button 
                 @click="visibleCount += 20"
                 class="px-12 py-4 bg-zinc-900 dark:bg-white text-white dark:text-black rounded-xl font-semibold text-base leading-normal tracking-tight active:scale-[0.98] transition-all"
@@ -158,18 +143,31 @@
             </div>
           </div>
 
-          <!-- Empty State / Loading State (Wavy Dots) -->
-          <div v-else class="flex flex-col items-center justify-center py-40 text-center">
-            <div class="flex items-center gap-2 mb-8">
-              <div class="w-3 h-3 bg-zinc-900 dark:bg-white rounded-full animate-wave" style="animation-delay: 0s"></div>
-              <div class="w-3 h-3 bg-zinc-900 dark:bg-white rounded-full animate-wave" style="animation-delay: 0.2s"></div>
-              <div class="w-3 h-3 bg-zinc-900 dark:bg-white rounded-full animate-wave" style="animation-delay: 0.4s"></div>
+          <!-- Page Skeleton (When loading or no data yet) -->
+          <div v-else class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-3">
+            <div v-for="i in 10" :key="i" class="bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-white/5 rounded-3xl p-5 animate-pulse flex flex-col h-[280px]">
+              <div class="flex justify-between items-center mb-4">
+                <div class="h-6 w-16 bg-zinc-200 dark:bg-zinc-800 rounded-md"></div>
+                <div class="h-3 w-20 bg-zinc-100 dark:bg-zinc-800/50 rounded"></div>
+              </div>
+              <div class="flex gap-4 mb-4 items-center h-12">
+                <div class="w-12 h-12 bg-zinc-200 dark:bg-zinc-800 rounded-lg flex-shrink-0"></div>
+                <div class="flex-grow space-y-2">
+                  <div class="h-4 w-full bg-zinc-200 dark:bg-zinc-800 rounded"></div>
+                  <div class="h-4 w-2/3 bg-zinc-200 dark:bg-zinc-800 rounded"></div>
+                </div>
+              </div>
+              <div class="space-y-2 mb-6">
+                <div class="h-3 w-full bg-zinc-100 dark:bg-zinc-800/50 rounded"></div>
+                <div class="h-3 w-4/5 bg-zinc-100 dark:bg-zinc-800/50 rounded"></div>
+              </div>
+              <div class="mt-auto pt-4 border-t border-zinc-100 dark:border-white/5 flex justify-between">
+                <div class="h-3 w-24 bg-zinc-100 dark:bg-zinc-800/50 rounded"></div>
+              </div>
             </div>
-            <h3 class="text-xl font-bold mb-2 text-zinc-900 dark:text-white">Searching for trends</h3>
-            <p class="text-zinc-500 dark:text-zinc-400 text-sm max-w-xs mx-auto">Please wait while we fetch the latest data.</p>
           </div>
         </div>
-      </Transition>
+      </div>
     </main>
 
     <SiteFooter />
@@ -210,6 +208,10 @@ const lastScrollY = ref(0)
 const tabsRef = ref<HTMLElement | null>(null)
 const scrollAnchor = ref<HTMLElement | null>(null)
 const transitionName = ref('slide-left')
+const activeIndex = computed(() => {
+  const idx = categories.findIndex(c => c.id === activeCategory.value)
+  return idx === -1 ? 0 : idx
+})
 
 const touchStartX = ref(0)
 const touchStartY = ref(0)
@@ -384,24 +386,18 @@ const RSS_SOURCES = [
   { name: '한겨레 스포츠', url: 'https://www.hani.co.kr/rss/sports/', category: 'sports' }
 ]
 
-const filteredNews = computed(() => {
-  if (activeCategory.value === 'all') return news.value
-  return news.value.filter(item => item.category === activeCategory.value)
-})
-
-const displayedNews = computed(() => {
-  return filteredNews.value.slice(0, visibleCount.value)
-})
-
-const groupedNews = computed(() => {
+const getGroupedNews = (catId: string) => {
+  const filtered = catId === 'all' 
+    ? news.value 
+    : news.value.filter(item => item.category === catId)
+  
+  const displayed = filtered.slice(0, visibleCount.value)
   const groups: { date: string, items: NewsItem[] }[] = []
   
-  displayedNews.value.forEach(item => {
+  displayed.forEach(item => {
     const pubDate = new Date(item.pubDate)
     if (isNaN(pubDate.getTime())) return
-    
     const dateStr = `${pubDate.getFullYear()}년 ${pubDate.getMonth() + 1}월 ${pubDate.getDate()}일`
-    
     let group = groups.find(g => g.date === dateStr)
     if (!group) {
       group = { date: dateStr, items: [] }
@@ -409,9 +405,8 @@ const groupedNews = computed(() => {
     }
     group.items.push(item)
   })
-  
   return groups
-})
+}
 
 watch(activeCategory, () => {
   visibleCount.value = 50
@@ -427,7 +422,7 @@ const decodeHtml = (html: string) => {
 
 const fetchNews = async () => {
   // 1. Initial Cache Load
-  const CURRENT_CACHE_VERSION = 'v4.0'
+  const CURRENT_CACHE_VERSION = 'v4.2'
   const CACHE_KEY = `uxm_trends_cache_${CURRENT_CACHE_VERSION}`
   
   if (news.value.length === 0) {
@@ -666,7 +661,7 @@ const fetchMissingThumbnails = async () => {
         const idx = news.value.findIndex(n => n.link === targetUrl)
         if (idx !== -1) {
           news.value[idx] = { ...news.value[idx], thumb: imgUrl }
-          localStorage.setItem(`uxm_trends_cache_v4.0`, JSON.stringify(news.value))
+          localStorage.setItem(`uxm_trends_cache_v4.2`, JSON.stringify(news.value))
         }
       }
     } catch (e) {}
@@ -720,35 +715,8 @@ onUnmounted(() => {
   animation: wave 1.2s ease-in-out infinite;
 }
 
-/* Dynamic Slide Transitions (Seamless Parallel) */
-.slide-left-enter-active,
-.slide-left-leave-active,
-.slide-right-enter-active,
-.slide-right-leave-active {
-  transition: transform 0.4s cubic-bezier(0.2, 0, 0.2, 1);
-  width: 100%;
-}
-
-.slide-left-leave-active,
-.slide-right-leave-active {
-  position: absolute;
-  top: 0;
-  left: 0;
-  pointer-events: none;
-}
-
-.slide-left-enter-from {
-  transform: translateX(100%);
-}
-.slide-left-leave-to {
-  transform: translateX(-100%);
-}
-
-.slide-right-enter-from {
-  transform: translateX(-100%);
-}
-.slide-right-leave-to {
-  transform: translateX(100%);
+.rail-container {
+  will-change: transform;
 }
 
 .transition-wrapper {
