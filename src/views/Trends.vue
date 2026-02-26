@@ -99,8 +99,18 @@
                   </div>
                   
                   <div class="flex gap-4 mb-4 items-center h-12">
-                    <div v-if="item.thumb" class="flex-shrink-0 w-12 h-12 rounded-lg overflow-hidden border border-zinc-100 dark:border-white/5 bg-zinc-50 dark:bg-zinc-800">
-                      <img :src="item.thumb" class="w-full h-full object-cover" alt="" loading="lazy" referrerpolicy="no-referrer" />
+                    <div 
+                      v-if="item.thumb && !item.thumbError" 
+                      class="flex-shrink-0 w-12 h-12 rounded-lg overflow-hidden border border-zinc-100 dark:border-white/5 bg-zinc-50 dark:bg-zinc-800 transition-opacity duration-300"
+                    >
+                      <img 
+                        :src="item.thumb" 
+                        class="w-full h-full object-cover" 
+                        alt="" 
+                        loading="lazy" 
+                        referrerpolicy="no-referrer"
+                        @error="handleImgError(item)"
+                      />
                     </div>
                     <h3 class="text-lg font-bold text-zinc-900 dark:text-white leading-tight line-clamp-2 title-element flex-grow">
                       {{ item.title }}
@@ -178,12 +188,17 @@ interface NewsItem {
   category: string
   provider: string
   thumb?: string
+  thumbError?: boolean
 }
 
 const isLoading = ref(true)
 const activeCategory = ref('all')
 const news = ref<NewsItem[]>([])
 const visibleCount = ref(50)
+
+const handleImgError = (item: NewsItem) => {
+  item.thumbError = true
+}
 
 const getCategoryName = (id: string) => {
   const cat = categories.find(c => c.id === id)
@@ -438,7 +453,7 @@ const decodeHtml = (html: string) => {
 
 const fetchNews = async () => {
   // 1. Initial Cache Load
-  const CURRENT_CACHE_VERSION = 'v10.3'
+  const CURRENT_CACHE_VERSION = 'v10.4'
   const CACHE_KEY = `uxm_trends_cache_${CURRENT_CACHE_VERSION}`
   
   if (news.value.length === 0) {
@@ -751,7 +766,7 @@ const fetchMissingThumbnails = async () => {
         const idx = news.value.findIndex(n => n.link === targetUrl)
         if (idx !== -1) {
           news.value[idx] = { ...news.value[idx], thumb: imgUrl }
-          localStorage.setItem(`uxm_trends_cache_v10.3`, JSON.stringify(news.value))
+          localStorage.setItem(`uxm_trends_cache_v10.4`, JSON.stringify(news.value))
         }
       }
     } catch (e) {}
