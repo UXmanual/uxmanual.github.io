@@ -429,7 +429,7 @@ const decodeHtml = (html: string) => {
 
 const fetchNews = async () => {
   // 1. Initial Cache Load
-  const CURRENT_CACHE_VERSION = 'v8.0'
+  const CURRENT_CACHE_VERSION = 'v8.1'
   const CACHE_KEY = `uxm_trends_cache_${CURRENT_CACHE_VERSION}`
   
   if (news.value.length === 0) {
@@ -689,7 +689,7 @@ const fetchMissingThumbnails = async () => {
         const idx = news.value.findIndex(n => n.link === targetUrl)
         if (idx !== -1) {
           news.value[idx] = { ...news.value[idx], thumb: imgUrl }
-          localStorage.setItem(`uxm_trends_cache_v8.0`, JSON.stringify(news.value))
+          localStorage.setItem(`uxm_trends_cache_v8.1`, JSON.stringify(news.value))
         }
       }
     } catch (e) {}

@@ -24,11 +24,17 @@ const router = createRouter({
     history: createWebHistory(),
     routes,
     scrollBehavior(to, from, savedPosition) {
-        if (savedPosition) {
-            return savedPosition
-        } else {
-            return { top: 0, left: 0 }
-        }
+        return new Promise((resolve) => {
+            // Delay the scroll to top until the 'fade-out' transition in App.vue completes (300ms)
+            // This prevents the user from seeing the old page content flying up before switching.
+            setTimeout(() => {
+                if (savedPosition) {
+                    resolve(savedPosition)
+                } else {
+                    resolve({ top: 0, left: 0 })
+                }
+            }, 300)
+        })
     },
 })
 
