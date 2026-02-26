@@ -79,18 +79,14 @@
         }"
       >
         <div 
-          v-for="cat in categories" 
+          v-for="(cat, index) in categories" 
           :key="cat.id" 
           class="w-full flex-shrink-0 px-6 md:px-10 min-h-[400px]"
+          :style="{ visibility: Math.abs(index - activeIndex) <= 1 ? 'visible' : 'hidden' }"
         >
-          <!-- Category Title (Mobile Only peek) -->
-          <div class="sm:hidden mb-6">
-            <h2 class="text-2xl font-black text-zinc-900 dark:text-white">{{ cat.name }}</h2>
-          </div>
-
           <!-- Content: List or Skeleton -->
-          <div v-if="getGroupedNews(cat.id).length > 0" class="space-y-10">
-            <div v-for="group in getGroupedNews(cat.id)" :key="group.date" class="space-y-6">
+          <div v-if="allGroupedNews[cat.id]?.length > 0" class="space-y-10">
+            <div v-for="group in allGroupedNews[cat.id]" :key="group.date" class="space-y-6">
               <h2 class="text-sm font-semibold text-zinc-400 dark:text-zinc-500 uppercase whitespace-nowrap mb-6">📅 {{ group.date }}</h2>
               
               <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-3">
@@ -133,7 +129,7 @@
             </div>
 
             <!-- Page Load More -->
-            <div v-if="(cat.id === 'all' ? news.length : news.filter(n => n.category === cat.id).length) > visibleCount" class="flex justify-center pt-10 pb-20">
+            <div v-if="(cat.id === 'all' ? news.length : news.filter(n => n.category === cat.id).length) > visibleCount" class="flex justify-center pt-10 pb-10">
               <button 
                 @click="visibleCount += 20"
                 class="px-12 py-4 bg-zinc-900 dark:bg-white text-white dark:text-black rounded-xl font-semibold text-base leading-normal tracking-tight active:scale-[0.98] transition-all"
@@ -386,27 +382,31 @@ const RSS_SOURCES = [
   { name: '한겨레 스포츠', url: 'https://www.hani.co.kr/rss/sports/', category: 'sports' }
 ]
 
-const getGroupedNews = (catId: string) => {
-  const filtered = catId === 'all' 
-    ? news.value 
-    : news.value.filter(item => item.category === catId)
-  
-  const displayed = filtered.slice(0, visibleCount.value)
-  const groups: { date: string, items: NewsItem[] }[] = []
-  
-  displayed.forEach(item => {
-    const pubDate = new Date(item.pubDate)
-    if (isNaN(pubDate.getTime())) return
-    const dateStr = `${pubDate.getFullYear()}년 ${pubDate.getMonth() + 1}월 ${pubDate.getDate()}일`
-    let group = groups.find(g => g.date === dateStr)
-    if (!group) {
-      group = { date: dateStr, items: [] }
-      groups.push(group)
-    }
-    group.items.push(item)
+const allGroupedNews = computed(() => {
+  const result: Record<string, { date: string, items: NewsItem[] }[]> = {}
+  categories.forEach(cat => {
+    const filtered = cat.id === 'all' 
+      ? news.value 
+      : news.value.filter(item => item.category === cat.id)
+    
+    const displayed = filtered.slice(0, visibleCount.value)
+    const groups: { date: string, items: NewsItem[] }[] = []
+    
+    displayed.forEach(item => {
+      const pubDate = new Date(item.pubDate)
+      if (isNaN(pubDate.getTime())) return
+      const dateStr = `${pubDate.getFullYear()}년 ${pubDate.getMonth() + 1}월 ${pubDate.getDate()}일`
+      let group = groups.find(g => g.date === dateStr)
+      if (!group) {
+        group = { date: dateStr, items: [] }
+        groups.push(group)
+      }
+      group.items.push(item)
+    })
+    result[cat.id] = groups
   })
-  return groups
-}
+  return result
+})
 
 watch(activeCategory, () => {
   visibleCount.value = 50
@@ -422,7 +422,7 @@ const decodeHtml = (html: string) => {
 
 const fetchNews = async () => {
   // 1. Initial Cache Load
-  const CURRENT_CACHE_VERSION = 'v4.2'
+  const CURRENT_CACHE_VERSION = 'v4.3'
   const CACHE_KEY = `uxm_trends_cache_${CURRENT_CACHE_VERSION}`
   
   if (news.value.length === 0) {
@@ -661,7 +661,7 @@ const fetchMissingThumbnails = async () => {
         const idx = news.value.findIndex(n => n.link === targetUrl)
         if (idx !== -1) {
           news.value[idx] = { ...news.value[idx], thumb: imgUrl }
-          localStorage.setItem(`uxm_trends_cache_v4.2`, JSON.stringify(news.value))
+          localStorage.setItem(`uxm_trends_cache_v4.3`, JSON.stringify(news.value))
         }
       }
     } catch (e) {}
