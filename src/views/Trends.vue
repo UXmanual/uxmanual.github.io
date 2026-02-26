@@ -396,7 +396,7 @@ const decodeHtml = (html: string) => {
 
 const fetchNews = async () => {
   // 1. Initial Cache Load
-  const CURRENT_CACHE_VERSION = 'v3.6'
+  const CURRENT_CACHE_VERSION = 'v3.7'
   const CACHE_KEY = `uxm_trends_cache_${CURRENT_CACHE_VERSION}`
   
   if (news.value.length === 0) {
@@ -635,7 +635,7 @@ const fetchMissingThumbnails = async () => {
         const idx = news.value.findIndex(n => n.link === targetUrl)
         if (idx !== -1) {
           news.value[idx] = { ...news.value[idx], thumb: imgUrl }
-          localStorage.setItem(`uxm_trends_cache_v3.6`, JSON.stringify(news.value))
+          localStorage.setItem(`uxm_trends_cache_v3.7`, JSON.stringify(news.value))
         }
       }
     } catch (e) {}
@@ -698,21 +698,17 @@ onUnmounted(() => {
 }
 
 .slide-left-enter-from {
-  transform: translateX(30px);
-  opacity: 0;
+  transform: translateX(60px);
 }
 .slide-left-leave-to {
-  transform: translateX(-30px);
-  opacity: 0;
+  transform: translateX(-60px);
 }
 
 .slide-right-enter-from {
-  transform: translateX(-30px);
-  opacity: 0;
+  transform: translateX(-60px);
 }
 .slide-right-leave-to {
-  transform: translateX(30px);
-  opacity: 0;
+  transform: translateX(60px);
 }
 
 .category-tab {
