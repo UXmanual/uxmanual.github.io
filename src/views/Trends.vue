@@ -394,14 +394,10 @@ const RSS_SOURCES = [
   { name: '올리브영 테크', url: 'https://tech.oliveyoung.co.kr/feed/', category: 'blog' },
   { name: '당근 테크', url: 'https://medium.com/daangn/feed', category: 'blog' },
 
-  // YouTube (Hot & Trending Issue Channels)
-  { name: 'SBS 뉴스', url: 'https://www.youtube.com/feeds/videos.xml?channel_id=UCfUuK_1H_7UatYv8Eks5GxA', category: 'youtube' },
-  { name: 'MBC 뉴스', url: 'https://www.youtube.com/feeds/videos.xml?channel_id=UC91n67V2zYtLz37V-26nEaA', category: 'youtube' },
-  { name: 'YTN 이슈', url: 'https://www.youtube.com/feeds/videos.xml?channel_id=UC_g_P6OEx3X0Y9fM_S_1BZw', category: 'youtube' },
-  { name: '너덜트', url: 'https://www.youtube.com/feeds/videos.xml?channel_id=UC-f9W_l7qR5h3YxO_tD31A', category: 'youtube' },
-  { name: '숏박스', url: 'https://www.youtube.com/feeds/videos.xml?channel_id=UC_aUf9lI-oVbJ2Kk2Q0Kj4Q', category: 'youtube' },
-  { name: '디스패치', url: 'https://www.youtube.com/feeds/videos.xml?channel_id=UCk2w-nJm9y-iK_wI5_bL5wQ', category: 'youtube' },
-  { name: '워크맨', url: 'https://www.youtube.com/feeds/videos.xml?channel_id=UC_2uP_K9fO6oY8yWzK_6Sow', category: 'youtube' }
+  // YouTube (Video-Direct Sourcing via Google News Search)
+  { name: '유튜브 인기 영상', url: 'https://news.google.com/rss/search?q=site:youtube.com+trending+korea+when:24h&hl=ko&gl=KR&ceid=KR:ko', category: 'youtube' },
+  { name: '유튜브 화제 영상', url: 'https://news.google.com/rss/search?q=site:youtube.com+hot+issue+korea+when:24h&hl=ko&gl=KR&ceid=KR:ko', category: 'youtube' },
+  { name: '유튜브 대세 소식', url: 'https://news.google.com/rss/search?q=site:youtube.com+대세+영상+when:24h&hl=ko&gl=KR&ceid=KR:ko', category: 'youtube' }
 ]
 
 const filteredNews = computed(() => {
@@ -441,7 +437,7 @@ const decodeHtml = (html: string) => {
 
 const fetchNews = async () => {
   // 1. Initial Cache Load
-  const CURRENT_CACHE_VERSION = 'v8.6'
+  const CURRENT_CACHE_VERSION = 'v8.7'
   const CACHE_KEY = `uxm_trends_cache_${CURRENT_CACHE_VERSION}`
   
   if (news.value.length === 0) {
@@ -453,36 +449,18 @@ const fetchNews = async () => {
         }
       })
       const cached = localStorage.getItem(CACHE_KEY)
-      if (cached) {
-        const parsed = JSON.parse(cached)
-        if (Array.isArray(parsed)) {
-          // Filter out legacy or broken items and ensure YouTube direct links are preserved
-          news.value = parsed.sort((a: NewsItem, b: NewsItem) => new Date(b.pubDate).getTime() - new Date(a.pubDate).getTime())
-        }
-      }
-
-      // 2. Inject Direct YouTube Connect Structure (Ensures tab is never empty)
+      // 2. Inject Direct YouTube Video Structure (Ensures tab is never empty and links to VIDEOS)
       if (activeCategory.value === 'youtube' || activeCategory.value === 'all') {
         const youtubeHotLinks: NewsItem[] = [
           {
-            title: "🔥 YouTube 인기 급상승 차트 (대한민국)",
+            title: "🔥 YouTube 대한민국 실시간 인기 영상 보러가기",
             link: "https://www.youtube.com/feed/trending?gl=KR",
             pubDate: new Date().toISOString(),
-            description: "지금 대한민국에서 가장 화제가 되고 있는 인기 급상승 동영상을 유튜브에서 직접 확인하세요.",
-            source: "YouTube Official",
+            description: "지금 대한민국에서 가장 화제가 되고 있는 인기 급상승 동영상을 유튜브 앱/웹에서 직접 확인하세요.",
+            source: "YouTube Trending",
             category: "youtube",
             provider: "YouTube",
             thumb: "https://www.gstatic.com/youtube/img/branding/youtubelogo/svg/youtubelogo.svg"
-          },
-          {
-            title: "📢 슈카월드 이슈 브리핑",
-            link: "https://www.youtube.com/@syukaworld/videos",
-            pubDate: new Date().toISOString(),
-            description: "경제, 시사, 사회 전반의 가장 뜨거운 이슈를 슈카월드에서 만나보세요.",
-            source: "YouTube Hot",
-            category: "youtube",
-            provider: "슈카월드",
-            thumb: "https://i.ytimg.com/vi/yt-id-placeholder/mqdefault.jpg"
           }
         ]
         
