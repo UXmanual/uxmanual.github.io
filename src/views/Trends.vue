@@ -375,11 +375,13 @@ const RSS_SOURCES = [
   { name: '인벤 뉴스', url: 'https://www.inven.co.kr/webzine/news/rss.php', category: 'game' },
   { name: '매경 게임', url: 'https://www.mk.co.kr/rss/50700001/', category: 'game' },
 
-  // Sports
+  // Sports (Optimized High-Performance Broadcasting Sources)
+  { name: 'SBS 스포츠', url: 'https://news.sbs.co.kr/news/rss.do?section=09', category: 'sports' },
+  { name: 'KBS 스포츠', url: 'https://news.kbs.co.kr/rss/news_05.xml', category: 'sports' },
+  { name: 'MBC 스포츠', url: 'https://imnews.imbc.com/rss/news/news_04.xml', category: 'sports' },
   { name: '연합 스포츠', url: 'https://www.yna.co.kr/rss/sports.xml', category: 'sports' },
   { name: '매경 스포츠', url: 'https://www.mk.co.kr/rss/71000001/', category: 'sports' },
-  { name: '스포츠동아', url: 'https://rss.donga.com/sports.xml', category: 'sports' },
-  { name: '한겨레 스포츠', url: 'https://www.hani.co.kr/rss/sports/', category: 'sports' },
+  { name: '한국일보 스포츠', url: 'https://www.hankookilbo.com/RSS/04', category: 'sports' },
 
   // Blog (Tech Blogs - Korean Domestic Focused)
   { name: '토스 테크', url: 'https://toss.tech/rss.xml', category: 'blog' },
@@ -429,7 +431,7 @@ const decodeHtml = (html: string) => {
 
 const fetchNews = async () => {
   // 1. Initial Cache Load
-  const CURRENT_CACHE_VERSION = 'v8.1'
+  const CURRENT_CACHE_VERSION = 'v8.2'
   const CACHE_KEY = `uxm_trends_cache_${CURRENT_CACHE_VERSION}`
   
   if (news.value.length === 0) {
@@ -689,7 +691,7 @@ const fetchMissingThumbnails = async () => {
         const idx = news.value.findIndex(n => n.link === targetUrl)
         if (idx !== -1) {
           news.value[idx] = { ...news.value[idx], thumb: imgUrl }
-          localStorage.setItem(`uxm_trends_cache_v8.1`, JSON.stringify(news.value))
+          localStorage.setItem(`uxm_trends_cache_v8.2`, JSON.stringify(news.value))
         }
       }
     } catch (e) {}
