@@ -9,7 +9,7 @@
         기사 본문에 대한 저작권은 해당 언론사에 있습니다. 각 기사는 클릭 시 해당 언론사의 원문 페이지로 연결됩니다.
       </p>
       <p class="text-[10px] font-bold text-zinc-300 dark:text-zinc-700 uppercase mt-2">
-        Version 8.3
+        Version 8.4
       </p>
     </div>
   </footer>
