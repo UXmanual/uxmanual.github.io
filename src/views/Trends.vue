@@ -66,10 +66,15 @@
     <main 
       class="px-6 md:px-10 pb-10 max-w-[1800px] mx-auto overflow-hidden touch-pan-y relative"
       @touchstart="handleTouchStart"
+      @touchmove="handleTouchMove"
       @touchend="handleTouchEnd"
     >
       <Transition :name="transitionName">
-        <div :key="activeCategory" class="content-wrapper transition-wrapper">
+        <div 
+          :key="activeCategory" 
+          class="content-wrapper transition-wrapper"
+          :style="isDragging ? { transform: `translateX(${dragOffset}px)`, transition: 'none' } : {}"
+        >
           <div v-if="isLoading && news.length === 0" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-3">
             <div v-for="i in 10" :key="i" class="bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-white/5 rounded-3xl p-5 animate-pulse flex flex-col h-[280px]">
               <!-- Header skeleton -->
@@ -208,20 +213,45 @@ const transitionName = ref('slide-left')
 
 const touchStartX = ref(0)
 const touchStartY = ref(0)
+const dragOffset = ref(0)
+const isDragging = ref(false)
 
 const handleTouchStart = (e: TouchEvent) => {
   touchStartX.value = e.touches[0].clientX
   touchStartY.value = e.touches[0].clientY
+  isDragging.value = false
+  dragOffset.value = 0
+}
+
+const handleTouchMove = (e: TouchEvent) => {
+  const currentX = e.touches[0].clientX
+  const currentY = e.touches[0].clientY
+  const deltaX = currentX - touchStartX.value
+  const deltaY = currentY - touchStartY.value
+
+  // Check if horizontal intent is clear (to avoid interfering with scroll)
+  if (!isDragging.value && Math.abs(deltaX) > 10 && Math.abs(deltaX) > Math.abs(deltaY) * 1.5) {
+    isDragging.value = true
+  }
+
+  if (isDragging.value) {
+    // Prevent default scrolling when dragging horizontally
+    if (e.cancelable) e.preventDefault()
+    dragOffset.value = deltaX
+  }
 }
 
 const handleTouchEnd = (e: TouchEvent) => {
-  const deltaX = e.changedTouches[0].clientX - touchStartX.value
-  const deltaY = e.changedTouches[0].clientY - touchStartY.value
+  const finalDeltaX = dragOffset.value
+  const isHorizontalSwipe = isDragging.value
   
-  // Minimal distance for swipe (60px) and must be horizontal
-  if (Math.abs(deltaX) > 60 && Math.abs(deltaX) > Math.abs(deltaY) * 1.5) {
+  isDragging.value = false
+  dragOffset.value = 0
+
+  // Minimal distance for swipe (60px)
+  if (isHorizontalSwipe && Math.abs(finalDeltaX) > 60) {
     const currentIndex = categories.findIndex(c => c.id === activeCategory.value)
-    if (deltaX > 0) {
+    if (finalDeltaX > 0) {
       // Swipe Right -> Go to Previous Tab
       if (currentIndex > 0) {
         changeCategory(categories[currentIndex - 1].id)
@@ -397,7 +427,7 @@ const decodeHtml = (html: string) => {
 
 const fetchNews = async () => {
   // 1. Initial Cache Load
-  const CURRENT_CACHE_VERSION = 'v3.9'
+  const CURRENT_CACHE_VERSION = 'v4.0'
   const CACHE_KEY = `uxm_trends_cache_${CURRENT_CACHE_VERSION}`
   
   if (news.value.length === 0) {
@@ -636,7 +666,7 @@ const fetchMissingThumbnails = async () => {
         const idx = news.value.findIndex(n => n.link === targetUrl)
         if (idx !== -1) {
           news.value[idx] = { ...news.value[idx], thumb: imgUrl }
-          localStorage.setItem(`uxm_trends_cache_v3.9`, JSON.stringify(news.value))
+          localStorage.setItem(`uxm_trends_cache_v4.0`, JSON.stringify(news.value))
         }
       }
     } catch (e) {}
