@@ -13,7 +13,6 @@
       padding-top="pt-16"
       margin-bottom="mb-16"
       inner-max-width="max-w-[680px] mx-auto"
-      :enable-gradient="true"
     />
 
     <main class="px-6 md:px-10 max-w-[1800px] mx-auto pb-20">
