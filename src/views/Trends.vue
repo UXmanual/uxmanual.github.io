@@ -441,7 +441,7 @@ const decodeHtml = (html: string) => {
 
 const fetchNews = async () => {
   // 1. Initial Cache Load
-  const CURRENT_CACHE_VERSION = 'v8.4'
+  const CURRENT_CACHE_VERSION = 'v8.5'
   const CACHE_KEY = `uxm_trends_cache_${CURRENT_CACHE_VERSION}`
   
   if (news.value.length === 0) {
@@ -532,20 +532,27 @@ const fetchNews = async () => {
           
           const description = descMatch ? descMatch[1].trim() : ''
           const pubDate = dateMatch ? dateMatch[1].trim() : ''
-
-          let thumb = ''
-          const imgMatch = description.match(/<img[^>]+src=["']([^"'>]+)["']/i) || description.match(/<img[^>]+src=([^ >]+)/i)
-          if (imgMatch) thumb = imgMatch[1].replace(/['"]/g, '').trim()
           
-          if (!thumb) {
-            const mediaMatch = itemRaw.match(/<(?:media:content|enclosure|thumbnail|image|media:thumbnail|img)[^>]+(?:url|href|src)=["']([^"'>]+)["']/i)
-            if (mediaMatch) thumb = mediaMatch[1]
+          // YouTube Specific: Use yt:videoId for reliable thumbnails
+          const ytIdMatch = itemRaw.match(/<yt:videoId>(?:<!\[CDATA\[)?([\s\S]*?)(?:\]\]>)?<\/yt:videoId>/i)
+          let thumb = ''
+          
+          if (ytIdMatch) {
+            thumb = `https://i.ytimg.com/vi/${ytIdMatch[1].trim()}/mqdefault.jpg`
+          } else {
+            const imgMatch = description.match(/<img[^>]+src=["']([^"'>]+)["']/i) || description.match(/<img[^>]+src=([^ >]+)/i)
+            if (imgMatch) thumb = imgMatch[1].replace(/['"]/g, '').trim()
+            
+            if (!thumb) {
+              const mediaMatch = itemRaw.match(/<(?:media:content|enclosure|thumbnail|image|media:thumbnail|img)[^>]+(?:url|href|src)=["']([^"'>]+)["']/i)
+              if (mediaMatch) thumb = mediaMatch[1]
+            }
           }
 
           const parts = title.split(/ - | \| | : /)
           const newItem = {
             title: parts[0].trim(), link, pubDate,
-            description: decodeHtml(description.replace(/<[^>]*>?/gm, ' ').replace(/\s+/g, ' ').trim()) || '기사 본문을 확인하세요.',
+            description: decodeHtml(description.replace(/<[^>]*>?/gm, ' ').replace(/\s+/g, ' ').trim()) || (source.category === 'youtube' ? '유튜브에서 관련 영상을 시청하세요.' : '기사 본문을 확인하세요.'),
             source: source.name, category: source.category, provider: parts.length > 1 ? parts[parts.length - 1].trim() : '',
             thumb: thumb.startsWith('//') ? 'https:' + thumb : thumb
           }
@@ -631,8 +638,10 @@ const fetchNews = async () => {
     // 2. Fire background sources: No-wait background update
     otherSources.forEach(source => fetchSource(source))
     
-    // final safety: ensure loading ends eventually if something hangs
-    setTimeout(() => { isLoading.value = false }, 15000)
+    // final safety: ensure loading ends eventually (even for slow YouTube feeds)
+    setTimeout(() => { 
+      if (isLoading.value) isLoading.value = false 
+    }, 12000)
 
     fetchMissingThumbnails()
   } catch (err) {
@@ -706,7 +715,7 @@ const fetchMissingThumbnails = async () => {
         const idx = news.value.findIndex(n => n.link === targetUrl)
         if (idx !== -1) {
           news.value[idx] = { ...news.value[idx], thumb: imgUrl }
-          localStorage.setItem(`uxm_trends_cache_v8.4`, JSON.stringify(news.value))
+          localStorage.setItem(`uxm_trends_cache_v8.5`, JSON.stringify(news.value))
         }
       }
     } catch (e) {}
