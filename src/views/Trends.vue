@@ -442,7 +442,7 @@ const decodeHtml = (html: string) => {
 
 const fetchNews = async () => {
   // 1. Initial Cache Load
-  const CURRENT_CACHE_VERSION = 'v9.3'
+  const CURRENT_CACHE_VERSION = 'v9.4'
   const CACHE_KEY = `uxm_trends_cache_${CURRENT_CACHE_VERSION}`
   
   if (news.value.length === 0) {
@@ -520,12 +520,12 @@ const fetchNews = async () => {
                 while (b64.length % 4 !== 0) b64 += '='
                 const decoded = atob(b64)
                 
-                // Enhanced Detection + ID Extraction
-                const ytIdMatch = decoded.match(/https?:\/\/(?:www\.)?youtube\.com\/watch\?v=([A-Za-z0-9_-]+)/i) ||
-                                  decoded.match(/https?:\/\/youtu\.be\/([A-Za-z0-9_-]+)/i)
+                // Robust ID Extraction: Support for watch?v=, v/, embed/, youtu.be, and attribution_links
+                const idRegex = /(?:v=|v\/|embed\/|youtu\.be\/|watch\?v%3D|watch\?v=)([A-Za-z0-9_-]{11})/i
+                const ytMatch = decoded.match(idRegex)
                 
-                if (ytIdMatch) {
-                  ytId = ytIdMatch[1]
+                if (ytMatch) {
+                  ytId = ytMatch[1]
                   link = `https://www.youtube.com/watch?v=${ytId}`
                 } else {
                   const urlMatch = decoded.match(/https?:\/\/[^\s\u0000-\u001F"<>\\^`{|}]+/g)
@@ -545,21 +545,27 @@ const fetchNews = async () => {
           const description = descMatch ? descMatch[1].trim() : ''
           const pubDate = dateMatch ? dateMatch[1].trim() : ''
           
-          // Improved Thumbnail Logic: Use ytId if available, then parsed tags
+          // Improved Thumbnail Logic: Deterministic HQ Thumbnails for YouTube
           let thumb = ''
           if (ytId) {
-            thumb = `https://i.ytimg.com/vi/${ytId}/mqdefault.jpg`
+            thumb = `https://i.ytimg.com/vi/${ytId}/hqdefault.jpg`
           } else {
-            const ytIdInRaw = itemRaw.match(/<yt:videoId>(?:<!\[CDATA\[)?([\s\S]*?)(?:\]\]>)?<\/yt:videoId>/i)
-            if (ytIdInRaw) {
-              thumb = `https://i.ytimg.com/vi/${ytIdInRaw[1].trim()}/mqdefault.jpg`
+            // Check if link itself is a direct YouTube link that escaped decoding
+            const directIdMatch = link.match(/(?:v=|v\/|embed\/|youtu\.be\/)([A-Za-z0-9_-]{11})/i)
+            if (directIdMatch) {
+              thumb = `https://i.ytimg.com/vi/${directIdMatch[1]}/hqdefault.jpg`
             } else {
-              const imgMatch = description.match(/<img[^>]+src=["']([^"'>]+)["']/i) || description.match(/<img[^>]+src=([^ >]+)/i)
-              if (imgMatch) thumb = imgMatch[1].replace(/['"]/g, '').trim()
-              
-              if (!thumb) {
-                const mediaMatch = itemRaw.match(/<(?:media:content|enclosure|thumbnail|image|media:thumbnail|img)[^>]+(?:url|href|src)=["']([^"'>]+)["']/i)
-                if (mediaMatch) thumb = mediaMatch[1]
+              const ytIdInRaw = itemRaw.match(/<yt:videoId>(?:<!\[CDATA\[)?([\s\S]*?)(?:\]\]>)?<\/yt:videoId>/i)
+              if (ytIdInRaw) {
+                thumb = `https://i.ytimg.com/vi/${ytIdInRaw[1].trim()}/hqdefault.jpg`
+              } else {
+                const imgMatch = description.match(/<img[^>]+src=["']([^"'>]+)["']/i) || description.match(/<img[^>]+src=([^ >]+)/i)
+                if (imgMatch) thumb = imgMatch[1].replace(/['"]/g, '').trim()
+                
+                if (!thumb) {
+                  const mediaMatch = itemRaw.match(/<(?:media:content|enclosure|thumbnail|image|media:thumbnail|img)[^>]+(?:url|href|src)=["']([^"'>]+)["']/i)
+                  if (mediaMatch) thumb = mediaMatch[1]
+                }
               }
             }
           }
@@ -730,7 +736,7 @@ const fetchMissingThumbnails = async () => {
         const idx = news.value.findIndex(n => n.link === targetUrl)
         if (idx !== -1) {
           news.value[idx] = { ...news.value[idx], thumb: imgUrl }
-          localStorage.setItem(`uxm_trends_cache_v9.3`, JSON.stringify(news.value))
+          localStorage.setItem(`uxm_trends_cache_v9.4`, JSON.stringify(news.value))
         }
       }
     } catch (e) {}
