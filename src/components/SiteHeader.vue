@@ -41,15 +41,17 @@ withDefaults(defineProps<Props>(), {
 .gradient-text {
   background: linear-gradient(
     120deg, 
-    #00AF50 25%, 
-    #86efac 50%, 
-    #00AF50 75%
+    #00AF50, 
+    #34d399, 
+    #86efac, 
+    #10b981, 
+    #00AF50
   );
   background-size: 200% auto;
   -webkit-background-clip: text;
   background-clip: text;
   -webkit-text-fill-color: transparent;
-  animation: shimmer 5s ease-in-out infinite;
+  animation: shimmer 10s ease-in-out infinite;
 }
 
 @keyframes shimmer {
