@@ -394,15 +394,15 @@ const RSS_SOURCES = [
   { name: '올리브영 테크', url: 'https://tech.oliveyoung.co.kr/feed/', category: 'blog' },
   { name: '당근 테크', url: 'https://medium.com/daangn/feed', category: 'blog' },
 
-  // YouTube (Direct Channel Sourcing: Fast, No Redirects)
+  // YouTube (Direct Channel Sourcing with Google Search Fallback)
   { name: 'SBS 뉴스', url: 'https://www.youtube.com/feeds/videos.xml?channel_id=UCfUuK_1H_7UatYv8Eks5GxA', category: 'youtube' },
   { name: 'MBC 뉴스', url: 'https://www.youtube.com/feeds/videos.xml?channel_id=UC91n67V2zYtLz37V-26nEaA', category: 'youtube' },
-  { name: 'KBS 뉴스', url: 'https://www.youtube.com/feeds/videos.xml?channel_id=UC9bDo-9u_0mYLR6UatU7oFQ', category: 'youtube' },
-  { name: 'YTN 뉴스', url: 'https://www.youtube.com/feeds/videos.xml?channel_id=UC_g_P6OEx3X0Y9fM_S_1BZw', category: 'youtube' },
   { name: 'JTBC 뉴스', url: 'https://www.youtube.com/feeds/videos.xml?channel_id=UCul2neM_C6o2K_56Z_mHhXg', category: 'youtube' },
+  { name: 'YTN 뉴스', url: 'https://www.youtube.com/feeds/videos.xml?channel_id=UC_g_P6OEx3X0Y9fM_S_1BZw', category: 'youtube' },
   { name: 'MBN 뉴스', url: 'https://www.youtube.com/feeds/videos.xml?channel_id=UCZ0U6Csm_Uf85shp58N62Sg', category: 'youtube' },
-  { name: '디스패치', url: 'https://www.youtube.com/feeds/videos.xml?channel_id=UCndJX3OTviLelmjkntPmWHQ', category: 'youtube' },
-  { name: '슈카월드', url: 'https://www.youtube.com/feeds/videos.xml?channel_id=UCt-8sJm5sZ0X0IeF8f4M_2w', category: 'youtube' }
+  { name: '슈카월드', url: 'https://www.youtube.com/feeds/videos.xml?channel_id=UCt-8sJm5sZ0X0IeF8f4M_2w', category: 'youtube' },
+  { name: '오늘의 이슈', url: 'https://news.google.com/rss/search?q=site:youtube.com+이슈+when:24h&hl=ko&gl=KR&ceid=KR:ko', category: 'youtube' },
+  { name: '실시간 영상', url: 'https://news.google.com/rss/search?q=site:youtube.com+trending+korea&hl=ko&gl=KR&ceid=KR:ko', category: 'youtube' }
 ]
 
 const filteredNews = computed(() => {
@@ -442,7 +442,7 @@ const decodeHtml = (html: string) => {
 
 const fetchNews = async () => {
   // 1. Initial Cache Load
-  const CURRENT_CACHE_VERSION = 'v9.2'
+  const CURRENT_CACHE_VERSION = 'v9.3'
   const CACHE_KEY = `uxm_trends_cache_${CURRENT_CACHE_VERSION}`
   
   if (news.value.length === 0) {
@@ -643,8 +643,8 @@ const fetchNews = async () => {
     prioritySources.forEach(source => {
       fetchSource(source).finally(() => {
         completedCount++
-        // End loading if we have data OR if all priority sources have at least attempted
-        if (news.value.length > 0 || completedCount === prioritySources.length) {
+        // Hyper-Responsive Loading Exit
+        if (news.value.length > 5 || completedCount === prioritySources.length) {
           isLoading.value = false
         }
       })
@@ -653,10 +653,10 @@ const fetchNews = async () => {
     // 2. Fire background sources: No-wait background update
     otherSources.forEach(source => fetchSource(source))
     
-    // final safety: ensure loading ends eventually (even for slow YouTube feeds)
+    // final safety: ensure loading ends eventually (Critical for YouTube tab)
     setTimeout(() => { 
       if (isLoading.value) isLoading.value = false 
-    }, 12000)
+    }, 8000)
 
     fetchMissingThumbnails()
   } catch (err) {
@@ -730,7 +730,7 @@ const fetchMissingThumbnails = async () => {
         const idx = news.value.findIndex(n => n.link === targetUrl)
         if (idx !== -1) {
           news.value[idx] = { ...news.value[idx], thumb: imgUrl }
-          localStorage.setItem(`uxm_trends_cache_v9.2`, JSON.stringify(news.value))
+          localStorage.setItem(`uxm_trends_cache_v9.3`, JSON.stringify(news.value))
         }
       }
     } catch (e) {}
