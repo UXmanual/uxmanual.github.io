@@ -438,7 +438,7 @@ const decodeHtml = (html: string) => {
 
 const fetchNews = async () => {
   // 1. Initial Cache Load
-  const CURRENT_CACHE_VERSION = 'v10.2'
+  const CURRENT_CACHE_VERSION = 'v10.3'
   const CACHE_KEY = `uxm_trends_cache_${CURRENT_CACHE_VERSION}`
   
   if (news.value.length === 0) {
@@ -556,13 +556,15 @@ const fetchNews = async () => {
             thumb = `https://i.ytimg.com/vi/${ytId}/hqdefault.jpg`
           } else {
             // Check if link itself is a direct YouTube link that escaped decoding
-            const directIdMatch = link.match(/(?:v=|v\/|embed\/|youtu\.be\/)([A-Za-z0-9_-]{11})/i)
+            const directIdMatch = link.match(/(?:v=|v\/|embed\/|youtu\.be\/|watch\?v%3D|watch\?v=)([A-Za-z0-9_-]{11})/i)
             if (directIdMatch) {
-              thumb = `https://i.ytimg.com/vi/${directIdMatch[1]}/hqdefault.jpg`
+              ytId = directIdMatch[1]
+              thumb = `https://i.ytimg.com/vi/${ytId}/hqdefault.jpg`
             } else {
               const ytIdInRaw = itemRaw.match(/<yt:videoId>(?:<!\[CDATA\[)?([\s\S]*?)(?:\]\]>)?<\/yt:videoId>/i)
               if (ytIdInRaw) {
-                thumb = `https://i.ytimg.com/vi/${ytIdInRaw[1].trim()}/hqdefault.jpg`
+                ytId = ytIdInRaw[1].trim()
+                thumb = `https://i.ytimg.com/vi/${ytId}/hqdefault.jpg`
               } else {
                 const imgMatch = description.match(/<img[^>]+src=["']([^"'>]+)["']/i) || description.match(/<img[^>]+src=([^ >]+)/i)
                 if (imgMatch) thumb = imgMatch[1].replace(/['"]/g, '').trim()
@@ -572,6 +574,14 @@ const fetchNews = async () => {
                   if (mediaMatch) thumb = mediaMatch[1]
                 }
               }
+            }
+          }
+
+          // FINAL PROTECTION: If it's YouTube category, but still has a Google logo or no thumb, force generate via ID extract
+          if (source.category === 'youtube' && (thumb.includes('google') || !thumb)) {
+            const finalIdCheck = link.match(/(?:v=|v\/|embed\/|youtu\.be\/|watch\?v%3D|watch\?v=)([A-Za-z0-9_-]{11})/i)
+            if (finalIdCheck) {
+              thumb = `https://i.ytimg.com/vi/${finalIdCheck[1]}/hqdefault.jpg`
             }
           }
 
@@ -741,7 +751,7 @@ const fetchMissingThumbnails = async () => {
         const idx = news.value.findIndex(n => n.link === targetUrl)
         if (idx !== -1) {
           news.value[idx] = { ...news.value[idx], thumb: imgUrl }
-          localStorage.setItem(`uxm_trends_cache_v10.2`, JSON.stringify(news.value))
+          localStorage.setItem(`uxm_trends_cache_v10.3`, JSON.stringify(news.value))
         }
       }
     } catch (e) {}
