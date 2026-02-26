@@ -394,10 +394,10 @@ const RSS_SOURCES = [
   { name: '올리브영 테크', url: 'https://tech.oliveyoung.co.kr/feed/', category: 'blog' },
   { name: '당근 테크', url: 'https://medium.com/daangn/feed', category: 'blog' },
 
-  // YouTube (Keyword-Based Video Sourcing via Google News Search)
-  { name: '유튜브 뉴스 이슈', url: 'https://news.google.com/rss/search?q=site:youtube.com+뉴스+이슈+when:24h&hl=ko&gl=KR&ceid=KR:ko', category: 'youtube' },
-  { name: '유튜브 실시간 화제', url: 'https://news.google.com/rss/search?q=site:youtube.com+실시간+화제+when:24h&hl=ko&gl=KR&ceid=KR:ko', category: 'youtube' },
-  { name: '유튜브 오늘 영상', url: 'https://news.google.com/rss/search?q=site:youtube.com+화제의영상+when:24h&hl=ko&gl=KR&ceid=KR:ko', category: 'youtube' }
+  // YouTube (Optimized Keyword-News Sourcing: News, This Week, High Relevance)
+  { name: '유튜브 이슈 뉴스', url: 'https://news.google.com/rss/search?q=site:youtube.com+뉴스+이슈+when:7d&hl=ko&gl=KR&ceid=KR:ko', category: 'youtube' },
+  { name: 'Youtube Top News', url: 'https://news.google.com/rss/search?q=site:youtube.com+News+Korea+when:7d&hl=ko&gl=KR&ceid=KR:ko', category: 'youtube' },
+  { name: '유튜브 실시간 화제', url: 'https://news.google.com/rss/search?q=site:youtube.com+실시간+화제+when:7d&hl=ko&gl=KR&ceid=KR:ko', category: 'youtube' }
 ]
 
 const filteredNews = computed(() => {
@@ -437,7 +437,7 @@ const decodeHtml = (html: string) => {
 
 const fetchNews = async () => {
   // 1. Initial Cache Load
-  const CURRENT_CACHE_VERSION = 'v8.9'
+  const CURRENT_CACHE_VERSION = 'v9.0'
   const CACHE_KEY = `uxm_trends_cache_${CURRENT_CACHE_VERSION}`
   
   if (news.value.length === 0) {
@@ -720,7 +720,7 @@ const fetchMissingThumbnails = async () => {
         const idx = news.value.findIndex(n => n.link === targetUrl)
         if (idx !== -1) {
           news.value[idx] = { ...news.value[idx], thumb: imgUrl }
-          localStorage.setItem(`uxm_trends_cache_v8.9`, JSON.stringify(news.value))
+          localStorage.setItem(`uxm_trends_cache_v9.0`, JSON.stringify(news.value))
         }
       }
     } catch (e) {}
