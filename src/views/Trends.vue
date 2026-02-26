@@ -64,26 +64,27 @@
 
 
     <main 
-      class="pb-10 overflow-hidden touch-pan-y relative"
+      class="overflow-hidden touch-pan-y relative"
       @touchstart="handleTouchStart"
       @touchmove="handleTouchMove"
       @touchend="handleTouchEnd"
     >
       <!-- Carousel Rail -->
       <div 
-        class="flex transition-transform duration-300 ease-out rail-container"
+        class="flex items-start transition-transform duration-300 ease-out rail-container"
         :style="{ 
           width: '100%',
-          transform: `translateX(calc(-${activeIndex * 100}% + ${dragOffset}px))`,
+          transform: `translate3d(calc(-${activeIndex * 100}% + ${dragOffset}px), 0, 0)`,
           transition: isDragging ? 'none' : 'transform 0.5s cubic-bezier(0.2, 0, 0.2, 1)'
         }"
       >
         <div 
           v-for="(cat, index) in categories" 
           :key="cat.id" 
-          class="w-full flex-shrink-0 px-6 md:px-10 min-h-[400px]"
-          :style="{ visibility: Math.abs(index - activeIndex) <= 1 ? 'visible' : 'hidden' }"
+          class="w-full flex-shrink-0 px-6 md:px-10 min-h-[100px] mb-10"
         >
+          <!-- Only render content for visible or neighbor tabs for performance -->
+          <template v-if="Math.abs(index - activeIndex) <= 1">
           <!-- Content: List or Skeleton -->
           <div v-if="allGroupedNews[cat.id]?.length > 0" class="space-y-10">
             <div v-for="group in allGroupedNews[cat.id]" :key="group.date" class="space-y-6">
@@ -129,7 +130,7 @@
             </div>
 
             <!-- Page Load More -->
-            <div v-if="(cat.id === 'all' ? news.length : news.filter(n => n.category === cat.id).length) > visibleCount" class="flex justify-center pt-10 pb-10">
+            <div v-if="(cat.id === 'all' ? news.length : news.filter(n => n.category === cat.id).length) > visibleCount" class="flex justify-center pt-10">
               <button 
                 @click="visibleCount += 20"
                 class="px-12 py-4 bg-zinc-900 dark:bg-white text-white dark:text-black rounded-xl font-semibold text-base leading-normal tracking-tight active:scale-[0.98] transition-all"
@@ -137,7 +138,7 @@
                 헤드라인 더보기
               </button>
             </div>
-          </div>
+          </template>
 
           <!-- Page Skeleton (When loading or no data yet) -->
           <div v-else class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-3">
@@ -384,7 +385,13 @@ const RSS_SOURCES = [
 
 const allGroupedNews = computed(() => {
   const result: Record<string, { date: string, items: NewsItem[] }[]> = {}
-  categories.forEach(cat => {
+  
+  // Only process active and neighbors for extreme performance during drag
+  const visibleIndices = [activeIndex.value - 1, activeIndex.value, activeIndex.value + 1]
+  
+  categories.forEach((cat, index) => {
+    if (!visibleIndices.includes(index)) return
+
     const filtered = cat.id === 'all' 
       ? news.value 
       : news.value.filter(item => item.category === cat.id)
@@ -422,7 +429,7 @@ const decodeHtml = (html: string) => {
 
 const fetchNews = async () => {
   // 1. Initial Cache Load
-  const CURRENT_CACHE_VERSION = 'v4.3'
+  const CURRENT_CACHE_VERSION = 'v4.4'
   const CACHE_KEY = `uxm_trends_cache_${CURRENT_CACHE_VERSION}`
   
   if (news.value.length === 0) {
@@ -661,7 +668,7 @@ const fetchMissingThumbnails = async () => {
         const idx = news.value.findIndex(n => n.link === targetUrl)
         if (idx !== -1) {
           news.value[idx] = { ...news.value[idx], thumb: imgUrl }
-          localStorage.setItem(`uxm_trends_cache_v4.3`, JSON.stringify(news.value))
+          localStorage.setItem(`uxm_trends_cache_v4.4`, JSON.stringify(news.value))
         }
       }
     } catch (e) {}
