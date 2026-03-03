@@ -179,7 +179,7 @@ import SiteFooter from '../components/SiteFooter.vue'
 import SiteHeader from '../components/SiteHeader.vue'
 import SiteBanner from '../components/SiteBanner.vue'
 
-const CURRENT_CACHE_VERSION = 'v11.4'
+const CURRENT_CACHE_VERSION = 'v11.5'
 const CACHE_KEY = `uxm_trends_cache_${CURRENT_CACHE_VERSION}`
 
 interface NewsItem {
@@ -415,10 +415,10 @@ const RSS_SOURCES = [
 
   // YouTube (Direct Broadcast Video RSS for Robust Thumbnails)
   { name: '뉴스1 TV', url: 'https://www.news1.kr/rss/tv', category: 'youtube' },
-  { name: 'JTBC 영상뉴스', url: 'https://fs.jtbc.joins.com/RSS/newsroom.xml', category: 'youtube' },
   { name: 'SBS 뉴스 영상', url: 'https://news.sbs.co.kr/news/rss.do?section=14', category: 'youtube' },
   { name: 'KBS 뉴스 영상', url: 'https://news.kbs.co.kr/rss/news_12.xml', category: 'youtube' },
   { name: 'YTN 주요뉴스', url: 'https://www.ytn.co.kr/_ln/rss/0100.xml', category: 'youtube' },
+  { name: '연합뉴스 TV', url: 'https://www.yna.co.kr/rss/video.xml', category: 'youtube' },
 
   // GoodRich (Corporate & Insurance News - Direct Sources for Thumbnails)
   { name: '굿리치 공식 블로그', url: 'https://rss.blog.naver.com/goodrich_official.xml', category: 'goodrich' },
