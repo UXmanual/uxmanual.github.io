@@ -180,7 +180,7 @@ import SiteFooter from '../components/SiteFooter.vue'
 import SiteHeader from '../components/SiteHeader.vue'
 import SiteBanner from '../components/SiteBanner.vue'
 
-const CURRENT_CACHE_VERSION = 'v14.1'
+const CURRENT_CACHE_VERSION = 'v14.5'
 const CACHE_KEY = `uxm_trends_cache_${CURRENT_CACHE_VERSION}`
 
 interface NewsItem {
@@ -384,10 +384,11 @@ const RSS_SOURCES = [
   { name: '동아 경제', url: 'https://rss.donga.com/economy.xml', category: 'finance' },
 
   // Design & Art
+  { name: '디자인정글', url: 'https://www.jungle.co.kr/rss/news', category: 'design' },
   { name: '플래텀', url: 'https://platum.kr/feed', category: 'design' },
-  { name: 'Creative Bloq', url: 'https://www.creativebloq.com/feed', category: 'design' },
-  { name: 'UX Collective', url: 'https://uxdesign.cc/feed', category: 'design' },
-  { name: 'Design Milk', url: 'https://design-milk.com/feed/', category: 'design' },
+  { name: 'Creative Bloq', url: 'https://www.creativebloq.com/feed', category: 'design', translate: true },
+  { name: 'UX Collective', url: 'https://uxdesign.cc/feed', category: 'design', translate: true },
+  { name: 'Design Milk', url: 'https://design-milk.com/feed/', category: 'design', translate: true },
 
   // Game (Isolated & Robust for v3.2)
   { name: '지디넷 게임', url: 'https://www.zdnet.co.kr/rss/zdnet_game.xml', category: 'game' },
@@ -473,6 +474,21 @@ const decodeHtml = (html: string) => {
   return txt.value
 }
 
+const translateText = async (text: string) => {
+  if (!text || !/[a-zA-Z]/.test(text)) return text;
+  // Use a proxy to avoid CORS and to stay safe
+  const targetUrl = `https://translate.googleapis.com/translate_a/single?client=gtx&sl=auto&tl=ko&dt=t&q=${encodeURIComponent(text)}`;
+  try {
+    const response = await fetch(`https://api.codetabs.com/v1/proxy?quest=${encodeURIComponent(targetUrl)}`);
+    if (!response.ok) return text;
+    const data = await response.json();
+    // Google Translate returns an array of arrays for the translation segments
+    return data[0].map((item: any) => item[0]).join('').trim();
+  } catch (e) {
+    return text;
+  }
+}
+
 const fetchNews = async () => {
   // 1. Initial Cache Load
   
@@ -532,14 +548,17 @@ const fetchNews = async () => {
         const xmlItems = xmlString.split(/<item>|<entry>/i).slice(1)
         const parsedItems: NewsItem[] = []
 
-        xmlItems.forEach((itemRaw, idx) => {
-          if (idx >= 30) return 
+        // Process sequentially to allow for translation awaits if needed
+        for (let idx = 0; idx < xmlItems.length; idx++) {
+          if (idx >= 30) break 
+          const itemRaw = xmlItems[idx]
+          
           const titleMatch = itemRaw.match(/<title>(?:<!\[CDATA\[)?([\s\S]*?)(?:\]\]>)?<\/title>/i)
           const linkMatch = itemRaw.match(/<link>(?:<!\[CDATA\[)?([\s\S]*?)(?:\]\]>)?<\/link>/i) ||
                             itemRaw.match(/<link[^>]+href=["']([^"']+)["']/i)
-          if (!titleMatch || !linkMatch) return
+          if (!titleMatch || !linkMatch) continue
 
-          const title = decodeHtml(titleMatch[1].trim())
+          let title = decodeHtml(titleMatch[1].trim())
           let link = linkMatch[1].trim()
           let ytId = ''
           
@@ -559,11 +578,9 @@ const fetchNews = async () => {
                   ytId = ytMatch[1]
                   link = `https://www.youtube.com/watch?v=${ytId}`
                 } else {
-                  // Fallback: extract the deepest URL possible
                   const urlMatch = decoded.match(/https?:\/\/[^\s\u0000-\u001F"<>\\^`{|}]+/g)
                   if (urlMatch && urlMatch.length > 0) {
                     link = urlMatch[0]
-                    // Second pass if the extracted URL is also a YouTube link but not processed
                     const innerYtMatch = link.match(idRegex)
                     if (innerYtMatch) {
                       ytId = innerYtMatch[1]
@@ -582,15 +599,14 @@ const fetchNews = async () => {
                             itemRaw.match(/<published>(?:<!\[CDATA\[)?([\s\S]*?)(?:\]\]>)?<\/published>/i) ||
                             itemRaw.match(/<updated>(?:<!\[CDATA\[)?([\s\S]*?)(?:\]\]>)?<\/updated>/i)
           
-          const description = descMatch ? descMatch[1].trim() : ''
+          let description = descMatch ? decodeHtml(descMatch[1].replace(/<[^>]*>?/gm, ' ').replace(/\s+/g, ' ').trim()) : ''
           const pubDate = dateMatch ? dateMatch[1].trim() : ''
           
-          // Improved Thumbnail Logic: Deterministic HQ Thumbnails for YouTube
+          // Improved Thumbnail Logic
           let thumb = ''
           if (ytId) {
             thumb = `https://i.ytimg.com/vi/${ytId}/hqdefault.jpg`
           } else {
-            // Check if link itself is a direct YouTube link that escaped decoding
             const directIdMatch = link.match(/(?:v=|v\/|embed\/|youtu\.be\/|watch\?v%3D|watch\?v=)([A-Za-z0-9_-]{11})/i)
             if (directIdMatch) {
               ytId = directIdMatch[1]
@@ -601,9 +617,8 @@ const fetchNews = async () => {
                 ytId = ytIdInRaw[1].trim()
                 thumb = `https://i.ytimg.com/vi/${ytId}/hqdefault.jpg`
               } else {
-                const imgMatch = description.match(/<img[^>]+src=["']([^"'>]+)["']/i) || description.match(/<img[^>]+src=([^ >]+)/i)
+                const imgMatch = (descMatch ? descMatch[1] : '').match(/<img[^>]+src=["']([^"'>]+)["']/i) || (descMatch ? descMatch[1] : '').match(/<img[^>]+src=([^ >]+)/i)
                 if (imgMatch) thumb = imgMatch[1].replace(/['"]/g, '').trim()
-                
                 if (!thumb) {
                   const mediaMatch = itemRaw.match(/<(?:media:content|enclosure|thumbnail|image|media:thumbnail|img)[^>]+(?:url|href|src)=["']([^"'>]+)["']/i)
                   if (mediaMatch) thumb = mediaMatch[1]
@@ -612,24 +627,32 @@ const fetchNews = async () => {
             }
           }
 
-          // FINAL PROTECTION: If it's YouTube category, but still has a Google logo or no thumb, force generate via ID extract
           if (source.category === 'youtube' && (thumb.includes('google') || !thumb)) {
             const finalIdCheck = link.match(/(?:v=|v\/|embed\/|youtu\.be\/|watch\?v%3D|watch\?v=)([A-Za-z0-9_-]{11})/i)
-            if (finalIdCheck) {
-              thumb = `https://i.ytimg.com/vi/${finalIdCheck[1]}/hqdefault.jpg`
-            }
+            if (finalIdCheck) thumb = `https://i.ytimg.com/vi/${finalIdCheck[1]}/hqdefault.jpg`
+          }
+
+          // Handle Translation if enabled
+          // Use any cast to access custom property added to RSS_SOURCES
+          if ((source as any).translate) {
+            const [tTitle, tDesc] = await Promise.all([
+              translateText(title),
+              description ? translateText(description) : Promise.resolve('')
+            ])
+            title = `[번역] ${tTitle}`
+            if (tDesc) description = tDesc
           }
 
           const parts = title.split(/ - | \| | : /)
           const newItem = {
             title: parts[0].trim(), link, pubDate,
-            description: decodeHtml(description.replace(/<[^>]*>?/gm, ' ').replace(/\s+/g, ' ').trim()) || (source.category === 'youtube' ? '유튜브에서 관련 영상을 시청하세요.' : '기사 본문을 확인하세요.'),
+            description: description || (source.category === 'youtube' ? '유튜브에서 관련 영상을 시청하세요.' : '기사 본문을 확인하세요.'),
             source: source.name, category: source.category, provider: parts.length > 1 ? parts[parts.length - 1].trim() : '',
             thumb: thumb.startsWith('//') ? 'https:' + thumb : thumb
           }
           parsedItems.push(newItem)
           if (idx === 0) updateNewsList([newItem])
-        })
+        }
 
         if (parsedItems.length > 0) {
           updateNewsList(parsedItems)
