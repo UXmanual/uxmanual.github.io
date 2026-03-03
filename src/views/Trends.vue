@@ -179,7 +179,7 @@ import SiteFooter from '../components/SiteFooter.vue'
 import SiteHeader from '../components/SiteHeader.vue'
 import SiteBanner from '../components/SiteBanner.vue'
 
-const CURRENT_CACHE_VERSION = 'v13.4'
+const CURRENT_CACHE_VERSION = 'v13.5'
 const CACHE_KEY = `uxm_trends_cache_${CURRENT_CACHE_VERSION}`
 
 interface NewsItem {
@@ -414,13 +414,10 @@ const RSS_SOURCES = [
   { name: '올리브영 테크', url: 'https://tech.oliveyoung.co.kr/feed/', category: 'blog' },
   { name: '당근 테크', url: 'https://medium.com/daangn/feed', category: 'blog' },
 
-  // YouTube (Curated Korean Hot Issues & Trending Entertainment)
-  { name: '침착맨 (Hot)', url: 'https://www.youtube.com/feeds/videos.xml?channel_id=UCu9e_C-g7f-sZgC_yN1HwDQ', category: 'youtube' },
-  { name: '슈카월드 (Hot)', url: 'https://www.youtube.com/feeds/videos.xml?channel_id=UCsJ6RuBiTVWRX156FVbeaGg', category: 'youtube' },
-  { name: '빠니보틀 (Hot)', url: 'https://www.youtube.com/feeds/videos.xml?channel_id=UCNhofiqfw5nl-NeDJkXtPvw', category: 'youtube' },
+  // YouTube (Curated Korean Hot Issues - Strictly User Specified)
+  { name: '침착맨 (Requested)', url: 'https://www.youtube.com/feeds/videos.xml?channel_id=UCu9e_C-g7f-sZgC_yN1HwDQ', category: 'youtube' },
   { name: '숏박스 (Hot)', url: 'https://www.youtube.com/feeds/videos.xml?channel_id=UC1B6SalAoiJD7eHfMUA9QrA', category: 'youtube' },
   { name: '워크맨 (Hot)', url: 'https://www.youtube.com/feeds/videos.xml?channel_id=UC-xN69Y4N4K7A8weaH_QyEQ', category: 'youtube' },
-  { name: '피식대학 (Hot)', url: 'https://www.youtube.com/feeds/videos.xml?channel_id=UCGX5sP4ehBkihHwt5bs5wvg', category: 'youtube' },
   { name: '너덜트 (Hot)', url: 'https://www.youtube.com/feeds/videos.xml?channel_id=UC-f9w3U-w_h6gK5l8G9T0fQ', category: 'youtube' },
   { name: '문명특급 (Hot)', url: 'https://www.youtube.com/feeds/videos.xml?channel_id=UCYtqkpf-f1J3_x_d2_SjPZQ', category: 'youtube' },
   { name: '엠빅뉴스 (이슈)', url: 'https://www.youtube.com/feeds/videos.xml?channel_id=UCZzQSZv0KDes96yVvdW5f-w', category: 'youtube' },
