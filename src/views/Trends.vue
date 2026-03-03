@@ -179,7 +179,7 @@ import SiteFooter from '../components/SiteFooter.vue'
 import SiteHeader from '../components/SiteHeader.vue'
 import SiteBanner from '../components/SiteBanner.vue'
 
-const CURRENT_CACHE_VERSION = 'v12.9'
+const CURRENT_CACHE_VERSION = 'v13.0'
 const CACHE_KEY = `uxm_trends_cache_${CURRENT_CACHE_VERSION}`
 
 interface NewsItem {
@@ -426,10 +426,12 @@ const RSS_SOURCES = [
   { name: '플래텀 (Insurtech)', url: 'https://platum.kr/feed', category: 'goodrich' },
   { name: '보험신보', url: 'http://www.insweek.co.kr/rss/all.xml', category: 'goodrich' },
 
-  // Diablo2 (Verified Direct & Bridge Feeds: Community Posts)
+  // Diablo2 (Community Deep-Bridge: Inven, DC Inside, ChaosCube, Ruliweb)
+  // Implementing a stable bridge via whitelisted aggregator to bypass strict 404/502 blocks.
   { name: '루리웹 디아2 (커뮤니티)', url: 'https://bbs.ruliweb.com/game/85642/rss', category: 'diablo2' },
-  { name: '인벤 디아2 (자게)', url: 'https://rss-feed.duckdns.org/?action=display&bridge=InvenBridge&come_idx=5735', category: 'diablo2' },
-  { name: '디시 디아2 (갤러리)', url: 'https://rss-feed.duckdns.org/?action=display&bridge=DcinsideBridge&id=d2resurrected', category: 'diablo2' },
+  { name: '인벤 디아2 (커뮤니티)', url: 'https://news.google.com/rss/search?q=site:inven.co.kr+"디아블로2"+when:7d&hl=ko&gl=KR&ceid=KR:ko', category: 'diablo2' },
+  { name: '디시 디아2 (갤러리)', url: 'https://news.google.com/rss/search?q=site:gall.dcinside.com+"디아블로2"+when:7d&hl=ko&gl=KR&ceid=KR:ko', category: 'diablo2' },
+  { name: '카오스큐브 (커뮤니티)', url: 'https://news.google.com/rss/search?q=site:chaoscube.co.kr+"디아블로2"+when:7d&hl=ko&gl=KR&ceid=KR:ko', category: 'diablo2' },
   { name: '게임메카 디아2 뉴스', url: 'https://www.gamemeca.com/rss/news.php', category: 'diablo2' }
 ]
 
