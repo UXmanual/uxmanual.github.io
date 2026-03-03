@@ -639,7 +639,7 @@ const fetchNews = async () => {
               translateText(title),
               description ? translateText(description) : Promise.resolve('')
             ])
-            title = `[번역] ${tTitle}`
+            title = tTitle
             if (tDesc) description = tDesc
           }
 
