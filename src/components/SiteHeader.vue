@@ -12,7 +12,7 @@
         <span>{{ formattedDate }}</span>
         <span v-if="weather" class="flex items-center gap-1.5 transition-opacity duration-500">
           <span class="w-[1px] h-3 bg-zinc-200 dark:bg-white/10"></span>
-          <span>{{ weatherEmoji }} {{ weather.temp }}°C</span>
+          <span>서울 {{ weatherEmoji }} {{ weather.temp }}°C</span>
         </span>
       </div>
 
