@@ -134,7 +134,7 @@
             <div v-if="filteredNews.length > visibleCount" class="flex justify-center pt-10">
               <button 
                 @click="visibleCount += 20"
-                class="px-12 py-4 bg-zinc-900 dark:bg-white text-white dark:text-black rounded-lg font-semibold text-base leading-normal tracking-tight active:scale-[0.98] transition-all"
+                class="px-12 py-4 bg-zinc-800 hover:bg-zinc-900 dark:bg-zinc-300 hover:dark:bg-white text-white dark:text-black rounded-lg font-semibold text-base leading-normal tracking-tight active:scale-[0.98] transition-all duration-300"
               >
                 헤드라인 더보기
               </button>
@@ -179,7 +179,7 @@ import SiteFooter from '../components/SiteFooter.vue'
 import SiteHeader from '../components/SiteHeader.vue'
 import SiteBanner from '../components/SiteBanner.vue'
 
-const CURRENT_CACHE_VERSION = 'v11.5'
+const CURRENT_CACHE_VERSION = 'v11.6'
 const CACHE_KEY = `uxm_trends_cache_${CURRENT_CACHE_VERSION}`
 
 interface NewsItem {
@@ -926,10 +926,6 @@ onUnmounted(() => {
 
   .news-card:hover .title-element {
     opacity: 0.8;
-  }
-
-  button:hover {
-    scale: 1.02;
   }
 }
 
