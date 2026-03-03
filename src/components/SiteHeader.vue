@@ -4,15 +4,20 @@
     :class="[paddingTop, marginBottom]"
   >
     <div class="space-y-2 md:space-y-3" :class="innerMaxWidth">
-      <!-- Date and Weather Info (Simple Sub-header) -->
+      <!-- Real-time Clock and Weather Info (Simple Sub-header) -->
       <div 
         class="flex items-center gap-3 text-xs md:text-sm font-medium text-zinc-500 dark:text-zinc-500 tracking-tight"
         style="font-family: 'Pretendard Variable', 'Pretendard', sans-serif;"
       >
         <span>{{ formattedDate }}</span>
-        <span v-if="weather" class="flex items-center gap-1.5 transition-opacity duration-500">
+        <span class="flex items-center gap-1.5 transition-opacity duration-500">
           <span class="w-[1px] h-3 bg-zinc-200 dark:bg-white/10"></span>
-          <span>서울 {{ weather.time }} {{ weatherEmoji }} {{ weather.temp }}°C</span>
+          <!-- Real-time Clock: 서울 오후 1:45:30 -->
+          <span>서울 {{ currentTime }}</span>
+          <template v-if="weather">
+            <span class="w-[1px] h-1.5 bg-zinc-200 dark:bg-white/10 mx-0.5"></span>
+            <span>{{ weatherEmoji }} {{ weather.temp }}°C</span>
+          </template>
         </span>
       </div>
 
@@ -33,7 +38,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted, computed } from 'vue'
+import { ref, onMounted, onUnmounted, computed } from 'vue'
 
 interface Props {
   title: string
@@ -51,17 +56,29 @@ withDefaults(defineProps<Props>(), {
   enableGradient: false
 })
 
-const weather = ref<{ temp: number; code: number; time: string } | null>(null)
+const weather = ref<{ temp: number; code: number } | null>(null)
+const now = ref(new Date())
+let clockInterval: number | null = null
+let weatherInterval: number | null = null
+
+// Real-time Clock formatting: 오후 1:45:30
+const currentTime = computed(() => {
+  return new Intl.DateTimeFormat('ko-KR', {
+    hour: 'numeric',
+    minute: 'numeric',
+    second: 'numeric',
+    hour12: true
+  }).format(now.value)
+})
 
 // Current Date formatting: 2026년 3월 3일 화요일
 const formattedDate = computed(() => {
-  const now = new Date()
   return new Intl.DateTimeFormat('ko-KR', {
     year: 'numeric',
     month: 'long',
     day: 'numeric',
     weekday: 'long'
-  }).format(now)
+  }).format(now.value)
 })
 
 const weatherEmoji = computed(() => {
@@ -79,17 +96,12 @@ const weatherEmoji = computed(() => {
 
 const fetchWeather = async () => {
   try {
-    // Fetching Seoul weather using Open-Meteo API
-    // timezone=Asia/Seoul parameter ensures we get the time in correct local timezone
-    const res = await fetch('https://api.open-meteo.com/v1/forecast?latitude=37.5665&longitude=126.9780&current_weather=true&timezone=Asia%2FSeoul')
+    const res = await fetch('https://api.open-meteo.com/v1/forecast?latitude=37.5665&longitude=126.9780&current_weather=true')
     const data = await res.json()
     if (data.current_weather) {
-      // API time format is "2026-03-03T13:45"
-      const timePart = data.current_weather.time.split('T')[1]
       weather.value = {
         temp: Math.round(data.current_weather.temperature),
-        code: data.current_weather.weathercode,
-        time: timePart
+        code: data.current_weather.weathercode
       }
     }
   } catch (e) {
@@ -99,6 +111,21 @@ const fetchWeather = async () => {
 
 onMounted(() => {
   fetchWeather()
+  
+  // Real-time clock update (every second)
+  clockInterval = window.setInterval(() => {
+    now.value = new Date()
+  }, 1000)
+
+  // Weather update (every 10 minutes)
+  weatherInterval = window.setInterval(() => {
+    fetchWeather()
+  }, 10 * 60 * 1000)
+})
+
+onUnmounted(() => {
+  if (clockInterval) clearInterval(clockInterval)
+  if (weatherInterval) clearInterval(weatherInterval)
 })
 </script>
 
