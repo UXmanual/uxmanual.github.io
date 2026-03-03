@@ -6,19 +6,16 @@
     <div class="space-y-2 md:space-y-3" :class="innerMaxWidth">
       <!-- Real-time Clock and Weather Info (Simple Sub-header) -->
       <div 
-        class="flex items-center gap-3 text-xs md:text-sm font-medium text-zinc-500 dark:text-zinc-500 tracking-tight"
+        class="flex items-center gap-2 md:gap-3 text-xs md:text-sm font-medium text-zinc-500 dark:text-zinc-500 tracking-tight"
         style="font-family: 'Pretendard Variable', 'Pretendard', sans-serif;"
       >
         <span>{{ formattedDate }}</span>
-        <span class="flex items-center gap-1.5 transition-opacity duration-500">
-          <span class="w-[1px] h-3 bg-zinc-200 dark:bg-white/10"></span>
-          <!-- Real-time Clock: 서울 오후 1:45:30 -->
-          <span>서울 {{ currentTime }}</span>
-          <template v-if="weather">
-            <span class="w-[1px] h-1.5 bg-zinc-200 dark:bg-white/10 mx-0.5"></span>
-            <span>{{ weatherEmoji }} {{ weather.temp }}°C</span>
-          </template>
-        </span>
+        <span class="w-[1px] h-2.5 bg-zinc-200 dark:bg-white/10"></span>
+        <span>서울 {{ currentTime }}</span>
+        <template v-if="weather">
+          <span class="w-[1px] h-2.5 bg-zinc-200 dark:bg-white/10"></span>
+          <span>{{ weatherEmoji }} {{ weather.temp }}°C</span>
+        </template>
       </div>
 
       <h1 
