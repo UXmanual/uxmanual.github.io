@@ -4,8 +4,9 @@
     :class="[paddingTop, marginBottom]"
   >
     <div class="space-y-2 md:space-y-3" :class="innerMaxWidth">
-      <!-- Real-time Clock and Weather Info (Simple Sub-header) -->
+      <!-- Real-time Clock and Weather Info (Conditional - Only for Main Page) -->
       <div 
+        v-if="showDateTimeWeather"
         class="flex items-center gap-2 md:gap-3 text-xs md:text-sm font-medium text-zinc-500 dark:text-zinc-500 tracking-tight"
         style="font-family: 'Pretendard Variable', 'Pretendard', sans-serif;"
       >
@@ -44,19 +45,21 @@ interface Props {
   marginBottom?: string
   innerMaxWidth?: string
   enableGradient?: boolean
+  showDateTimeWeather?: boolean
 }
 
-withDefaults(defineProps<Props>(), {
+const props = withDefaults(defineProps<Props>(), {
   paddingTop: 'pt-28',
   marginBottom: 'mb-8',
   innerMaxWidth: 'max-w-2xl',
-  enableGradient: false
+  enableGradient: false,
+  showDateTimeWeather: false
 })
 
 const weather = ref<{ temp: number; code: number } | null>(null)
 const now = ref(new Date())
-let clockInterval: number | null = null
-let weatherInterval: number | null = null
+let clockInterval: any = null
+let weatherInterval: any = null
 
 // Real-time Clock formatting: 오후 1:45:30
 const currentTime = computed(() => {
@@ -92,6 +95,7 @@ const weatherEmoji = computed(() => {
 })
 
 const fetchWeather = async () => {
+  if (!props.showDateTimeWeather) return
   try {
     const res = await fetch('https://api.open-meteo.com/v1/forecast?latitude=37.5665&longitude=126.9780&current_weather=true')
     const data = await res.json()
@@ -107,17 +111,19 @@ const fetchWeather = async () => {
 }
 
 onMounted(() => {
-  fetchWeather()
-  
-  // Real-time clock update (every second)
-  clockInterval = window.setInterval(() => {
-    now.value = new Date()
-  }, 1000)
-
-  // Weather update (every 10 minutes)
-  weatherInterval = window.setInterval(() => {
+  if (props.showDateTimeWeather) {
     fetchWeather()
-  }, 10 * 60 * 1000)
+    
+    // Real-time clock update (every second)
+    clockInterval = setInterval(() => {
+      now.value = new Date()
+    }, 1000)
+
+    // Weather update (every 10 minutes)
+    weatherInterval = setInterval(() => {
+      fetchWeather()
+    }, 10 * 60 * 1000)
+  }
 })
 
 onUnmounted(() => {

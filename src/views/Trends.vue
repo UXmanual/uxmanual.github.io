@@ -13,6 +13,7 @@
       description="주요 언론사의 실시간 뉴스 피드를 한곳에서 확인하세요"
       padding-top="pt-16"
       :enable-gradient="true"
+      :show-date-time-weather="true"
     />
 
     <!-- Stable Anchor for Scroll Positioning -->
@@ -179,7 +180,7 @@ import SiteFooter from '../components/SiteFooter.vue'
 import SiteHeader from '../components/SiteHeader.vue'
 import SiteBanner from '../components/SiteBanner.vue'
 
-const CURRENT_CACHE_VERSION = 'v14.0'
+const CURRENT_CACHE_VERSION = 'v14.1'
 const CACHE_KEY = `uxm_trends_cache_${CURRENT_CACHE_VERSION}`
 
 interface NewsItem {
