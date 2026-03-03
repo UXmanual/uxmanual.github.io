@@ -943,7 +943,7 @@ onUnmounted(() => {
 .theme-blog { --brand-color: #10b981; --brand-bg: rgba(16, 185, 129, 0.05); }
 .theme-youtube { --brand-color: #ef4444; --brand-bg: rgba(239, 68, 68, 0.05); }
 .theme-goodrich { --brand-color: #f97316; --brand-bg: rgba(249, 115, 22, 0.05); }
-.theme-diablo2 { --brand-color: #e11d48; --brand-bg: rgba(225, 29, 72, 0.05); }
+.theme-diablo2 { --brand-color: #c44135; --brand-bg: rgba(196, 65, 53, 0.05); }
 .theme-googleart { --brand-color: #0ea5e9; --brand-bg: rgba(14, 165, 233, 0.05); }
 
 /* Apply Theme to Header Tabs */
@@ -975,7 +975,8 @@ onUnmounted(() => {
 .category-tab[data-cat="goodrich"][data-active="true"] { color: #f97316 !important; }
 .category-tab[data-cat="goodrich"][data-active="true"] .active-underline { background-color: #f97316; }
 
-.category-tab[data-cat="diablo2"][data-active="true"] .active-underline { background-color: #e11d48; }
+.category-tab[data-cat="diablo2"][data-active="true"] { color: #c44135 !important; }
+.category-tab[data-cat="diablo2"][data-active="true"] .active-underline { background-color: #c44135; }
 
 .category-tab[data-cat="googleart"][data-active="true"] { color: #0ea5e9 !important; }
 .category-tab[data-cat="googleart"][data-active="true"] .active-underline { background-color: #0ea5e9; }
@@ -989,7 +990,7 @@ onUnmounted(() => {
 .news-card.theme-blog { --brand-color: #10b981; --brand-bg: rgba(16, 185, 129, 0.05); }
 .news-card.theme-youtube { --brand-color: #ef4444; --brand-bg: rgba(239, 68, 68, 0.05); }
 .news-card.theme-goodrich { --brand-color: #f97316; --brand-bg: rgba(249, 115, 22, 0.05); }
-.news-card.theme-diablo2 { --brand-color: #e11d48; --brand-bg: rgba(225, 29, 72, 0.05); }
+.news-card.theme-diablo2 { --brand-color: #c44135; --brand-bg: rgba(196, 65, 53, 0.05); }
 .news-card.theme-googleart { --brand-color: #0ea5e9; --brand-bg: rgba(14, 165, 233, 0.05); }
 
 /* Hover Effects: Enabled only for devices that support hover (Mouse) to prevent sticky feel on mobile */
@@ -1005,7 +1006,7 @@ onUnmounted(() => {
   .news-card.theme-game:hover { border-color: #9333ea80; }
   .news-card.theme-blog:hover { border-color: #f59e0b80; }
   .news-card.theme-youtube:hover { border-color: #ef444480; }
-  .news-card.theme-diablo2:hover { border-color: #e11d4880; }
+  .news-card.theme-diablo2:hover { border-color: #c4413580; }
   .news-card.theme-googleart:hover { border-color: #0ea5e980; }
 
   .news-card:hover .title-element {
@@ -1026,7 +1027,7 @@ onUnmounted(() => {
 .news-card.theme-game .source-badge { border-color: #9333ea30; }
 .news-card.theme-blog .source-badge { border-color: #f59e0b30; }
 .news-card.theme-youtube .source-badge { border-color: #ef444430; }
-.news-card.theme-diablo2 .source-badge { border-color: #e11d4830; }
+.news-card.theme-diablo2 .source-badge { border-color: #c4413530; }
 .news-card.theme-googleart .source-badge { border-color: #0ea5e930; }
 
 .more-link {
