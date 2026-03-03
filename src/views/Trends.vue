@@ -179,7 +179,7 @@ import SiteFooter from '../components/SiteFooter.vue'
 import SiteHeader from '../components/SiteHeader.vue'
 import SiteBanner from '../components/SiteBanner.vue'
 
-const CURRENT_CACHE_VERSION = 'v12.8'
+const CURRENT_CACHE_VERSION = 'v12.9'
 const CACHE_KEY = `uxm_trends_cache_${CURRENT_CACHE_VERSION}`
 
 interface NewsItem {
@@ -426,11 +426,11 @@ const RSS_SOURCES = [
   { name: '플래텀 (Insurtech)', url: 'https://platum.kr/feed', category: 'goodrich' },
   { name: '보험신보', url: 'http://www.insweek.co.kr/rss/all.xml', category: 'goodrich' },
 
-  // Diablo2 (Verified Direct Feeds: Community & News)
-  // Note: Inven and DC Inside strictly block direct RSS access (404/502), so high-quality direct sources from Ruliweb/GameMeca are used.
+  // Diablo2 (Verified Direct & Bridge Feeds: Community Posts)
   { name: '루리웹 디아2 (커뮤니티)', url: 'https://bbs.ruliweb.com/game/85642/rss', category: 'diablo2' },
-  { name: '루리웹 PC 게임 뉴스', url: 'https://bbs.ruliweb.com/news/523/rss', category: 'diablo2' },
-  { name: '게임메카 최신 뉴스', url: 'https://www.gamemeca.com/rss/news.php', category: 'diablo2' }
+  { name: '인벤 디아2 (자게)', url: 'https://rss-feed.duckdns.org/?action=display&bridge=InvenBridge&come_idx=5735', category: 'diablo2' },
+  { name: '디시 디아2 (갤러리)', url: 'https://rss-feed.duckdns.org/?action=display&bridge=DcinsideBridge&id=d2resurrected', category: 'diablo2' },
+  { name: '게임메카 디아2 뉴스', url: 'https://www.gamemeca.com/rss/news.php', category: 'diablo2' }
 ]
 
 const filteredNews = computed(() => {
