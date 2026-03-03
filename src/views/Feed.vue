@@ -51,7 +51,7 @@
             <button 
               @click="addPost"
               :disabled="isPosting"
-              class="w-full md:w-auto px-10 py-4 bg-zinc-800 hover:bg-zinc-900 text-white dark:bg-zinc-300 hover:dark:bg-white dark:text-black rounded-lg font-black text-sm uppercase tracking-wider active:scale-[0.98] transition-all duration-300 disabled:opacity-50 disabled:scale-100"
+              class="w-full md:w-auto px-10 py-4 bg-zinc-600 hover:bg-zinc-900 text-white dark:bg-zinc-300 hover:dark:bg-white dark:text-black rounded-lg font-black text-sm uppercase tracking-wider active:scale-[0.98] transition-all duration-300 disabled:opacity-50 disabled:scale-100"
             >
               {{ isPosting ? '게시 중...' : '피드 글쓰기' }}
             </button>
