@@ -12,7 +12,7 @@
         <span>{{ formattedDate }}</span>
         <span v-if="weather" class="flex items-center gap-1.5 transition-opacity duration-500">
           <span class="w-[1px] h-3 bg-zinc-200 dark:bg-white/10"></span>
-          <span>서울 {{ weatherEmoji }} {{ weather.temp }}°C</span>
+          <span>서울 {{ weather.time }} {{ weatherEmoji }} {{ weather.temp }}°C</span>
         </span>
       </div>
 
@@ -51,7 +51,7 @@ withDefaults(defineProps<Props>(), {
   enableGradient: false
 })
 
-const weather = ref<{ temp: number; code: number } | null>(null)
+const weather = ref<{ temp: number; code: number; time: string } | null>(null)
 
 // Current Date formatting: 2026년 3월 3일 화요일
 const formattedDate = computed(() => {
@@ -80,12 +80,16 @@ const weatherEmoji = computed(() => {
 const fetchWeather = async () => {
   try {
     // Fetching Seoul weather using Open-Meteo API
-    const res = await fetch('https://api.open-meteo.com/v1/forecast?latitude=37.5665&longitude=126.9780&current_weather=true')
+    // timezone=Asia/Seoul parameter ensures we get the time in correct local timezone
+    const res = await fetch('https://api.open-meteo.com/v1/forecast?latitude=37.5665&longitude=126.9780&current_weather=true&timezone=Asia%2FSeoul')
     const data = await res.json()
     if (data.current_weather) {
+      // API time format is "2026-03-03T13:45"
+      const timePart = data.current_weather.time.split('T')[1]
       weather.value = {
         temp: Math.round(data.current_weather.temperature),
-        code: data.current_weather.weathercode
+        code: data.current_weather.weathercode,
+        time: timePart
       }
     }
   } catch (e) {
