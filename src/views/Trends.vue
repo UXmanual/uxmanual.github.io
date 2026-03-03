@@ -179,7 +179,7 @@ import SiteFooter from '../components/SiteFooter.vue'
 import SiteHeader from '../components/SiteHeader.vue'
 import SiteBanner from '../components/SiteBanner.vue'
 
-const CURRENT_CACHE_VERSION = 'v12.2'
+const CURRENT_CACHE_VERSION = 'v12.3'
 const CACHE_KEY = `uxm_trends_cache_${CURRENT_CACHE_VERSION}`
 
 interface NewsItem {
@@ -363,6 +363,7 @@ const categories = [
   { id: 'design', name: 'Design' },
   { id: 'blog', name: 'Blog' },
   { id: 'youtube', name: 'YouTube' },
+  { id: 'diablo2', name: 'Diablo2' },
   { id: 'goodrich', name: 'GoodRich' }
 ]
 
@@ -423,7 +424,13 @@ const RSS_SOURCES = [
   // GoodRich (Corporate & Insurance News - Direct Sources for Thumbnails)
   { name: '굿리치 공식 블로그', url: 'https://rss.blog.naver.com/goodrich_official.xml', category: 'goodrich' },
   { name: '플래텀 (Insurtech)', url: 'https://platum.kr/feed', category: 'goodrich' },
-  { name: '보험신보', url: 'http://www.insweek.co.kr/rss/all.xml', category: 'goodrich' }
+  { name: '보험신보', url: 'http://www.insweek.co.kr/rss/all.xml', category: 'goodrich' },
+
+  // Diablo2 (News & Community Issues)
+  { name: '인벤 디아2', url: 'https://www.inven.co.kr/common/rss/rss.xml?id=diablo2', category: 'diablo2' },
+  { name: '루리웹 디아2', url: 'https://rss.ruliweb.com/rss/pc_diablo2.xml', category: 'diablo2' },
+  { name: '디아블로2 이슈 (Google)', url: 'https://news.google.com/rss/search?q=디아블로2+레저렉션+when:1d&hl=ko&gl=KR&ceid=KR:ko', category: 'diablo2' },
+  { name: 'Diablo 2 Global (Korean)', url: 'https://news.google.com/rss/search?q=Diablo+2+Resurrected+when:1d&hl=ko&gl=KR&ceid=KR:ko', category: 'diablo2' }
 ]
 
 const filteredNews = computed(() => {
