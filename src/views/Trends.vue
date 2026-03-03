@@ -366,7 +366,7 @@ const categories = [
   { id: 'youtube', name: 'YouTube' },
   { id: 'diablo2', name: 'Diablo2' },
   { id: 'goodrich', name: 'GoodRich' },
-  { id: 'googleart', name: 'Google Art' }
+  { id: 'googleart', name: 'Arts' }
 ]
 
 const RSS_SOURCES = [
