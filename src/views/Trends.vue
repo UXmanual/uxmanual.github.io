@@ -527,17 +527,23 @@ const fetchNews = async () => {
         const data = await res.json();
         if (!data.data) return [];
         
-        const artItems: NewsItem[] = data.data
+        const artItems: NewsItem[] = await Promise.all(data.data
           .filter((item: any) => item.image_id) // Only items with images
-          .map((item: any) => ({
-            title: item.title,
-            link: `https://www.artic.edu/artworks/${item.id}`,
-            pubDate: new Date().toISOString(), // Random art doesn't have a 'pub date' in the same way
-            description: item.artist_display || 'Art Institute of Chicago collection',
-            source: 'Google Art (AIC)',
-            category: 'googleart',
-            provider: 'AIC',
-            thumb: `https://www.artic.edu/iiif/2/${item.image_id}/full/843,/0/default.jpg`
+          .map(async (item: any) => {
+            const [tTitle, tDesc] = await Promise.all([
+              translateText(item.title),
+              item.artist_display ? translateText(item.artist_display) : Promise.resolve('시카고 미술관 컬렉션')
+            ]);
+            return {
+              title: tTitle,
+              link: `https://www.artic.edu/artworks/${item.id}`,
+              pubDate: new Date().toISOString(),
+              description: tDesc,
+              source: 'Arts (AIC)',
+              category: 'googleart',
+              provider: 'AIC',
+              thumb: `https://www.artic.edu/iiif/2/${item.image_id}/full/843,/0/default.jpg`
+            };
           }));
         
         updateNewsList(artItems);
