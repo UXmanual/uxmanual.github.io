@@ -179,7 +179,7 @@ import SiteFooter from '../components/SiteFooter.vue'
 import SiteHeader from '../components/SiteHeader.vue'
 import SiteBanner from '../components/SiteBanner.vue'
 
-const CURRENT_CACHE_VERSION = 'v13.2'
+const CURRENT_CACHE_VERSION = 'v13.3'
 const CACHE_KEY = `uxm_trends_cache_${CURRENT_CACHE_VERSION}`
 
 interface NewsItem {
@@ -414,13 +414,15 @@ const RSS_SOURCES = [
   { name: '올리브영 테크', url: 'https://tech.oliveyoung.co.kr/feed/', category: 'blog' },
   { name: '당근 테크', url: 'https://medium.com/daangn/feed', category: 'blog' },
 
-  // YouTube (Direct Channel RSS for High-Fidelity Video Collection)
-  { name: 'SBS 뉴스 (유튜브)', url: 'https://www.youtube.com/feeds/videos.xml?channel_id=UCkinYTS9I-NaZNYQe4gq_3g', category: 'youtube' },
-  { name: 'KBS 뉴스 (유튜브)', url: 'https://www.youtube.com/feeds/videos.xml?channel_id=UC_Cl_Cpx69v_Y_zRCHX3LqA', category: 'youtube' },
-  { name: 'YTN 뉴스 (유튜브)', url: 'https://www.youtube.com/feeds/videos.xml?channel_id=UChlgI3UHC_PCEzWc_VqgL8Q', category: 'youtube' },
-  { name: 'JTBC 뉴스 (유튜브)', url: 'https://www.youtube.com/feeds/videos.xml?channel_id=UC6S_Y-mR9m0_XU7lW-6u6_A', category: 'youtube' },
-  { name: 'MBC 뉴스 (유튜브)', url: 'https://www.youtube.com/feeds/videos.xml?channel_id=UCF4BuarudzkclJ5iS6969-w', category: 'youtube' },
-  { name: '뉴스1 TV (유튜브)', url: 'https://www.youtube.com/feeds/videos.xml?channel_id=UCygWbILDfBfPN6xR3mrHXHA', category: 'youtube' },
+  // YouTube (Curated Korean Hot Issues & Trending Entertainment)
+  { name: '숏박스 (Hot)', url: 'https://www.youtube.com/feeds/videos.xml?channel_id=UC1B6SalAoiJD7eHfMUA9QrA', category: 'youtube' },
+  { name: '워크맨 (Hot)', url: 'https://www.youtube.com/feeds/videos.xml?channel_id=UC-xN69Y4N4K7A8weaH_QyEQ', category: 'youtube' },
+  { name: '피식대학 (Hot)', url: 'https://www.youtube.com/feeds/videos.xml?channel_id=UCGX5sP4ehBkihHwt5bs5wvg', category: 'youtube' },
+  { name: '너덜트 (Hot)', url: 'https://www.youtube.com/feeds/videos.xml?channel_id=UC-f9w3U-w_h6gK5l8G9T0fQ', category: 'youtube' },
+  { name: '침착맨 (Hot)', url: 'https://www.youtube.com/feeds/videos.xml?channel_id=UCu9e_C-g7f-sZgC_yN1HwDQ', category: 'youtube' },
+  { name: '문명특급 (Hot)', url: 'https://www.youtube.com/feeds/videos.xml?channel_id=UCYtqkpf-f1J3_x_d2_SjPZQ', category: 'youtube' },
+  { name: '엠빅뉴스 (이슈)', url: 'https://www.youtube.com/feeds/videos.xml?channel_id=UCZzQSZv0KDes96yVvdW5f-w', category: 'youtube' },
+  { name: '스브스뉴스 (이슈)', url: 'https://www.youtube.com/feeds/videos.xml?channel_id=UCN_GB5o7c7N-N_i0P5Q6Yqg', category: 'youtube' },
 
   // GoodRich (Corporate & Insurance News - Direct Sources for Thumbnails)
   { name: '굿리치 공식 블로그', url: 'https://rss.blog.naver.com/goodrich_official.xml', category: 'goodrich' },
