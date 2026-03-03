@@ -179,7 +179,7 @@ import SiteFooter from '../components/SiteFooter.vue'
 import SiteHeader from '../components/SiteHeader.vue'
 import SiteBanner from '../components/SiteBanner.vue'
 
-const CURRENT_CACHE_VERSION = 'v12.7'
+const CURRENT_CACHE_VERSION = 'v12.8'
 const CACHE_KEY = `uxm_trends_cache_${CURRENT_CACHE_VERSION}`
 
 interface NewsItem {
@@ -426,10 +426,11 @@ const RSS_SOURCES = [
   { name: '플래텀 (Insurtech)', url: 'https://platum.kr/feed', category: 'goodrich' },
   { name: '보험신보', url: 'http://www.insweek.co.kr/rss/all.xml', category: 'goodrich' },
 
-  // Diablo2 (Strict Community Posts: Inven, DC Inside, Ruliweb)
-  { name: '인벤 디아2 커뮤니티', url: 'https://news.google.com/rss/search?q=site:inven.co.kr+디아블로2+when:1d&hl=ko&gl=KR&ceid=KR:ko', category: 'diablo2' },
-  { name: '디시 디아2 갤러리', url: 'https://news.google.com/rss/search?q=site:gall.dcinside.com+디아블로2+when:1d&hl=ko&gl=KR&ceid=KR:ko', category: 'diablo2' },
-  { name: '루리웹 디아2 커뮤니티', url: 'https://news.google.com/rss/search?q=site:ruliweb.com+디아블로2+when:1d&hl=ko&gl=KR&ceid=KR:ko', category: 'diablo2' }
+  // Diablo2 (Verified Direct Feeds: Community & News)
+  // Note: Inven and DC Inside strictly block direct RSS access (404/502), so high-quality direct sources from Ruliweb/GameMeca are used.
+  { name: '루리웹 디아2 (커뮤니티)', url: 'https://bbs.ruliweb.com/game/85642/rss', category: 'diablo2' },
+  { name: '루리웹 PC 게임 뉴스', url: 'https://bbs.ruliweb.com/news/523/rss', category: 'diablo2' },
+  { name: '게임메카 최신 뉴스', url: 'https://www.gamemeca.com/rss/news.php', category: 'diablo2' }
 ]
 
 const filteredNews = computed(() => {
