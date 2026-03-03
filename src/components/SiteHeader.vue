@@ -12,9 +12,9 @@
       >
         <span class="shrink-0">{{ formattedDate }}</span>
         <span class="w-[1px] h-2.5 bg-zinc-200 dark:bg-white/10 shrink-0"></span>
-        <span class="inline-flex items-center gap-1 tabular-nums min-w-[110px] md:min-w-[135px]">
-          <span class="shrink-0">서울</span>
-          <span>{{ currentTime }}</span>
+        <span class="shrink-0">서울</span>
+        <span class="tabular-nums min-w-[82px] md:min-w-[102px]">
+          {{ currentTime }}
         </span>
         <template v-if="weather">
           <span class="w-[1px] h-2.5 bg-zinc-200 dark:bg-white/10 shrink-0"></span>
