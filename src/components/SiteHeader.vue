@@ -10,12 +10,15 @@
         class="flex items-center gap-2 md:gap-3 text-xs md:text-sm font-medium text-zinc-500 dark:text-zinc-500 tracking-tight"
         style="font-family: 'Pretendard Variable', 'Pretendard', sans-serif;"
       >
-        <span>{{ formattedDate }}</span>
-        <span class="w-[1px] h-2.5 bg-zinc-200 dark:bg-white/10"></span>
-        <span>서울 {{ currentTime }}</span>
+        <span class="shrink-0">{{ formattedDate }}</span>
+        <span class="w-[1px] h-2.5 bg-zinc-200 dark:bg-white/10 shrink-0"></span>
+        <span class="inline-flex items-center gap-1 tabular-nums min-w-[110px] md:min-w-[135px]">
+          <span class="shrink-0">서울</span>
+          <span>{{ currentTime }}</span>
+        </span>
         <template v-if="weather">
-          <span class="w-[1px] h-2.5 bg-zinc-200 dark:bg-white/10"></span>
-          <span>{{ weatherEmoji }} {{ weather.temp }}°C</span>
+          <span class="w-[1px] h-2.5 bg-zinc-200 dark:bg-white/10 shrink-0"></span>
+          <span class="shrink-0">{{ weatherEmoji }} {{ weather.temp }}°C</span>
         </template>
       </div>
 
