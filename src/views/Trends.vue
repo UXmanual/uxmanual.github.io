@@ -179,7 +179,7 @@ import SiteFooter from '../components/SiteFooter.vue'
 import SiteHeader from '../components/SiteHeader.vue'
 import SiteBanner from '../components/SiteBanner.vue'
 
-const CURRENT_CACHE_VERSION = 'v13.1'
+const CURRENT_CACHE_VERSION = 'v13.2'
 const CACHE_KEY = `uxm_trends_cache_${CURRENT_CACHE_VERSION}`
 
 interface NewsItem {
@@ -414,12 +414,13 @@ const RSS_SOURCES = [
   { name: '올리브영 테크', url: 'https://tech.oliveyoung.co.kr/feed/', category: 'blog' },
   { name: '당근 테크', url: 'https://medium.com/daangn/feed', category: 'blog' },
 
-  // YouTube (Direct Broadcast Video RSS for Robust Thumbnails)
-  { name: '뉴스1 TV', url: 'https://www.news1.kr/rss/tv', category: 'youtube' },
-  { name: 'SBS 뉴스 영상', url: 'https://news.sbs.co.kr/news/rss.do?section=14', category: 'youtube' },
-  { name: 'KBS 뉴스 영상', url: 'https://news.kbs.co.kr/rss/news_12.xml', category: 'youtube' },
-  { name: 'YTN 주요뉴스', url: 'https://www.ytn.co.kr/_ln/rss/0100.xml', category: 'youtube' },
-  { name: '연합뉴스 TV', url: 'https://www.yna.co.kr/rss/video.xml', category: 'youtube' },
+  // YouTube (Direct Channel RSS for High-Fidelity Video Collection)
+  { name: 'SBS 뉴스 (유튜브)', url: 'https://www.youtube.com/feeds/videos.xml?channel_id=UCkinYTS9I-NaZNYQe4gq_3g', category: 'youtube' },
+  { name: 'KBS 뉴스 (유튜브)', url: 'https://www.youtube.com/feeds/videos.xml?channel_id=UC_Cl_Cpx69v_Y_zRCHX3LqA', category: 'youtube' },
+  { name: 'YTN 뉴스 (유튜브)', url: 'https://www.youtube.com/feeds/videos.xml?channel_id=UChlgI3UHC_PCEzWc_VqgL8Q', category: 'youtube' },
+  { name: 'JTBC 뉴스 (유튜브)', url: 'https://www.youtube.com/feeds/videos.xml?channel_id=UC6S_Y-mR9m0_XU7lW-6u6_A', category: 'youtube' },
+  { name: 'MBC 뉴스 (유튜브)', url: 'https://www.youtube.com/feeds/videos.xml?channel_id=UCF4BuarudzkclJ5iS6969-w', category: 'youtube' },
+  { name: '뉴스1 TV (유튜브)', url: 'https://www.youtube.com/feeds/videos.xml?channel_id=UCygWbILDfBfPN6xR3mrHXHA', category: 'youtube' },
 
   // GoodRich (Corporate & Insurance News - Direct Sources for Thumbnails)
   { name: '굿리치 공식 블로그', url: 'https://rss.blog.naver.com/goodrich_official.xml', category: 'goodrich' },
