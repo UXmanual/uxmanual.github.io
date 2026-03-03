@@ -365,7 +365,8 @@ const categories = [
   { id: 'blog', name: 'Blog' },
   { id: 'youtube', name: 'YouTube' },
   { id: 'diablo2', name: 'Diablo2' },
-  { id: 'goodrich', name: 'GoodRich' }
+  { id: 'goodrich', name: 'GoodRich' },
+  { id: 'googleart', name: 'Google Art' }
 ]
 
 const RSS_SOURCES = [
@@ -436,7 +437,10 @@ const RSS_SOURCES = [
   { name: '인벤 디아2 (커뮤니티)', url: 'https://news.google.com/rss/search?q=디아블로2+인벤&hl=ko&gl=KR&ceid=KR:ko', category: 'diablo2' },
   { name: '디시 디아2 (갤러리)', url: 'https://news.google.com/rss/search?q=디아블로2+디시인사이드&hl=ko&gl=KR&ceid=KR:ko', category: 'diablo2' },
   { name: '카오스큐브 (커뮤니티)', url: 'https://news.google.com/rss/search?q=디아블로2+카오스큐브&hl=ko&gl=KR&ceid=KR:ko', category: 'diablo2' },
-  { name: '게임메카 디아2 뉴스', url: 'https://www.gamemeca.com/rss/news.php', category: 'diablo2' }
+  { name: '게임메카 디아2 뉴스', url: 'https://www.gamemeca.com/rss/news.php', category: 'diablo2' },
+  
+  // Google Art (API Driven)
+  { name: 'Google Arts & Culture', url: 'https://api.artic.edu/api/v1/artworks', category: 'googleart' }
 ]
 
 const filteredNews = computed(() => {
@@ -515,6 +519,34 @@ const fetchNews = async () => {
   isLoading.value = true
 
   const fetchSource = async (source: typeof RSS_SOURCES[0]) => {
+    // Special handling for Google Art (AIC API)
+    if (source.category === 'googleart') {
+      try {
+        const randomPage = Math.floor(Math.random() * 200) + 1;
+        const res = await fetch(`https://api.artic.edu/api/v1/artworks?page=${randomPage}&limit=25&fields=id,title,artist_display,image_id`);
+        const data = await res.json();
+        if (!data.data) return [];
+        
+        const artItems: NewsItem[] = data.data
+          .filter((item: any) => item.image_id) // Only items with images
+          .map((item: any) => ({
+            title: item.title,
+            link: `https://www.artic.edu/artworks/${item.id}`,
+            pubDate: new Date().toISOString(), // Random art doesn't have a 'pub date' in the same way
+            description: item.artist_display || 'Art Institute of Chicago collection',
+            source: 'Google Art (AIC)',
+            category: 'googleart',
+            provider: 'AIC',
+            thumb: `https://www.artic.edu/iiif/2/${item.image_id}/full/843,/0/default.jpg`
+          }));
+        
+        updateNewsList(artItems);
+        return artItems;
+      } catch (e) {
+        return [];
+      }
+    }
+
     // Smart Racing: Standard proxies first, heavyweight fallbacks only if needed
     const primaryProxies = [
       (url: string) => `https://api.codetabs.com/v1/proxy?quest=${encodeURIComponent(url)}`,
@@ -906,6 +938,7 @@ onUnmounted(() => {
 .theme-youtube { --brand-color: #ef4444; --brand-bg: rgba(239, 68, 68, 0.05); }
 .theme-goodrich { --brand-color: #f97316; --brand-bg: rgba(249, 115, 22, 0.05); }
 .theme-diablo2 { --brand-color: #e11d48; --brand-bg: rgba(225, 29, 72, 0.05); }
+.theme-googleart { --brand-color: #0ea5e9; --brand-bg: rgba(14, 165, 233, 0.05); }
 
 /* Apply Theme to Header Tabs */
 .category-tab[data-cat="all"] .active-underline { background-color: #18181b; }
@@ -936,8 +969,10 @@ onUnmounted(() => {
 .category-tab[data-cat="goodrich"][data-active="true"] { color: #f97316 !important; }
 .category-tab[data-cat="goodrich"][data-active="true"] .active-underline { background-color: #f97316; }
 
-.category-tab[data-cat="diablo2"][data-active="true"] { color: #e11d48 !important; }
 .category-tab[data-cat="diablo2"][data-active="true"] .active-underline { background-color: #e11d48; }
+
+.category-tab[data-cat="googleart"][data-active="true"] { color: #0ea5e9 !important; }
+.category-tab[data-cat="googleart"][data-active="true"] .active-underline { background-color: #0ea5e9; }
 
 /* Refined News Card Styling */
 .news-card.theme-ai { --brand-color: #6366f1; --brand-bg: rgba(99, 102, 241, 0.05); }
@@ -949,6 +984,7 @@ onUnmounted(() => {
 .news-card.theme-youtube { --brand-color: #ef4444; --brand-bg: rgba(239, 68, 68, 0.05); }
 .news-card.theme-goodrich { --brand-color: #f97316; --brand-bg: rgba(249, 115, 22, 0.05); }
 .news-card.theme-diablo2 { --brand-color: #e11d48; --brand-bg: rgba(225, 29, 72, 0.05); }
+.news-card.theme-googleart { --brand-color: #0ea5e9; --brand-bg: rgba(14, 165, 233, 0.05); }
 
 /* Hover Effects: Enabled only for devices that support hover (Mouse) to prevent sticky feel on mobile */
 @media (hover: hover) {
@@ -964,6 +1000,7 @@ onUnmounted(() => {
   .news-card.theme-blog:hover { border-color: #f59e0b80; }
   .news-card.theme-youtube:hover { border-color: #ef444480; }
   .news-card.theme-diablo2:hover { border-color: #e11d4880; }
+  .news-card.theme-googleart:hover { border-color: #0ea5e980; }
 
   .news-card:hover .title-element {
     opacity: 0.8;
@@ -984,6 +1021,7 @@ onUnmounted(() => {
 .news-card.theme-blog .source-badge { border-color: #f59e0b30; }
 .news-card.theme-youtube .source-badge { border-color: #ef444430; }
 .news-card.theme-diablo2 .source-badge { border-color: #e11d4830; }
+.news-card.theme-googleart .source-badge { border-color: #0ea5e930; }
 
 .more-link {
   color: var(--brand-color);
