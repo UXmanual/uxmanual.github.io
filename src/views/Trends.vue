@@ -24,7 +24,7 @@
       class="sticky z-40 bg-zinc-50/90 dark:bg-[#0a0a0c]/90 backdrop-blur-xl border-b border-zinc-200 dark:border-white/10 mb-12 transition-all duration-200"
       :style="{ top: `max(0px, 56px + var(--nav-y, 0px))` }"
     >
-      <div class="px-6 md:px-10 max-w-[1800px] mx-auto pt-3 pb-0">
+      <div class="px-6 md:px-10 max-w-[1800px] mx-auto pt-2 pb-0">
         <div class="relative group/tabs">
           <div 
             class="absolute left-0 top-0 bottom-0 w-8 bg-gradient-to-r from-zinc-50 dark:from-[#0a0a0c] to-transparent pointer-events-none z-10 transition-opacity"
@@ -179,7 +179,7 @@ import SiteFooter from '../components/SiteFooter.vue'
 import SiteHeader from '../components/SiteHeader.vue'
 import SiteBanner from '../components/SiteBanner.vue'
 
-const CURRENT_CACHE_VERSION = 'v11.2'
+const CURRENT_CACHE_VERSION = 'v11.3'
 const CACHE_KEY = `uxm_trends_cache_${CURRENT_CACHE_VERSION}`
 
 interface NewsItem {
