@@ -117,7 +117,10 @@
                   <h3 class="font-black text-zinc-900 dark:text-white uppercase tracking-tight">{{ post.name }}</h3>
                   <div class="flex items-center gap-1.5 text-xs text-zinc-400 font-medium">
                     <span>{{ post.date }}</span>
-                    <span v-if="post.is_edited" class="flex items-center gap-1 text-[10px] bg-zinc-100 dark:bg-white/5 px-1.5 py-0.5 rounded text-zinc-400 font-bold">(수정됨)</span>
+                    <template v-if="post.is_edited">
+                      <span class="text-zinc-200 dark:text-zinc-800">·</span>
+                      <span>수정됨</span>
+                    </template>
                   </div>
                 </div>
               </div>
