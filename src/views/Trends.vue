@@ -143,26 +143,33 @@
           </div>
 
           <!-- Skeletons: Show when loading or no data yet -->
-          <div v-else class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-3">
-            <div v-for="i in 10" :key="i" class="bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-white/5 rounded-2xl p-5 animate-pulse flex flex-col h-[280px]">
-              <div class="flex justify-between items-center mb-4">
-                <div class="h-6 w-16 bg-zinc-200 dark:bg-zinc-800 rounded-md"></div>
-                <div class="h-3 w-20 bg-zinc-100 dark:bg-zinc-800/50 rounded"></div>
-              </div>
-              <div class="flex gap-4 mb-4 items-center h-12">
-                <div class="w-12 h-12 bg-zinc-200 dark:bg-zinc-800 rounded-lg flex-shrink-0"></div>
-                <div class="flex-grow space-y-2">
-                  <div class="h-4 w-full bg-zinc-200 dark:bg-zinc-800 rounded"></div>
-                  <div class="h-4 w-2/3 bg-zinc-200 dark:bg-zinc-800 rounded"></div>
+          <div v-else class="min-h-[400px]">
+            <div v-if="isLoading || isBackgroundLoading" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-3">
+              <div v-for="i in 10" :key="i" class="bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-white/5 rounded-2xl p-5 animate-pulse flex flex-col h-[280px]">
+                <div class="flex justify-between items-center mb-4">
+                  <div class="h-6 w-16 bg-zinc-200 dark:bg-zinc-800 rounded-md"></div>
+                  <div class="h-3 w-20 bg-zinc-100 dark:bg-zinc-800/50 rounded"></div>
+                </div>
+                <div class="flex gap-4 mb-4 items-center h-12">
+                  <div class="w-12 h-12 bg-zinc-200 dark:bg-zinc-800 rounded-lg flex-shrink-0"></div>
+                  <div class="flex-grow space-y-2">
+                    <div class="h-4 w-full bg-zinc-200 dark:bg-zinc-800 rounded"></div>
+                    <div class="h-4 w-2/3 bg-zinc-200 dark:bg-zinc-800 rounded"></div>
+                  </div>
+                </div>
+                <div class="space-y-2 mb-6">
+                  <div class="h-3 w-full bg-zinc-100 dark:bg-zinc-800/50 rounded"></div>
+                  <div class="h-3 w-4/5 bg-zinc-100 dark:bg-zinc-800/50 rounded"></div>
                 </div>
               </div>
-              <div class="space-y-2 mb-6">
-                <div class="h-3 w-full bg-zinc-100 dark:bg-zinc-800/50 rounded"></div>
-                <div class="h-3 w-4/5 bg-zinc-100 dark:bg-zinc-800/50 rounded"></div>
-              </div>
-              <div class="mt-auto pt-4 border-t border-zinc-100 dark:border-white/5 flex justify-between">
-                <div class="h-3 w-24 bg-zinc-100 dark:bg-zinc-800/50 rounded"></div>
-              </div>
+            </div>
+            <div v-else class="flex flex-col items-center justify-center py-20 text-zinc-400 font-medium">
+               <svg xmlns="http://www.w3.org/2000/svg" class="w-12 h-12 mb-4 opacity-20" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10l4 4v10a2 2 0 01-2 2z" />
+                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M14 2v4a2 2 0 002 2h4" />
+                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 13h6m-6 3h3" />
+               </svg>
+               기사를 찾을 수 없습니다.
             </div>
           </div>
         </div>
@@ -173,16 +180,15 @@
     <Transition name="toast">
       <div 
         v-if="isBackgroundLoading" 
-        class="fixed bottom-8 right-8 z-50 bg-white/80 dark:bg-zinc-900/80 backdrop-blur-xl border border-zinc-200 dark:border-white/10 rounded-2xl px-5 py-3 shadow-2xl flex items-center gap-3 transition-all duration-300 hover:scale-[1.02]"
+        class="fixed bottom-8 right-8 z-50 bg-white/80 dark:bg-zinc-900/80 backdrop-blur-xl border border-zinc-200 dark:border-white/10 rounded-full px-4 py-2 shadow-2xl flex items-center gap-3 transition-all duration-300"
       >
-        <div class="relative w-4 h-4 flex-shrink-0">
-           <div class="absolute inset-0 border-2 border-zinc-100 dark:border-zinc-800 rounded-full"></div>
-           <div class="absolute inset-0 border-2 border-zinc-900 dark:border-white rounded-full border-t-transparent animate-spin"></div>
+        <div class="relative w-3 h-3 flex-shrink-0">
+           <div class="absolute inset-0 border-[1.5px] border-zinc-100 dark:border-zinc-800 rounded-full"></div>
+           <div class="absolute inset-0 border-[1.5px] border-zinc-900 dark:border-white rounded-full border-t-transparent animate-spin"></div>
         </div>
-        <div class="flex items-center gap-3 pr-2">
-           <span class="text-[11px] text-zinc-500 dark:text-zinc-400 font-bold">기사 추가 로딩 중...</span>
-           <span class="text-[11px] text-zinc-900 dark:text-white font-black tabular-nums">{{ processedTaskSources }}/{{ totalTaskSources }}</span>
-        </div>
+        <span class="text-[11px] text-zinc-900 dark:text-white font-black tabular-nums tracking-tight">
+          {{ processedTaskSources }}/{{ totalTaskSources }}
+        </span>
       </div>
     </Transition>
 
@@ -796,15 +802,14 @@ const fetchNews = async () => {
     processedTaskSources.value = 0
     isBackgroundLoading.value = true
     
-    // Each source updates the list independently as it finishes
     let completedCount = 0
     const totalPriority = prioritySources.length
     
     // 1. Priority sources load in parallel
     prioritySources.forEach(source => {
       fetchSource(source).finally(() => {
+        processedTaskSources.value = Math.min(totalTaskSources.value, processedTaskSources.value + 1)
         completedCount++
-        processedTaskSources.value++
         if (completedCount === totalPriority || (news.value.length > 40 && completedCount > 5)) {
           isLoading.value = false
         }
@@ -813,21 +818,24 @@ const fetchNews = async () => {
     
     // 2. Fire background sources: Non-blocking batching
     const startBackgroundFetch = async () => {
-      const batchSize = 8
+      const batchSize = 6
       for (let i = 0; i < otherSources.length; i += batchSize) {
         const batch = otherSources.slice(i, i + batchSize)
         await Promise.all(batch.map(s => {
           return fetchSource(s).finally(() => {
-            processedTaskSources.value++
+            processedTaskSources.value = Math.min(totalTaskSources.value, processedTaskSources.value + 1)
           })
         }))
-        // Subtle gap for UI thread sanity
-        await new Promise(r => setTimeout(r, 150))
+        await new Promise(r => setTimeout(r, 200))
       }
-      // Finish background loading
+      
+      // Final synchronization and hide toast
       setTimeout(() => {
-        isBackgroundLoading.value = false
-      }, 2000)
+        processedTaskSources.value = totalTaskSources.value
+        setTimeout(() => {
+          isBackgroundLoading.value = false
+        }, 1500)
+      }, 500)
     }
     startBackgroundFetch()
     
