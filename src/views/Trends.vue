@@ -776,33 +776,32 @@ const fetchNews = async () => {
     let completedCount = 0
     const totalPriority = prioritySources.length
     
-    // Wait for ALL priority sources to finish for a stable "Final" feel
-    // Priority sources load in parallel
-    await Promise.all(prioritySources.map(async (source) => {
-      try {
-        await fetchSource(source)
-      } finally {
+    // 1. Priority sources load in parallel
+    prioritySources.forEach(source => {
+      fetchSource(source).finally(() => {
         completedCount++
         if (completedCount === totalPriority || (news.value.length > 40 && completedCount > 5)) {
           isLoading.value = false
         }
-      }
-    }))
+      })
+    })
     
-    // 2. Fire background sources: Batch them to avoid connection throttling
-    const batchSize = 5
-    for (let i = 0; i < otherSources.length; i += batchSize) {
-      const batch = otherSources.slice(i, i + batchSize)
-      await Promise.all(batch.map(s => fetchSource(s)))
-      // Minor gap to keep UI responsive
-      await new Promise(r => setTimeout(r, 200))
+    // 2. Fire background sources: Non-blocking batching
+    const startBackgroundFetch = async () => {
+      const batchSize = 10
+      for (let i = 0; i < otherSources.length; i += batchSize) {
+        const batch = otherSources.slice(i, i + batchSize)
+        await Promise.all(batch.map(s => fetchSource(s)))
+        await new Promise(r => setTimeout(r, 100))
+      }
     }
+    startBackgroundFetch()
     
     // final safety: ensure loading ends eventually
-    setTimeout(() => { if (isLoading.value) isLoading.value = false }, 5000)
+    setTimeout(() => { if (isLoading.value) isLoading.value = false }, 3000)
 
     // Delay thumbnail fetching to prioritize core content
-    setTimeout(fetchMissingThumbnails, 3000)
+    setTimeout(fetchMissingThumbnails, 4000)
   } catch (err) {
     console.error('Fetch news error:', err)
   } finally {
