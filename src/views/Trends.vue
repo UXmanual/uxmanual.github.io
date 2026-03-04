@@ -180,7 +180,7 @@ import SiteFooter from '../components/SiteFooter.vue'
 import SiteHeader from '../components/SiteHeader.vue'
 import SiteBanner from '../components/SiteBanner.vue'
 
-const CURRENT_CACHE_VERSION = 'v14.6'
+const CURRENT_CACHE_VERSION = 'v15.3'
 const CACHE_KEY = `uxm_trends_cache_${CURRENT_CACHE_VERSION}`
 
 interface NewsItem {
@@ -599,14 +599,12 @@ const fetchNews = async () => {
         
         if (!xmlString || xmlString.length < 100) throw new Error('Short payload')
         
-        const xmlItems = xmlString.split(/<item>|<entry>/i).slice(1)
+        const xmlItems = xmlString.split(/<item>|<entry>/i).slice(1).slice(0, 20) // Limit to 20 for faster processing
         const parsedItems: NewsItem[] = []
 
-        // Process sequentially to allow for translation awaits if needed
-        for (let idx = 0; idx < xmlItems.length; idx++) {
-          if (idx >= 30) break 
-          const itemRaw = xmlItems[idx]
-          
+        // Pre-process all items to extract raw data first
+        const rawParsed: any[] = []
+        for (const itemRaw of xmlItems) {
           const titleMatch = itemRaw.match(/<title>(?:<!\[CDATA\[)?([\s\S]*?)(?:\]\]>)?<\/title>/i)
           const linkMatch = itemRaw.match(/<link>(?:<!\[CDATA\[)?([\s\S]*?)(?:\]\]>)?<\/link>/i) ||
                             itemRaw.match(/<link[^>]+href=["']([^"']+)["']/i)
@@ -624,7 +622,6 @@ const fetchNews = async () => {
                 while (b64.length % 4 !== 0) b64 += '='
                 const decoded = atob(b64)
                 
-                // Aggressive ID Extraction: Handle nested trackers and multiple YouTube formats
                 const idRegex = /(?:v=|v\/|embed\/|youtu\.be\/|watch\?v%3D|watch\?v=)([A-Za-z0-9_-]{11})/i
                 const ytMatch = decoded.match(idRegex)
                 
@@ -656,61 +653,64 @@ const fetchNews = async () => {
           let description = descMatch ? decodeHtml(descMatch[1].replace(/<[^>]*>?/gm, ' ').replace(/\s+/g, ' ').trim()) : ''
           const pubDate = dateMatch ? dateMatch[1].trim() : ''
           
-          // Improved Thumbnail Logic
           let thumb = ''
           if (ytId) {
             thumb = `https://i.ytimg.com/vi/${ytId}/hqdefault.jpg`
           } else {
-            const directIdMatch = link.match(/(?:v=|v\/|embed\/|youtu\.be\/|watch\?v%3D|watch\?v=)([A-Za-z0-9_-]{11})/i)
-            if (directIdMatch) {
-              ytId = directIdMatch[1]
-              thumb = `https://i.ytimg.com/vi/${ytId}/hqdefault.jpg`
+            const ytMatch = link.match(/(?:v=|v\/|embed\/|youtu\.be\/|watch\?v%3D|watch\?v=)([A-Za-z0-9_-]{11})/i)
+            if (ytMatch) {
+              thumb = `https://i.ytimg.com/vi/${ytMatch[1]}/hqdefault.jpg`
             } else {
-              const ytIdInRaw = itemRaw.match(/<yt:videoId>(?:<!\[CDATA\[)?([\s\S]*?)(?:\]\]>)?<\/yt:videoId>/i)
-              if (ytIdInRaw) {
-                ytId = ytIdInRaw[1].trim()
-                thumb = `https://i.ytimg.com/vi/${ytId}/hqdefault.jpg`
-              } else {
-                const imgMatch = (descMatch ? descMatch[1] : '').match(/<img[^>]+src=["']([^"'>]+)["']/i) || (descMatch ? descMatch[1] : '').match(/<img[^>]+src=([^ >]+)/i)
-                if (imgMatch) thumb = imgMatch[1].replace(/['"]/g, '').trim()
-                if (!thumb) {
-                  const mediaMatch = itemRaw.match(/<(?:media:content|enclosure|thumbnail|image|media:thumbnail|img)[^>]+(?:url|href|src)=["']([^"'>]+)["']/i)
-                  if (mediaMatch) thumb = mediaMatch[1]
-                }
-              }
+              const imgMatch = (descMatch ? descMatch[1] : '').match(/<img[^>]+src=["']([^"'>]+)["']/i) || (descMatch ? descMatch[1] : '').match(/<img[^>]+src=([^ >]+)/i)
+              if (imgMatch) thumb = imgMatch[1].replace(/['"]/g, '').trim()
             }
           }
 
-          if (source.category === 'youtube' && (thumb.includes('google') || !thumb)) {
-            const finalIdCheck = link.match(/(?:v=|v\/|embed\/|youtu\.be\/|watch\?v%3D|watch\?v=)([A-Za-z0-9_-]{11})/i)
-            if (finalIdCheck) thumb = `https://i.ytimg.com/vi/${finalIdCheck[1]}/hqdefault.jpg`
-          }
+          rawParsed.push({
+            titleRaw: title,
+            link, pubDate,
+            description: description || (source.category === 'youtube' ? '유튜브에서 관련 영상을 시청하세요.' : '기사 본문을 확인하세요.'),
+            source: source.name, category: source.category,
+            thumb: thumb.startsWith('//') ? 'https:' + thumb : thumb
+          })
+        }
 
-          // Handle Translation if enabled
-          // Use any cast to access custom property added to RSS_SOURCES
+        // Parallel Translation if enabled: Only translate first 10 for speed
+        const itemsToProcess = (source as any).translate ? rawParsed.slice(0, 10) : rawParsed
+        
+        const finalizedItems: NewsItem[] = await Promise.all(itemsToProcess.map(async (item: any) => {
+          let title = item.titleRaw
+          let description = item.description
+          
           if ((source as any).translate) {
-            const [tTitle, tDesc] = await Promise.all([
-              translateText(title),
-              description ? translateText(description) : Promise.resolve('')
-            ])
-            title = tTitle
-            if (tDesc) description = tDesc
+            try {
+              const [tTitle, tDesc] = await Promise.all([
+                translateText(title),
+                description ? translateText(description) : Promise.resolve('')
+              ])
+              title = tTitle
+              if (tDesc) description = tDesc
+            } catch (e) {
+              console.error('Translation failed', e)
+            }
           }
 
           const parts = title.split(/ - | \| | : /)
-          const newItem = {
-            title: parts[0].trim(), link, pubDate,
-            description: description || (source.category === 'youtube' ? '유튜브에서 관련 영상을 시청하세요.' : '기사 본문을 확인하세요.'),
-            source: source.name, category: source.category, provider: parts.length > 1 ? parts[parts.length - 1].trim() : '',
-            thumb: thumb.startsWith('//') ? 'https:' + thumb : thumb
+          return {
+            title: parts[0].trim(),
+            link: item.link,
+            pubDate: item.pubDate,
+            description,
+            source: item.source,
+            category: item.category,
+            provider: parts.length > 1 ? parts[parts.length - 1].trim() : '',
+            thumb: item.thumb
           }
-          parsedItems.push(newItem)
-          if (idx === 0) updateNewsList([newItem])
-        }
+        }))
 
-        if (parsedItems.length > 0) {
-          updateNewsList(parsedItems)
-          return parsedItems
+        if (finalizedItems.length > 0) {
+          updateNewsList(finalizedItems)
+          return finalizedItems
         }
         throw new Error('No items')
       } catch (err) {
@@ -764,9 +764,9 @@ const fetchNews = async () => {
   }
 
   try {
-    // 1. Fire priority sources immediately without awaiting ALL of them (Incremental UI)
+    // 1. Fire priority sources immediately (Subset for 'All News' to avoid overload)
     const prioritySources = activeCategory.value === 'all' 
-      ? RSS_SOURCES 
+      ? RSS_SOURCES.filter(s => ['ai', 'finance', 'game', 'sports'].includes(s.category)).slice(0, 12)
       : RSS_SOURCES.filter(s => s.category === activeCategory.value)
     
     const otherSources = RSS_SOURCES.filter(s => !prioritySources.includes(s))
