@@ -90,7 +90,7 @@
                    :key="item.link + index"
                    :href="item.link"
                    target="_blank"
-                   class="news-card group flex flex-col bg-white dark:bg-[#1f1f1f] border border-zinc-200 dark:border-white/5 rounded-2xl p-5 transition-all duration-300 shadow-sm dark:shadow-none"
+                   class="news-card group flex flex-col bg-white dark:bg-[#1f1f1f] border border-zinc-200 dark:border-white/5 rounded-2xl p-5 transition-all duration-300"
                    :class="`theme-${item.category}`"
                 >
                   <div class="flex justify-between items-center mb-4 gap-2">

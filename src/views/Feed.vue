@@ -18,7 +18,7 @@
     <main class="px-6 md:px-10 max-w-[1800px] mx-auto pb-20">
       <div class="max-w-[680px] mx-auto">
       <!-- Input Area -->
-      <div class="mb-20 bg-white dark:bg-[#1f1f1f] border-2 border-zinc-200 dark:border-white/5 rounded-2xl p-8 shadow-sm dark:shadow-none">
+      <div class="mb-20 bg-white dark:bg-[#1f1f1f] border-2 border-zinc-200 dark:border-white/5 rounded-2xl p-8">
         <div class="flex flex-col gap-6">
           <div class="grid grid-cols-1 md:grid-cols-[1fr_1.2fr_0.8fr] gap-4">
             <input 
@@ -103,7 +103,7 @@
         <CommunitySkeleton v-if="isLoading" />
         <TransitionGroup v-else name="list">
           <div v-for="post in posts" :key="post.id" 
-            class="group relative bg-white dark:bg-[#1f1f1f] border-2 border-zinc-200 dark:border-white/10 rounded-2xl p-8 transition-all duration-150 hover:border-zinc-800 dark:hover:border-zinc-500 shadow-sm dark:shadow-none"
+            class="group relative bg-white dark:bg-[#1f1f1f] border-2 border-zinc-200 dark:border-white/10 rounded-2xl p-8 transition-all duration-150 hover:border-zinc-800 dark:hover:border-zinc-500"
           >
             <div class="flex justify-between items-start mb-6">
               <div class="flex items-center gap-4">
