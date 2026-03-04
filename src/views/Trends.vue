@@ -388,7 +388,9 @@ const categories = [
 
 const RSS_SOURCES = [
   // Google Trends (Real-time Rising Search)
-  { name: 'Google Trends', url: 'https://trends.google.co.kr/trends/trendingsearches/daily/rss?geo=KR', category: 'google' },
+  // Use both direct Trends RSS and a more proxy-friendly News Search fallback
+  { name: 'Google Trends', url: 'https://trends.google.com/trends/trendingsearches/daily/rss?geo=KR', category: 'google' },
+  { name: 'Google 뉴스 (급상승)', url: 'https://news.google.com/rss/search?q=급상승+검색어&hl=ko&gl=KR&ceid=KR:ko', category: 'google' },
 
   // AI & Tech
   { name: 'AI 타임스', url: 'https://www.aitimes.com/rss/S1N1.xml', category: 'ai' },
@@ -620,7 +622,7 @@ const fetchNews = async () => {
         
         if (!xmlString || xmlString.length < 100) throw new Error('Short payload')
         
-        const xmlItems = xmlString.split(/<item>|<entry>/i).slice(1).slice(0, 25) // Limit to 25 for fast processing
+        const xmlItems = xmlString.split(/<item>|<entry>/i).slice(1).slice(0, 30) // Limit to 30 to cover all trends
         const parsedItems: NewsItem[] = []
 
         // Pre-process all items to extract raw data first
