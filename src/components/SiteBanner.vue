@@ -11,7 +11,7 @@
 </template>
 
 <script setup lang="ts">
-// Message is now a single instance moving with a faster speed
+// Responsive marquee speed: Slower on PC (wider distance), faster on mobile
 </script>
 
 <style scoped>
@@ -24,12 +24,18 @@
 .marquee-content {
   display: inline-block;
   padding-left: 100%;
-  animation: marquee-scroll 15s linear infinite;
+  animation: marquee-scroll 28s linear infinite; /* Optimized for PC */
+}
+
+@media (max-width: 768px) {
+  .marquee-content {
+    animation-duration: 15s; /* Optimized for Mobile */
+  }
 }
 
 @keyframes marquee-scroll {
   from { transform: translateX(0); }
-  to { transform: translateX(-150%); }
+  to { transform: translateX(-180%); }
 }
 
 /* Subtle fade edges to blend with background */
