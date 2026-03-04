@@ -170,7 +170,7 @@
     <Transition name="toast">
       <div 
         v-if="isBackgroundLoading" 
-        class="fixed bottom-8 right-8 z-50 bg-white/80 dark:bg-zinc-900/80 backdrop-blur-xl border border-zinc-200 dark:border-white/10 rounded-full px-4 py-2 shadow-2xl flex items-center gap-3 transition-all duration-300"
+        class="fixed bottom-8 right-8 z-50 bg-zinc-50/90 dark:bg-[#0a0a0c]/90 backdrop-blur-xl border border-zinc-200 dark:border-white/10 rounded-full px-4 py-2 shadow-2xl flex items-center gap-3 transition-all duration-300"
       >
         <div class="relative w-3 h-3 flex-shrink-0">
            <div class="absolute inset-0 border-[1.5px] border-zinc-100 dark:border-zinc-800 rounded-full"></div>
