@@ -120,9 +120,9 @@
 
                   <div class="pt-4 mt-auto border-t border-zinc-100 dark:border-white/5 flex justify-between items-center">
                     <span class="text-[11px] text-zinc-400 font-medium">{{ formatDate(item.pubDate) }}</span>
-                    <span class="more-link text-[11px] font-bold flex items-center gap-1">
-                      더 보기
-                      <svg xmlns="http://www.w3.org/2000/svg" class="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <span class="more-link text-[11px] font-bold flex items-center gap-0.5">
+                      <span class="translate-y-[0.5px]">더 보기</span>
+                      <svg xmlns="http://www.w3.org/2000/svg" class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
                       </svg>
                     </span>
@@ -382,8 +382,7 @@ const categories = [
   { id: 'youtube', name: 'YouTube' },
   { id: 'diablo2', name: 'Diablo2' },
   { id: 'goodrich', name: 'GoodRich' },
-  { id: 'googleart', name: 'Arts' },
-  { id: 'nasa', name: 'NASA' }
+  { id: 'googleart', name: 'Arts' }
 ]
 
 const RSS_SOURCES = [
@@ -471,8 +470,8 @@ const filteredNews = computed(() => {
   if (activeCategory.value !== 'all') {
     list = list.filter(item => item.category === activeCategory.value)
   } else {
-    // Exclude Arts and NASA from 'All News' to maintain focus
-    list = list.filter(item => !['googleart', 'nasa'].includes(item.category))
+    // Exclude Arts category from 'All News' to avoid overcrowding
+    list = list.filter(item => item.category !== 'googleart')
   }
   // Strictly filter out Arts items without a valid thumbnail
   // Stabilize layout: Avoid removing items from the list reactively when images fail
@@ -590,64 +589,6 @@ const fetchNews = async () => {
       }
     }
 
-    // Special handling for NASA (NeoWS API - Earth Close Approach Asteroids)
-    if (source.category === 'nasa') {
-      try {
-        const now = new Date();
-        const start = new Date(now.getTime() - (24 * 60 * 60 * 1000)).toISOString().split('T')[0];
-        const end = new Date(now.getTime() + (24 * 60 * 60 * 1000)).toISOString().split('T')[0];
-        const apiUrl = `https://api.nasa.gov/neo/rest/v1/feed?start_date=${start}&end_date=${end}&api_key=DEMO_KEY`;
-        
-        const proxies = [
-          (url: string) => `https://api.codetabs.com/v1/proxy?quest=${encodeURIComponent(url)}`,
-          (url: string) => `https://corsproxy.io/?url=${encodeURIComponent(url)}`,
-          (url: string) => `https://api.allorigins.win/get?url=${encodeURIComponent(url)}`
-        ];
-
-        let data: any = null;
-        for (const getProxy of proxies) {
-          try {
-            const res = await fetch(getProxy(apiUrl));
-            if (!res.ok) continue;
-            const text = await res.text();
-            data = text.includes('contents') ? JSON.parse(JSON.parse(text).contents) : JSON.parse(text);
-            if (data && data.near_earth_objects) break;
-          } catch (e) {}
-        }
-
-        if (!data || !data.near_earth_objects) return [];
-        
-        const allAsteroids: NewsItem[] = [];
-        Object.keys(data.near_earth_objects).forEach(dateKey => {
-          data.near_earth_objects[dateKey].forEach((neo: any) => {
-            const isHazardous = neo.is_potentially_hazardous_asteroid;
-            const diameter = Math.round(neo.estimated_diameter.meters.estimated_diameter_max);
-            const approach = neo.close_approach_data[0];
-            const velocity = approach ? Math.round(parseFloat(approach.relative_velocity.kilometers_per_hour)) : 0;
-            const distance = approach ? Math.round(parseFloat(approach.miss_distance.kilometers) / 10000) / 100 : 0;
-            
-            allAsteroids.push({
-              title: `☄️ 소행성 ${neo.name}`,
-              link: neo.nasa_jpl_url,
-              pubDate: approach ? approach.close_approach_date_full || dateKey : dateKey,
-              description: `${isHazardous ? '⚠️ 위험 가능성 있음 | ' : ''}크기: 약 ${diameter}m | 속도: ${velocity.toLocaleString()}km/h | 지구와의 거리: ${distance}만 km`,
-              source: 'NASA',
-              category: 'nasa',
-              provider: 'Near-Earth Object',
-              thumb: 'https://images-assets.nasa.gov/image/PIA17037/PIA17037~thumb.jpg'
-            });
-          });
-        });
-        
-        const sortedAsteroids = allAsteroids.sort((a, b) => new Date(b.pubDate).getTime() - new Date(a.pubDate).getTime());
-        updateNewsList(sortedAsteroids);
-        return sortedAsteroids;
-      } catch (e) {
-        console.error('NASA Robust Fetch Error:', e);
-        return [];
-      }
-    }
-
     // Smart Racing: Standard proxies first, heavyweight fallbacks only if needed
     const primaryProxies = [
       (url: string) => `https://api.codetabs.com/v1/proxy?quest=${encodeURIComponent(url)}`,
@@ -691,13 +632,6 @@ const fetchNews = async () => {
 
           let title = decodeHtml(titleMatch[1].trim())
           let link = linkMatch[1].trim()
-
-          // Higher quality link/image for Google Trends
-          if (source.category === 'google') {
-            const hNewsLink = itemRaw.match(/<ht:news_item_url>(?:<!\[CDATA\[)?([\s\S]*?)(?:\]\]>)?<\/ht:news_item_url>/i)
-            if (hNewsLink) link = hNewsLink[1].trim()
-          }
-
           let ytId = ''
           
           if (link.includes('news.google.com/')) {
@@ -739,14 +673,6 @@ const fetchNews = async () => {
           let description = descMatch ? decodeHtml(descMatch[1].replace(/<[^>]*>?/gm, ' ').replace(/\s+/g, ' ').trim()) : ''
           const pubDate = dateMatch ? dateMatch[1].trim() : ''
           
-          if (source.category === 'google') {
-            const trafficMatch = itemRaw.match(/<ht:approx_traffic>(?:<!\[CDATA\[)?([\s\S]*?)(?:\]\]>)?<\/ht:approx_traffic>/i)
-            if (trafficMatch) {
-              const traffic = trafficMatch[1].trim()
-              description = `지표: ${traffic}회 이상 검색 | ${description}`
-            }
-          }
-          
           let thumb = ''
           if (ytId) {
             thumb = `https://i.ytimg.com/vi/${ytId}/hqdefault.jpg`
@@ -755,14 +681,8 @@ const fetchNews = async () => {
             if (ytMatch) {
               thumb = `https://i.ytimg.com/vi/${ytMatch[1]}/hqdefault.jpg`
             } else {
-              // Priority thumb for Google Trends
-              const gTrendsThumb = itemRaw.match(/<ht:picture>(?:<!\[CDATA\[)?([\s\S]*?)(?:\]\]>)?<\/ht:picture>/i)
-              if (gTrendsThumb) {
-                thumb = gTrendsThumb[1].trim()
-              } else {
-                const imgMatch = (descMatch ? descMatch[1] : '').match(/<img[^>]+src=["']([^"'>]+)["']/i) || (descMatch ? descMatch[1] : '').match(/<img[^>]+src=([^ >]+)/i)
-                if (imgMatch) thumb = imgMatch[1].replace(/['"]/g, '').trim()
-              }
+              const imgMatch = (descMatch ? descMatch[1] : '').match(/<img[^>]+src=["']([^"'>]+)["']/i) || (descMatch ? descMatch[1] : '').match(/<img[^>]+src=([^ >]+)/i)
+              if (imgMatch) thumb = imgMatch[1].replace(/['"]/g, '').trim()
             }
           }
 
@@ -1100,7 +1020,6 @@ onUnmounted(() => {
 .theme-goodrich { --brand-color: #f97316; --brand-bg: rgba(249, 115, 22, 0.05); }
 .theme-diablo2 { --brand-color: #c44135; --brand-bg: rgba(196, 65, 53, 0.05); }
 .theme-googleart { --brand-color: #0ea5e9; --brand-bg: rgba(14, 165, 233, 0.05); }
-.theme-nasa { --brand-color: #0b3d91; --brand-bg: rgba(11, 61, 145, 0.05); }
 
 /* Apply Theme to Header Tabs */
 .category-tab[data-cat="all"] .active-underline { background-color: #18181b; }
@@ -1137,9 +1056,6 @@ onUnmounted(() => {
 .category-tab[data-cat="googleart"][data-active="true"] { color: #0ea5e9 !important; }
 .category-tab[data-cat="googleart"][data-active="true"] .active-underline { background-color: #0ea5e9; }
 
-.category-tab[data-cat="nasa"][data-active="true"] { color: #0b3d91 !important; }
-.category-tab[data-cat="nasa"][data-active="true"] .active-underline { background-color: #0b3d91; }
-
 /* Refined News Card Styling */
 .news-card.theme-ai { --brand-color: #6366f1; --brand-bg: rgba(99, 102, 241, 0.05); }
 .news-card.theme-finance { --brand-color: #0acaaa; --brand-bg: rgba(10, 202, 170, 0.05); }
@@ -1151,7 +1067,6 @@ onUnmounted(() => {
 .news-card.theme-goodrich { --brand-color: #f97316; --brand-bg: rgba(249, 115, 22, 0.05); }
 .news-card.theme-diablo2 { --brand-color: #c44135; --brand-bg: rgba(196, 65, 53, 0.05); }
 .news-card.theme-googleart { --brand-color: #0ea5e9; --brand-bg: rgba(14, 165, 233, 0.05); }
-.news-card.theme-nasa { --brand-color: #0b3d91; --brand-bg: rgba(11, 61, 145, 0.05); }
 
 /* Hover Effects: Enabled only for devices that support hover (Mouse) to prevent sticky feel on mobile */
 @media (hover: hover) {
@@ -1169,7 +1084,6 @@ onUnmounted(() => {
   .news-card.theme-diablo2:hover { border-color: #c4413580; }
   .news-card.theme-goodrich:hover { border-color: #f9731680; }
   .news-card.theme-googleart:hover { border-color: #0ea5e980; }
-  .news-card.theme-nasa:hover { border-color: #0b3d9180; }
 
   .news-card:hover .title-element {
     opacity: 0.8;
@@ -1192,7 +1106,6 @@ onUnmounted(() => {
 .news-card.theme-diablo2 .source-badge { border-color: #c4413530; }
 .news-card.theme-goodrich .source-badge { border-color: #f9731630; }
 .news-card.theme-googleart .source-badge { border-color: #0ea5e930; }
-.news-card.theme-nasa .source-badge { border-color: #0b3d9130; }
 
 .more-link {
   color: var(--brand-color);
