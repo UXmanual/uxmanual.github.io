@@ -11,7 +11,7 @@
       title="FEED" 
       description="뉴스보다 더 재밌는 우리들의 이야기 <br /> 함께 읽고, 함께 말해요!"
       padding-top="pt-16"
-      margin-bottom="mb-16"
+      margin-bottom="mb-8"
       inner-max-width="max-w-[680px] mx-auto"
     />
 
@@ -443,19 +443,22 @@ const saveEdit = async (post: Post) => {
       message: tempEditMessage.value
     })
 
-    const { error } = await supabase
+    const { error, data } = await supabase
       .from('posts')
       .update({ 
         title: tempEditTitle.value, 
         message: tempEditMessage.value
       })
-      .match({ id: post.id })
+      .eq('id', post.id)
+      .select()
 
-    console.log('Update result:', { error })
+    console.log('Update result:', { error, data })
 
     if (error) {
       alert('저장 중 오류가 발생했습니다: ' + error.message)
       console.error('Update error:', error)
+    } else if (!data || data.length === 0) {
+      alert('수정된 내용이 없습니다. (권한 문제일 수 있습니다.)')
     } else {
       editingPostId.value = null
       await fetchPosts()
