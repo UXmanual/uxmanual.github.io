@@ -1076,7 +1076,7 @@ onUnmounted(() => {
   .news-card.theme-design:hover { border-color: #fa4fc180; }
   .news-card.theme-sports:hover { border-color: #5196fd80; }
   .news-card.theme-game:hover { border-color: #9333ea80; }
-  .news-card.theme-blog:hover { border-color: #f59e0b80; }
+  .news-card.theme-blog:hover { border-color: #10b98180; }
   .news-card.theme-youtube:hover { border-color: #ef444480; }
   .news-card.theme-diablo2:hover { border-color: #c4413580; }
   .news-card.theme-goodrich:hover { border-color: #f9731680; }
@@ -1098,7 +1098,7 @@ onUnmounted(() => {
 .news-card.theme-design .source-badge { border-color: #fa4fc130; }
 .news-card.theme-sports .source-badge { border-color: #5196fd30; }
 .news-card.theme-game .source-badge { border-color: #9333ea30; }
-.news-card.theme-blog .source-badge { border-color: #f59e0b30; }
+.news-card.theme-blog .source-badge { border-color: #10b98130; }
 .news-card.theme-youtube .source-badge { border-color: #ef444430; }
 .news-card.theme-diablo2 .source-badge { border-color: #c4413530; }
 .news-card.theme-goodrich .source-badge { border-color: #f9731630; }
