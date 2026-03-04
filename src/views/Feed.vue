@@ -113,8 +113,8 @@
                 >
                   {{ post.name.charAt(0).toUpperCase() }}
                 </div>
-                <div>
-                  <h3 class="font-black text-zinc-900 dark:text-white uppercase tracking-tight">{{ post.name }}</h3>
+                <div class="min-w-0">
+                  <h3 class="font-black text-zinc-900 dark:text-white uppercase tracking-tight truncate max-w-[150px] sm:max-w-[200px]">{{ post.name }}</h3>
                   <div class="flex items-center gap-1.5 text-xs text-zinc-400 font-medium">
                     <span>{{ post.date }}</span>
                     <template v-if="post.is_edited">
