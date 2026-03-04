@@ -373,6 +373,7 @@ const checkScroll = () => {
 
 const categories = [
   { id: 'all', name: 'All News' },
+  { id: 'google', name: 'Google' },
   { id: 'ai', name: 'AI & Tech' },
   { id: 'finance', name: 'Finance' },
   { id: 'game', name: 'Game' },
@@ -386,6 +387,9 @@ const categories = [
 ]
 
 const RSS_SOURCES = [
+  // Google Trends (Real-time Rising Search)
+  { name: 'Google Trends', url: 'https://trends.google.com/trends/trendingsearches/daily/rss?geo=KR', category: 'google' },
+
   // AI & Tech
   { name: 'AI 타임스', url: 'https://www.aitimes.com/rss/S1N1.xml', category: 'ai' },
   { name: '지디넷코리아', url: 'https://feeds.feedburner.com/zdkorea', category: 'ai' },
@@ -467,8 +471,8 @@ const filteredNews = computed(() => {
   if (activeCategory.value !== 'all') {
     list = list.filter(item => item.category === activeCategory.value)
   } else {
-    // Exclude Arts category from 'All News' to avoid overcrowding
-    list = list.filter(item => item.category !== 'googleart')
+    // Exclude Trends and Arts from 'All News' to keep it focused on core news
+    list = list.filter(item => !['google', 'googleart'].includes(item.category))
   }
   // Strictly filter out Arts items without a valid thumbnail
   // Stabilize layout: Avoid removing items from the list reactively when images fail
@@ -616,7 +620,7 @@ const fetchNews = async () => {
         
         if (!xmlString || xmlString.length < 100) throw new Error('Short payload')
         
-        const xmlItems = xmlString.split(/<item>|<entry>/i).slice(1).slice(0, 20) // Limit to 20 for faster processing
+        const xmlItems = xmlString.split(/<item>|<entry>/i).slice(1).slice(0, 25) // Limit to 25 for fast processing
         const parsedItems: NewsItem[] = []
 
         // Pre-process all items to extract raw data first
@@ -678,8 +682,14 @@ const fetchNews = async () => {
             if (ytMatch) {
               thumb = `https://i.ytimg.com/vi/${ytMatch[1]}/hqdefault.jpg`
             } else {
-              const imgMatch = (descMatch ? descMatch[1] : '').match(/<img[^>]+src=["']([^"'>]+)["']/i) || (descMatch ? descMatch[1] : '').match(/<img[^>]+src=([^ >]+)/i)
-              if (imgMatch) thumb = imgMatch[1].replace(/['"]/g, '').trim()
+              // Priority thumb for Google Trends
+              const gTrendsThumb = itemRaw.match(/<ht:news_item_picture>(?:<!\[CDATA\[)?([\s\S]*?)(?:\]\]>)?<\/ht:news_item_picture>/i)
+              if (gTrendsThumb) {
+                thumb = gTrendsThumb[1].trim()
+              } else {
+                const imgMatch = (descMatch ? descMatch[1] : '').match(/<img[^>]+src=["']([^"'>]+)["']/i) || (descMatch ? descMatch[1] : '').match(/<img[^>]+src=([^ >]+)/i)
+                if (imgMatch) thumb = imgMatch[1].replace(/['"]/g, '').trim()
+              }
             }
           }
 
@@ -1007,6 +1017,7 @@ onUnmounted(() => {
 }
 
 /* Category Themes using CSS Variables */
+.theme-google { --brand-color: #4285f4; --brand-bg: rgba(66, 133, 244, 0.05); }
 .theme-ai { --brand-color: #6366f1; --brand-bg: rgba(99, 102, 241, 0.05); }
 .theme-finance { --brand-color: #0acaaa; --brand-bg: rgba(10, 202, 170, 0.05); }
 .theme-design { --brand-color: #fa4fc1; --brand-bg: rgba(250, 79, 193, 0.05); }
@@ -1023,6 +1034,9 @@ onUnmounted(() => {
 .dark .category-tab[data-cat="all"] .active-underline { background-color: white !important; }
 
 /* Active Title & Underline Colors */
+.category-tab[data-cat="google"][data-active="true"] { color: #4285f4 !important; }
+.category-tab[data-cat="google"][data-active="true"] .active-underline { background-color: #4285f4; }
+
 .category-tab[data-cat="ai"][data-active="true"] { color: #6366f1 !important; }
 .category-tab[data-cat="ai"][data-active="true"] .active-underline { background-color: #6366f1; }
 
@@ -1054,6 +1068,7 @@ onUnmounted(() => {
 .category-tab[data-cat="googleart"][data-active="true"] .active-underline { background-color: #0ea5e9; }
 
 /* Refined News Card Styling */
+.news-card.theme-google { --brand-color: #4285f4; --brand-bg: rgba(66, 133, 244, 0.05); }
 .news-card.theme-ai { --brand-color: #6366f1; --brand-bg: rgba(99, 102, 241, 0.05); }
 .news-card.theme-finance { --brand-color: #0acaaa; --brand-bg: rgba(10, 202, 170, 0.05); }
 .news-card.theme-design { --brand-color: #fa4fc1; --brand-bg: rgba(250, 79, 193, 0.05); }
@@ -1071,6 +1086,7 @@ onUnmounted(() => {
     transform: translateY(-4px);
   }
   
+  .news-card.theme-google:hover { border-color: #4285f480; }
   .news-card.theme-ai:hover { border-color: #6366f180; }
   .news-card.theme-finance:hover { border-color: #0acaaa80; }
   .news-card.theme-design:hover { border-color: #fa4fc180; }
@@ -1093,6 +1109,7 @@ onUnmounted(() => {
   border-color: rgba(0, 0, 0, 0.05); /* Default */
 }
 
+.news-card.theme-google .source-badge { border-color: #4285f430; }
 .news-card.theme-ai .source-badge { border-color: #6366f130; }
 .news-card.theme-finance .source-badge { border-color: #0acaaa30; }
 .news-card.theme-design .source-badge { border-color: #fa4fc130; }
