@@ -51,9 +51,8 @@
             ></textarea>
             
             <div class="absolute bottom-4 right-4 flex items-center gap-2 max-w-[calc(100%-2rem)]">
-              <!-- Custom Emoji Bar -->
-              <Transition name="fade-slide">
-                <div v-if="showEmojiPicker" ref="emojiPickerRef" class="relative flex items-center bg-white/95 dark:bg-zinc-900/90 backdrop-blur-md rounded-full border border-zinc-200 dark:border-white/10 shadow-none overflow-hidden">
+                  <Transition name="fade-slide">
+                    <div v-if="showMainEmojiPicker" ref="mainEmojiPickerRef" class="relative flex items-center bg-white/95 dark:bg-zinc-900/90 backdrop-blur-md rounded-full border border-zinc-200 dark:border-white/10 shadow-none overflow-hidden">
                   <!-- Left mask -->
                   <div class="absolute left-0 inset-y-0 w-6 bg-gradient-to-r from-white/95 dark:from-zinc-900/90 to-transparent pointer-events-none z-10"></div>
                   
@@ -76,9 +75,9 @@
 
               <button 
                 type="button"
-                @click.stop="toggleEmojiPicker"
+                @click.stop="toggleEmojiPicker($event, 'new')"
                 class="shrink-0 p-2 text-zinc-400 hover:text-zinc-600 dark:hover:text-zinc-200 transition-colors"
-                :class="{ 'text-zinc-900 dark:text-white': showEmojiPicker }"
+                :class="{ 'text-zinc-900 dark:text-white': showMainEmojiPicker }"
                 title="이모지 선택"
               >
                 <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -165,7 +164,7 @@
                 
                 <div class="absolute bottom-4 right-4 flex items-center gap-2 max-w-[calc(100%-2rem)]">
                   <Transition name="fade-slide">
-                    <div v-if="showEmojiPicker" ref="emojiPickerRef" class="relative flex items-center bg-white/95 dark:bg-zinc-900/90 backdrop-blur-md rounded-full border border-zinc-200 dark:border-white/10 shadow-none overflow-hidden">
+                    <div v-if="showEditEmojiPicker" ref="editEmojiPickerRef" class="relative flex items-center bg-white/95 dark:bg-zinc-900/90 backdrop-blur-md rounded-full border border-zinc-200 dark:border-white/10 shadow-none overflow-hidden">
                       <div class="absolute left-0 inset-y-0 w-6 bg-gradient-to-r from-white/95 dark:from-zinc-900/90 to-transparent pointer-events-none z-10"></div>
                       <div class="flex items-center gap-1 overflow-x-auto no-scrollbar px-4 py-1">
                         <button 
@@ -184,9 +183,9 @@
 
                   <button 
                     type="button"
-                    @click.stop="toggleEmojiPicker"
+                    @click.stop="toggleEmojiPicker($event, 'edit')"
                     class="shrink-0 p-2 text-zinc-400 hover:text-zinc-600 dark:hover:text-zinc-200 transition-colors"
-                    :class="{ 'text-zinc-900 dark:text-white': showEmojiPicker }"
+                    :class="{ 'text-zinc-900 dark:text-white': showEditEmojiPicker }"
                     title="이모지 선택"
                   >
                     <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -275,8 +274,10 @@ const newMessage = ref('')
 const newPassword = ref('')
 const isPosting = ref(false)
 const isLoading = ref(true)
-const showEmojiPicker = ref(false)
-const emojiPickerRef = ref<HTMLElement | null>(null)
+const showMainEmojiPicker = ref(false)
+const showEditEmojiPicker = ref(false)
+const mainEmojiPickerRef = ref<HTMLElement | null>(null)
+const editEmojiPickerRef = ref<HTMLElement | null>(null)
 const isDarkMode = ref(document.documentElement.classList.contains('dark'))
 const textareaRef = ref<HTMLTextAreaElement | null>(null)
 
@@ -344,17 +345,33 @@ const addEmoji = (emoji: string, target: 'new' | 'edit' = 'new') => {
     if (target === 'new') newMessage.value += emoji
     else tempEditMessage.value += emoji
   }
-  showEmojiPicker.value = false
+  showMainEmojiPicker.value = false
+  showEditEmojiPicker.value = false
 }
 
-const toggleEmojiPicker = (e: Event) => {
+const toggleEmojiPicker = (e: Event, target: 'new' | 'edit' = 'new') => {
   e.stopPropagation()
-  showEmojiPicker.value = !showEmojiPicker.value
+  if (target === 'new') {
+    showMainEmojiPicker.value = !showMainEmojiPicker.value
+    showEditEmojiPicker.value = false
+  } else {
+    showEditEmojiPicker.value = !showEditEmojiPicker.value
+    showMainEmojiPicker.value = false
+  }
 }
 
 const handleClickOutside = (e: MouseEvent) => {
-  if (emojiPickerRef.value && !emojiPickerRef.value.contains(e.target as Node)) {
-    showEmojiPicker.value = false
+  if (mainEmojiPickerRef.value && !mainEmojiPickerRef.value.contains(e.target as Node)) {
+    showMainEmojiPicker.value = false
+  }
+  
+  // For edit picker, it might be an array if using ref in v-for
+  const editEl = editEmojiPickerRef.value
+  if (editEl) {
+    const targetEl = Array.isArray(editEl) ? editEl[0] : editEl
+    if (targetEl && !targetEl.contains(e.target as Node)) {
+      showEditEmojiPicker.value = false
+    }
   }
 }
 
@@ -421,13 +438,21 @@ const saveEdit = async (post: Post) => {
   }
   
   try {
-    const { error } = await supabase
+    console.log('Attempting to update post:', post.id, {
+      title: tempEditTitle.value,
+      message: tempEditMessage.value
+    })
+
+    const { error, data } = await supabase
       .from('posts')
       .update({ 
         title: tempEditTitle.value, 
         message: tempEditMessage.value
       })
       .eq('id', post.id)
+      .select()
+
+    console.log('Update result:', { error, data })
 
     if (error) {
       alert('저장 중 오류가 발생했습니다: ' + error.message)
