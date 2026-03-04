@@ -3,7 +3,7 @@
     <div class="max-w-[1800px] mx-auto overflow-hidden relative">
       <div class="marquee-wrapper">
         <p class="marquee-content text-[13px] font-bold text-zinc-500 dark:text-zinc-400 tracking-tight leading-none whitespace-nowrap">
-          데이터 정보가 많은 경우 시간이 걸릴 수 있습니다.. ⏳
+          카테고리 업데이트 중입니다. 데이터 정보가 많은 경우 시간이 걸릴 수 있습니다.. ⏳
         </p>
       </div>
     </div>
