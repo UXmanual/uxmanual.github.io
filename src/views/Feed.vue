@@ -415,14 +415,16 @@ const saveEdit = async (post: Post) => {
     return
   }
   
-  const { error } = await supabase
+  const { error, data } = await supabase
     .from('posts')
     .update({ 
       title: tempEditTitle.value, 
-      message: tempEditMessage.value,
-      is_edited: true
+      message: tempEditMessage.value
     })
     .eq('id', post.id)
+    .select()
+
+  console.log('Update result:', { error, data })
 
   if (error) {
     alert('게시물 수정 중 오류가 발생했습니다.')
