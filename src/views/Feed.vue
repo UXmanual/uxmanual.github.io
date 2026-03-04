@@ -49,16 +49,16 @@
               class="w-full bg-zinc-50 dark:bg-black/50 border-2 border-zinc-200 dark:border-white/10 rounded-2xl px-6 py-5 text-base focus:outline-none focus:border-zinc-800 dark:focus:border-zinc-400 transition-all resize-none leading-relaxed"
             ></textarea>
             
-            <div class="absolute bottom-5 right-5 flex items-center gap-3 max-w-[calc(100%-2.5rem)]">
+            <div class="absolute bottom-4 right-4 flex items-center gap-2 max-w-[calc(100%-2rem)]">
               <!-- Custom Emoji Bar -->
               <Transition name="fade-slide">
-                <div v-if="showEmojiPicker" ref="emojiPickerRef" class="flex items-center gap-1 overflow-x-auto no-scrollbar bg-white/90 dark:bg-black/80 backdrop-blur-xl rounded-full px-2 py-1.5 border-2 border-zinc-200 dark:border-white/10 shadow-2xl">
+                <div v-if="showEmojiPicker" ref="emojiPickerRef" class="flex items-center gap-1 overflow-x-auto no-scrollbar bg-white/95 dark:bg-zinc-900/90 backdrop-blur-md rounded-full px-1.5 py-1 border border-zinc-200 dark:border-white/10 shadow-none">
                   <button 
                     v-for="emoji in ['😊', '😂', '🤣', '😍', '👍', '🙌', '✨', '🔥', '👀', '🤔', '🎉', '❤️', '🙏', '😭', '😮']" 
                     :key="emoji"
                     type="button"
                     @click="addEmoji(emoji)"
-                    class="w-10 h-10 flex items-center justify-center hover:bg-zinc-100 dark:hover:bg-white/10 rounded-full transition-all active:scale-90 text-xl"
+                    class="w-8 h-8 flex items-center justify-center hover:bg-zinc-100 dark:hover:bg-white/10 rounded-full transition-all active:scale-95 text-lg"
                   >
                     {{ emoji }}
                   </button>
@@ -68,11 +68,11 @@
               <button 
                 type="button"
                 @click.stop="toggleEmojiPicker"
-                class="shrink-0 p-2 text-zinc-400 hover:text-zinc-600 dark:hover:text-white transition-all hover:scale-110 active:scale-95"
-                :class="{ 'text-zinc-900 dark:text-white scale-110': showEmojiPicker }"
+                class="shrink-0 p-2 text-zinc-400 hover:text-zinc-600 dark:hover:text-zinc-200 transition-colors"
+                :class="{ 'text-zinc-900 dark:text-white': showEmojiPicker }"
                 title="이모지 선택"
               >
-                <svg xmlns="http://www.w3.org/2000/svg" class="w-7 h-7" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.828 14.828a4 4 0 01-5.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
                 </svg>
               </button>
@@ -340,7 +340,7 @@ onUnmounted(() => {
 .fade-slide-enter-from,
 .fade-slide-leave-to {
   opacity: 0;
-  transform: translateX(10px) scale(0.95);
+  transform: translateX(5px);
 }
 </style>
 
