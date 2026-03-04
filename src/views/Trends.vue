@@ -382,7 +382,8 @@ const categories = [
   { id: 'youtube', name: 'YouTube' },
   { id: 'diablo2', name: 'Diablo2' },
   { id: 'goodrich', name: 'GoodRich' },
-  { id: 'googleart', name: 'Arts' }
+  { id: 'googleart', name: 'Arts' },
+  { id: 'nasa', name: 'NASA' }
 ]
 
 const RSS_SOURCES = [
@@ -459,7 +460,10 @@ const RSS_SOURCES = [
   { name: '게임메카 디아2 뉴스', url: 'https://www.gamemeca.com/rss/news.php', category: 'diablo2' },
   
   // Google Art (API Driven)
-  { name: 'Google Arts & Culture', url: 'https://api.artic.edu/api/v1/artworks', category: 'googleart' }
+  { name: 'Google Arts & Culture', url: 'https://api.artic.edu/api/v1/artworks', category: 'googleart' },
+  
+  // NASA (Space Weather - NEO API)
+  { name: 'NASA 오늘의 우주', url: 'https://api.nasa.gov/neo/rest/v1/feed', category: 'nasa' }
 ]
 
 const filteredNews = computed(() => {
@@ -467,8 +471,8 @@ const filteredNews = computed(() => {
   if (activeCategory.value !== 'all') {
     list = list.filter(item => item.category === activeCategory.value)
   } else {
-    // Exclude Arts category from 'All News' to avoid overcrowding
-    list = list.filter(item => item.category !== 'googleart')
+    // Exclude Arts and NASA from 'All News' to maintain focus
+    list = list.filter(item => !['googleart', 'nasa'].includes(item.category))
   }
   // Strictly filter out Arts items without a valid thumbnail
   // Stabilize layout: Avoid removing items from the list reactively when images fail
@@ -582,6 +586,46 @@ const fetchNews = async () => {
         updateNewsList(artItems);
         return artItems;
       } catch (e) {
+        return [];
+      }
+    }
+
+    // Special handling for NASA (NeoWS API)
+    if (source.category === 'nasa') {
+      try {
+        const today = new Date().toISOString().split('T')[0];
+        const apiUrl = `https://api.nasa.gov/neo/rest/v1/feed?start_date=${today}&end_date=${today}&api_key=DEMO_KEY`;
+        
+        // Use proxy to avoid CORS for direct JSON API
+        const proxyUrl = `https://api.codetabs.com/v1/proxy?quest=${encodeURIComponent(apiUrl)}`;
+        const res = await fetch(proxyUrl);
+        const data = await res.json();
+        
+        if (!data.near_earth_objects || !data.near_earth_objects[today]) return [];
+        
+        const asteroids = data.near_earth_objects[today];
+        const nasaItems: NewsItem[] = asteroids.slice(0, 15).map((neo: any) => {
+          const isHazardous = neo.is_potentially_hazardous_asteroid;
+          const diameter = Math.round(neo.estimated_diameter.meters.estimated_diameter_max);
+          const velocity = Math.round(parseFloat(neo.close_approach_data[0].relative_velocity.kilometers_per_hour));
+          const distance = Math.round(parseFloat(neo.close_approach_data[0].miss_distance.kilometers) / 10000) / 100;
+          
+          return {
+            title: `☄️ 소행성 ${neo.name}`,
+            link: neo.nasa_jpl_url,
+            pubDate: new Date().toISOString(),
+            description: `${isHazardous ? '⚠️ 위험 가능성 있음 | ' : ''}크기: 약 ${diameter}m | 속도: ${velocity.toLocaleString()}km/h | 지구와의 거리: ${distance}만 km`,
+            source: 'NASA',
+            category: 'nasa',
+            provider: 'Near-Earth Object',
+            thumb: 'https://images-assets.nasa.gov/image/PIA17037/PIA17037~thumb.jpg' // High quality asteroid placeholder
+          };
+        });
+        
+        updateNewsList(nasaItems);
+        return nasaItems;
+      } catch (e) {
+        console.error('NASA Fetch Error:', e);
         return [];
       }
     }
@@ -1028,7 +1072,6 @@ onUnmounted(() => {
 }
 
 /* Category Themes using CSS Variables */
-.theme-google { --brand-color: #4285f4; --brand-bg: rgba(66, 133, 244, 0.05); }
 .theme-ai { --brand-color: #6366f1; --brand-bg: rgba(99, 102, 241, 0.05); }
 .theme-finance { --brand-color: #0acaaa; --brand-bg: rgba(10, 202, 170, 0.05); }
 .theme-design { --brand-color: #fa4fc1; --brand-bg: rgba(250, 79, 193, 0.05); }
@@ -1039,15 +1082,13 @@ onUnmounted(() => {
 .theme-goodrich { --brand-color: #f97316; --brand-bg: rgba(249, 115, 22, 0.05); }
 .theme-diablo2 { --brand-color: #c44135; --brand-bg: rgba(196, 65, 53, 0.05); }
 .theme-googleart { --brand-color: #0ea5e9; --brand-bg: rgba(14, 165, 233, 0.05); }
+.theme-nasa { --brand-color: #0b3d91; --brand-bg: rgba(11, 61, 145, 0.05); }
 
 /* Apply Theme to Header Tabs */
 .category-tab[data-cat="all"] .active-underline { background-color: #18181b; }
 .dark .category-tab[data-cat="all"] .active-underline { background-color: white !important; }
 
 /* Active Title & Underline Colors */
-.category-tab[data-cat="google"][data-active="true"] { color: #4285f4 !important; }
-.category-tab[data-cat="google"][data-active="true"] .active-underline { background-color: #4285f4; }
-
 .category-tab[data-cat="ai"][data-active="true"] { color: #6366f1 !important; }
 .category-tab[data-cat="ai"][data-active="true"] .active-underline { background-color: #6366f1; }
 
@@ -1078,8 +1119,10 @@ onUnmounted(() => {
 .category-tab[data-cat="googleart"][data-active="true"] { color: #0ea5e9 !important; }
 .category-tab[data-cat="googleart"][data-active="true"] .active-underline { background-color: #0ea5e9; }
 
+.category-tab[data-cat="nasa"][data-active="true"] { color: #0b3d91 !important; }
+.category-tab[data-cat="nasa"][data-active="true"] .active-underline { background-color: #0b3d91; }
+
 /* Refined News Card Styling */
-.news-card.theme-google { --brand-color: #4285f4; --brand-bg: rgba(66, 133, 244, 0.05); }
 .news-card.theme-ai { --brand-color: #6366f1; --brand-bg: rgba(99, 102, 241, 0.05); }
 .news-card.theme-finance { --brand-color: #0acaaa; --brand-bg: rgba(10, 202, 170, 0.05); }
 .news-card.theme-design { --brand-color: #fa4fc1; --brand-bg: rgba(250, 79, 193, 0.05); }
@@ -1090,6 +1133,7 @@ onUnmounted(() => {
 .news-card.theme-goodrich { --brand-color: #f97316; --brand-bg: rgba(249, 115, 22, 0.05); }
 .news-card.theme-diablo2 { --brand-color: #c44135; --brand-bg: rgba(196, 65, 53, 0.05); }
 .news-card.theme-googleart { --brand-color: #0ea5e9; --brand-bg: rgba(14, 165, 233, 0.05); }
+.news-card.theme-nasa { --brand-color: #0b3d91; --brand-bg: rgba(11, 61, 145, 0.05); }
 
 /* Hover Effects: Enabled only for devices that support hover (Mouse) to prevent sticky feel on mobile */
 @media (hover: hover) {
@@ -1097,7 +1141,6 @@ onUnmounted(() => {
     transform: translateY(-4px);
   }
   
-  .news-card.theme-google:hover { border-color: #4285f480; }
   .news-card.theme-ai:hover { border-color: #6366f180; }
   .news-card.theme-finance:hover { border-color: #0acaaa80; }
   .news-card.theme-design:hover { border-color: #fa4fc180; }
@@ -1108,6 +1151,7 @@ onUnmounted(() => {
   .news-card.theme-diablo2:hover { border-color: #c4413580; }
   .news-card.theme-goodrich:hover { border-color: #f9731680; }
   .news-card.theme-googleart:hover { border-color: #0ea5e980; }
+  .news-card.theme-nasa:hover { border-color: #0b3d9180; }
 
   .news-card:hover .title-element {
     opacity: 0.8;
@@ -1120,7 +1164,6 @@ onUnmounted(() => {
   border-color: rgba(0, 0, 0, 0.05); /* Default */
 }
 
-.news-card.theme-google .source-badge { border-color: #4285f430; }
 .news-card.theme-ai .source-badge { border-color: #6366f130; }
 .news-card.theme-finance .source-badge { border-color: #0acaaa30; }
 .news-card.theme-design .source-badge { border-color: #fa4fc130; }
@@ -1131,6 +1174,7 @@ onUnmounted(() => {
 .news-card.theme-diablo2 .source-badge { border-color: #c4413530; }
 .news-card.theme-goodrich .source-badge { border-color: #f9731630; }
 .news-card.theme-googleart .source-badge { border-color: #0ea5e930; }
+.news-card.theme-nasa .source-badge { border-color: #0b3d9130; }
 
 .more-link {
   color: var(--brand-color);
