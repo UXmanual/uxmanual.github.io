@@ -41,12 +41,37 @@
               class="w-full min-w-0 bg-zinc-50 dark:bg-black/50 border-2 border-zinc-200 dark:border-white/10 rounded-lg px-5 py-4 text-base focus:outline-none focus:border-zinc-800 dark:focus:border-zinc-400 transition-all font-bold"
             >
           </div>
-          <textarea 
-            v-model="newMessage" 
-            rows="4" 
-            placeholder="내용을 입력해주세요..." 
-            class="w-full bg-zinc-50 dark:bg-black/50 border-2 border-zinc-200 dark:border-white/10 rounded-lg px-5 py-4 text-base focus:outline-none focus:border-zinc-800 dark:focus:border-zinc-400 transition-all resize-none leading-relaxed px-5 py-4"
-          ></textarea>
+          <div class="space-y-4">
+            <div class="flex items-center justify-between px-1">
+              <span class="text-sm font-black text-zinc-400 dark:text-zinc-500 uppercase tracking-wider">내용 입력</span>
+              <div class="relative">
+                <button 
+                  type="button"
+                  @click.stop="toggleEmojiPicker"
+                  class="flex items-center gap-2 px-4 py-2 bg-zinc-100 dark:bg-white/5 hover:bg-zinc-200 dark:hover:bg-white/10 rounded-xl text-sm font-bold transition-all border-2 border-zinc-200 dark:border-white/10"
+                >
+                  <span class="text-lg">😊</span>
+                  <span class="text-zinc-700 dark:text-zinc-300">이모지</span>
+                </button>
+                
+                <div v-if="showEmojiPicker" ref="emojiPickerRef" class="absolute top-full right-0 mt-3 z-[100] animate-in fade-in slide-in-from-top-2 duration-200">
+                  <EmojiPicker 
+                    :native="true" 
+                    :theme="isDarkMode ? 'dark' : 'light'"
+                    @select="onSelectEmoji" 
+                    class="v3-emoji-picker-custom shadow-2xl rounded-2xl overflow-hidden border-2 border-zinc-200 dark:border-white/10"
+                  />
+                </div>
+              </div>
+            </div>
+            
+            <textarea 
+              v-model="newMessage" 
+              rows="5" 
+              placeholder="내용을 입력해주세요..." 
+              class="w-full bg-zinc-50 dark:bg-black/50 border-2 border-zinc-200 dark:border-white/10 rounded-2xl px-6 py-5 text-base focus:outline-none focus:border-zinc-800 dark:focus:border-zinc-400 transition-all resize-none leading-relaxed"
+            ></textarea>
+          </div>
           <div class="flex justify-end">
             <button 
               @click="addPost"
@@ -107,13 +132,15 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted } from 'vue'
+import { ref, onMounted, onUnmounted } from 'vue'
 import SiteNavbar from '../components/SiteNavbar.vue'
 import SiteFooter from '../components/SiteFooter.vue'
 import SiteHeader from '../components/SiteHeader.vue'
 import SiteBanner from '../components/SiteBanner.vue'
 import CommunitySkeleton from '../components/CommunitySkeleton.vue'
 import { supabase } from '../lib/supabaseClient'
+import EmojiPicker from 'vue3-emoji-picker'
+import 'vue3-emoji-picker/css'
 
 const linkify = (text: string) => {
   if (!text) return ''
@@ -163,8 +190,16 @@ const newMessage = ref('')
 const newPassword = ref('')
 const isPosting = ref(false)
 const isLoading = ref(true)
+const showEmojiPicker = ref(false)
+const emojiPickerRef = ref<HTMLElement | null>(null)
+const isDarkMode = ref(document.documentElement.classList.contains('dark'))
 
 const posts = ref<Post[]>([])
+
+// Watch for dark mode changes
+const observer = new MutationObserver(() => {
+  isDarkMode.value = document.documentElement.classList.contains('dark')
+})
 
 // Fetch posts from Supabase
 const fetchPosts = async () => {
@@ -184,6 +219,21 @@ const fetchPosts = async () => {
     console.error('Supabase fetch error:', err)
   } finally {
     isLoading.value = false
+  }
+}
+
+const onSelectEmoji = (emoji: any) => {
+  newMessage.value += emoji.i
+}
+
+const toggleEmojiPicker = (e: Event) => {
+  e.stopPropagation()
+  showEmojiPicker.value = !showEmojiPicker.value
+}
+
+const handleClickOutside = (e: MouseEvent) => {
+  if (emojiPickerRef.value && !emojiPickerRef.value.contains(e.target as Node)) {
+    showEmojiPicker.value = false
   }
 }
 
@@ -253,6 +303,13 @@ const verifyAndDelete = async (post: Post) => {
 
 onMounted(() => {
   fetchPosts()
+  window.addEventListener('click', handleClickOutside)
+  observer.observe(document.documentElement, { attributes: true, attributeFilter: ['class'] })
+})
+
+onUnmounted(() => {
+  window.removeEventListener('click', handleClickOutside)
+  observer.disconnect()
 })
 </script>
 
@@ -268,5 +325,51 @@ onMounted(() => {
 .list-leave-to {
   opacity: 0;
   transform: scale(0.9);
+}
+</style>
+
+<style>
+/* Custom styles for vue3-emoji-picker */
+.v3-emoji-picker-custom {
+  --v3-spacing: 12px;
+  background: white !important;
+  border: none !important;
+  font-family: inherit !important;
+}
+
+.dark .v3-emoji-picker-custom {
+  background: #18181b !important; /* zinc-900 */
+}
+
+.v3-emoji-picker-custom .v3-header,
+.v3-emoji-picker-custom .v3-footer {
+  border-color: rgba(0, 0, 0, 0.05) !important;
+}
+
+.dark .v3-emoji-picker-custom .v3-header,
+.dark .v3-emoji-picker-custom .v3-footer {
+  border-color: rgba(255, 255, 255, 0.05) !important;
+}
+
+.animate-in {
+  animation: animate-in 0.2s ease-out;
+}
+
+@keyframes animate-in {
+  from {
+    opacity: 0;
+    transform: translateY(10px) scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+/* Adjust for mobile */
+@media (max-width: 640px) {
+  .v3-emoji-picker-custom {
+    width: 280px !important;
+  }
 }
 </style>
