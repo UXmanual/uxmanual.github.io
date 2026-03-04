@@ -173,18 +173,15 @@
     <Transition name="toast">
       <div 
         v-if="isBackgroundLoading" 
-        class="fixed bottom-8 right-8 z-50 bg-white/80 dark:bg-zinc-900/80 backdrop-blur-xl border border-zinc-200 dark:border-white/10 rounded-2xl px-5 py-4 shadow-2xl flex items-center gap-4 group transition-all duration-300 hover:scale-[1.02]"
+        class="fixed bottom-8 right-8 z-50 bg-white/80 dark:bg-zinc-900/80 backdrop-blur-xl border border-zinc-200 dark:border-white/10 rounded-2xl px-5 py-3 shadow-2xl flex items-center gap-3 transition-all duration-300 hover:scale-[1.02]"
       >
-        <div class="relative w-5 h-5 flex-shrink-0">
+        <div class="relative w-4 h-4 flex-shrink-0">
            <div class="absolute inset-0 border-2 border-zinc-100 dark:border-zinc-800 rounded-full"></div>
            <div class="absolute inset-0 border-2 border-zinc-900 dark:border-white rounded-full border-t-transparent animate-spin"></div>
         </div>
-        <div class="flex flex-col min-w-[140px]">
-          <span class="text-[10px] font-black text-zinc-900 dark:text-white uppercase tracking-wider mb-0.5">Syncing News Stand</span>
-          <div class="flex items-center justify-between gap-4">
-             <span class="text-[11px] text-zinc-500 dark:text-zinc-400 font-bold truncate">추가 기사 로딩 중...</span>
-             <span class="text-[11px] text-zinc-900 dark:text-white font-black whitespace-nowrap">{{ processedTaskSources }}/{{ totalTaskSources }}</span>
-          </div>
+        <div class="flex items-center gap-3 pr-2">
+           <span class="text-[11px] text-zinc-500 dark:text-zinc-400 font-bold">기사 추가 로딩 중...</span>
+           <span class="text-[11px] text-zinc-900 dark:text-white font-black tabular-nums">{{ processedTaskSources }}/{{ totalTaskSources }}</span>
         </div>
       </div>
     </Transition>
