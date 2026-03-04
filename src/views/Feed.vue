@@ -93,7 +93,10 @@
             </div>
             
             <h4 v-if="post.title" class="text-lg font-bold mb-3 text-zinc-800 dark:text-zinc-200 tracking-tight">{{ post.title }}</h4>
-            <p class="text-zinc-600 dark:text-zinc-400 leading-relaxed whitespace-pre-line">{{ post.message }}</p>
+            <p 
+              class="text-zinc-600 dark:text-zinc-400 leading-relaxed whitespace-pre-line"
+              v-html="linkify(post.message)"
+            ></p>
           </div>
         </TransitionGroup>
       </div>
@@ -111,6 +114,25 @@ import SiteHeader from '../components/SiteHeader.vue'
 import SiteBanner from '../components/SiteBanner.vue'
 import CommunitySkeleton from '../components/CommunitySkeleton.vue'
 import { supabase } from '../lib/supabaseClient'
+
+const linkify = (text: string) => {
+  if (!text) return ''
+  
+  // 1. Escape HTML to prevent XSS
+  const escapedText = text
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#039;');
+
+  // 2. Detect URLs and wrap them in <a> tags
+  // Using a more robust regex to avoid picking up trailing punctuation
+  const urlRegex = /(https?:\/\/[^\s<]+[^.,;?!\s<])/g;
+  return escapedText.replace(urlRegex, (url) => {
+    return `<a href="${url}" target="_blank" rel="noopener noreferrer" class="text-blue-500 dark:text-blue-400 hover:underline break-all font-semibold">${url}</a>`;
+  });
+}
 
 const getAvatarGradient = (id: number) => {
   const gradients = [
