@@ -76,7 +76,8 @@
           :key="activeCategory" 
           class="content-wrapper"
         >
-          <div v-if="groupedNews.length > 0" class="space-y-10">
+          <!-- Show content ONLY when NOT loading or when we have data but want to avoid flicker, we prioritize isLoading state for fresh feel -->
+          <div v-if="!isLoading && groupedNews.length > 0" class="space-y-10">
             <div v-for="group in groupedNews" :key="group.date" class="space-y-6">
               <h2 class="text-sm font-semibold text-zinc-400 dark:text-zinc-500 uppercase whitespace-nowrap mb-6">📅 {{ group.date }}</h2>
               
@@ -179,7 +180,7 @@ import SiteFooter from '../components/SiteFooter.vue'
 import SiteHeader from '../components/SiteHeader.vue'
 import SiteBanner from '../components/SiteBanner.vue'
 
-const CURRENT_CACHE_VERSION = 'v14.3'
+const CURRENT_CACHE_VERSION = 'v14.4'
 const CACHE_KEY = `uxm_trends_cache_${CURRENT_CACHE_VERSION}`
 
 interface NewsItem {
@@ -768,11 +769,14 @@ const fetchNews = async () => {
     
     // Each source updates the list independently as it finishes
     let completedCount = 0
+    const totalPriority = prioritySources.length
+    
+    // Wait for ALL priority sources to finish for a stable "Final" feel
     prioritySources.forEach(source => {
       fetchSource(source).finally(() => {
         completedCount++
-        // Hyper-Responsive Loading Exit
-        if (news.value.length > 5 || completedCount === prioritySources.length) {
+        // Only stop loading when all priority sources are done OR a generous number of items are ready
+        if (completedCount === totalPriority || (news.value.length > 40 && completedCount > 5)) {
           isLoading.value = false
         }
       })
