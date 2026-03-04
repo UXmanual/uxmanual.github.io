@@ -50,40 +50,32 @@
             ></textarea>
             
             <div class="absolute bottom-4 right-4 flex items-center gap-2 max-w-[calc(100%-2rem)]">
-              <!-- Quick Emoji Bar -->
-              <div class="flex items-center gap-1 overflow-x-auto no-scrollbar bg-white/80 dark:bg-black/40 backdrop-blur-md rounded-full px-2 py-1 border border-zinc-200 dark:border-white/10 shadow-sm">
-                <button 
-                  v-for="emoji in ['😊', '😂', '🤣', '😍', '👍', '🙌', '✨', '🔥', '👀', '🤔']" 
-                  :key="emoji"
-                  type="button"
-                  @click="newMessage += emoji"
-                  class="w-8 h-8 flex items-center justify-center hover:bg-zinc-100 dark:hover:bg-white/10 rounded-full transition-all active:scale-90 text-lg"
-                >
-                  {{ emoji }}
-                </button>
-              </div>
-
-              <div class="relative shrink-0">
-                <button 
-                  type="button"
-                  @click.stop="toggleEmojiPicker"
-                  class="p-2 text-zinc-400 hover:text-zinc-600 dark:hover:text-zinc-200 transition-all hover:scale-110 active:scale-95"
-                  title="더 많은 이모지"
-                >
-                  <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.828 14.828a4 4 0 01-5.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-                  </svg>
-                </button>
-                
-                <div v-if="showEmojiPicker" ref="emojiPickerRef" class="absolute bottom-full right-0 mb-4 z-[100] animate-in fade-in slide-in-from-bottom-2 duration-200">
-                  <EmojiPicker 
-                    :native="true" 
-                    :theme="isDarkMode ? 'dark' : 'light'"
-                    @select="onSelectEmoji" 
-                    class="v3-emoji-picker-custom shadow-2xl rounded-2xl overflow-hidden border-2 border-zinc-200 dark:border-white/10"
-                  />
+              <!-- Custom Emoji Bar -->
+              <Transition name="fade-slide">
+                <div v-if="showEmojiPicker" ref="emojiPickerRef" class="flex items-center gap-1 overflow-x-auto no-scrollbar bg-white/90 dark:bg-black/60 backdrop-blur-md rounded-full px-2 py-1 border-2 border-zinc-200 dark:border-white/10 shadow-xl">
+                  <button 
+                    v-for="emoji in ['😊', '😂', '🤣', '😍', '👍', '🙌', '✨', '🔥', '👀', '🤔', '🎉', '❤️', '🙏', '😭', '😮']" 
+                    :key="emoji"
+                    type="button"
+                    @click="addEmoji(emoji)"
+                    class="w-9 h-9 flex items-center justify-center hover:bg-zinc-100 dark:hover:bg-white/10 rounded-full transition-all active:scale-90 text-xl"
+                  >
+                    {{ emoji }}
+                  </button>
                 </div>
-              </div>
+              </Transition>
+
+              <button 
+                type="button"
+                @click.stop="toggleEmojiPicker"
+                class="shrink-0 p-2.5 bg-zinc-100 dark:bg-white/5 hover:bg-zinc-200 dark:hover:bg-white/10 rounded-full text-zinc-500 dark:text-zinc-400 transition-all hover:scale-110 active:scale-95 border border-zinc-200 dark:border-white/10 shadow-sm"
+                :class="{ 'rotate-12 text-zinc-800 dark:text-zinc-100': showEmojiPicker }"
+                title="이모지 선택"
+              >
+                <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.828 14.828a4 4 0 01-5.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                </svg>
+              </button>
             </div>
           </div>
           <div class="flex justify-end">
@@ -153,8 +145,6 @@ import SiteHeader from '../components/SiteHeader.vue'
 import SiteBanner from '../components/SiteBanner.vue'
 import CommunitySkeleton from '../components/CommunitySkeleton.vue'
 import { supabase } from '../lib/supabaseClient'
-import EmojiPicker from 'vue3-emoji-picker'
-import 'vue3-emoji-picker/css'
 
 const linkify = (text: string) => {
   if (!text) return ''
@@ -236,8 +226,9 @@ const fetchPosts = async () => {
   }
 }
 
-const onSelectEmoji = (emoji: any) => {
-  newMessage.value += emoji.i
+const addEmoji = (emoji: string) => {
+  newMessage.value += emoji
+  showEmojiPicker.value = false
 }
 
 const toggleEmojiPicker = (e: Event) => {
@@ -339,6 +330,17 @@ onUnmounted(() => {
 .list-leave-to {
   opacity: 0;
   transform: scale(0.9);
+}
+
+.fade-slide-enter-active,
+.fade-slide-leave-active {
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.fade-slide-enter-from,
+.fade-slide-leave-to {
+  opacity: 0;
+  transform: translateX(10px) scale(0.95);
 }
 </style>
 
