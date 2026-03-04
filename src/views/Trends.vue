@@ -545,6 +545,7 @@ const fetchNews = async () => {
         
         const artItems: NewsItem[] = await Promise.all(data.data
           .filter((item: any) => item.image_id) // Only items with images
+          .slice(0, 12) // Limit to 12 for speed
           .map(async (item: any) => {
             const [tTitle, tDesc] = await Promise.all([
               translateText(item.title),
@@ -555,7 +556,7 @@ const fetchNews = async () => {
               link: `https://www.artic.edu/artworks/${item.id}`,
               pubDate: new Date().toISOString(),
               description: tDesc,
-              source: 'Arts (AIC)',
+              source: 'Arts',
               category: 'googleart',
               provider: 'AIC',
               thumb: `https://www.artic.edu/iiif/2/${item.image_id}/full/843,/0/default.jpg`
@@ -776,25 +777,32 @@ const fetchNews = async () => {
     const totalPriority = prioritySources.length
     
     // Wait for ALL priority sources to finish for a stable "Final" feel
-    prioritySources.forEach(source => {
-      fetchSource(source).finally(() => {
+    // Priority sources load in parallel
+    await Promise.all(prioritySources.map(async (source) => {
+      try {
+        await fetchSource(source)
+      } finally {
         completedCount++
-        // Only stop loading when all priority sources are done OR a generous number of items are ready
         if (completedCount === totalPriority || (news.value.length > 40 && completedCount > 5)) {
           isLoading.value = false
         }
-      })
-    })
+      }
+    }))
     
-    // 2. Fire background sources: No-wait background update
-    otherSources.forEach(source => fetchSource(source))
+    // 2. Fire background sources: Batch them to avoid connection throttling
+    const batchSize = 5
+    for (let i = 0; i < otherSources.length; i += batchSize) {
+      const batch = otherSources.slice(i, i + batchSize)
+      await Promise.all(batch.map(s => fetchSource(s)))
+      // Minor gap to keep UI responsive
+      await new Promise(r => setTimeout(r, 200))
+    }
     
-    // final safety: ensure loading ends eventually (Critical for YouTube tab)
-    setTimeout(() => { 
-      if (isLoading.value) isLoading.value = false 
-    }, 8000)
+    // final safety: ensure loading ends eventually
+    setTimeout(() => { if (isLoading.value) isLoading.value = false }, 5000)
 
-    fetchMissingThumbnails()
+    // Delay thumbnail fetching to prioritize core content
+    setTimeout(fetchMissingThumbnails, 3000)
   } catch (err) {
     console.error('Fetch news error:', err)
   } finally {
@@ -811,11 +819,11 @@ const fetchMissingThumbnails = async () => {
     ? news.value 
     : news.value.filter(n => n.category === activeCategory.value)
     
-  let pending = currentItems.filter(n => !n.thumb).slice(0, 30)
+  let pending = currentItems.filter(n => !n.thumb).slice(0, 15) // Reduced from 30 to 15
   
   // 2. If space remains, fill with other categories' items
-  if (pending.length < 30) {
-    const others = news.value.filter(n => !n.thumb && n.category !== activeCategory.value).slice(0, 30 - pending.length)
+  if (pending.length < 15) {
+    const others = news.value.filter(n => !n.thumb && n.category !== activeCategory.value).slice(0, 15 - pending.length)
     pending = [...pending, ...others]
   }
 
