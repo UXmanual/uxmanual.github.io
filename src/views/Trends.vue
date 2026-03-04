@@ -180,7 +180,7 @@ import SiteFooter from '../components/SiteFooter.vue'
 import SiteHeader from '../components/SiteHeader.vue'
 import SiteBanner from '../components/SiteBanner.vue'
 
-const CURRENT_CACHE_VERSION = 'v14.5'
+const CURRENT_CACHE_VERSION = 'v14.6'
 const CACHE_KEY = `uxm_trends_cache_${CURRENT_CACHE_VERSION}`
 
 interface NewsItem {
@@ -450,6 +450,9 @@ const filteredNews = computed(() => {
   let list = news.value
   if (activeCategory.value !== 'all') {
     list = list.filter(item => item.category === activeCategory.value)
+  } else {
+    // Exclude Arts category from 'All News' to avoid overcrowding
+    list = list.filter(item => item.category !== 'googleart')
   }
   // Strictly filter out Arts items without a valid thumbnail
   // Stabilize layout: Avoid removing items from the list reactively when images fail
