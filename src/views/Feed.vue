@@ -52,16 +52,24 @@
             <div class="absolute bottom-4 right-4 flex items-center gap-2 max-w-[calc(100%-2rem)]">
               <!-- Custom Emoji Bar -->
               <Transition name="fade-slide">
-                <div v-if="showEmojiPicker" ref="emojiPickerRef" class="flex items-center gap-1 overflow-x-auto no-scrollbar bg-white/95 dark:bg-zinc-900/90 backdrop-blur-md rounded-full px-1.5 py-1 border border-zinc-200 dark:border-white/10 shadow-none">
-                  <button 
-                    v-for="emoji in ['😊', '😂', '🤣', '😍', '👍', '🙌', '✨', '🔥', '👀', '🤔', '🎉', '❤️', '🙏', '😭', '😮']" 
-                    :key="emoji"
-                    type="button"
-                    @click="addEmoji(emoji)"
-                    class="w-8 h-8 flex items-center justify-center hover:bg-zinc-100 dark:hover:bg-white/10 rounded-full transition-all active:scale-95 text-lg"
-                  >
-                    {{ emoji }}
-                  </button>
+                <div v-if="showEmojiPicker" ref="emojiPickerRef" class="relative flex items-center bg-white/95 dark:bg-zinc-900/90 backdrop-blur-md rounded-full border border-zinc-200 dark:border-white/10 shadow-none overflow-hidden">
+                  <!-- Left mask -->
+                  <div class="absolute left-0 inset-y-0 w-6 bg-gradient-to-r from-white/95 dark:from-zinc-900/90 to-transparent pointer-events-none z-10"></div>
+                  
+                  <div class="flex items-center gap-1 overflow-x-auto no-scrollbar px-4 py-1">
+                    <button 
+                      v-for="emoji in ['😊', '😂', '🤣', '😍', '👍', '🙌', '✨', '🔥', '👀', '🤔', '🎉', '❤️', '🙏', '😭', '😮']" 
+                      :key="emoji"
+                      type="button"
+                      @click="addEmoji(emoji)"
+                      class="w-8 h-8 flex items-center justify-center hover:bg-zinc-100 dark:hover:bg-white/10 rounded-full transition-all active:scale-95 text-lg"
+                    >
+                      {{ emoji }}
+                    </button>
+                  </div>
+
+                  <!-- Right mask -->
+                  <div class="absolute right-0 inset-y-0 w-6 bg-gradient-to-l from-white/95 dark:from-zinc-900/90 to-transparent pointer-events-none z-10"></div>
                 </div>
               </Transition>
 
