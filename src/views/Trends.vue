@@ -388,7 +388,7 @@ const categories = [
 
 const RSS_SOURCES = [
   // Google Trends (Real-time Rising Search)
-  { name: 'Google Trends', url: 'https://trends.google.com/trends/trendingsearches/daily/rss?geo=KR', category: 'google' },
+  { name: 'Google Trends', url: 'https://trends.google.co.kr/trends/trendingsearches/daily/rss?geo=KR', category: 'google' },
 
   // AI & Tech
   { name: 'AI 타임스', url: 'https://www.aitimes.com/rss/S1N1.xml', category: 'ai' },
@@ -633,6 +633,13 @@ const fetchNews = async () => {
 
           let title = decodeHtml(titleMatch[1].trim())
           let link = linkMatch[1].trim()
+
+          // Higher quality link/image for Google Trends
+          if (source.category === 'google') {
+            const hNewsLink = itemRaw.match(/<ht:news_item_url>(?:<!\[CDATA\[)?([\s\S]*?)(?:\]\]>)?<\/ht:news_item_url>/i)
+            if (hNewsLink) link = hNewsLink[1].trim()
+          }
+
           let ytId = ''
           
           if (link.includes('news.google.com/')) {
@@ -674,6 +681,14 @@ const fetchNews = async () => {
           let description = descMatch ? decodeHtml(descMatch[1].replace(/<[^>]*>?/gm, ' ').replace(/\s+/g, ' ').trim()) : ''
           const pubDate = dateMatch ? dateMatch[1].trim() : ''
           
+          if (source.category === 'google') {
+            const trafficMatch = itemRaw.match(/<ht:approx_traffic>(?:<!\[CDATA\[)?([\s\S]*?)(?:\]\]>)?<\/ht:approx_traffic>/i)
+            if (trafficMatch) {
+              const traffic = trafficMatch[1].trim()
+              description = `지표: ${traffic}회 이상 검색 | ${description}`
+            }
+          }
+          
           let thumb = ''
           if (ytId) {
             thumb = `https://i.ytimg.com/vi/${ytId}/hqdefault.jpg`
@@ -683,7 +698,7 @@ const fetchNews = async () => {
               thumb = `https://i.ytimg.com/vi/${ytMatch[1]}/hqdefault.jpg`
             } else {
               // Priority thumb for Google Trends
-              const gTrendsThumb = itemRaw.match(/<ht:news_item_picture>(?:<!\[CDATA\[)?([\s\S]*?)(?:\]\]>)?<\/ht:news_item_picture>/i)
+              const gTrendsThumb = itemRaw.match(/<ht:picture>(?:<!\[CDATA\[)?([\s\S]*?)(?:\]\]>)?<\/ht:picture>/i)
               if (gTrendsThumb) {
                 thumb = gTrendsThumb[1].trim()
               } else {
