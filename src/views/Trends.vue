@@ -169,6 +169,26 @@
       </Transition>
     </main>
 
+    <!-- Loading Toast Notification -->
+    <Transition name="toast">
+      <div 
+        v-if="isBackgroundLoading" 
+        class="fixed bottom-8 right-8 z-50 bg-white/80 dark:bg-zinc-900/80 backdrop-blur-xl border border-zinc-200 dark:border-white/10 rounded-2xl px-5 py-4 shadow-2xl flex items-center gap-4 group transition-all duration-300 hover:scale-[1.02]"
+      >
+        <div class="relative w-5 h-5 flex-shrink-0">
+           <div class="absolute inset-0 border-2 border-zinc-100 dark:border-zinc-800 rounded-full"></div>
+           <div class="absolute inset-0 border-2 border-zinc-900 dark:border-white rounded-full border-t-transparent animate-spin"></div>
+        </div>
+        <div class="flex flex-col min-w-[140px]">
+          <span class="text-[10px] font-black text-zinc-900 dark:text-white uppercase tracking-wider mb-0.5">Syncing News Stand</span>
+          <div class="flex items-center justify-between gap-4">
+             <span class="text-[11px] text-zinc-500 dark:text-zinc-400 font-bold truncate">추가 기사 로딩 중...</span>
+             <span class="text-[11px] text-zinc-900 dark:text-white font-black whitespace-nowrap">{{ processedTaskSources }}/{{ totalTaskSources }}</span>
+          </div>
+        </div>
+      </div>
+    </Transition>
+
     <SiteFooter />
   </div>
 </template>
@@ -196,6 +216,9 @@ interface NewsItem {
 }
 
 const isLoading = ref(true)
+const isBackgroundLoading = ref(false)
+const totalTaskSources = ref(0)
+const processedTaskSources = ref(0)
 const activeCategory = ref('all')
 const news = ref<NewsItem[]>([])
 const visibleCount = ref(50)
@@ -772,6 +795,10 @@ const fetchNews = async () => {
     
     const otherSources = RSS_SOURCES.filter(s => !prioritySources.includes(s))
     
+    totalTaskSources.value = RSS_SOURCES.length
+    processedTaskSources.value = 0
+    isBackgroundLoading.value = true
+    
     // Each source updates the list independently as it finishes
     let completedCount = 0
     const totalPriority = prioritySources.length
@@ -780,6 +807,7 @@ const fetchNews = async () => {
     prioritySources.forEach(source => {
       fetchSource(source).finally(() => {
         completedCount++
+        processedTaskSources.value++
         if (completedCount === totalPriority || (news.value.length > 40 && completedCount > 5)) {
           isLoading.value = false
         }
@@ -788,12 +816,21 @@ const fetchNews = async () => {
     
     // 2. Fire background sources: Non-blocking batching
     const startBackgroundFetch = async () => {
-      const batchSize = 10
+      const batchSize = 8
       for (let i = 0; i < otherSources.length; i += batchSize) {
         const batch = otherSources.slice(i, i + batchSize)
-        await Promise.all(batch.map(s => fetchSource(s)))
-        await new Promise(r => setTimeout(r, 100))
+        await Promise.all(batch.map(s => {
+          return fetchSource(s).finally(() => {
+            processedTaskSources.value++
+          })
+        }))
+        // Subtle gap for UI thread sanity
+        await new Promise(r => setTimeout(r, 150))
       }
+      // Finish background loading
+      setTimeout(() => {
+        isBackgroundLoading.value = false
+      }, 2000)
     }
     startBackgroundFetch()
     
@@ -925,6 +962,20 @@ onUnmounted(() => {
 }
 .animate-wave {
   animation: wave 1.2s ease-in-out infinite;
+}
+
+/* Toast Animation */
+.toast-enter-active,
+.toast-leave-active {
+  transition: all 0.5s cubic-bezier(0.2, 0, 0.2, 1);
+}
+.toast-enter-from {
+  opacity: 0;
+  transform: translateY(40px) scale(0.9);
+}
+.toast-leave-to {
+  opacity: 0;
+  transform: translateY(20px) scale(0.95);
 }
 
 /* Cinematic Slide-Fade Transitions */
