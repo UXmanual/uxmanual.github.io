@@ -242,6 +242,7 @@ const addEmoji = (emoji: string) => {
     const start = el.selectionStart
     const end = el.selectionEnd
     const text = newMessage.value
+    const scrollTop = el.scrollTop
     
     newMessage.value = text.substring(0, start) + emoji + text.substring(end)
     
@@ -250,6 +251,7 @@ const addEmoji = (emoji: string) => {
       el.focus()
       const newPos = start + emoji.length
       el.setSelectionRange(newPos, newPos)
+      el.scrollTop = scrollTop
     })
   } else {
     newMessage.value += emoji
