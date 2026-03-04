@@ -126,7 +126,7 @@
                 <button 
                   v-if="editingPostId !== post.id"
                   @click="startEdit(post)"
-                  class="p-2 rounded-lg hover:bg-zinc-500/10 text-zinc-400 hover:text-zinc-600 dark:hover:text-zinc-200 transition-all opacity-0 group-hover:opacity-100"
+                  class="p-2 rounded-lg hover:bg-zinc-500/10 text-zinc-400 hover:text-zinc-600 dark:hover:text-zinc-200 transition-all"
                   title="수정하기"
                 >
                   <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -137,7 +137,7 @@
                 <!-- Delete Button -->
                 <button 
                   @click="verifyAndDelete(post)"
-                  class="p-2 rounded-lg hover:bg-red-500/10 text-zinc-400 hover:text-red-500 transition-all opacity-0 group-hover:opacity-100"
+                  class="p-2 rounded-lg hover:bg-red-500/10 text-zinc-400 hover:text-red-500 transition-all"
                   title="게시물 삭제"
                 >
                   <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -443,16 +443,15 @@ const saveEdit = async (post: Post) => {
       message: tempEditMessage.value
     })
 
-    const { error, data } = await supabase
+    const { error } = await supabase
       .from('posts')
       .update({ 
         title: tempEditTitle.value, 
         message: tempEditMessage.value
       })
-      .eq('id', post.id)
-      .select()
+      .match({ id: post.id })
 
-    console.log('Update result:', { error, data })
+    console.log('Update result:', { error })
 
     if (error) {
       alert('저장 중 오류가 발생했습니다: ' + error.message)
