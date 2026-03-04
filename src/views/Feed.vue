@@ -449,16 +449,7 @@ const saveEdit = async (post: Post) => {
       .select()
 
     if (error) {
-      if (error.code === '42703') {
-        // Fallback for missing column
-        await supabase.from('posts').update({ 
-          title: tempEditTitle.value, 
-          message: tempEditMessage.value 
-        }).eq('id', post.id)
-        alert('저장은 완료되었으나, (수정됨) 라벨 표시를 위한 데이터베이스 설정이 필요합니다. (SQL 실행 필요)')
-      } else {
-        alert('저장 중 오류가 발생했습니다: ' + error.message)
-      }
+      alert('저장 중 오류가 발생했습니다: ' + error.message)
       console.error('Update error:', error)
     } else if (!data || data.length === 0) {
       alert('저장 권한이 없습니다. (Supabase SQL 정책 설정을 확인해 주세요.)')
