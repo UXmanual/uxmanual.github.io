@@ -118,7 +118,7 @@
                   <div class="flex items-center gap-1.5 text-xs text-zinc-400 font-medium">
                     <span>{{ post.date }}</span>
                     <template v-if="post.is_edited">
-                      <span class="text-zinc-200 dark:text-zinc-800">|</span>
+                       <span class="text-zinc-200 dark:text-zinc-700">|</span>
                       <span>수정됨</span>
                     </template>
                   </div>

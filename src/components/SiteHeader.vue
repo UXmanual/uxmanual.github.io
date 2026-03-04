@@ -11,13 +11,13 @@
         style="font-family: 'Pretendard Variable', 'Pretendard', sans-serif;"
       >
         <span class="shrink-0">{{ formattedDate }}</span>
-        <span class="w-[1px] h-2.5 bg-zinc-200 dark:bg-white/10 shrink-0"></span>
+        <span class="w-[1px] h-2.5 bg-zinc-200 dark:bg-white/20 shrink-0"></span>
         <span class="shrink-0">서울</span>
         <span class="tabular-nums min-w-[64px] md:min-w-[78px]">
           {{ currentTime }}
         </span>
         <template v-if="weather">
-          <span class="w-[1px] h-2.5 bg-zinc-200 dark:bg-white/10 shrink-0"></span>
+          <span class="w-[1px] h-2.5 bg-zinc-200 dark:bg-white/20 shrink-0"></span>
           <span class="shrink-0">{{ weatherEmoji }} {{ weather.temp }}°C</span>
         </template>
       </div>
