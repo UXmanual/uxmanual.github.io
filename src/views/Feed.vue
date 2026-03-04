@@ -120,10 +120,33 @@
                 </div>
               </div>
               <div class="flex items-center gap-2">
+                <!-- Edit Button -->
+                <button 
+                  v-if="editingPostId !== post.id"
+                  @click="startEdit(post)"
+                  class="p-2 rounded-lg hover:bg-zinc-500/10 text-zinc-400 hover:text-zinc-600 dark:hover:text-zinc-200 transition-all opacity-0 group-hover:opacity-100"
+                  title="수정하기"
+                >
+                  <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+                  </svg>
+                </button>
+                <button 
+                  v-else
+                  @click="saveEdit(post)"
+                  class="p-2 rounded-lg hover:bg-green-500/10 text-green-500 transition-all animate-pulse"
+                  title="저장하기"
+                >
+                  <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+                  </svg>
+                </button>
+
+                <!-- Delete Button -->
                 <button 
                   @click="verifyAndDelete(post)"
                   class="p-2 rounded-lg hover:bg-red-500/10 text-zinc-400 hover:text-red-500 transition-all opacity-0 group-hover:opacity-100"
-                  title="Delete Post"
+                  title="게시물 삭제"
                 >
                   <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
@@ -132,11 +155,30 @@
               </div>
             </div>
             
-            <h4 v-if="post.title" class="text-lg font-bold mb-3 text-zinc-800 dark:text-zinc-200 tracking-tight">{{ post.title }}</h4>
-            <p 
-              class="text-zinc-600 dark:text-zinc-400 leading-relaxed whitespace-pre-line"
-              v-html="linkify(post.message)"
-            ></p>
+            <div v-if="editingPostId === post.id" class="space-y-4 animate-in">
+              <input 
+                v-model="tempEditTitle"
+                class="w-full bg-zinc-50 dark:bg-black/30 border border-zinc-200 dark:border-white/10 rounded-xl px-4 py-2 text-base focus:outline-none focus:border-zinc-800 dark:focus:border-zinc-400 transition-all font-bold"
+                placeholder="제목을 입력하세요..."
+              />
+              <textarea 
+                v-model="tempEditMessage"
+                rows="4"
+                class="w-full bg-zinc-50 dark:bg-black/30 border border-zinc-200 dark:border-white/10 rounded-xl px-4 py-3 text-base focus:outline-none focus:border-zinc-800 dark:focus:border-zinc-400 transition-all resize-none leading-relaxed"
+                placeholder="내용을 입력하세요..."
+              ></textarea>
+              <div class="flex justify-end gap-3 mt-2">
+                <button @click="editingPostId = null" class="px-4 py-2 text-sm text-zinc-400 hover:text-zinc-600 dark:hover:text-zinc-200 transition-colors">취소</button>
+                <button @click="saveEdit(post)" class="px-4 py-2 bg-zinc-900 dark:bg-white text-white dark:text-black rounded-lg text-sm font-bold">수정 완료</button>
+              </div>
+            </div>
+            <template v-else>
+              <h4 v-if="post.title" class="text-lg font-bold mb-3 text-zinc-800 dark:text-zinc-200 tracking-tight">{{ post.title }}</h4>
+              <p 
+                class="text-zinc-600 dark:text-zinc-400 leading-relaxed whitespace-pre-line"
+                v-html="linkify(post.message)"
+              ></p>
+            </template>
           </div>
         </TransitionGroup>
       </div>
@@ -207,6 +249,10 @@ const showEmojiPicker = ref(false)
 const emojiPickerRef = ref<HTMLElement | null>(null)
 const isDarkMode = ref(document.documentElement.classList.contains('dark'))
 const textareaRef = ref<HTMLTextAreaElement | null>(null)
+
+const editingPostId = ref<number | null>(null)
+const tempEditTitle = ref('')
+const tempEditMessage = ref('')
 
 const posts = ref<Post[]>([])
 
@@ -311,6 +357,42 @@ const addPost = async () => {
   }
   
   isPosting.value = false
+}
+
+const startEdit = (post: Post) => {
+  const input = prompt('게시물을 수정하려면 숫자 4자리 비밀번호를 입력하세요:')
+  if (input === null) return
+  
+  if (input === post.password) {
+    editingPostId.value = post.id
+    tempEditTitle.value = post.title
+    tempEditMessage.value = post.message
+  } else {
+    alert('비밀번호가 일치하지 않습니다.')
+  }
+}
+
+const saveEdit = async (post: Post) => {
+  if (!tempEditTitle.value || !tempEditMessage.value) {
+    alert('제목과 내용을 모두 입력해주세요.')
+    return
+  }
+  
+  const { error } = await supabase
+    .from('posts')
+    .update({ 
+      title: tempEditTitle.value, 
+      message: tempEditMessage.value 
+    })
+    .eq('id', post.id)
+
+  if (error) {
+    alert('게시물 수정 중 오류가 발생했습니다.')
+    console.error(error)
+  } else {
+    editingPostId.value = null
+    await fetchPosts()
+  }
 }
 
 const verifyAndDelete = async (post: Post) => {
