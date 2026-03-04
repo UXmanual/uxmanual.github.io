@@ -180,7 +180,7 @@ import SiteFooter from '../components/SiteFooter.vue'
 import SiteHeader from '../components/SiteHeader.vue'
 import SiteBanner from '../components/SiteBanner.vue'
 
-const CURRENT_CACHE_VERSION = 'v14.4'
+const CURRENT_CACHE_VERSION = 'v14.5'
 const CACHE_KEY = `uxm_trends_cache_${CURRENT_CACHE_VERSION}`
 
 interface NewsItem {
@@ -452,9 +452,10 @@ const filteredNews = computed(() => {
     list = list.filter(item => item.category === activeCategory.value)
   }
   // Strictly filter out Arts items without a valid thumbnail
+  // Stabilize layout: Avoid removing items from the list reactively when images fail
   return list.filter(item => {
     if (item.category === 'googleart') {
-      return item.thumb && !item.thumbError
+      return !!item.thumb
     }
     return true
   })
