@@ -41,36 +41,35 @@
               class="w-full min-w-0 bg-zinc-50 dark:bg-black/50 border-2 border-zinc-200 dark:border-white/10 rounded-lg px-5 py-4 text-base focus:outline-none focus:border-zinc-800 dark:focus:border-zinc-400 transition-all font-bold"
             >
           </div>
-          <div class="space-y-4">
-            <div class="flex items-center justify-between px-1">
-              <span class="text-sm font-black text-zinc-400 dark:text-zinc-500 uppercase tracking-wider">내용 입력</span>
-              <div class="relative">
-                <button 
-                  type="button"
-                  @click.stop="toggleEmojiPicker"
-                  class="flex items-center gap-2 px-4 py-2 bg-zinc-100 dark:bg-white/5 hover:bg-zinc-200 dark:hover:bg-white/10 rounded-xl text-sm font-bold transition-all border-2 border-zinc-200 dark:border-white/10"
-                >
-                  <span class="text-lg">😊</span>
-                  <span class="text-zinc-700 dark:text-zinc-300">이모지</span>
-                </button>
-                
-                <div v-if="showEmojiPicker" ref="emojiPickerRef" class="absolute top-full right-0 mt-3 z-[100] animate-in fade-in slide-in-from-top-2 duration-200">
-                  <EmojiPicker 
-                    :native="true" 
-                    :theme="isDarkMode ? 'dark' : 'light'"
-                    @select="onSelectEmoji" 
-                    class="v3-emoji-picker-custom shadow-2xl rounded-2xl overflow-hidden border-2 border-zinc-200 dark:border-white/10"
-                  />
-                </div>
-              </div>
-            </div>
-            
+          <div class="relative">
             <textarea 
               v-model="newMessage" 
               rows="5" 
               placeholder="내용을 입력해주세요..." 
               class="w-full bg-zinc-50 dark:bg-black/50 border-2 border-zinc-200 dark:border-white/10 rounded-2xl px-6 py-5 text-base focus:outline-none focus:border-zinc-800 dark:focus:border-zinc-400 transition-all resize-none leading-relaxed"
             ></textarea>
+            
+            <div class="absolute bottom-4 right-4 flex items-center gap-2">
+              <button 
+                type="button"
+                @click.stop="toggleEmojiPicker"
+                class="p-2 text-zinc-400 hover:text-zinc-600 dark:hover:text-zinc-200 transition-all hover:scale-110 active:scale-95"
+                title="이모지 선택"
+              >
+                <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.828 14.828a4 4 0 01-5.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                </svg>
+              </button>
+            </div>
+
+            <div v-if="showEmojiPicker" ref="emojiPickerRef" class="absolute bottom-full right-0 mb-4 z-[100] animate-in fade-in slide-in-from-bottom-2 duration-200">
+              <EmojiPicker 
+                :native="true" 
+                :theme="isDarkMode ? 'dark' : 'light'"
+                @select="onSelectEmoji" 
+                class="v3-emoji-picker-custom shadow-2xl rounded-2xl overflow-hidden border-2 border-zinc-200 dark:border-white/10"
+              />
+            </div>
           </div>
           <div class="flex justify-end">
             <button 
