@@ -1079,6 +1079,7 @@ onUnmounted(() => {
   .news-card.theme-blog:hover { border-color: #f59e0b80; }
   .news-card.theme-youtube:hover { border-color: #ef444480; }
   .news-card.theme-diablo2:hover { border-color: #c4413580; }
+  .news-card.theme-goodrich:hover { border-color: #f9731680; }
   .news-card.theme-googleart:hover { border-color: #0ea5e980; }
 
   .news-card:hover .title-element {
@@ -1100,6 +1101,7 @@ onUnmounted(() => {
 .news-card.theme-blog .source-badge { border-color: #f59e0b30; }
 .news-card.theme-youtube .source-badge { border-color: #ef444430; }
 .news-card.theme-diablo2 .source-badge { border-color: #c4413530; }
+.news-card.theme-goodrich .source-badge { border-color: #f9731630; }
 .news-card.theme-googleart .source-badge { border-color: #0ea5e930; }
 
 .more-link {
