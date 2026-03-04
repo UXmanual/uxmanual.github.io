@@ -24,18 +24,18 @@
 .marquee-content {
   display: inline-block;
   padding-left: 100%;
-  animation: marquee-scroll 28s linear infinite; /* Optimized for PC */
+  animation: marquee-scroll 22s linear infinite; /* Optimized for PC */
 }
 
 @media (max-width: 768px) {
   .marquee-content {
-    animation-duration: 15s; /* Optimized for Mobile */
+    animation-duration: 12s; /* Optimized for Mobile */
   }
 }
 
 @keyframes marquee-scroll {
   from { transform: translateX(0); }
-  to { transform: translateX(-180%); }
+  to { transform: translateX(-100%); }
 }
 
 /* Subtle fade edges to blend with background */
