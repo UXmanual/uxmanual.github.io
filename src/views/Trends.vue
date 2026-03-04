@@ -459,10 +459,7 @@ const RSS_SOURCES = [
   { name: '게임메카 디아2 뉴스', url: 'https://www.gamemeca.com/rss/news.php', category: 'diablo2' },
   
   // Google Art (API Driven)
-  { name: 'Google Arts & Culture', url: 'https://api.artic.edu/api/v1/artworks', category: 'googleart' },
-  
-  // NASA (Space Weather - NEO API)
-  { name: 'NASA 오늘의 우주', url: 'https://api.nasa.gov/neo/rest/v1/feed', category: 'nasa' }
+  { name: 'Google Arts & Culture', url: 'https://api.artic.edu/api/v1/artworks', category: 'googleart' }
 ]
 
 const filteredNews = computed(() => {
@@ -543,7 +540,10 @@ const fetchNews = async () => {
       if (cached) {
         const parsed = JSON.parse(cached)
         if (Array.isArray(parsed)) {
-          news.value = parsed.sort((a: NewsItem, b: NewsItem) => new Date(b.pubDate).getTime() - new Date(a.pubDate).getTime())
+          // Purge items from categories that no longer exist (like nasa)
+          const validCategoryIds = new Set(['all', ...categories.map(c => c.id)])
+          const filtered = parsed.filter((item: any) => validCategoryIds.has(item.category))
+          news.value = filtered.sort((a: NewsItem, b: NewsItem) => new Date(b.pubDate).getTime() - new Date(a.pubDate).getTime())
         }
       }
     } catch (e) {
