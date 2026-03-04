@@ -438,27 +438,30 @@ const saveEdit = async (post: Post) => {
   }
   
   try {
-    console.log('Attempting to update post:', post.id, {
-      title: tempEditTitle.value,
-      message: tempEditMessage.value
-    })
-
     const { error, data } = await supabase
       .from('posts')
       .update({ 
         title: tempEditTitle.value, 
-        message: tempEditMessage.value
+        message: tempEditMessage.value,
+        is_edited: true
       })
       .eq('id', post.id)
       .select()
 
-    console.log('Update result:', { error, data })
-
     if (error) {
-      alert('저장 중 오류가 발생했습니다: ' + error.message)
+      if (error.code === '42703') {
+        // Fallback for missing column
+        await supabase.from('posts').update({ 
+          title: tempEditTitle.value, 
+          message: tempEditMessage.value 
+        }).eq('id', post.id)
+        alert('저장은 완료되었으나, (수정됨) 라벨 표시를 위한 데이터베이스 설정이 필요합니다. (SQL 실행 필요)')
+      } else {
+        alert('저장 중 오류가 발생했습니다: ' + error.message)
+      }
       console.error('Update error:', error)
     } else if (!data || data.length === 0) {
-      alert('수정된 내용이 없습니다. (권한 문제일 수 있습니다.)')
+      alert('저장 권한이 없습니다. (Supabase SQL 정책 설정을 확인해 주세요.)')
     } else {
       editingPostId.value = null
       await fetchPosts()
