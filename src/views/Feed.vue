@@ -314,7 +314,12 @@ const fetchPosts = async () => {
 }
 
 const addEmoji = (emoji: string, target: 'new' | 'edit' = 'new') => {
-  const el = target === 'new' ? textareaRef.value : editTextareaRef.value
+  let el = target === 'new' ? textareaRef.value : editTextareaRef.value
+  
+  if (Array.isArray(el)) {
+    el = el[0]
+  }
+  
   const modelValue = target === 'new' ? newMessage.value : tempEditMessage.value
   
   if (el) {
@@ -415,23 +420,25 @@ const saveEdit = async (post: Post) => {
     return
   }
   
-  const { error, data } = await supabase
-    .from('posts')
-    .update({ 
-      title: tempEditTitle.value, 
-      message: tempEditMessage.value
-    })
-    .eq('id', post.id)
-    .select()
+  try {
+    const { error } = await supabase
+      .from('posts')
+      .update({ 
+        title: tempEditTitle.value, 
+        message: tempEditMessage.value
+      })
+      .eq('id', post.id)
 
-  console.log('Update result:', { error, data })
-
-  if (error) {
-    alert('게시물 수정 중 오류가 발생했습니다.')
-    console.error(error)
-  } else {
-    editingPostId.value = null
-    await fetchPosts()
+    if (error) {
+      alert('저장 중 오류가 발생했습니다: ' + error.message)
+      console.error('Update error:', error)
+    } else {
+      editingPostId.value = null
+      await fetchPosts()
+    }
+  } catch (err) {
+    alert('시스템 오류가 발생했습니다.')
+    console.error('Save error:', err)
   }
 }
 
