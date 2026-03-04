@@ -373,7 +373,6 @@ const checkScroll = () => {
 
 const categories = [
   { id: 'all', name: 'All News' },
-  { id: 'google', name: 'Google' },
   { id: 'ai', name: 'AI & Tech' },
   { id: 'finance', name: 'Finance' },
   { id: 'game', name: 'Game' },
@@ -387,11 +386,6 @@ const categories = [
 ]
 
 const RSS_SOURCES = [
-  // Google Trends (Real-time Rising Search)
-  // Use both direct Trends RSS and a more proxy-friendly News Search fallback
-  { name: 'Google Trends', url: 'https://trends.google.com/trends/trendingsearches/daily/rss?geo=KR', category: 'google' },
-  { name: 'Google 뉴스 (급상승)', url: 'https://news.google.com/rss/search?q=급상승+검색어&hl=ko&gl=KR&ceid=KR:ko', category: 'google' },
-
   // AI & Tech
   { name: 'AI 타임스', url: 'https://www.aitimes.com/rss/S1N1.xml', category: 'ai' },
   { name: '지디넷코리아', url: 'https://feeds.feedburner.com/zdkorea', category: 'ai' },
@@ -473,8 +467,8 @@ const filteredNews = computed(() => {
   if (activeCategory.value !== 'all') {
     list = list.filter(item => item.category === activeCategory.value)
   } else {
-    // Exclude Trends and Arts from 'All News' to keep it focused on core news
-    list = list.filter(item => !['google', 'googleart'].includes(item.category))
+    // Exclude Arts category from 'All News' to avoid overcrowding
+    list = list.filter(item => item.category !== 'googleart')
   }
   // Strictly filter out Arts items without a valid thumbnail
   // Stabilize layout: Avoid removing items from the list reactively when images fail
