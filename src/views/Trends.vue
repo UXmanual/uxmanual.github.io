@@ -179,7 +179,7 @@ import SiteFooter from '../components/SiteFooter.vue'
 import SiteHeader from '../components/SiteHeader.vue'
 import SiteBanner from '../components/SiteBanner.vue'
 
-const CURRENT_CACHE_VERSION = 'v14.2'
+const CURRENT_CACHE_VERSION = 'v14.3'
 const CACHE_KEY = `uxm_trends_cache_${CURRENT_CACHE_VERSION}`
 
 interface NewsItem {
@@ -419,11 +419,14 @@ const RSS_SOURCES = [
   // YouTube (Curated Korean Hot Issues - Strictly User Specified)
   { name: '침착맨 (Channel)', url: 'https://www.youtube.com/feeds/videos.xml?channel_id=UCUj6rrhMTR9pipbAWBAMvUQ', category: 'youtube' },
   { name: '돌비공포라디오 (NEW)', url: 'https://www.youtube.com/feeds/videos.xml?channel_id=UC9aUIOFL_OeARVA6MtBTZAQ', category: 'youtube' },
+  { name: '코딩애플 (NEW)', url: 'https://www.youtube.com/feeds/videos.xml?channel_id=UCSLrpBAzr-ROVGHQ5EmxnUg', category: 'youtube' },
+  { name: 'YouTube Creators (NEW)', url: 'https://www.youtube.com/feeds/videos.xml?channel_id=UCUZHFZ9jIKrLroW8LcyJEQQ', category: 'youtube' },
+  { name: 'OpenAI (NEW)', url: 'https://www.youtube.com/feeds/videos.xml?channel_id=UCXZCJLdBC09xxGZ6gcdrc6A', category: 'youtube' },
+  { name: 'Figma (NEW)', url: 'https://www.youtube.com/feeds/videos.xml?channel_id=UCQsVmhSa4X-G3lHlUtejzLA', category: 'youtube' },
   { name: '숏박스 (Hot)', url: 'https://www.youtube.com/feeds/videos.xml?channel_id=UC1B6SalAoiJD7eHfMUA9QrA', category: 'youtube' },
   { name: '워크맨 (Hot)', url: 'https://www.youtube.com/feeds/videos.xml?channel_id=UC-xN69Y4N4K7A8weaH_QyEQ', category: 'youtube' },
   { name: '너덜트 (Hot)', url: 'https://www.youtube.com/feeds/videos.xml?channel_id=UC-f9w3U-w_h6gK5l8G9T0fQ', category: 'youtube' },
   { name: '문명특급 (Hot)', url: 'https://www.youtube.com/feeds/videos.xml?channel_id=UCYtqkpf-f1J3_x_d2_SjPZQ', category: 'youtube' },
-  { name: '스브스뉴스 (이슈)', url: 'https://www.youtube.com/feeds/videos.xml?channel_id=UCN_GB5o7c7N-N_i0P5Q6Yqg', category: 'youtube' },
 
   // GoodRich (Corporate & Insurance News - Direct Sources for Thumbnails)
   { name: '굿리치 공식 블로그', url: 'https://rss.blog.naver.com/goodrich_official.xml', category: 'goodrich' },
