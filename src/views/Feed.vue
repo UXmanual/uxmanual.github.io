@@ -43,6 +43,7 @@
           </div>
           <div class="relative">
             <textarea 
+              ref="textareaRef"
               v-model="newMessage" 
               rows="5" 
               placeholder="내용을 입력해주세요..." 
@@ -146,7 +147,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted, onUnmounted } from 'vue'
+import { ref, onMounted, onUnmounted, nextTick } from 'vue'
 import SiteNavbar from '../components/SiteNavbar.vue'
 import SiteFooter from '../components/SiteFooter.vue'
 import SiteHeader from '../components/SiteHeader.vue'
@@ -205,6 +206,7 @@ const isLoading = ref(true)
 const showEmojiPicker = ref(false)
 const emojiPickerRef = ref<HTMLElement | null>(null)
 const isDarkMode = ref(document.documentElement.classList.contains('dark'))
+const textareaRef = ref<HTMLTextAreaElement | null>(null)
 
 const posts = ref<Post[]>([])
 
@@ -235,7 +237,23 @@ const fetchPosts = async () => {
 }
 
 const addEmoji = (emoji: string) => {
-  newMessage.value += emoji
+  if (textareaRef.value) {
+    const el = textareaRef.value
+    const start = el.selectionStart
+    const end = el.selectionEnd
+    const text = newMessage.value
+    
+    newMessage.value = text.substring(0, start) + emoji + text.substring(end)
+    
+    // Set selection back
+    nextTick(() => {
+      el.focus()
+      const newPos = start + emoji.length
+      el.setSelectionRange(newPos, newPos)
+    })
+  } else {
+    newMessage.value += emoji
+  }
   showEmojiPicker.value = false
 }
 
