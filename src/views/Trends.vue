@@ -590,42 +590,60 @@ const fetchNews = async () => {
       }
     }
 
-    // Special handling for NASA (NeoWS API)
+    // Special handling for NASA (NeoWS API - Earth Close Approach Asteroids)
     if (source.category === 'nasa') {
       try {
-        const today = new Date().toISOString().split('T')[0];
-        const apiUrl = `https://api.nasa.gov/neo/rest/v1/feed?start_date=${today}&end_date=${today}&api_key=DEMO_KEY`;
+        const now = new Date();
+        const start = new Date(now.getTime() - (24 * 60 * 60 * 1000)).toISOString().split('T')[0];
+        const end = new Date(now.getTime() + (24 * 60 * 60 * 1000)).toISOString().split('T')[0];
+        const apiUrl = `https://api.nasa.gov/neo/rest/v1/feed?start_date=${start}&end_date=${end}&api_key=DEMO_KEY`;
         
-        // Use proxy to avoid CORS for direct JSON API
-        const proxyUrl = `https://api.codetabs.com/v1/proxy?quest=${encodeURIComponent(apiUrl)}`;
-        const res = await fetch(proxyUrl);
-        const data = await res.json();
+        const proxies = [
+          (url: string) => `https://api.codetabs.com/v1/proxy?quest=${encodeURIComponent(url)}`,
+          (url: string) => `https://corsproxy.io/?url=${encodeURIComponent(url)}`,
+          (url: string) => `https://api.allorigins.win/get?url=${encodeURIComponent(url)}`
+        ];
+
+        let data: any = null;
+        for (const getProxy of proxies) {
+          try {
+            const res = await fetch(getProxy(apiUrl));
+            if (!res.ok) continue;
+            const text = await res.text();
+            data = text.includes('contents') ? JSON.parse(JSON.parse(text).contents) : JSON.parse(text);
+            if (data && data.near_earth_objects) break;
+          } catch (e) {}
+        }
+
+        if (!data || !data.near_earth_objects) return [];
         
-        if (!data.near_earth_objects || !data.near_earth_objects[today]) return [];
-        
-        const asteroids = data.near_earth_objects[today];
-        const nasaItems: NewsItem[] = asteroids.slice(0, 15).map((neo: any) => {
-          const isHazardous = neo.is_potentially_hazardous_asteroid;
-          const diameter = Math.round(neo.estimated_diameter.meters.estimated_diameter_max);
-          const velocity = Math.round(parseFloat(neo.close_approach_data[0].relative_velocity.kilometers_per_hour));
-          const distance = Math.round(parseFloat(neo.close_approach_data[0].miss_distance.kilometers) / 10000) / 100;
-          
-          return {
-            title: `☄️ 소행성 ${neo.name}`,
-            link: neo.nasa_jpl_url,
-            pubDate: new Date().toISOString(),
-            description: `${isHazardous ? '⚠️ 위험 가능성 있음 | ' : ''}크기: 약 ${diameter}m | 속도: ${velocity.toLocaleString()}km/h | 지구와의 거리: ${distance}만 km`,
-            source: 'NASA',
-            category: 'nasa',
-            provider: 'Near-Earth Object',
-            thumb: 'https://images-assets.nasa.gov/image/PIA17037/PIA17037~thumb.jpg' // High quality asteroid placeholder
-          };
+        const allAsteroids: NewsItem[] = [];
+        Object.keys(data.near_earth_objects).forEach(dateKey => {
+          data.near_earth_objects[dateKey].forEach((neo: any) => {
+            const isHazardous = neo.is_potentially_hazardous_asteroid;
+            const diameter = Math.round(neo.estimated_diameter.meters.estimated_diameter_max);
+            const approach = neo.close_approach_data[0];
+            const velocity = approach ? Math.round(parseFloat(approach.relative_velocity.kilometers_per_hour)) : 0;
+            const distance = approach ? Math.round(parseFloat(approach.miss_distance.kilometers) / 10000) / 100 : 0;
+            
+            allAsteroids.push({
+              title: `☄️ 소행성 ${neo.name}`,
+              link: neo.nasa_jpl_url,
+              pubDate: approach ? approach.close_approach_date_full || dateKey : dateKey,
+              description: `${isHazardous ? '⚠️ 위험 가능성 있음 | ' : ''}크기: 약 ${diameter}m | 속도: ${velocity.toLocaleString()}km/h | 지구와의 거리: ${distance}만 km`,
+              source: 'NASA',
+              category: 'nasa',
+              provider: 'Near-Earth Object',
+              thumb: 'https://images-assets.nasa.gov/image/PIA17037/PIA17037~thumb.jpg'
+            });
+          });
         });
         
-        updateNewsList(nasaItems);
-        return nasaItems;
+        const sortedAsteroids = allAsteroids.sort((a, b) => new Date(b.pubDate).getTime() - new Date(a.pubDate).getTime());
+        updateNewsList(sortedAsteroids);
+        return sortedAsteroids;
       } catch (e) {
-        console.error('NASA Fetch Error:', e);
+        console.error('NASA Robust Fetch Error:', e);
         return [];
       }
     }
