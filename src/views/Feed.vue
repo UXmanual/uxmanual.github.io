@@ -116,7 +116,10 @@
                 </div>
                 <div>
                   <h3 class="font-black text-zinc-900 dark:text-white uppercase tracking-tight">{{ post.name }}</h3>
-                  <span class="text-xs text-zinc-400">{{ post.date }}</span>
+                  <div class="flex items-center gap-1.5 text-xs text-zinc-400 font-medium">
+                    <span>{{ post.date }}</span>
+                    <span v-if="post.is_edited" class="flex items-center gap-1 text-[10px] bg-zinc-100 dark:bg-white/5 px-1.5 py-0.5 rounded text-zinc-400 font-bold">(수정됨)</span>
+                  </div>
                 </div>
               </div>
               <div class="flex items-center gap-2">
@@ -129,16 +132,6 @@
                 >
                   <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
-                  </svg>
-                </button>
-                <button 
-                  v-else
-                  @click="saveEdit(post)"
-                  class="p-2 rounded-lg hover:bg-green-500/10 text-green-500 transition-all animate-pulse"
-                  title="저장하기"
-                >
-                  <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
                   </svg>
                 </button>
 
@@ -158,18 +151,54 @@
             <div v-if="editingPostId === post.id" class="space-y-4 animate-in">
               <input 
                 v-model="tempEditTitle"
-                class="w-full bg-zinc-50 dark:bg-black/30 border border-zinc-200 dark:border-white/10 rounded-xl px-4 py-2 text-base focus:outline-none focus:border-zinc-800 dark:focus:border-zinc-400 transition-all font-bold"
+                class="w-full bg-zinc-50 dark:bg-black/50 border-2 border-zinc-200 dark:border-white/10 rounded-lg px-5 py-4 text-base focus:outline-none focus:border-zinc-800 dark:focus:border-zinc-400 transition-all font-bold"
                 placeholder="제목을 입력하세요..."
               />
-              <textarea 
-                v-model="tempEditMessage"
-                rows="4"
-                class="w-full bg-zinc-50 dark:bg-black/30 border border-zinc-200 dark:border-white/10 rounded-xl px-4 py-3 text-base focus:outline-none focus:border-zinc-800 dark:focus:border-zinc-400 transition-all resize-none leading-relaxed"
-                placeholder="내용을 입력하세요..."
-              ></textarea>
-              <div class="flex justify-end gap-3 mt-2">
-                <button @click="editingPostId = null" class="px-4 py-2 text-sm text-zinc-400 hover:text-zinc-600 dark:hover:text-zinc-200 transition-colors">취소</button>
-                <button @click="saveEdit(post)" class="px-4 py-2 bg-zinc-900 dark:bg-white text-white dark:text-black rounded-lg text-sm font-bold">수정 완료</button>
+              <div class="relative">
+                <textarea 
+                  ref="editTextareaRef"
+                  v-model="tempEditMessage"
+                  rows="5"
+                  class="w-full bg-zinc-50 dark:bg-black/50 border-2 border-zinc-200 dark:border-white/10 rounded-2xl px-6 py-5 text-base focus:outline-none focus:border-zinc-800 dark:focus:border-zinc-400 transition-all resize-none leading-relaxed"
+                  placeholder="내용을 입력하세요..."
+                ></textarea>
+                
+                <div class="absolute bottom-4 right-4 flex items-center gap-2 max-w-[calc(100%-2rem)]">
+                  <Transition name="fade-slide">
+                    <div v-if="showEmojiPicker" ref="emojiPickerRef" class="relative flex items-center bg-white/95 dark:bg-zinc-900/90 backdrop-blur-md rounded-full border border-zinc-200 dark:border-white/10 shadow-none overflow-hidden">
+                      <div class="absolute left-0 inset-y-0 w-6 bg-gradient-to-r from-white/95 dark:from-zinc-900/90 to-transparent pointer-events-none z-10"></div>
+                      <div class="flex items-center gap-1 overflow-x-auto no-scrollbar px-4 py-1">
+                        <button 
+                          v-for="emoji in ['😊', '😂', '🤣', '😍', '👍', '🙌', '✨', '🔥', '👀', '🤔', '🎉', '❤️', '🙏', '😭', '😮']" 
+                          :key="emoji"
+                          type="button"
+                          @click="addEmoji(emoji, 'edit')"
+                          class="w-8 h-8 flex items-center justify-center hover:bg-zinc-100 dark:hover:bg-white/10 rounded-full transition-all active:scale-95 text-lg"
+                        >
+                          {{ emoji }}
+                        </button>
+                      </div>
+                      <div class="absolute right-0 inset-y-0 w-6 bg-gradient-to-l from-white/95 dark:from-zinc-900/90 to-transparent pointer-events-none z-10"></div>
+                    </div>
+                  </Transition>
+
+                  <button 
+                    type="button"
+                    @click.stop="toggleEmojiPicker"
+                    class="shrink-0 p-2 text-zinc-400 hover:text-zinc-600 dark:hover:text-zinc-200 transition-colors"
+                    :class="{ 'text-zinc-900 dark:text-white': showEmojiPicker }"
+                    title="이모지 선택"
+                  >
+                    <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.828 14.828a4 4 0 01-5.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                    </svg>
+                  </button>
+                </div>
+              </div>
+
+              <div class="flex justify-end gap-3">
+                <button @click="editingPostId = null" class="px-6 py-3 border-2 border-zinc-200 dark:border-white/10 rounded-xl text-sm font-bold hover:bg-zinc-100 dark:hover:bg-white/5 transition-all">취소</button>
+                <button @click="saveEdit(post)" class="px-8 py-3 bg-zinc-900 dark:bg-white text-white dark:text-black rounded-xl text-sm font-bold active:scale-95 transition-all">수정 완료</button>
               </div>
             </div>
             <template v-else>
@@ -237,6 +266,7 @@ interface Post {
   message: string
   date: string
   password?: string // 4 digits
+  is_edited?: boolean
 }
 
 const newName = ref('')
@@ -253,6 +283,7 @@ const textareaRef = ref<HTMLTextAreaElement | null>(null)
 const editingPostId = ref<number | null>(null)
 const tempEditTitle = ref('')
 const tempEditMessage = ref('')
+const editTextareaRef = ref<HTMLTextAreaElement | null>(null)
 
 const posts = ref<Post[]>([])
 
@@ -282,17 +313,22 @@ const fetchPosts = async () => {
   }
 }
 
-const addEmoji = (emoji: string) => {
-  if (textareaRef.value) {
-    const el = textareaRef.value
+const addEmoji = (emoji: string, target: 'new' | 'edit' = 'new') => {
+  const el = target === 'new' ? textareaRef.value : editTextareaRef.value
+  const modelValue = target === 'new' ? newMessage.value : tempEditMessage.value
+  
+  if (el) {
+    el.focus()
     const start = el.selectionStart
     const end = el.selectionEnd
-    const text = newMessage.value
     const scrollTop = el.scrollTop
     
-    newMessage.value = text.substring(0, start) + emoji + text.substring(end)
+    if (target === 'new') {
+      newMessage.value = modelValue.substring(0, start) + emoji + modelValue.substring(end)
+    } else {
+      tempEditMessage.value = modelValue.substring(0, start) + emoji + modelValue.substring(end)
+    }
     
-    // Set selection back
     nextTick(() => {
       el.focus()
       const newPos = start + emoji.length
@@ -300,7 +336,8 @@ const addEmoji = (emoji: string) => {
       el.scrollTop = scrollTop
     })
   } else {
-    newMessage.value += emoji
+    if (target === 'new') newMessage.value += emoji
+    else tempEditMessage.value += emoji
   }
   showEmojiPicker.value = false
 }
@@ -382,7 +419,8 @@ const saveEdit = async (post: Post) => {
     .from('posts')
     .update({ 
       title: tempEditTitle.value, 
-      message: tempEditMessage.value 
+      message: tempEditMessage.value,
+      is_edited: true
     })
     .eq('id', post.id)
 
