@@ -376,13 +376,13 @@ const categories = [
   { id: 'ai', name: 'AI Next' },
   { id: 'it', name: 'IT Device' },
   { id: 'finance', name: 'Finance' },
+  { id: 'insurance', name: 'Insurance' },
   { id: 'game', name: 'Game' },
   { id: 'sports', name: 'Sports' },
   { id: 'design', name: 'Design' },
   { id: 'blog', name: 'Blog' },
   { id: 'youtube', name: 'YouTube' },
   { id: 'diablo2', name: 'Diablo2' },
-  { id: 'goodrich', name: 'GoodRich' },
   { id: 'googleart', name: 'Arts' }
 ]
 
@@ -457,10 +457,15 @@ const RSS_SOURCES = [
   { name: '너덜트 (Hot)', url: 'https://www.youtube.com/feeds/videos.xml?channel_id=UC-f9w3U-w_h6gK5l8G9T0fQ', category: 'youtube' },
   { name: '문명특급 (Hot)', url: 'https://www.youtube.com/feeds/videos.xml?channel_id=UCYtqkpf-f1J3_x_d2_SjPZQ', category: 'youtube' },
 
-  // GoodRich (Corporate & Insurance News - Direct Sources for Thumbnails)
-  { name: '굿리치 공식 블로그', url: 'https://rss.blog.naver.com/goodrich_official.xml', category: 'goodrich' },
-  { name: '플래텀 (Insurtech)', url: 'https://platum.kr/feed', category: 'goodrich' },
-  { name: '보험신보', url: 'http://www.insweek.co.kr/rss/all.xml', category: 'goodrich' },
+  // Insurance (Renamed from GoodRich - Specialized Professional Sources)
+  { name: '보험신보', url: 'http://www.insweek.co.kr/rss/all.xml', category: 'insurance' },
+  { name: '한국금융 보험', url: 'https://www.fntimes.com/rss/S1N6.xml', category: 'insurance' },
+  { name: '대항뉴스 보험', url: 'https://www.dhns.co.kr/rss/S1N12.xml', category: 'insurance' },
+  { name: '매경 경제 (보험)', url: 'https://www.mk.co.kr/rss/30100041/', category: 'insurance' },
+  { name: '조선비즈 보험', url: 'https://biz.chosun.com/rss/insurance/', category: 'insurance' },
+  { name: '국민일보 보험', url: 'https://rss.kmib.co.kr/index.xml', category: 'insurance' },
+  { name: '굿리치 공식 블로그', url: 'https://rss.blog.naver.com/goodrich_official.xml', category: 'insurance' },
+  { name: '플래텀 (Insurtech)', url: 'https://platum.kr/feed', category: 'insurance' },
 
   // Diablo2 (Google Bypass & Direct Bridge: Community Posts)
   // Using broad Google Search RSS bypass for strictly blocked sites (Inven, DC Inside, ChaosCube).
@@ -1031,7 +1036,7 @@ onUnmounted(() => {
 .theme-game { --brand-color: #9333ea; --brand-bg: rgba(147, 51, 234, 0.05); }
 .theme-blog { --brand-color: #10b981; --brand-bg: rgba(16, 185, 129, 0.05); }
 .theme-youtube { --brand-color: #ef4444; --brand-bg: rgba(239, 68, 68, 0.05); }
-.theme-goodrich { --brand-color: #f97316; --brand-bg: rgba(249, 115, 22, 0.05); }
+.theme-insurance { --brand-color: #f97316; --brand-bg: rgba(249, 115, 22, 0.05); }
 .theme-diablo2 { --brand-color: #c44135; --brand-bg: rgba(196, 65, 53, 0.05); }
 .theme-googleart { --brand-color: #0ea5e9; --brand-bg: rgba(14, 165, 233, 0.05); }
 .theme-it { --brand-color: #3b82f6; --brand-bg: rgba(59, 130, 246, 0.05); }
@@ -1065,8 +1070,8 @@ onUnmounted(() => {
 .category-tab[data-cat="youtube"][data-active="true"] { color: #ef4444 !important; }
 .category-tab[data-cat="youtube"][data-active="true"] .active-underline { background-color: #ef4444; }
 
-.category-tab[data-cat="goodrich"][data-active="true"] { color: #f97316 !important; }
-.category-tab[data-cat="goodrich"][data-active="true"] .active-underline { background-color: #f97316; }
+.category-tab[data-cat="insurance"][data-active="true"] { color: #f97316 !important; }
+.category-tab[data-cat="insurance"][data-active="true"] .active-underline { background-color: #f97316; }
 
 .category-tab[data-cat="diablo2"][data-active="true"] { color: #c44135 !important; }
 .category-tab[data-cat="diablo2"][data-active="true"] .active-underline { background-color: #c44135; }
@@ -1082,7 +1087,7 @@ onUnmounted(() => {
 .news-card.theme-game { --brand-color: #9333ea; --brand-bg: rgba(147, 51, 234, 0.05); }
 .news-card.theme-blog { --brand-color: #10b981; --brand-bg: rgba(16, 185, 129, 0.05); }
 .news-card.theme-youtube { --brand-color: #ef4444; --brand-bg: rgba(239, 68, 68, 0.05); }
-.news-card.theme-goodrich { --brand-color: #f97316; --brand-bg: rgba(249, 115, 22, 0.05); }
+.news-card.theme-insurance { --brand-color: #f97316; --brand-bg: rgba(249, 115, 22, 0.05); }
 .news-card.theme-diablo2 { --brand-color: #c44135; --brand-bg: rgba(196, 65, 53, 0.05); }
 .news-card.theme-googleart { --brand-color: #0ea5e9; --brand-bg: rgba(14, 165, 233, 0.05); }
 .news-card.theme-it { --brand-color: #3b82f6; --brand-bg: rgba(59, 130, 246, 0.05); }
@@ -1101,7 +1106,7 @@ onUnmounted(() => {
   .news-card.theme-blog:hover { border-color: #10b98180; }
   .news-card.theme-youtube:hover { border-color: #ef444480; }
   .news-card.theme-diablo2:hover { border-color: #c4413580; }
-  .news-card.theme-goodrich:hover { border-color: #f9731680; }
+  .news-card.theme-insurance:hover { border-color: #f9731680; }
   .news-card.theme-googleart:hover { border-color: #0ea5e980; }
   .news-card.theme-it:hover { border-color: #3b82f680; }
 
@@ -1124,7 +1129,7 @@ onUnmounted(() => {
 .news-card.theme-blog .source-badge { border-color: #10b98130; }
 .news-card.theme-youtube .source-badge { border-color: #ef444430; }
 .news-card.theme-diablo2 .source-badge { border-color: #c4413530; }
-.news-card.theme-goodrich .source-badge { border-color: #f9731630; }
+.news-card.theme-insurance .source-badge { border-color: #f9731630; }
 .news-card.theme-googleart .source-badge { border-color: #0ea5e930; }
 .news-card.theme-it .source-badge { border-color: #3b82f630; }
 
