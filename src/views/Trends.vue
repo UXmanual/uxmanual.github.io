@@ -87,7 +87,6 @@
                 :class="activeCategory === 'googleart' ? 'columns-2 sm:columns-3 md:columns-4 lg:columns-5 gap-4 space-y-4' : 'grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-3'"
               >
                 <a v-for="(item, index) in group.items"
-                   v-show="activeCategory !== 'googleart' || (item.thumbLoaded && !item.thumbError)"
                    :key="item.link + index"
                    :href="item.link"
                    target="_blank"
@@ -115,7 +114,17 @@
                         <div 
                           v-if="!item.thumbLoaded && !item.thumbError" 
                           class="absolute inset-0 z-10 animate-pulse bg-gradient-to-r from-zinc-100 via-zinc-200 to-zinc-100 dark:from-zinc-800 dark:via-zinc-700 dark:to-zinc-800"
+                          style="aspect-ratio: 4/5"
                         ></div>
+                        
+                        <!-- Error Placeholder -->
+                        <div v-if="item.thumbError" class="w-full aspect-[4/5] bg-zinc-50 dark:bg-zinc-800/50 flex flex-col items-center justify-center gap-2 p-6 text-center">
+                          <svg xmlns="http://www.w3.org/2000/svg" class="w-8 h-8 text-zinc-300 dark:text-zinc-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                          </svg>
+                          <span class="text-[10px] text-zinc-400 font-medium">이미지를 불러올 수 없습니다</span>
+                        </div>
+
                         <img 
                           v-if="item.thumb && !item.thumbError"
                           :src="item.thumb" 
@@ -532,6 +541,7 @@ const RSS_SOURCES = [
   { name: 'Aesthetica', url: 'https://aestheticamagazine.com/feed/', category: 'googleart', translate: true },
   { name: 'Wallpaper* Art', url: 'https://www.wallpaper.com/rss/art', category: 'googleart', translate: true },
   { name: 'Creative Review', url: 'https://www.creativereview.co.uk/feed/', category: 'googleart', translate: true },
+  { name: 'ArtNews', url: 'https://www.artnews.com/feed/', category: 'googleart', translate: true },
 ]
 
 const filteredNews = computed(() => {
@@ -542,13 +552,14 @@ const filteredNews = computed(() => {
     // Exclude Arts category from 'All News' to avoid overcrowding
     list = list.filter(item => item.category !== 'googleart')
   }
-  // Strictly filter out Arts items without a valid thumbnail OR those that failed to load
-  return list.filter(item => {
-    if (item.category === 'googleart') {
-      return !!item.thumb && !item.thumbError
-    }
-    return true
-  })
+    // Strictly filter out Arts items without a thumbnail property initially
+    // But DO NOT filter reactively by thumbError to prevent layout flicker
+    return list.filter(item => {
+      if (item.category === 'googleart') {
+        return !!item.thumb
+      }
+      return true
+    })
 })
 
 const groupedNews = computed(() => {
