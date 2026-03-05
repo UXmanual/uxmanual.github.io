@@ -247,7 +247,7 @@ import SiteFooter from '../components/SiteFooter.vue'
 import SiteHeader from '../components/SiteHeader.vue'
 import SiteBanner from '../components/SiteBanner.vue'
 
-const CURRENT_CACHE_VERSION = 'v15.3'
+const CURRENT_CACHE_VERSION = 'v15.4'
 const CACHE_KEY = `uxm_trends_cache_${CURRENT_CACHE_VERSION}`
 
 interface NewsItem {
@@ -434,6 +434,7 @@ const categories = [
   { id: 'insurance', name: 'Insurance' },
   { id: 'game', name: 'Game' },
   { id: 'sports', name: 'Sports' },
+  { id: 'entertain', name: 'Entertain' },
   { id: 'design', name: 'Design' },
   { id: 'figma', name: 'Figma' },
   { id: 'youtube', name: 'YouTube' },
@@ -489,6 +490,17 @@ const RSS_SOURCES = [
   { name: '연합 스포츠', url: 'https://www.yna.co.kr/rss/sports.xml', category: 'sports' },
   { name: '매경 스포츠', url: 'https://www.mk.co.kr/rss/71000001/', category: 'sports' },
   { name: '한국일보 스포츠', url: 'https://www.hankookilbo.com/RSS/04', category: 'sports' },
+
+  // Entertain (Domestic & International)
+  { name: '연합뉴스 연예', url: 'https://www.yna.co.kr/rss/entertainment.xml', category: 'entertain' },
+  { name: 'MBC 연예', url: 'https://imnews.imbc.com/rss/news/news_05.xml', category: 'entertain' },
+  { name: 'KBS 연예', url: 'https://news.kbs.co.kr/rss/news_06.xml', category: 'entertain' },
+  { name: 'SBS 연예', url: 'https://news.sbs.co.kr/news/rss.do?section=14', category: 'entertain' },
+  { name: '한국일보 연예', url: 'https://www.hankookilbo.com/RSS/05', category: 'entertain' },
+  { name: 'TMZ News', url: 'https://www.tmz.com/rss.xml', category: 'entertain', translate: true },
+  { name: 'Variety', url: 'https://variety.com/feed/', category: 'entertain', translate: true },
+  { name: 'Deadline', url: 'https://deadline.com/feed/', category: 'entertain', translate: true },
+  { name: 'Hollywood Reporter', url: 'https://www.hollywoodreporter.com/feed/', category: 'entertain', translate: true },
 
   // Figma (Official Blog, Global News, Community, Config)
   { name: 'Figma Blog', url: 'https://www.figma.com/blog/feed/', category: 'figma', translate: true },
@@ -1159,6 +1171,7 @@ onUnmounted(() => {
 .theme-finance { --brand-color: #0acaaa; --brand-bg: rgba(10, 202, 170, 0.05); }
 .theme-design { --brand-color: #fa4fc1; --brand-bg: rgba(250, 79, 193, 0.05); }
 .theme-sports { --brand-color: #f59e0b; --brand-bg: rgba(245, 158, 11, 0.05); }
+.theme-entertain { --brand-color: #ec4899; --brand-bg: rgba(236, 72, 153, 0.05); }
 .theme-game { --brand-color: #9333ea; --brand-bg: rgba(147, 51, 234, 0.05); }
 .theme-figma { --brand-color: #f24e1e; --brand-bg: rgba(242, 78, 30, 0.05); }
 .theme-youtube { --brand-color: #ef4444; --brand-bg: rgba(239, 68, 68, 0.05); }
@@ -1187,6 +1200,9 @@ onUnmounted(() => {
 .category-tab[data-cat="sports"][data-active="true"] { color: #f59e0b !important; }
 .category-tab[data-cat="sports"][data-active="true"] .active-underline { background-color: #f59e0b; }
 
+.category-tab[data-cat="entertain"][data-active="true"] { color: #ec4899 !important; }
+.category-tab[data-cat="entertain"][data-active="true"] .active-underline { background-color: #ec4899; }
+
 .category-tab[data-cat="game"][data-active="true"] { color: #9333ea !important; }
 .category-tab[data-cat="game"][data-active="true"] .active-underline { background-color: #9333ea; }
 
@@ -1210,6 +1226,7 @@ onUnmounted(() => {
 .news-card.theme-finance { --brand-color: #0acaaa; --brand-bg: rgba(10, 202, 170, 0.05); }
 .news-card.theme-design { --brand-color: #fa4fc1; --brand-bg: rgba(250, 79, 193, 0.05); }
 .news-card.theme-sports { --brand-color: #f59e0b; --brand-bg: rgba(245, 158, 11, 0.05); }
+.news-card.theme-entertain { --brand-color: #ec4899; --brand-bg: rgba(236, 72, 153, 0.05); }
 .news-card.theme-game { --brand-color: #9333ea; --brand-bg: rgba(147, 51, 234, 0.05); }
 .news-card.theme-figma { --brand-color: #f24e1e; --brand-bg: rgba(242, 78, 30, 0.05); }
 .news-card.theme-youtube { --brand-color: #ef4444; --brand-bg: rgba(239, 68, 68, 0.05); }
@@ -1228,6 +1245,7 @@ onUnmounted(() => {
   .news-card.theme-finance:hover { border-color: #0acaaa80; }
   .news-card.theme-design:hover { border-color: #fa4fc180; }
   .news-card.theme-sports:hover { border-color: #f59e0b80; }
+  .news-card.theme-entertain:hover { border-color: #ec489980; }
   .news-card.theme-game:hover { border-color: #9333ea80; }
   .news-card.theme-figma:hover { border-color: #f24e1e80; }
   .news-card.theme-youtube:hover { border-color: #ef444480; }
@@ -1251,6 +1269,7 @@ onUnmounted(() => {
 .news-card.theme-finance .source-badge { border-color: #0acaaa30; }
 .news-card.theme-design .source-badge { border-color: #fa4fc130; }
 .news-card.theme-sports .source-badge { border-color: #f59e0b30; }
+.news-card.theme-entertain .source-badge { border-color: #ec489930; }
 .news-card.theme-game .source-badge { border-color: #9333ea30; }
 .news-card.theme-figma .source-badge { border-color: #f24e1e30; }
 .news-card.theme-youtube .source-badge { border-color: #ef444430; }
