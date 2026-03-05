@@ -10,7 +10,7 @@
 
     <SiteHeader 
       title="NEWS STAND" 
-      description="주요 언론사의 실시간 뉴스 피드를 한곳에서 확인하세요"
+      description="All major news feeds, real-time and in one place"
       padding-top="pt-16"
       :enable-gradient="true"
       :show-date-time-weather="true"
