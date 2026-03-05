@@ -84,7 +84,7 @@
               <TransitionGroup 
                 name="list" 
                 tag="div"
-                :class="activeCategory === 'googleart' ? 'columns-2 sm:columns-3 md:columns-4 lg:columns-5 gap-4 space-y-4' : 'grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-3'"
+                :class="activeCategory === 'googleart' ? 'columns-2 sm:columns-3 md:columns-4 lg:columns-5 gap-3' : 'grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-3'"
               >
                 <a v-for="(item, index) in group.items"
                    :key="item.link + index"
@@ -94,7 +94,7 @@
                    :class="[
                      `theme-${item.category}`,
                      activeCategory === 'googleart' 
-                       ? 'flex-col break-inside-avoid mb-4 bg-white dark:bg-[#1f1f1f] border border-zinc-200 dark:border-white/5 rounded-2xl overflow-hidden p-0' 
+                       ? 'flex-col break-inside-avoid mb-3 bg-white dark:bg-[#1f1f1f] border border-zinc-200 dark:border-white/5 rounded-2xl overflow-hidden p-0' 
                        : 'flex-col bg-white dark:bg-[#1f1f1f] border border-zinc-200 dark:border-white/5 rounded-2xl p-5'
                    ]"
                 >
