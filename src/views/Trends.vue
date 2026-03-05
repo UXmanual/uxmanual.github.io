@@ -258,7 +258,7 @@ import SiteFooter from '../components/SiteFooter.vue'
 import SiteHeader from '../components/SiteHeader.vue'
 import SiteBanner from '../components/SiteBanner.vue'
 
-const CURRENT_CACHE_VERSION = 'v16.4'
+const CURRENT_CACHE_VERSION = 'v16.5'
 const CACHE_KEY = `uxm_trends_cache_${CURRENT_CACHE_VERSION}`
 
 interface NewsItem {
@@ -283,6 +283,10 @@ const news = ref<NewsItem[]>([])
 const visibleCount = ref(50)
 const currentLoadingCategoryName = ref('')
 const currentFetchSession = ref(0)
+
+// Persistent Session Progress
+const sessionProcessedSources = ref(new Set<string>())
+const lastGlobalSyncTime = ref(0)
 
 const handleImgError = (item: NewsItem) => {
   item.thumbError = true
@@ -960,33 +964,55 @@ const fetchNews = async () => {
     localStorage.setItem(CACHE_KEY, JSON.stringify(finalized))
   }
 
+  // 5 Minutes Global Refresh Logic
+  const now = Date.now()
+  const isStale = now - lastGlobalSyncTime.value > 5 * 60 * 1000
+  if (isStale) {
+    sessionProcessedSources.value.clear()
+    lastGlobalSyncTime.value = now
+  }
+
+  totalTaskSources.value = RSS_SOURCES.length
+  processedTaskSources.value = sessionProcessedSources.value.size
+
+  // If already full, just show updated message briefly or skip
+  if (processedTaskSources.value === totalTaskSources.value && !isStale) {
+    currentLoadingCategoryName.value = 'Up to date'
+    isBackgroundLoading.value = true
+    setTimeout(() => { if (sessionId === currentFetchSession.value) isBackgroundLoading.value = false }, 1500)
+    return
+  }
+
   try {
     isBackgroundLoading.value = true
     
-    // 1. Process current active category first (Fast parallel)
+    // 1. Process current active category first (Priority Group)
     const prioritySources = activeCategory.value === 'all'
       ? RSS_SOURCES.filter(s => ['ai', 'finance', 'it', 'game', 'sports', 'entertain'].includes(s.category)).slice(0, 15)
       : RSS_SOURCES.filter(s => s.category === activeCategory.value)
 
-    if (prioritySources.length > 0) {
+    const realPriority = prioritySources.filter(s => !sessionProcessedSources.value.has(s.url))
+    
+    if (realPriority.length > 0) {
       if (sessionId !== currentFetchSession.value) return
       currentLoadingCategoryName.value = getCategoryName(activeCategory.value)
-      totalTaskSources.value = prioritySources.length
-      processedTaskSources.value = 0
-
-      await Promise.all(prioritySources.map(source => 
+      
+      await Promise.all(realPriority.map(source => 
         fetchSource(source).finally(() => {
-          if (sessionId === currentFetchSession.value) processedTaskSources.value++
+          if (sessionId === currentFetchSession.value) {
+            sessionProcessedSources.value.add(source.url)
+            processedTaskSources.value = sessionProcessedSources.value.size
+          }
         })
       ))
       isLoading.value = false
     } else {
-      if (news.value.length > 0) isLoading.value = false
+      if (news.value.length > 20) isLoading.value = false
     }
     
     // 2. Process all other categories SEQUENTIALLY
     const startBackgroundFetch = async () => {
-      const remainingSources = RSS_SOURCES.filter(s => s.category !== activeCategory.value)
+      const remainingSources = RSS_SOURCES.filter(s => !sessionProcessedSources.value.has(s.url))
       const categoryGroups = remainingSources.reduce((acc, source) => {
         if (!acc[source.category]) acc[source.category] = []
         acc[source.category].push(source)
@@ -1000,12 +1026,13 @@ const fetchNews = async () => {
         
         const group = categoryGroups[catId]
         currentLoadingCategoryName.value = getCategoryName(catId)
-        totalTaskSources.value = group.length
-        processedTaskSources.value = 0
         
         await Promise.all(group.map(s => 
           fetchSource(s).finally(() => {
-            if (sessionId === currentFetchSession.value) processedTaskSources.value++
+            if (sessionId === currentFetchSession.value) {
+              sessionProcessedSources.value.add(s.url)
+              processedTaskSources.value = sessionProcessedSources.value.size
+            }
           })
         ))
         
@@ -1018,8 +1045,7 @@ const fetchNews = async () => {
       setTimeout(() => {
         if (sessionId === currentFetchSession.value) {
           currentLoadingCategoryName.value = 'Ready'
-          totalTaskSources.value = RSS_SOURCES.length
-          processedTaskSources.value = RSS_SOURCES.length
+          processedTaskSources.value = totalTaskSources.value
           setTimeout(() => {
             if (sessionId === currentFetchSession.value) isBackgroundLoading.value = false
           }, 2000)
@@ -1029,18 +1055,10 @@ const fetchNews = async () => {
     
     startBackgroundFetch()
     
-    // final safety: ensure loading ends eventually
     setTimeout(() => { if (isLoading.value) isLoading.value = false }, 5000)
-
-    // Delay thumbnail fetching to prioritize core content
     setTimeout(fetchMissingThumbnails, 4000)
   } catch (err) {
-    console.error('Fetch news error:', err)
-  } finally {
-    // Only set loading false if we HAVE data (either from cache or priority fetch)
-    if (news.value.length > 0) {
-      isLoading.value = false
-    }
+    if (news.value.length > 0) isLoading.value = false
   }
 }
 
