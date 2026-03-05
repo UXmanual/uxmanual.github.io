@@ -110,7 +110,7 @@
                   <div class="w-full relative">
                     <!-- Arts Pinterest View -->
                     <div v-if="activeCategory === 'googleart'">
-                      <div class="relative w-full overflow-hidden bg-zinc-100 dark:bg-zinc-800" style="min-height: 200px">
+                      <div class="relative w-full overflow-hidden bg-zinc-100 dark:bg-zinc-800">
                         <div 
                           v-if="!item.thumbLoaded && !item.thumbError" 
                           class="absolute inset-0 z-10 animate-pulse bg-gradient-to-r from-zinc-100 via-zinc-200 to-zinc-100 dark:from-zinc-800 dark:via-zinc-700 dark:to-zinc-800"
@@ -524,6 +524,8 @@ const RSS_SOURCES = [
   { name: 'Designboom', url: 'https://www.designboom.com/feed/', category: 'googleart', translate: true },
   { name: 'Artnet News', url: 'https://news.artnet.com/feed/', category: 'googleart', translate: true },
   { name: 'Artforum', url: 'https://www.artforum.com/rss/news', category: 'googleart', translate: true },
+  { name: 'The Art Newspaper', url: 'https://www.theartnewspaper.com/rss', category: 'googleart', translate: true },
+  { name: 'Bored Panda Art', url: 'https://www.boredpanda.com/art/feed/', category: 'googleart', translate: true },
 ]
 
 const filteredNews = computed(() => {
@@ -623,8 +625,8 @@ const fetchNews = async () => {
   isLoading.value = true
 
   const fetchSource = async (source: typeof RSS_SOURCES[0]) => {
-    // Special handling for Google Art (AIC API)
-    if (source.category === 'googleart') {
+    // Special handling for Google Art (AIC API) - Only for the AIC specific source
+    if (source.category === 'googleart' && source.url.includes('artic.edu')) {
       try {
         const randomPage = Math.floor(Math.random() * 200) + 1;
         const res = await fetch(`https://api.artic.edu/api/v1/artworks?page=${randomPage}&limit=25&fields=id,title,artist_display,image_id`);
