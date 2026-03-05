@@ -224,25 +224,25 @@
     <Transition name="toast">
       <div 
         v-if="isBackgroundLoading" 
-        class="fixed bottom-8 right-8 z-50 bg-zinc-50/90 dark:bg-[#131313]/90 backdrop-blur-xl border border-zinc-200 dark:border-white/10 rounded-full px-4 py-2 shadow-2xl flex items-center gap-3 transition-all duration-300"
+        class="fixed bottom-8 right-8 z-50 bg-zinc-50/90 dark:bg-[#131313]/90 backdrop-blur-xl border border-zinc-200 dark:border-white/10 rounded-full pl-5 pr-4 py-2.5 shadow-2xl flex flex-row-reverse items-center gap-3 transition-all duration-300"
       >
-        <svg class="animate-spin h-3.5 w-3.5 text-zinc-900 dark:text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+        <!-- Spinner on the right for natural RTL expansion -->
+        <svg class="animate-spin h-3.5 w-3.5 text-zinc-900 dark:text-white flex-shrink-0" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
           <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
           <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
         </svg>
-        <div class="flex flex-col items-start min-w-[100px]">
-          <div class="flex items-center gap-2">
-            <div class="relative h-5 overflow-hidden flex items-center">
-              <Transition name="slide-up-fade" mode="out-in">
-                <span :key="currentLoadingCategoryName" class="text-[12px] text-zinc-900 dark:text-white font-medium whitespace-nowrap tracking-tight">
-                  {{ currentLoadingCategoryName || 'Newsstand' }}
-                </span>
-              </Transition>
+
+        <div class="relative h-5 overflow-hidden flex items-center">
+          <Transition name="slide-up-fade" mode="out-in">
+            <div :key="currentLoadingCategoryName" class="flex items-center gap-2">
+              <span class="text-[12px] text-zinc-900 dark:text-white font-medium whitespace-nowrap tracking-tight">
+                {{ currentLoadingCategoryName || 'News' }}
+              </span>
+              <span class="text-[11px] text-zinc-400 dark:text-zinc-500 font-bold tabular-nums">
+                {{ processedTaskSources }}/{{ totalTaskSources }}
+              </span>
             </div>
-            <span class="text-[11px] text-zinc-400 dark:text-zinc-500 font-bold tabular-nums">
-              {{ processedTaskSources }}/{{ totalTaskSources }}
-            </span>
-          </div>
+          </Transition>
         </div>
       </div>
     </Transition>
@@ -258,7 +258,7 @@ import SiteFooter from '../components/SiteFooter.vue'
 import SiteHeader from '../components/SiteHeader.vue'
 import SiteBanner from '../components/SiteBanner.vue'
 
-const CURRENT_CACHE_VERSION = 'v15.8'
+const CURRENT_CACHE_VERSION = 'v15.9'
 const CACHE_KEY = `uxm_trends_cache_${CURRENT_CACHE_VERSION}`
 
 interface NewsItem {
