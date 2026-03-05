@@ -109,13 +109,18 @@
                   <!-- Arts Pinterest Content -->
                   <div v-if="activeCategory === 'googleart'" class="w-full relative">
                     <img 
-                      v-if="item.thumb"
+                      v-if="item.thumb && !item.thumbError"
                       :src="item.thumb" 
-                      class="w-full object-cover transition-all duration-500 group-hover:scale-[1.02]" 
+                      class="w-full object-cover transition-all duration-500 group-hover:scale-[1.01]" 
                       loading="lazy" 
                       referrerpolicy="no-referrer"
                       @error="handleImgError(item)"
                     />
+                    <div v-if="item.thumbError" class="w-full aspect-[4/3] bg-zinc-100 dark:bg-zinc-800 flex items-center justify-center">
+                      <svg xmlns="http://www.w3.org/2000/svg" class="w-8 h-8 text-zinc-300" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                      </svg>
+                    </div>
                     <div class="p-4 border-t border-zinc-100 dark:border-white/5">
                       <h3 class="text-sm font-bold text-zinc-900 dark:text-white leading-tight line-clamp-2">
                         {{ item.title }}
@@ -618,7 +623,7 @@ const fetchNews = async () => {
         
         const artItems: NewsItem[] = await Promise.all(data.data
           .filter((item: any) => item.image_id) // Only items with images
-          .slice(0, 12) // Limit to 12 for speed
+          .slice(0, 30) // Increased for better Masonry feel
           .map(async (item: any) => {
             const [tTitle, tDesc] = await Promise.all([
               translateText(item.title),
@@ -717,7 +722,8 @@ const fetchNews = async () => {
             } catch (e) {}
           }
 
-          const descMatch = itemRaw.match(/<(?:description|summary|content)[^>]*>(?:<!\[CDATA\[)?([\s\S]*?)(?:\]\]>)?<\/(?:description|summary|content)>/i)
+          const descMatch = itemRaw.match(/<(?:description|summary|content|content:encoded)[^>]*>(?:<!\[CDATA\[)?([\s\S]*?)(?:\]\]>)?<\/(?:description|summary|content|content:encoded)>/i)
+          const contentMatch = itemRaw.match(/<(?:content:encoded|encoded)[^>]*>(?:<!\[CDATA\[)?([\s\S]*?)(?:\]\]>)?<\/(?:content:encoded|encoded)>/i)
           const dateMatch = itemRaw.match(/<(?:pubDate|published|updated)[^>]*>(?:<!\[CDATA\[)?([\s\S]*?)(?:\]\]>)?<\/(?:pubDate|published|updated)>/i)
           
           let description = descMatch ? decodeHtml(descMatch[1].replace(/<[^>]*>?/gm, ' ').replace(/\s+/g, ' ').trim()) : ''
@@ -731,8 +737,19 @@ const fetchNews = async () => {
             if (ytMatch) {
               thumb = `https://i.ytimg.com/vi/${ytMatch[1]}/hqdefault.jpg`
             } else {
-              const imgMatch = (descMatch ? descMatch[1] : '').match(/<img[^>]+src=["']([^"'>]+)["']/i) || (descMatch ? descMatch[1] : '').match(/<img[^>]+src=([^ >]+)/i)
-              if (imgMatch) thumb = imgMatch[1].replace(/['"]/g, '').trim()
+              // Try Media RSS tags first
+              const mediaMatch = itemRaw.match(/<(?:media:content|media:thumbnail)[^>]+url=["']([^"']+)["']/i) ||
+                                 itemRaw.match(/<enclosure[^>]+url=["']([^"']+)["'][^>]+type=["']image\/[^"']+["']/i) ||
+                                 itemRaw.match(/<image[^>]*>([\s\S]*?)<\/image>/i)
+              
+              if (mediaMatch) {
+                thumb = mediaMatch[1].includes('url=') ? (mediaMatch[1].match(/url=["']([^"']+)["']/i)?.[1] || '') : mediaMatch[1]
+              } else {
+                // Look in description OR content:encoded
+                const searchBody = (descMatch ? descMatch[1] : '') + (contentMatch ? contentMatch[1] : '')
+                const imgMatch = searchBody.match(/<img[^>]+src=["']([^"'>]+)["']/i) || searchBody.match(/<img[^>]+src=([^ >]+)/i)
+                if (imgMatch) thumb = imgMatch[1].replace(/['"]/g, '').trim()
+              }
             }
           }
 
@@ -741,7 +758,7 @@ const fetchNews = async () => {
             link, pubDate,
             description: description || (source.category === 'youtube' ? '유튜브에서 관련 영상을 시청하세요.' : '기사 본문을 확인하세요.'),
             source: source.name, category: source.category,
-            thumb: thumb.startsWith('//') ? 'https:' + thumb : thumb
+            thumb: thumb && thumb.startsWith('//') ? 'https:' + thumb : thumb
           })
         }
 
