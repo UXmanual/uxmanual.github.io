@@ -8,7 +8,7 @@
 
 모든 작업은 반드시 다음 단계를 순차적으로 수행한다.
 
-1.  **규칙 로드**: `.agent/rules.md` 파일을 읽고 최신 원칙을 확인한다.
+1.  **규칙 로드**: `.agent/AI_Guidelines.md` 파일을 읽고 최신 원칙을 확인한다.
 2.  **저장소 동기화**: 하루의 첫 작업 시 `git pull`을 통해 최신 코드를 확보한다.
 3.  **의도 파악**: 사용자의 요청을 분석하되, **임의의 UI/UX 변경**이 포함되지 않도록 주의한다.
 4.  **작업 수행**: 아래 정의된 세부 개발 원칙에 따라 코드를 수정한다.
@@ -49,10 +49,10 @@
 -   `fix:`: 버그 수정
 -   `feat:`: 기능 추가
 -   `style:`: 코드 의미에 영향을 주지 않는 변경 (CSS, 포맷팅 등)
--   `docs:`: 문서 수정 (`rules.md` 등)
+-   `docs:`: 문서 수정 (`AI_Guidelines.md` 등)
 -   `chore:`: 빌드 업무, 패키지 매니저 설정 등
 
-**예시**: `fix: blog loading issues and bump version to 21.6`
+**예시**: `fix: blog loading issues and bump version to 21.7`
 
 ---
 
