@@ -106,51 +106,55 @@
                     <span class="text-[11px] text-zinc-400 font-bold uppercase tracking-tight truncate text-right flex-grow min-w-0">{{ item.provider || item.source }}</span>
                   </div>
                   
-                  <!-- Arts Pinterest Content -->
-                  <div v-if="activeCategory === 'googleart'" class="w-full relative">
-                    <img 
-                      v-if="item.thumb && !item.thumbError"
-                      :src="item.thumb" 
-                      class="w-full object-cover transition-opacity duration-700 group-hover:scale-[1.01]" 
-                      :class="item.thumbLoaded ? 'opacity-100' : 'opacity-0'"
-                      loading="lazy" 
-                      referrerpolicy="no-referrer"
-                      @load="item.thumbLoaded = true"
-                      @error="handleImgError(item)"
-                    />
-                    <div v-if="item.thumbError" class="w-full aspect-[4/3] bg-zinc-100 dark:bg-zinc-800 flex items-center justify-center">
-                      <svg xmlns="http://www.w3.org/2000/svg" class="w-8 h-8 text-zinc-300" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
-                      </svg>
-                    </div>
-                    <div class="p-4 border-t border-zinc-100 dark:border-white/5">
-                      <h3 class="text-sm font-bold text-zinc-900 dark:text-white leading-tight line-clamp-2">
-                        {{ item.title }}
-                      </h3>
-                      <div class="mt-2 flex items-center justify-between">
-                        <span class="text-[10px] text-zinc-400 font-bold uppercase tracking-wider">{{ item.source }}</span>
-                        <span class="text-[10px] text-zinc-400">{{ formatDate(item.pubDate) }}</span>
+                  <!-- Main Content Block -->
+                  <div class="w-full relative">
+                    <!-- Arts Pinterest View -->
+                    <div v-if="activeCategory === 'googleart'">
+                      <div class="relative w-full overflow-hidden bg-zinc-100 dark:bg-zinc-800" style="min-height: 200px">
+                        <div 
+                          v-if="!item.thumbLoaded && !item.thumbError" 
+                          class="absolute inset-0 z-10 animate-pulse bg-gradient-to-r from-zinc-100 via-zinc-200 to-zinc-100 dark:from-zinc-800 dark:via-zinc-700 dark:to-zinc-800"
+                        ></div>
+                        <img 
+                          v-if="item.thumb && !item.thumbError"
+                          :src="item.thumb" 
+                          class="w-full object-cover transition-all duration-700 ease-out group-hover:scale-[1.01]" 
+                          :class="item.thumbLoaded ? 'opacity-100 scale-100' : 'opacity-0 scale-95'"
+                          loading="lazy" 
+                          referrerpolicy="no-referrer"
+                          @load="item.thumbLoaded = true"
+                          @error="handleImgError(item)"
+                        />
+                      </div>
+                      <div class="p-4 border-t border-zinc-100 dark:border-white/5 bg-white dark:bg-[#1f1f1f]">
+                        <h3 class="text-sm font-bold text-zinc-900 dark:text-white leading-tight line-clamp-2">
+                          {{ item.title }}
+                        </h3>
+                        <div class="mt-2 flex items-center justify-between">
+                          <span class="text-[10px] text-zinc-400 font-bold uppercase tracking-wider">{{ item.source }}</span>
+                          <span class="text-[10px] text-zinc-400">{{ formatDate(item.pubDate) }}</span>
+                        </div>
                       </div>
                     </div>
-                  </div>
 
-                  <!-- Regular Content (Not for Arts Pinterest) -->
-                  <div v-else class="flex gap-4 mb-4 items-center h-12">
-                    <div 
-                      v-if="item.thumb && !item.thumbError" 
-                      class="flex-shrink-0 w-12 h-12 rounded-lg overflow-hidden border border-zinc-100 dark:border-white/5 bg-zinc-50 dark:bg-zinc-800 transition-opacity duration-300"
-                    >
-                      <img 
-                        :src="item.thumb" 
-                        class="w-full h-full object-cover grayscale-[0.2] group-hover:grayscale-0 transition-all duration-500" 
-                        loading="lazy" 
-                        referrerpolicy="no-referrer"
-                        @error="handleImgError(item)"
-                      />
+                    <!-- Regular View -->
+                    <div v-else class="flex gap-4 mb-4 items-center h-12">
+                      <div 
+                        v-if="item.thumb && !item.thumbError" 
+                        class="flex-shrink-0 w-12 h-12 rounded-lg overflow-hidden border border-zinc-100 dark:border-white/5 bg-zinc-50 dark:bg-zinc-800 transition-opacity duration-300"
+                      >
+                        <img 
+                          :src="item.thumb" 
+                          class="w-full h-full object-cover grayscale-[0.2] group-hover:grayscale-0 transition-all duration-500" 
+                          loading="lazy" 
+                          referrerpolicy="no-referrer"
+                          @error="handleImgError(item)"
+                        />
+                      </div>
+                      <h3 class="text-lg font-bold text-zinc-900 dark:text-white leading-tight line-clamp-2 title-element flex-grow">
+                        {{ item.title }}
+                      </h3>
                     </div>
-                    <h3 class="text-lg font-bold text-zinc-900 dark:text-white leading-tight line-clamp-2 title-element flex-grow">
-                      {{ item.title }}
-                    </h3>
                   </div>
 
                   <!-- Regular Footer (Not for Arts Pinterest) -->
@@ -530,11 +534,10 @@ const filteredNews = computed(() => {
     // Exclude Arts category from 'All News' to avoid overcrowding
     list = list.filter(item => item.category !== 'googleart')
   }
-  // Strictly filter out Arts items without a valid thumbnail
-  // Stabilize layout: Avoid removing items from the list reactively when images fail
+  // Strictly filter out Arts items without a valid thumbnail OR those that failed to load
   return list.filter(item => {
     if (item.category === 'googleart') {
-      return !!item.thumb
+      return !!item.thumb && !item.thumbError
     }
     return true
   })
