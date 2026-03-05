@@ -144,9 +144,9 @@
                           <h3 class="text-sm font-bold text-zinc-900 dark:text-white leading-tight line-clamp-2">
                             {{ item.title }}
                           </h3>
-                          <div class="mt-2 flex items-center justify-between">
-                            <span class="text-[10px] text-zinc-400 font-bold uppercase tracking-wider">{{ item.source }}</span>
-                            <span class="text-[10px] text-zinc-400">{{ formatDate(item.pubDate) }}</span>
+                          <div class="mt-2 flex items-center justify-between gap-2">
+                            <span class="text-[10px] text-zinc-400 font-bold uppercase tracking-wider truncate min-w-0 flex-grow">{{ item.source }}</span>
+                            <span class="text-[10px] text-zinc-400 flex-shrink-0 text-right">{{ formatDate(item.pubDate) }}</span>
                           </div>
                         </div>
                       </div>
@@ -258,7 +258,7 @@ import SiteFooter from '../components/SiteFooter.vue'
 import SiteHeader from '../components/SiteHeader.vue'
 import SiteBanner from '../components/SiteBanner.vue'
 
-const CURRENT_CACHE_VERSION = 'v16.1'
+const CURRENT_CACHE_VERSION = 'v16.2'
 const CACHE_KEY = `uxm_trends_cache_${CURRENT_CACHE_VERSION}`
 
 interface NewsItem {
