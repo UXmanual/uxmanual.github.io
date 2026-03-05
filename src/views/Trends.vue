@@ -258,7 +258,7 @@ import SiteFooter from '../components/SiteFooter.vue'
 import SiteHeader from '../components/SiteHeader.vue'
 import SiteBanner from '../components/SiteBanner.vue'
 
-const CURRENT_CACHE_VERSION = 'v16.3'
+const CURRENT_CACHE_VERSION = 'v16.4'
 const CACHE_KEY = `uxm_trends_cache_${CURRENT_CACHE_VERSION}`
 
 interface NewsItem {
@@ -374,6 +374,7 @@ const changeCategory = async (id: string) => {
   }
 
   activeCategory.value = id
+  fetchNews()
   
   // Force Nav visible to make the target offset (56px) predictable
   isNavVisible.value = true
@@ -963,7 +964,10 @@ const fetchNews = async () => {
     isBackgroundLoading.value = true
     
     // 1. Process current active category first (Fast parallel)
-    const prioritySources = RSS_SOURCES.filter(s => s.category === activeCategory.value)
+    const prioritySources = activeCategory.value === 'all'
+      ? RSS_SOURCES.filter(s => ['ai', 'finance', 'it', 'game', 'sports', 'entertain'].includes(s.category)).slice(0, 15)
+      : RSS_SOURCES.filter(s => s.category === activeCategory.value)
+
     if (prioritySources.length > 0) {
       if (sessionId !== currentFetchSession.value) return
       currentLoadingCategoryName.value = getCategoryName(activeCategory.value)
