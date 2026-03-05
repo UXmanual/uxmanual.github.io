@@ -30,7 +30,7 @@
         <!-- Theme Toggle -->
         <button 
           @click="toggleTheme" 
-          class="p-2.5 rounded-xl bg-zinc-100 dark:bg-zinc-800/80 text-zinc-600 dark:text-zinc-300 transition-all duration-300 hover:scale-105 active:scale-95 group/theme flex items-center justify-center border border-transparent dark:border-white/5 shadow-sm"
+          class="p-2.5 rounded-full bg-zinc-100 dark:bg-zinc-800/80 text-zinc-600 dark:text-zinc-300 transition-all duration-300 hover:scale-105 active:scale-95 group/theme flex items-center justify-center border border-transparent dark:border-white/5"
           aria-label="Toggle Theme"
         >
           <!-- Sun Icon (Show when dark - to switch to light) -->

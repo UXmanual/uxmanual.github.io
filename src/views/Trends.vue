@@ -234,8 +234,8 @@
 
         <div class="relative h-5 overflow-hidden flex items-center">
           <Transition name="slide-up-fade" mode="out-in">
-            <div :key="currentLoadingCategoryName" class="flex items-center gap-2">
-              <span class="text-[12px] text-zinc-900 dark:text-white font-medium whitespace-nowrap tracking-tight">
+            <div :key="currentLoadingCategoryName" class="flex items-center gap-1.5 font-medium tracking-tight">
+              <span class="text-[12px] text-zinc-900 dark:text-white whitespace-nowrap">
                 {{ currentLoadingCategoryName || 'News' }}
               </span>
               <span class="text-[11px] text-zinc-400 dark:text-zinc-500 font-bold tabular-nums">
@@ -258,7 +258,7 @@ import SiteFooter from '../components/SiteFooter.vue'
 import SiteHeader from '../components/SiteHeader.vue'
 import SiteBanner from '../components/SiteBanner.vue'
 
-const CURRENT_CACHE_VERSION = 'v15.9'
+const CURRENT_CACHE_VERSION = 'v16.0'
 const CACHE_KEY = `uxm_trends_cache_${CURRENT_CACHE_VERSION}`
 
 interface NewsItem {
