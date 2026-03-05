@@ -110,15 +110,24 @@
                     <div class="w-full relative">
                       <!-- Arts Pinterest View -->
                       <div v-if="activeCategory === 'googleart'">
-                        <!-- Arts Image with Skeleton -->
-                        <div class="relative w-full overflow-hidden bg-zinc-100 dark:bg-zinc-800">
-                          <!-- Skeleton Shimmer -->
+                        <div class="relative w-full overflow-hidden bg-zinc-100 dark:bg-zinc-800" style="aspect-ratio: 16/9">
+                          <!-- Skeleton Shimmer (Always show until loaded or error) -->
                           <div 
                             v-if="!item.thumbLoaded && !item.thumbError" 
                             class="absolute inset-0 z-10 animate-pulse bg-gradient-to-r from-zinc-100 via-zinc-200 to-zinc-100 dark:from-zinc-800 dark:via-zinc-700 dark:to-zinc-800"
-                            style="aspect-ratio: 4/5"
                           ></div>
                           
+                          <!-- Error State Component -->
+                          <div 
+                            v-if="item.thumbError" 
+                            class="absolute inset-0 flex flex-col items-center justify-center gap-2 bg-zinc-50 dark:bg-zinc-800/50"
+                          >
+                            <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6 text-zinc-300" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                            </svg>
+                            <span class="text-[9px] text-zinc-400 font-medium">이미지 로드 실패</span>
+                          </div>
+
                           <img 
                             v-if="item.thumb && !item.thumbError"
                             :src="item.category === 'googleart' && !item.thumb.includes('artic.edu') ? `https://images.weserv.nl/?url=${encodeURIComponent(item.thumb)}&w=500&fit=cover` : item.thumb" 
@@ -550,11 +559,12 @@ const filteredNews = computed(() => {
     // Exclude Arts category from 'All News' to avoid overcrowding
     list = list.filter(item => item.category !== 'googleart')
   }
-    // Strictly filter out Arts items without a thumbnail property initially
-    // Also filter out items that failed to load (thumbError) to keep the gallery clean
+    // Filter items with local thumb property (to avoid showing empty text cards initially)
+    // IMPORTANT: DO NOT filter by thumbError here, as it causes reactive flickering 
+    // when an image fails and the item is suddenly removed from the masonry.
     return list.filter(item => {
       if (item.category === 'googleart') {
-        return !!item.thumb && !item.thumbError
+        return !!item.thumb
       }
       return true
     })
