@@ -110,29 +110,30 @@
                     <div class="w-full relative">
                       <!-- Arts Pinterest View -->
                       <div v-if="activeCategory === 'googleart'">
-                        <div class="relative w-full overflow-hidden bg-zinc-100 dark:bg-zinc-800" style="aspect-ratio: 16/9">
-                          <!-- Skeleton Shimmer (Always show until loaded or error) -->
+                        <div class="relative w-full overflow-hidden bg-zinc-50 dark:bg-zinc-800/20">
+                          <!-- Skeleton Shimmer -->
                           <div 
                             v-if="!item.thumbLoaded && !item.thumbError" 
                             class="absolute inset-0 z-10 animate-pulse bg-gradient-to-r from-zinc-100 via-zinc-200 to-zinc-100 dark:from-zinc-800 dark:via-zinc-700 dark:to-zinc-800"
+                            style="min-height: 200px;"
                           ></div>
                           
                           <!-- Error State Component -->
                           <div 
                             v-if="item.thumbError" 
-                            class="absolute inset-0 flex flex-col items-center justify-center gap-2 bg-zinc-50 dark:bg-zinc-800/50"
+                            class="flex flex-col items-center justify-center gap-2 bg-zinc-50 dark:bg-zinc-800/50 py-12"
                           >
                             <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6 text-zinc-300" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
                             </svg>
-                            <span class="text-[9px] text-zinc-400 font-medium">이미지 로드 실패</span>
+                            <span class="text-[9px] text-zinc-400 font-medium tracking-tight">이미지 로드 실패</span>
                           </div>
 
                           <img 
                             v-if="item.thumb && !item.thumbError"
-                            :src="item.category === 'googleart' && !item.thumb.includes('artic.edu') ? `https://images.weserv.nl/?url=${encodeURIComponent(item.thumb)}&w=500&fit=cover` : item.thumb" 
-                            class="w-full object-cover transition-all duration-700 ease-out group-hover:scale-[1.01]" 
-                            :class="item.thumbLoaded ? 'opacity-100 scale-100' : 'opacity-0 scale-95'"
+                            :src="item.category === 'googleart' && !item.thumb.includes('artic.edu') ? `https://images.weserv.nl/?url=${encodeURIComponent(item.thumb)}&w=500` : item.thumb" 
+                            class="w-full h-auto block transition-all duration-700 ease-out group-hover:scale-[1.01]" 
+                            :class="item.thumbLoaded ? 'opacity-100' : 'opacity-0'"
                             loading="lazy" 
                             referrerpolicy="no-referrer"
                             @load="item.thumbLoaded = true"
