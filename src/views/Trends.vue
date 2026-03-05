@@ -247,7 +247,7 @@ import SiteFooter from '../components/SiteFooter.vue'
 import SiteHeader from '../components/SiteHeader.vue'
 import SiteBanner from '../components/SiteBanner.vue'
 
-const CURRENT_CACHE_VERSION = 'v15.4'
+const CURRENT_CACHE_VERSION = 'v15.5'
 const CACHE_KEY = `uxm_trends_cache_${CURRENT_CACHE_VERSION}`
 
 interface NewsItem {
@@ -492,6 +492,7 @@ const RSS_SOURCES = [
   { name: '한국일보 스포츠', url: 'https://www.hankookilbo.com/RSS/04', category: 'sports' },
 
   // Entertain (Domestic & International)
+  { name: 'Google 연예 (KR)', url: 'https://news.google.com/rss/search?q=%EC%97%B0%EC%98%88+%EC%97%94%ED%84%B0%ED%85%8C%EC%9D%B8%EB%A8%BC%ED%8A%B8+%EC%95%84%EC%9D%B4%EB%8F%8C&hl=ko&gl=KR&ceid=KR:ko', category: 'entertain' },
   { name: '연합뉴스 연예', url: 'https://www.yna.co.kr/rss/entertainment.xml', category: 'entertain' },
   { name: 'MBC 연예', url: 'https://imnews.imbc.com/rss/news/news_05.xml', category: 'entertain' },
   { name: 'KBS 연예', url: 'https://news.kbs.co.kr/rss/news_06.xml', category: 'entertain' },
