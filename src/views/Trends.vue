@@ -76,8 +76,8 @@
           :key="activeCategory" 
           class="content-wrapper"
         >
-          <!-- Show content ONLY when NOT loading or when we have data but want to avoid flicker, we prioritize isLoading state for fresh feel -->
-          <div v-if="!isLoading && groupedNews.length > 0" class="space-y-10">
+          <!-- Show content when data is available -->
+          <div v-if="groupedNews.length > 0" class="space-y-10">
             <div v-for="group in groupedNews" :key="group.date" class="space-y-6">
               <h2 class="text-sm font-semibold text-zinc-400 dark:text-zinc-500 uppercase whitespace-nowrap mb-6">📅 {{ group.date }}</h2>
               
@@ -498,9 +498,15 @@ const groupedNews = computed(() => {
   return groups
 })
 
-watch(activeCategory, () => {
+watch(activeCategory, (newCat) => {
   visibleCount.value = 50
   fetchMissingThumbnails()
+  
+  // If the selected category is empty, trigger a prioritized fetch immediately
+  const hasItems = news.value.some(item => item.category === newCat)
+  if (!hasItems && newCat !== 'all') {
+    fetchNews()
+  }
 })
 
 
@@ -619,14 +625,14 @@ const fetchNews = async () => {
         
         if (!xmlString || xmlString.length < 100) throw new Error('Short payload')
         
-        const xmlItems = xmlString.split(/<item>|<entry>/i).slice(1).slice(0, 30) // Limit to 30 to cover all trends
+        const xmlItems = xmlString.split(/<(?:item|entry)[^>]*>/i).slice(1).slice(0, 30)
         const parsedItems: NewsItem[] = []
 
         // Pre-process all items to extract raw data first
         const rawParsed: any[] = []
         for (const itemRaw of xmlItems) {
-          const titleMatch = itemRaw.match(/<title>(?:<!\[CDATA\[)?([\s\S]*?)(?:\]\]>)?<\/title>/i)
-          const linkMatch = itemRaw.match(/<link>(?:<!\[CDATA\[)?([\s\S]*?)(?:\]\]>)?<\/link>/i) ||
+          const titleMatch = itemRaw.match(/<title[^>]*>(?:<!\[CDATA\[)?([\s\S]*?)(?:\]\]>)?<\/title>/i)
+          const linkMatch = itemRaw.match(/<link[^>]*>(?:<!\[CDATA\[)?([\s\S]*?)(?:\]\]>)?<\/link>/i) ||
                             itemRaw.match(/<link[^>]+href=["']([^"']+)["']/i)
           if (!titleMatch || !linkMatch) continue
 
@@ -663,12 +669,8 @@ const fetchNews = async () => {
             } catch (e) {}
           }
 
-          const descMatch = itemRaw.match(/<description>(?:<!\[CDATA\[)?([\s\S]*?)(?:\]\]>)?<\/description>/i) ||
-                            itemRaw.match(/<summary>(?:<!\[CDATA\[)?([\s\S]*?)(?:\]\]>)?<\/summary>/i) ||
-                            itemRaw.match(/<content[^>]*>(?:<!\[CDATA\[)?([\s\S]*?)(?:\]\]>)?<\/content>/i)
-          const dateMatch = itemRaw.match(/<pubDate>(?:<!\[CDATA\[)?([\s\S]*?)(?:\]\]>)?<\/pubDate>/i) ||
-                            itemRaw.match(/<published>(?:<!\[CDATA\[)?([\s\S]*?)(?:\]\]>)?<\/published>/i) ||
-                            itemRaw.match(/<updated>(?:<!\[CDATA\[)?([\s\S]*?)(?:\]\]>)?<\/updated>/i)
+          const descMatch = itemRaw.match(/<(?:description|summary|content)[^>]*>(?:<!\[CDATA\[)?([\s\S]*?)(?:\]\]>)?<\/(?:description|summary|content)>/i)
+          const dateMatch = itemRaw.match(/<(?:pubDate|published|updated)[^>]*>(?:<!\[CDATA\[)?([\s\S]*?)(?:\]\]>)?<\/(?:pubDate|published|updated)>/i)
           
           let description = descMatch ? decodeHtml(descMatch[1].replace(/<[^>]*>?/gm, ' ').replace(/\s+/g, ' ').trim()) : ''
           const pubDate = dateMatch ? dateMatch[1].trim() : ''
