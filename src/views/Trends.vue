@@ -374,6 +374,7 @@ const checkScroll = () => {
 const categories = [
   { id: 'all', name: 'All News' },
   { id: 'ai', name: 'AI & Tech' },
+  { id: 'it', name: 'IT' },
   { id: 'finance', name: 'Finance' },
   { id: 'game', name: 'Game' },
   { id: 'sports', name: 'Sports' },
@@ -391,6 +392,14 @@ const RSS_SOURCES = [
   { name: '지디넷코리아', url: 'https://feeds.feedburner.com/zdkorea', category: 'ai' },
   { name: '매경 IT', url: 'https://www.mk.co.kr/rss/50300001/', category: 'ai' },
   { name: '디지털데일리', url: 'https://www.ddaily.co.kr/rss/all.xml', category: 'ai' },
+
+  // IT (Hardware, Computer, Electronic Devices)
+  { name: '전자신문', url: 'https://www.etnews.com/rss/etnews_realtime_news.xml', category: 'it' },
+  { name: '블로터', url: 'https://www.bloter.net/rss/all.xml', category: 'it' },
+  { name: '보안뉴스', url: 'https://www.boannews.com/media/t_rss.xml', category: 'it' },
+  { name: '아이티데일리', url: 'http://www.itdaily.kr/rss/all.xml', category: 'it' },
+  { name: '바이라인네트워크', url: 'https://byline.network/feed/', category: 'it' },
+  { name: '데일리스포츠한국 IT', url: 'https://www.dailysportshankook.co.kr/rss/S1N15.xml', category: 'it' },
   
   // Finance (Verified High-Priority)
   { name: '한경 경제', url: 'https://www.hankyung.com/feed/economy', category: 'finance' },
@@ -1022,14 +1031,17 @@ onUnmounted(() => {
 .theme-goodrich { --brand-color: #f97316; --brand-bg: rgba(249, 115, 22, 0.05); }
 .theme-diablo2 { --brand-color: #c44135; --brand-bg: rgba(196, 65, 53, 0.05); }
 .theme-googleart { --brand-color: #0ea5e9; --brand-bg: rgba(14, 165, 233, 0.05); }
+.theme-it { --brand-color: #64748b; --brand-bg: rgba(100, 116, 139, 0.05); }
 
 /* Apply Theme to Header Tabs */
 .category-tab[data-cat="all"] .active-underline { background-color: #18181b; }
 .dark .category-tab[data-cat="all"] .active-underline { background-color: white !important; }
 
 /* Active Title & Underline Colors */
-.category-tab[data-cat="ai"][data-active="true"] { color: #6366f1 !important; }
 .category-tab[data-cat="ai"][data-active="true"] .active-underline { background-color: #6366f1; }
+
+.category-tab[data-cat="it"][data-active="true"] { color: #64748b !important; }
+.category-tab[data-cat="it"][data-active="true"] .active-underline { background-color: #64748b; }
 
 .category-tab[data-cat="finance"][data-active="true"] { color: #0acaaa !important; }
 .category-tab[data-cat="finance"][data-active="true"] .active-underline { background-color: #0acaaa; }
@@ -1069,6 +1081,7 @@ onUnmounted(() => {
 .news-card.theme-goodrich { --brand-color: #f97316; --brand-bg: rgba(249, 115, 22, 0.05); }
 .news-card.theme-diablo2 { --brand-color: #c44135; --brand-bg: rgba(196, 65, 53, 0.05); }
 .news-card.theme-googleart { --brand-color: #0ea5e9; --brand-bg: rgba(14, 165, 233, 0.05); }
+.news-card.theme-it { --brand-color: #64748b; --brand-bg: rgba(100, 116, 139, 0.05); }
 
 /* Hover Effects: Enabled only for devices that support hover (Mouse) to prevent sticky feel on mobile */
 @media (hover: hover) {
@@ -1086,6 +1099,7 @@ onUnmounted(() => {
   .news-card.theme-diablo2:hover { border-color: #c4413580; }
   .news-card.theme-goodrich:hover { border-color: #f9731680; }
   .news-card.theme-googleart:hover { border-color: #0ea5e980; }
+  .news-card.theme-it:hover { border-color: #64748b80; }
 
   .news-card:hover .title-element {
     opacity: 0.8;
@@ -1108,6 +1122,7 @@ onUnmounted(() => {
 .news-card.theme-diablo2 .source-badge { border-color: #c4413530; }
 .news-card.theme-goodrich .source-badge { border-color: #f9731630; }
 .news-card.theme-googleart .source-badge { border-color: #0ea5e930; }
+.news-card.theme-it .source-badge { border-color: #64748b30; }
 
 .more-link {
   color: var(--brand-color);
