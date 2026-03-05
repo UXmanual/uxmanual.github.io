@@ -434,7 +434,7 @@ const categories = [
   { id: 'game', name: 'Game' },
   { id: 'sports', name: 'Sports' },
   { id: 'design', name: 'Design' },
-  { id: 'blog', name: 'Blog' },
+  { id: 'figma', name: 'Figma' },
   { id: 'youtube', name: 'YouTube' },
   { id: 'diablo2', name: 'Diablo2' },
   { id: 'googleart', name: 'Arts' }
@@ -489,13 +489,12 @@ const RSS_SOURCES = [
   { name: '매경 스포츠', url: 'https://www.mk.co.kr/rss/71000001/', category: 'sports' },
   { name: '한국일보 스포츠', url: 'https://www.hankookilbo.com/RSS/04', category: 'sports' },
 
-  // Blog (Trending General Issues & Hot Topics)
-  { name: '브런치 인기글', url: 'https://news.google.com/rss/search?q=브런치+인기글&hl=ko&gl=KR&ceid=KR:ko', category: 'blog' },
-  { name: '티스토리 베스트', url: 'https://news.google.com/rss/search?q=티스토리+베스트&hl=ko&gl=KR&ceid=KR:ko', category: 'blog' },
-  { name: '네이버 블로그 핫이슈', url: 'https://news.google.com/rss/search?q=네이버블로그+실시간+이슈&hl=ko&gl=KR&ceid=KR:ko', category: 'blog' },
-  { name: 'Velog 인기글', url: 'https://velog.io/rss', category: 'blog' },
-  { name: 'GeekNews 트렌드', url: 'https://news.hada.io/rss', category: 'blog' },
-  { name: '워크맨 (Behind)', url: 'https://news.google.com/rss/search?q=워크맨+비하인드+스토리&hl=ko&gl=KR&ceid=KR:ko', category: 'blog' },
+  // Figma (Official Blog, Global News, Community, Config)
+  { name: 'Figma Blog', url: 'https://www.figma.com/blog/feed/', category: 'figma', translate: true },
+  { name: 'Figma News (Global)', url: 'https://news.google.com/rss/search?q=figma+design+tool&hl=en&gl=US&ceid=US:en', category: 'figma', translate: true },
+  { name: '피그마 새소식 (KR)', url: 'https://news.google.com/rss/search?q=피그마+Figma+디자인&hl=ko&gl=KR&ceid=KR:ko', category: 'figma' },
+  { name: 'Figma Community', url: 'https://news.google.com/rss/search?q=figma+community+plugins+widget&hl=en&gl=US&ceid=US:en', category: 'figma', translate: true },
+  { name: 'Config News', url: 'https://news.google.com/rss/search?q=figma+config+conference+news&hl=en&gl=US&ceid=US:en', category: 'figma', translate: true },
 
   // YouTube (Curated Korean Hot Issues - Strictly User Specified)
   { name: '침착맨 (Channel)', url: 'https://www.youtube.com/feeds/videos.xml?channel_id=UCUj6rrhMTR9pipbAWBAMvUQ', category: 'youtube' },
@@ -1119,7 +1118,7 @@ onUnmounted(() => {
 .theme-design { --brand-color: #fa4fc1; --brand-bg: rgba(250, 79, 193, 0.05); }
 .theme-sports { --brand-color: #f59e0b; --brand-bg: rgba(245, 158, 11, 0.05); }
 .theme-game { --brand-color: #9333ea; --brand-bg: rgba(147, 51, 234, 0.05); }
-.theme-blog { --brand-color: #10b981; --brand-bg: rgba(16, 185, 129, 0.05); }
+.theme-figma { --brand-color: #f24e1e; --brand-bg: rgba(242, 78, 30, 0.05); }
 .theme-youtube { --brand-color: #ef4444; --brand-bg: rgba(239, 68, 68, 0.05); }
 .theme-insurance { --brand-color: #f97316; --brand-bg: rgba(249, 115, 22, 0.05); }
 .theme-diablo2 { --brand-color: #c44135; --brand-bg: rgba(196, 65, 53, 0.05); }
@@ -1149,8 +1148,8 @@ onUnmounted(() => {
 .category-tab[data-cat="game"][data-active="true"] { color: #9333ea !important; }
 .category-tab[data-cat="game"][data-active="true"] .active-underline { background-color: #9333ea; }
 
-.category-tab[data-cat="blog"][data-active="true"] { color: #10b981 !important; }
-.category-tab[data-cat="blog"][data-active="true"] .active-underline { background-color: #10b981; }
+.category-tab[data-cat="figma"][data-active="true"] { color: #f24e1e !important; }
+.category-tab[data-cat="figma"][data-active="true"] .active-underline { background-color: #f24e1e; }
 
 .category-tab[data-cat="youtube"][data-active="true"] { color: #ef4444 !important; }
 .category-tab[data-cat="youtube"][data-active="true"] .active-underline { background-color: #ef4444; }
@@ -1170,7 +1169,7 @@ onUnmounted(() => {
 .news-card.theme-design { --brand-color: #fa4fc1; --brand-bg: rgba(250, 79, 193, 0.05); }
 .news-card.theme-sports { --brand-color: #f59e0b; --brand-bg: rgba(245, 158, 11, 0.05); }
 .news-card.theme-game { --brand-color: #9333ea; --brand-bg: rgba(147, 51, 234, 0.05); }
-.news-card.theme-blog { --brand-color: #10b981; --brand-bg: rgba(16, 185, 129, 0.05); }
+.news-card.theme-figma { --brand-color: #f24e1e; --brand-bg: rgba(242, 78, 30, 0.05); }
 .news-card.theme-youtube { --brand-color: #ef4444; --brand-bg: rgba(239, 68, 68, 0.05); }
 .news-card.theme-insurance { --brand-color: #f97316; --brand-bg: rgba(249, 115, 22, 0.05); }
 .news-card.theme-diablo2 { --brand-color: #c44135; --brand-bg: rgba(196, 65, 53, 0.05); }
@@ -1188,7 +1187,7 @@ onUnmounted(() => {
   .news-card.theme-design:hover { border-color: #fa4fc180; }
   .news-card.theme-sports:hover { border-color: #f59e0b80; }
   .news-card.theme-game:hover { border-color: #9333ea80; }
-  .news-card.theme-blog:hover { border-color: #10b98180; }
+  .news-card.theme-figma:hover { border-color: #f24e1e80; }
   .news-card.theme-youtube:hover { border-color: #ef444480; }
   .news-card.theme-diablo2:hover { border-color: #c4413580; }
   .news-card.theme-insurance:hover { border-color: #f9731680; }
@@ -1211,7 +1210,7 @@ onUnmounted(() => {
 .news-card.theme-design .source-badge { border-color: #fa4fc130; }
 .news-card.theme-sports .source-badge { border-color: #f59e0b30; }
 .news-card.theme-game .source-badge { border-color: #9333ea30; }
-.news-card.theme-blog .source-badge { border-color: #10b98130; }
+.news-card.theme-figma .source-badge { border-color: #f24e1e30; }
 .news-card.theme-youtube .source-badge { border-color: #ef444430; }
 .news-card.theme-diablo2 .source-badge { border-color: #c4413530; }
 .news-card.theme-insurance .source-badge { border-color: #f9731630; }
