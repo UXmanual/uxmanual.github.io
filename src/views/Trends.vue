@@ -90,11 +90,11 @@
                    :key="item.link + index"
                    :href="item.link"
                    target="_blank"
-                   class="news-card group flex transition-all duration-300"
+                   class="news-card group transition-all duration-300"
                    :class="[
                      `theme-${item.category}`,
                      activeCategory === 'googleart' 
-                       ? 'block w-full break-inside-avoid mb-3 bg-white dark:bg-[#1f1f1f] border border-zinc-200 dark:border-white/5 rounded-2xl overflow-hidden p-0' 
+                       ? 'block w-full break-inside-avoid mb-3 mt-0 bg-white dark:bg-[#1f1f1f] border border-zinc-200 dark:border-white/5 rounded-2xl overflow-hidden p-0 transform-gpu' 
                        : 'flex flex-col bg-white dark:bg-[#1f1f1f] border border-zinc-200 dark:border-white/5 rounded-2xl p-5'
                    ]"
                 >
@@ -258,7 +258,7 @@ import SiteFooter from '../components/SiteFooter.vue'
 import SiteHeader from '../components/SiteHeader.vue'
 import SiteBanner from '../components/SiteBanner.vue'
 
-const CURRENT_CACHE_VERSION = 'v16.6'
+const CURRENT_CACHE_VERSION = 'v16.7'
 const CACHE_KEY = `uxm_trends_cache_${CURRENT_CACHE_VERSION}`
 
 interface NewsItem {
