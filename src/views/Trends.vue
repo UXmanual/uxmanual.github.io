@@ -528,7 +528,9 @@ const RSS_SOURCES = [
   { name: '게임메카 디아2 뉴스', url: 'https://www.gamemeca.com/rss/news.php', category: 'diablo2' },
   
   // Google Art (Pinterest Style Masonry)
-  { name: 'Google Arts & Culture', url: 'https://api.artic.edu/api/v1/artworks', category: 'googleart' },
+  { name: 'Art Institute of Chicago', url: 'https://api.artic.edu/api/v1/artworks', category: 'googleart' },
+  { name: 'Cleveland Museum of Art', url: 'https://openaccess-api.clevelandart.org/api/artworks', category: 'googleart' },
+  { name: 'The Met Museum', url: 'https://collectionapi.metmuseum.org/public/collection/v1/objects', category: 'googleart' },
   { name: 'This Is Colossal', url: 'https://www.thisiscolossal.com/feed/', category: 'googleart', translate: true },
   { name: 'Juxtapoz Art', url: 'https://www.juxtapoz.com/feed/', category: 'googleart', translate: true },
   { name: 'Hi-Fructose', url: 'https://hifructose.com/feed/', category: 'googleart', translate: true },
@@ -650,38 +652,109 @@ const fetchNews = async () => {
   isLoading.value = true
 
   const fetchSource = async (source: typeof RSS_SOURCES[0]) => {
-    // Special handling for Google Art (AIC API) - Only for the AIC specific source
-    if (source.category === 'googleart' && source.url.includes('artic.edu')) {
-      try {
-        const randomPage = Math.floor(Math.random() * 200) + 1;
-        const res = await fetch(`https://api.artic.edu/api/v1/artworks?page=${randomPage}&limit=25&fields=id,title,artist_display,image_id`);
-        const data = await res.json();
-        if (!data.data) return [];
-        
-        const artItems: NewsItem[] = await Promise.all(data.data
-          .filter((item: any) => item.image_id) // Only items with images
-          .slice(0, 30) // Increased for better Masonry feel
-          .map(async (item: any) => {
+    // Special handling for Museum APIs
+    if (source.category === 'googleart') {
+      // 1. Art Institute of Chicago (AIC)
+      if (source.url.includes('artic.edu')) {
+        try {
+          const randomPage = Math.floor(Math.random() * 200) + 1;
+          const res = await fetch(`https://api.artic.edu/api/v1/artworks?page=${randomPage}&limit=25&fields=id,title,artist_display,image_id`);
+          const data = await res.json();
+          if (!data.data) return [];
+          
+          const artItems: NewsItem[] = await Promise.all(data.data
+            .filter((item: any) => item.image_id)
+            .slice(0, 30)
+            .map(async (item: any) => {
+              const [tTitle, tDesc] = await Promise.all([
+                translateText(item.title),
+                item.artist_display ? translateText(item.artist_display) : Promise.resolve('시카고 미술관 컬렉션')
+              ]);
+              return {
+                title: tTitle,
+                link: `https://www.artic.edu/artworks/${item.id}`,
+                pubDate: new Date().toISOString(),
+                description: tDesc,
+                source: 'AIC',
+                category: 'googleart',
+                provider: 'Art Institute of Chicago',
+                thumb: `https://www.artic.edu/iiif/2/${item.image_id}/full/843,/0/default.jpg`
+              };
+            }));
+          updateNewsList(artItems);
+          return artItems;
+        } catch (e) { return []; }
+      }
+
+      // 2. Cleveland Museum of Art (CMA)
+      if (source.url.includes('clevelandart.org')) {
+        try {
+          const randomSkip = Math.floor(Math.random() * 500);
+          const res = await fetch(`https://openaccess-api.clevelandart.org/api/artworks/?has_image=1&limit=25&skip=${randomSkip}`);
+          const data = await res.json();
+          if (!data.data) return [];
+
+          const artItems: NewsItem[] = await Promise.all(data.data.map(async (item: any) => {
             const [tTitle, tDesc] = await Promise.all([
               translateText(item.title),
-              item.artist_display ? translateText(item.artist_display) : Promise.resolve('시카고 미술관 컬렉션')
+              item.creators?.[0]?.description ? translateText(item.creators[0].description) : Promise.resolve('클리블랜드 미술관 컬렉션')
             ]);
             return {
               title: tTitle,
-              link: `https://www.artic.edu/artworks/${item.id}`,
+              link: item.url || `https://www.clevelandart.org/art/${item.accession_number}`,
               pubDate: new Date().toISOString(),
               description: tDesc,
-              source: 'Arts',
+              source: 'CMA',
               category: 'googleart',
-              provider: 'AIC',
-              thumb: `https://www.artic.edu/iiif/2/${item.image_id}/full/843,/0/default.jpg`
+              provider: 'Cleveland Museum of Art',
+              thumb: item.images?.web?.url || item.images?.print?.url
             };
           }));
-        
-        updateNewsList(artItems);
-        return artItems;
-      } catch (e) {
-        return [];
+          updateNewsList(artItems);
+          return artItems;
+        } catch (e) { return []; }
+      }
+
+      // 3. The Metropolitan Museum of Art (The Met)
+      if (source.url.includes('metmuseum.org')) {
+        try {
+          // The Met requires two steps. We'll search for 'paintings' and pick random results.
+          const searchRes = await fetch('https://collectionapi.metmuseum.org/public/collection/v1/search?hasImages=true&q=paintings');
+          const searchData = await searchRes.json();
+          if (!searchData.objectIDs) return [];
+
+          // Pick 15 random IDs to balance speed and variety
+          const randomIds = searchData.objectIDs
+            .sort(() => 0.5 - Math.random())
+            .slice(0, 15);
+
+          const artItems: NewsItem[] = (await Promise.all(randomIds.map(async (id: number) => {
+            try {
+              const objRes = await fetch(`https://collectionapi.metmuseum.org/public/collection/v1/objects/${id}`);
+              const objData = await objRes.json();
+              if (!objData.primaryImageSmall) return null;
+
+              const [tTitle, tDesc] = await Promise.all([
+                translateText(objData.title),
+                objData.artistDisplayName ? translateText(objData.artistDisplayName) : Promise.resolve('메트로폴리탄 미술관 컬렉션')
+              ]);
+
+              return {
+                title: tTitle,
+                link: objData.objectURL,
+                pubDate: new Date().toISOString(),
+                description: tDesc,
+                source: 'Met',
+                category: 'googleart',
+                provider: 'The Metropolitan Museum of Art',
+                thumb: objData.primaryImageSmall
+              };
+            } catch (e) { return null; }
+          }))).filter(Boolean) as NewsItem[];
+
+          updateNewsList(artItems);
+          return artItems;
+        } catch (e) { return []; }
       }
     }
 
