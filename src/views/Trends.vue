@@ -111,9 +111,11 @@
                     <img 
                       v-if="item.thumb && !item.thumbError"
                       :src="item.thumb" 
-                      class="w-full object-cover transition-all duration-500 group-hover:scale-[1.01]" 
+                      class="w-full object-cover transition-opacity duration-700 group-hover:scale-[1.01]" 
+                      :class="item.thumbLoaded ? 'opacity-100' : 'opacity-0'"
                       loading="lazy" 
                       referrerpolicy="no-referrer"
+                      @load="item.thumbLoaded = true"
                       @error="handleImgError(item)"
                     />
                     <div v-if="item.thumbError" class="w-full aspect-[4/3] bg-zinc-100 dark:bg-zinc-800 flex items-center justify-center">
@@ -240,6 +242,7 @@ interface NewsItem {
   provider: string
   thumb?: string
   thumbError?: boolean
+  thumbLoaded?: boolean
 }
 
 const isLoading = ref(true)
@@ -513,6 +516,10 @@ const RSS_SOURCES = [
   { name: 'Juxtapoz Art', url: 'https://www.juxtapoz.com/feed/', category: 'googleart', translate: true },
   { name: 'Hi-Fructose', url: 'https://hifructose.com/feed/', category: 'googleart', translate: true },
   { name: 'My Modern Met', url: 'https://mymodernmet.com/feed/', category: 'googleart', translate: true },
+  { name: 'Dezeen', url: 'https://www.dezeen.com/feed/', category: 'googleart', translate: true },
+  { name: 'Designboom', url: 'https://www.designboom.com/feed/', category: 'googleart', translate: true },
+  { name: 'Artnet News', url: 'https://news.artnet.com/feed/', category: 'googleart', translate: true },
+  { name: 'Artforum', url: 'https://www.artforum.com/rss/news', category: 'googleart', translate: true },
 ]
 
 const filteredNews = computed(() => {
