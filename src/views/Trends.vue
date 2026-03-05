@@ -373,8 +373,8 @@ const checkScroll = () => {
 
 const categories = [
   { id: 'all', name: 'All News' },
-  { id: 'ai', name: 'AI & Tech' },
-  { id: 'it', name: 'IT' },
+  { id: 'ai', name: 'AI Next' },
+  { id: 'it', name: 'IT Device' },
   { id: 'finance', name: 'Finance' },
   { id: 'game', name: 'Game' },
   { id: 'sports', name: 'Sports' },
@@ -387,19 +387,22 @@ const categories = [
 ]
 
 const RSS_SOURCES = [
-  // AI & Tech
+  // AI Next (Algorithms, Models, Intelligence Evolution)
   { name: 'AI 타임스', url: 'https://www.aitimes.com/rss/S1N1.xml', category: 'ai' },
-  { name: '지디넷코리아', url: 'https://feeds.feedburner.com/zdkorea', category: 'ai' },
-  { name: '매경 IT', url: 'https://www.mk.co.kr/rss/50300001/', category: 'ai' },
-  { name: '디지털데일리', url: 'https://www.ddaily.co.kr/rss/all.xml', category: 'ai' },
+  { name: 'Google AI Next (KR)', url: 'https://news.google.com/rss/search?q=LLM+딥러닝+생성형AI+인공지능&hl=ko&gl=KR&ceid=KR:ko', category: 'ai' },
+  { name: 'VentureBeat AI', url: 'https://venturebeat.com/category/ai/feed/', category: 'ai', translate: true },
+  { name: 'TechCrunch AI', url: 'https://techcrunch.com/category/artificial-intelligence/feed/', category: 'ai', translate: true },
+  { name: 'MIT Tech Review AI', url: 'https://www.technologyreview.com/topic/artificial-intelligence/feed/', category: 'ai', translate: true },
 
-  // IT (Hardware, Computer, Electronic Devices)
-  { name: '전자신문', url: 'https://www.etnews.com/rss/etnews_realtime_news.xml', category: 'it' },
-  { name: '블로터', url: 'https://www.bloter.net/rss/all.xml', category: 'it' },
-  { name: '보안뉴스', url: 'https://www.boannews.com/media/t_rss.xml', category: 'it' },
-  { name: '아이티데일리', url: 'http://www.itdaily.kr/rss/all.xml', category: 'it' },
+  // IT Device (Products, Hardware, Market, BigTech Business)
+  { name: '전자신문 (Devices)', url: 'https://www.etnews.com/rss/etnews_realtime_news.xml', category: 'it' },
+  { name: '지디넷코리아 (Product)', url: 'https://feeds.feedburner.com/zdkorea', category: 'it' },
+  { name: '디지털데일리 (Hardware)', url: 'https://www.ddaily.co.kr/rss/all.xml', category: 'it' },
+  { name: '매경 IT (Service)', url: 'https://www.mk.co.kr/rss/50300001/', category: 'it' },
+  { name: '블로터 (BigTech)', url: 'https://www.bloter.net/rss/all.xml', category: 'it' },
+  { name: '보안뉴스 (Security)', url: 'https://www.boannews.com/media/t_rss.xml', category: 'it' },
+  { name: '아이티데일리 (Enterprise)', url: 'http://www.itdaily.kr/rss/all.xml', category: 'it' },
   { name: '바이라인네트워크', url: 'https://byline.network/feed/', category: 'it' },
-  { name: '데일리스포츠한국 IT', url: 'https://www.dailysportshankook.co.kr/rss/S1N15.xml', category: 'it' },
   
   // Finance (Verified High-Priority)
   { name: '한경 경제', url: 'https://www.hankyung.com/feed/economy', category: 'finance' },
