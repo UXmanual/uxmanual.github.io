@@ -87,6 +87,7 @@
                 :class="activeCategory === 'googleart' ? 'columns-2 sm:columns-3 md:columns-4 lg:columns-5 gap-4 space-y-4' : 'grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-3'"
               >
                 <a v-for="(item, index) in group.items"
+                   v-show="activeCategory !== 'googleart' || (item.thumbLoaded && !item.thumbError)"
                    :key="item.link + index"
                    :href="item.link"
                    target="_blank"
@@ -526,6 +527,11 @@ const RSS_SOURCES = [
   { name: 'Artforum', url: 'https://www.artforum.com/rss/news', category: 'googleart', translate: true },
   { name: 'The Art Newspaper', url: 'https://www.theartnewspaper.com/rss', category: 'googleart', translate: true },
   { name: 'Bored Panda Art', url: 'https://www.boredpanda.com/art/feed/', category: 'googleart', translate: true },
+  { name: 'Hyperallergic', url: 'https://hyperallergic.com/feed/', category: 'googleart', translate: true },
+  { name: 'Apollo Magazine', url: 'https://www.apollo-magazine.com/feed/', category: 'googleart', translate: true },
+  { name: 'Aesthetica', url: 'https://aestheticamagazine.com/feed/', category: 'googleart', translate: true },
+  { name: 'Wallpaper* Art', url: 'https://www.wallpaper.com/rss/art', category: 'googleart', translate: true },
+  { name: 'Creative Review', url: 'https://www.creativereview.co.uk/feed/', category: 'googleart', translate: true },
 ]
 
 const filteredNews = computed(() => {
