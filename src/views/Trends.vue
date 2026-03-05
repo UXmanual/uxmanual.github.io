@@ -230,7 +230,8 @@
           <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
           <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
         </svg>
-        <span class="text-[11px] text-zinc-900 dark:text-white font-black tabular-nums tracking-tight">
+        <span class="text-[11px] text-zinc-900 dark:text-white font-black whitespace-nowrap tracking-tight">
+          <span class="text-zinc-400 dark:text-zinc-500 mr-1.5 uppercase">{{ currentLoadingCategoryName }}</span>
           {{ processedTaskSources }}/{{ totalTaskSources }}
         </span>
       </div>
@@ -247,7 +248,7 @@ import SiteFooter from '../components/SiteFooter.vue'
 import SiteHeader from '../components/SiteHeader.vue'
 import SiteBanner from '../components/SiteBanner.vue'
 
-const CURRENT_CACHE_VERSION = 'v15.5'
+const CURRENT_CACHE_VERSION = 'v15.6'
 const CACHE_KEY = `uxm_trends_cache_${CURRENT_CACHE_VERSION}`
 
 interface NewsItem {
@@ -270,6 +271,7 @@ const processedTaskSources = ref(0)
 const activeCategory = ref('all')
 const news = ref<NewsItem[]>([])
 const visibleCount = ref(50)
+const currentLoadingCategoryName = ref('')
 
 const handleImgError = (item: NewsItem) => {
   item.thumbError = true
@@ -942,56 +944,73 @@ const fetchNews = async () => {
   }
 
   try {
-    // 1. Fire priority sources immediately (Subset for 'All News' to avoid overload)
-    const prioritySources = activeCategory.value === 'all' 
-      ? RSS_SOURCES.filter(s => ['ai', 'finance', 'game', 'sports'].includes(s.category)).slice(0, 12)
-      : RSS_SOURCES.filter(s => s.category === activeCategory.value)
-    
-    const otherSources = RSS_SOURCES.filter(s => !prioritySources.includes(s))
-    
     totalTaskSources.value = RSS_SOURCES.length
     processedTaskSources.value = 0
     isBackgroundLoading.value = true
     
-    let completedCount = 0
-    const totalPriority = prioritySources.length
+    // 1. Process current active category first (Fast parallel)
+    const prioritySources = RSS_SOURCES.filter(s => s.category === activeCategory.value)
+    if (prioritySources.length > 0) {
+      currentLoadingCategoryName.value = getCategoryName(activeCategory.value)
+      await Promise.all(prioritySources.map(source => 
+        fetchSource(source).finally(() => {
+          processedTaskSources.value++
+        })
+      ))
+      isLoading.value = false
+    } else {
+      // If 'all' or no priority items, still set loading false based on cache or first few results
+      if (news.value.length > 0) isLoading.value = false
+    }
     
-    // 1. Priority sources load in parallel
-    prioritySources.forEach(source => {
-      fetchSource(source).finally(() => {
-        processedTaskSources.value = Math.min(totalTaskSources.value, processedTaskSources.value + 1)
-        completedCount++
-        if (completedCount === totalPriority || (news.value.length > 40 && completedCount > 5)) {
-          isLoading.value = false
-        }
-      })
-    })
-    
-    // 2. Fire background sources: Non-blocking batching
+    // 2. Process all other categories SEQUENTIALLY to maximize reliability
     const startBackgroundFetch = async () => {
-      const batchSize = 6
-      for (let i = 0; i < otherSources.length; i += batchSize) {
-        const batch = otherSources.slice(i, i + batchSize)
-        await Promise.all(batch.map(s => {
-          return fetchSource(s).finally(() => {
-            processedTaskSources.value = Math.min(totalTaskSources.value, processedTaskSources.value + 1)
+      // Filter out sources already fetched in step 1
+      const remainingSources = RSS_SOURCES.filter(s => s.category !== activeCategory.value)
+      
+      // Group by category to process one category at a time
+      const categoryGroups = remainingSources.reduce((acc, source) => {
+        if (!acc[source.category]) acc[source.category] = []
+        acc[source.category].push(source)
+        return acc
+      }, {} as Record<string, typeof RSS_SOURCES>)
+      
+      // Sort categories to follow the UI order if possible
+      const categoryIds = categories.map(c => c.id).filter(id => categoryGroups[id])
+      
+      for (const catId of categoryIds) {
+        currentLoadingCategoryName.value = getCategoryName(catId)
+        const group = categoryGroups[catId]
+        
+        // Process this category group (can use small parallel inside group or full sequential)
+        // Here we use Promise.all for the individual category to maintain some speed
+        await Promise.all(group.map(s => 
+          fetchSource(s).finally(() => {
+            processedTaskSources.value++
           })
-        }))
-        await new Promise(r => setTimeout(r, 200))
+        ))
+        
+        // Brief pause between categories to let the proxy/browser breathe
+        await new Promise(r => setTimeout(r, 300))
+        
+        // Update main loading state if it was still active
+        if (isLoading.value && news.value.length > 20) isLoading.value = false
       }
       
-      // Final synchronization and hide toast
+      // Final wrap up
       setTimeout(() => {
         processedTaskSources.value = totalTaskSources.value
+        currentLoadingCategoryName.value = '완료'
         setTimeout(() => {
           isBackgroundLoading.value = false
         }, 1500)
       }, 500)
     }
+    
     startBackgroundFetch()
     
     // final safety: ensure loading ends eventually
-    setTimeout(() => { if (isLoading.value) isLoading.value = false }, 3000)
+    setTimeout(() => { if (isLoading.value) isLoading.value = false }, 5000)
 
     // Delay thumbnail fetching to prioritize core content
     setTimeout(fetchMissingThumbnails, 4000)
