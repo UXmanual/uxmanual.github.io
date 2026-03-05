@@ -230,15 +230,16 @@
           <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
           <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
         </svg>
-        <div class="flex flex-col items-start min-w-[120px]">
-          <span class="text-[9px] text-zinc-400 dark:text-zinc-500 font-bold uppercase tracking-widest leading-none mb-1">
-            Now Loading
-          </span>
+        <div class="flex flex-col items-start min-w-[100px]">
           <div class="flex items-center gap-2">
-            <span class="text-[12px] text-zinc-900 dark:text-white font-black whitespace-nowrap tracking-tight transition-all duration-300">
-              {{ currentLoadingCategoryName || 'Newsstand' }}
-            </span>
-            <span class="text-[11px] text-zinc-400 dark:text-zinc-500 font-black tabular-nums">
+            <div class="relative h-5 overflow-hidden flex items-center">
+              <Transition name="slide-up-fade" mode="out-in">
+                <span :key="currentLoadingCategoryName" class="text-[12px] text-zinc-900 dark:text-white font-medium whitespace-nowrap tracking-tight">
+                  {{ currentLoadingCategoryName || 'Newsstand' }}
+                </span>
+              </Transition>
+            </div>
+            <span class="text-[11px] text-zinc-400 dark:text-zinc-500 font-bold tabular-nums">
               {{ processedTaskSources }}/{{ totalTaskSources }}
             </span>
           </div>
@@ -257,7 +258,7 @@ import SiteFooter from '../components/SiteFooter.vue'
 import SiteHeader from '../components/SiteHeader.vue'
 import SiteBanner from '../components/SiteBanner.vue'
 
-const CURRENT_CACHE_VERSION = 'v15.7'
+const CURRENT_CACHE_VERSION = 'v15.8'
 const CACHE_KEY = `uxm_trends_cache_${CURRENT_CACHE_VERSION}`
 
 interface NewsItem {
@@ -1163,6 +1164,20 @@ onUnmounted(() => {
 .toast-leave-to {
   opacity: 0;
   transform: translateY(20px) scale(0.95);
+}
+
+/* Category Name Motion: Slide up and Fade */
+.slide-up-fade-enter-active,
+.slide-up-fade-leave-active {
+  transition: all 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+}
+.slide-up-fade-enter-from {
+  opacity: 0;
+  transform: translateY(10px);
+}
+.slide-up-fade-leave-to {
+  opacity: 0;
+  transform: translateY(-10px);
 }
 
 /* Cinematic Slide-Fade Transitions */
