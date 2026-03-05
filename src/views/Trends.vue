@@ -230,10 +230,19 @@
           <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
           <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
         </svg>
-        <span class="text-[11px] text-zinc-900 dark:text-white font-black whitespace-nowrap tracking-tight">
-          <span class="text-zinc-400 dark:text-zinc-500 mr-1.5 uppercase">{{ currentLoadingCategoryName }}</span>
-          {{ processedTaskSources }}/{{ totalTaskSources }}
-        </span>
+        <div class="flex flex-col items-start min-w-[120px]">
+          <span class="text-[9px] text-zinc-400 dark:text-zinc-500 font-bold uppercase tracking-widest leading-none mb-1">
+            Now Loading
+          </span>
+          <div class="flex items-center gap-2">
+            <span class="text-[12px] text-zinc-900 dark:text-white font-black whitespace-nowrap tracking-tight transition-all duration-300">
+              {{ currentLoadingCategoryName || 'Newsstand' }}
+            </span>
+            <span class="text-[11px] text-zinc-400 dark:text-zinc-500 font-black tabular-nums">
+              {{ processedTaskSources }}/{{ totalTaskSources }}
+            </span>
+          </div>
+        </div>
       </div>
     </Transition>
 
@@ -248,7 +257,7 @@ import SiteFooter from '../components/SiteFooter.vue'
 import SiteHeader from '../components/SiteHeader.vue'
 import SiteBanner from '../components/SiteBanner.vue'
 
-const CURRENT_CACHE_VERSION = 'v15.6'
+const CURRENT_CACHE_VERSION = 'v15.7'
 const CACHE_KEY = `uxm_trends_cache_${CURRENT_CACHE_VERSION}`
 
 interface NewsItem {
@@ -272,6 +281,7 @@ const activeCategory = ref('all')
 const news = ref<NewsItem[]>([])
 const visibleCount = ref(50)
 const currentLoadingCategoryName = ref('')
+const currentFetchSession = ref(0)
 
 const handleImgError = (item: NewsItem) => {
   item.thumbError = true
@@ -665,8 +675,13 @@ const fetchNews = async () => {
   }
   
   isLoading.value = true
+  const sessionId = ++currentFetchSession.value
 
   const fetchSource = async (source: typeof RSS_SOURCES[0]) => {
+    if (sessionId !== currentFetchSession.value) return [] // Abort if session changed
+    // ... existing fetchSource logic ...
+    // Note: fetchSource structure remains the same but needs to check sessionId inside if possible
+    // For simplicity, we check sessionId at the loop level below which is more critical.
     // Special handling for Museum APIs
     if (source.category === 'googleart') {
       // 1. Cleveland Museum of Art (CMA)
@@ -951,59 +966,56 @@ const fetchNews = async () => {
     // 1. Process current active category first (Fast parallel)
     const prioritySources = RSS_SOURCES.filter(s => s.category === activeCategory.value)
     if (prioritySources.length > 0) {
+      if (sessionId !== currentFetchSession.value) return
       currentLoadingCategoryName.value = getCategoryName(activeCategory.value)
       await Promise.all(prioritySources.map(source => 
         fetchSource(source).finally(() => {
-          processedTaskSources.value++
+          if (sessionId === currentFetchSession.value) processedTaskSources.value++
         })
       ))
       isLoading.value = false
     } else {
-      // If 'all' or no priority items, still set loading false based on cache or first few results
       if (news.value.length > 0) isLoading.value = false
     }
     
-    // 2. Process all other categories SEQUENTIALLY to maximize reliability
+    // 2. Process all other categories SEQUENTIALLY
     const startBackgroundFetch = async () => {
-      // Filter out sources already fetched in step 1
       const remainingSources = RSS_SOURCES.filter(s => s.category !== activeCategory.value)
-      
-      // Group by category to process one category at a time
       const categoryGroups = remainingSources.reduce((acc, source) => {
         if (!acc[source.category]) acc[source.category] = []
         acc[source.category].push(source)
         return acc
       }, {} as Record<string, typeof RSS_SOURCES>)
       
-      // Sort categories to follow the UI order if possible
       const categoryIds = categories.map(c => c.id).filter(id => categoryGroups[id])
       
       for (const catId of categoryIds) {
+        // Strict Session Check: Kill loop if user switched categories or triggered new fetch
+        if (sessionId !== currentFetchSession.value) return
+        
         currentLoadingCategoryName.value = getCategoryName(catId)
         const group = categoryGroups[catId]
         
-        // Process this category group (can use small parallel inside group or full sequential)
-        // Here we use Promise.all for the individual category to maintain some speed
         await Promise.all(group.map(s => 
           fetchSource(s).finally(() => {
-            processedTaskSources.value++
+            if (sessionId === currentFetchSession.value) processedTaskSources.value++
           })
         ))
         
-        // Brief pause between categories to let the proxy/browser breathe
-        await new Promise(r => setTimeout(r, 300))
-        
-        // Update main loading state if it was still active
+        await new Promise(r => setTimeout(r, 400))
         if (isLoading.value && news.value.length > 20) isLoading.value = false
       }
       
-      // Final wrap up
+      if (sessionId !== currentFetchSession.value) return
+      
       setTimeout(() => {
-        processedTaskSources.value = totalTaskSources.value
-        currentLoadingCategoryName.value = '완료'
-        setTimeout(() => {
-          isBackgroundLoading.value = false
-        }, 1500)
+        if (sessionId === currentFetchSession.value) {
+          processedTaskSources.value = totalTaskSources.value
+          currentLoadingCategoryName.value = 'Ready'
+          setTimeout(() => {
+            if (sessionId === currentFetchSession.value) isBackgroundLoading.value = false
+          }, 2000)
+        }
       }, 500)
     }
     
