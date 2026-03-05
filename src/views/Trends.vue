@@ -503,6 +503,7 @@ const RSS_SOURCES = [
   { name: 'YouTube Creators (NEW)', url: 'https://www.youtube.com/feeds/videos.xml?channel_id=UCUZHFZ9jIKrLroW8LcyJEQQ', category: 'youtube' },
   { name: 'OpenAI (NEW)', url: 'https://www.youtube.com/feeds/videos.xml?channel_id=UCXZCJLdBC09xxGZ6gcdrc6A', category: 'youtube' },
   { name: 'Figma (NEW)', url: 'https://www.youtube.com/feeds/videos.xml?channel_id=UCQsVmhSa4X-G3lHlUtejzLA', category: 'youtube' },
+  { name: '잇섭 ITSub (Hot)', url: 'https://www.youtube.com/feeds/videos.xml?channel_id=UCdUcjkyZtf-1WJyPPiETF1g', category: 'youtube' },
   { name: '숏박스 (Hot)', url: 'https://www.youtube.com/feeds/videos.xml?channel_id=UC1B6SalAoiJD7eHfMUA9QrA', category: 'youtube' },
   { name: '워크맨 (Hot)', url: 'https://www.youtube.com/feeds/videos.xml?channel_id=UC-xN69Y4N4K7A8weaH_QyEQ', category: 'youtube' },
   { name: '너덜트 (Hot)', url: 'https://www.youtube.com/feeds/videos.xml?channel_id=UC-f9w3U-w_h6gK5l8G9T0fQ', category: 'youtube' },
