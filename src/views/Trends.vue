@@ -106,46 +106,40 @@
                     <span class="text-[11px] text-zinc-400 font-bold uppercase tracking-tight truncate text-right flex-grow min-w-0">{{ item.provider || item.source }}</span>
                   </div>
                   
-                  <!-- Main Content Block -->
-                  <div class="w-full relative">
-                    <!-- Arts Pinterest View -->
-                    <div v-if="activeCategory === 'googleart'">
-                      <div class="relative w-full overflow-hidden bg-zinc-100 dark:bg-zinc-800">
-                        <div 
-                          v-if="!item.thumbLoaded && !item.thumbError" 
-                          class="absolute inset-0 z-10 animate-pulse bg-gradient-to-r from-zinc-100 via-zinc-200 to-zinc-100 dark:from-zinc-800 dark:via-zinc-700 dark:to-zinc-800"
-                          style="aspect-ratio: 4/5"
-                        ></div>
-                        
-                        <!-- Error Placeholder -->
-                        <div v-if="item.thumbError" class="w-full aspect-[4/5] bg-zinc-50 dark:bg-zinc-800/50 flex flex-col items-center justify-center gap-2 p-6 text-center">
-                          <svg xmlns="http://www.w3.org/2000/svg" class="w-8 h-8 text-zinc-300 dark:text-zinc-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
-                          </svg>
-                          <span class="text-[10px] text-zinc-400 font-medium">이미지를 불러올 수 없습니다</span>
+                    <!-- Main Content Block -->
+                    <div class="w-full relative">
+                      <!-- Arts Pinterest View -->
+                      <div v-if="activeCategory === 'googleart'">
+                        <!-- Arts Image with Skeleton -->
+                        <div class="relative w-full overflow-hidden bg-zinc-100 dark:bg-zinc-800">
+                          <!-- Skeleton Shimmer -->
+                          <div 
+                            v-if="!item.thumbLoaded && !item.thumbError" 
+                            class="absolute inset-0 z-10 animate-pulse bg-gradient-to-r from-zinc-100 via-zinc-200 to-zinc-100 dark:from-zinc-800 dark:via-zinc-700 dark:to-zinc-800"
+                            style="aspect-ratio: 4/5"
+                          ></div>
+                          
+                          <img 
+                            v-if="item.thumb && !item.thumbError"
+                            :src="item.category === 'googleart' && !item.thumb.includes('artic.edu') ? `https://images.weserv.nl/?url=${encodeURIComponent(item.thumb)}&w=500&fit=cover` : item.thumb" 
+                            class="w-full object-cover transition-all duration-700 ease-out group-hover:scale-[1.01]" 
+                            :class="item.thumbLoaded ? 'opacity-100 scale-100' : 'opacity-0 scale-95'"
+                            loading="lazy" 
+                            referrerpolicy="no-referrer"
+                            @load="item.thumbLoaded = true"
+                            @error="handleImgError(item)"
+                          />
                         </div>
-
-                        <img 
-                          v-if="item.thumb && !item.thumbError"
-                          :src="item.thumb" 
-                          class="w-full object-cover transition-all duration-700 ease-out group-hover:scale-[1.01]" 
-                          :class="item.thumbLoaded ? 'opacity-100 scale-100' : 'opacity-0 scale-95'"
-                          loading="lazy" 
-                          referrerpolicy="no-referrer"
-                          @load="item.thumbLoaded = true"
-                          @error="handleImgError(item)"
-                        />
-                      </div>
-                      <div class="p-4 border-t border-zinc-100 dark:border-white/5 bg-white dark:bg-[#1f1f1f]">
-                        <h3 class="text-sm font-bold text-zinc-900 dark:text-white leading-tight line-clamp-2">
-                          {{ item.title }}
-                        </h3>
-                        <div class="mt-2 flex items-center justify-between">
-                          <span class="text-[10px] text-zinc-400 font-bold uppercase tracking-wider">{{ item.source }}</span>
-                          <span class="text-[10px] text-zinc-400">{{ formatDate(item.pubDate) }}</span>
+                        <div class="p-4 border-t border-zinc-100 dark:border-white/5 bg-white dark:bg-[#1f1f1f]">
+                          <h3 class="text-sm font-bold text-zinc-900 dark:text-white leading-tight line-clamp-2">
+                            {{ item.title }}
+                          </h3>
+                          <div class="mt-2 flex items-center justify-between">
+                            <span class="text-[10px] text-zinc-400 font-bold uppercase tracking-wider">{{ item.source }}</span>
+                            <span class="text-[10px] text-zinc-400">{{ formatDate(item.pubDate) }}</span>
+                          </div>
                         </div>
                       </div>
-                    </div>
 
                     <!-- Regular View -->
                     <div v-else class="flex gap-4 mb-4 items-center h-12">
@@ -553,10 +547,10 @@ const filteredNews = computed(() => {
     list = list.filter(item => item.category !== 'googleart')
   }
     // Strictly filter out Arts items without a thumbnail property initially
-    // But DO NOT filter reactively by thumbError to prevent layout flicker
+    // Also filter out items that failed to load (thumbError) to keep the gallery clean
     return list.filter(item => {
       if (item.category === 'googleart') {
-        return !!item.thumb
+        return !!item.thumb && !item.thumbError
       }
       return true
     })
