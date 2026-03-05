@@ -84,26 +84,43 @@
               <TransitionGroup 
                 name="list" 
                 tag="div"
-                class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-3"
+                :class="activeCategory === 'blog' ? 'flex flex-col gap-2' : 'grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-3'"
               >
                 <a v-for="(item, index) in group.items"
                    :key="item.link + index"
                    :href="item.link"
                    target="_blank"
-                   class="news-card group flex flex-col bg-white dark:bg-[#1f1f1f] border border-zinc-200 dark:border-white/5 rounded-2xl p-5 transition-all duration-300"
-                   :class="`theme-${item.category}`"
+                   class="news-card group flex transition-all duration-300"
+                   :class="[
+                     `theme-${item.category}`,
+                     activeCategory === 'blog' 
+                       ? 'flex-row items-center gap-6 py-4 px-6 h-auto bg-white dark:bg-[#1f1f1f] border border-zinc-200 dark:border-white/5 rounded-xl' 
+                       : 'flex-col bg-white dark:bg-[#1f1f1f] border border-zinc-200 dark:border-white/5 rounded-2xl p-5'
+                   ]"
                 >
-                  <div class="flex justify-between items-center mb-4 gap-2">
+                  <div 
+                    class="flex items-center gap-2"
+                    :class="activeCategory === 'blog' ? 'w-48 flex-shrink-0' : 'justify-between mb-4'"
+                  >
                     <span class="source-badge px-2.5 py-1 rounded-md text-[12px] font-black uppercase tracking-normal border flex-shrink-0">
                       {{ getCategoryName(item.category) }}
                     </span>
-                    <span class="text-[11px] text-zinc-400 font-bold uppercase tracking-tight truncate text-right flex-grow min-w-0">{{ item.provider || item.source }}</span>
+                    <span 
+                      v-if="activeCategory !== 'blog'"
+                      class="text-[11px] text-zinc-400 font-bold uppercase tracking-tight truncate text-right flex-grow min-w-0"
+                    >
+                      {{ item.provider || item.source }}
+                    </span>
                   </div>
                   
-                  <div class="flex gap-4 mb-4 items-center h-12">
+                  <div 
+                    class="flex items-center"
+                    :class="activeCategory === 'blog' ? 'flex-grow gap-4' : 'gap-4 mb-4 h-12'"
+                  >
                     <div 
                       v-if="item.thumb && !item.thumbError" 
-                      class="flex-shrink-0 w-12 h-12 rounded-lg overflow-hidden border border-zinc-100 dark:border-white/5 bg-zinc-50 dark:bg-zinc-800 transition-opacity duration-300"
+                      class="flex-shrink-0 rounded-lg overflow-hidden border border-zinc-100 dark:border-white/5 bg-zinc-50 dark:bg-zinc-800 transition-opacity duration-300"
+                      :class="activeCategory === 'blog' ? 'w-10 h-10' : 'w-12 h-12'"
                     >
                       <img 
                         :src="item.thumb" 
@@ -113,15 +130,35 @@
                         @error="handleImgError(item)"
                       />
                     </div>
-                    <h3 class="text-lg font-bold text-zinc-900 dark:text-white leading-tight line-clamp-2 title-element flex-grow">
-                      {{ item.title }}
-                    </h3>
+                    <div class="flex-grow min-w-0">
+                      <h3 
+                        class="font-bold text-zinc-900 dark:text-white leading-tight title-element"
+                        :class="activeCategory === 'blog' ? 'text-base truncate' : 'text-lg line-clamp-2'"
+                      >
+                        {{ item.title }}
+                      </h3>
+                      <p v-if="activeCategory === 'blog'" class="text-[11px] text-zinc-400 font-medium mt-0.5">
+                        {{ item.provider || item.source }} • {{ formatDate(item.pubDate) }}
+                      </p>
+                    </div>
                   </div>
 
-                  <div class="pt-4 mt-auto border-t border-zinc-100 dark:border-white/5 flex justify-between items-center">
+                  <div 
+                    v-if="activeCategory !== 'blog'"
+                    class="pt-4 mt-auto border-t border-zinc-100 dark:border-white/5 flex justify-between items-center"
+                  >
                     <span class="text-[11px] text-zinc-400 font-medium">{{ formatDate(item.pubDate) }}</span>
                     <span class="more-link text-[11px] font-bold flex items-center gap-0.5">
                       <span class="translate-y-[0.5px]">더 보기</span>
+                      <svg xmlns="http://www.w3.org/2000/svg" class="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+                      </svg>
+                    </span>
+                  </div>
+                  
+                  <div v-if="activeCategory === 'blog'" class="flex-shrink-0 flex items-center gap-2">
+                    <span class="more-link text-[11px] font-bold opacity-0 group-hover:opacity-100 transition-opacity flex items-center gap-0.5">
+                      <span>읽기</span>
                       <svg xmlns="http://www.w3.org/2000/svg" class="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
                       </svg>
@@ -435,7 +472,9 @@ const RSS_SOURCES = [
   { name: '매경 스포츠', url: 'https://www.mk.co.kr/rss/71000001/', category: 'sports' },
   { name: '한국일보 스포츠', url: 'https://www.hankookilbo.com/RSS/04', category: 'sports' },
 
-  // Blog (Tech Blogs - Korean Domestic Focused)
+  // Blog (Latest Blog News & Tech Blogs)
+  { name: 'GeekNews', url: 'https://news.hada.io/rss', category: 'blog' },
+  { name: 'Velog Trending', url: 'https://velog.io/rss', category: 'blog' },
   { name: '토스 테크', url: 'https://toss.tech/rss.xml', category: 'blog' },
   { name: '카카오 테크', url: 'https://tech.kakao.com/feed/', category: 'blog' },
   { name: '우아한형제들', url: 'https://techblog.woowahan.com/feed/', category: 'blog' },
