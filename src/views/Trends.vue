@@ -94,8 +94,8 @@
                    :class="[
                      `theme-${item.category}`,
                      activeCategory === 'googleart' 
-                       ? 'flex-col break-inside-avoid mb-3 bg-white dark:bg-[#1f1f1f] border border-zinc-200 dark:border-white/5 rounded-2xl overflow-hidden p-0' 
-                       : 'flex-col bg-white dark:bg-[#1f1f1f] border border-zinc-200 dark:border-white/5 rounded-2xl p-5'
+                       ? 'block w-full break-inside-avoid mb-3 bg-white dark:bg-[#1f1f1f] border border-zinc-200 dark:border-white/5 rounded-2xl overflow-hidden p-0' 
+                       : 'flex flex-col bg-white dark:bg-[#1f1f1f] border border-zinc-200 dark:border-white/5 rounded-2xl p-5'
                    ]"
                 >
                   <!-- Regular Header (Not for Arts Pinterest) -->
@@ -258,7 +258,7 @@ import SiteFooter from '../components/SiteFooter.vue'
 import SiteHeader from '../components/SiteHeader.vue'
 import SiteBanner from '../components/SiteBanner.vue'
 
-const CURRENT_CACHE_VERSION = 'v16.5'
+const CURRENT_CACHE_VERSION = 'v16.6'
 const CACHE_KEY = `uxm_trends_cache_${CURRENT_CACHE_VERSION}`
 
 interface NewsItem {
