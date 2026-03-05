@@ -84,23 +84,51 @@
               <TransitionGroup 
                 name="list" 
                 tag="div"
-                class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-3"
+                :class="activeCategory === 'googleart' ? 'columns-2 sm:columns-3 md:columns-4 lg:columns-5 gap-4 space-y-4' : 'grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-3'"
               >
                 <a v-for="(item, index) in group.items"
                    :key="item.link + index"
                    :href="item.link"
                    target="_blank"
-                   class="news-card group flex flex-col bg-white dark:bg-[#1f1f1f] border border-zinc-200 dark:border-white/5 rounded-2xl p-5 transition-all duration-300"
-                   :class="`theme-${item.category}`"
+                   class="news-card group flex transition-all duration-300"
+                   :class="[
+                     `theme-${item.category}`,
+                     activeCategory === 'googleart' 
+                       ? 'flex-col break-inside-avoid mb-4 bg-white dark:bg-[#1f1f1f] border border-zinc-200 dark:border-white/5 rounded-2xl overflow-hidden p-0' 
+                       : 'flex-col bg-white dark:bg-[#1f1f1f] border border-zinc-200 dark:border-white/5 rounded-2xl p-5'
+                   ]"
                 >
-                  <div class="flex justify-between items-center mb-4 gap-2">
+                  <!-- Regular Header (Not for Arts Pinterest) -->
+                  <div v-if="activeCategory !== 'googleart'" class="flex justify-between items-center mb-4 gap-2 px-0">
                     <span class="source-badge px-2.5 py-1 rounded-md text-[12px] font-black uppercase tracking-normal border flex-shrink-0">
                       {{ getCategoryName(item.category) }}
                     </span>
                     <span class="text-[11px] text-zinc-400 font-bold uppercase tracking-tight truncate text-right flex-grow min-w-0">{{ item.provider || item.source }}</span>
                   </div>
                   
-                  <div class="flex gap-4 mb-4 items-center h-12">
+                  <!-- Arts Pinterest Content -->
+                  <div v-if="activeCategory === 'googleart'" class="w-full relative">
+                    <img 
+                      v-if="item.thumb"
+                      :src="item.thumb" 
+                      class="w-full object-cover transition-all duration-500 group-hover:scale-[1.02]" 
+                      loading="lazy" 
+                      referrerpolicy="no-referrer"
+                      @error="handleImgError(item)"
+                    />
+                    <div class="p-4 border-t border-zinc-100 dark:border-white/5">
+                      <h3 class="text-sm font-bold text-zinc-900 dark:text-white leading-tight line-clamp-2">
+                        {{ item.title }}
+                      </h3>
+                      <div class="mt-2 flex items-center justify-between">
+                        <span class="text-[10px] text-zinc-400 font-bold uppercase tracking-wider">{{ item.source }}</span>
+                        <span class="text-[10px] text-zinc-400">{{ formatDate(item.pubDate) }}</span>
+                      </div>
+                    </div>
+                  </div>
+
+                  <!-- Regular Content (Not for Arts Pinterest) -->
+                  <div v-else class="flex gap-4 mb-4 items-center h-12">
                     <div 
                       v-if="item.thumb && !item.thumbError" 
                       class="flex-shrink-0 w-12 h-12 rounded-lg overflow-hidden border border-zinc-100 dark:border-white/5 bg-zinc-50 dark:bg-zinc-800 transition-opacity duration-300"
@@ -118,7 +146,8 @@
                     </h3>
                   </div>
 
-                  <div class="pt-4 mt-auto border-t border-zinc-100 dark:border-white/5 flex justify-between items-center">
+                  <!-- Regular Footer (Not for Arts Pinterest) -->
+                  <div v-if="activeCategory !== 'googleart'" class="pt-4 mt-auto border-t border-zinc-100 dark:border-white/5 flex justify-between items-center">
                     <span class="text-[11px] text-zinc-400 font-medium">{{ formatDate(item.pubDate) }}</span>
                     <span class="more-link text-[11px] font-bold flex items-center gap-0.5">
                       <span class="translate-y-[0.5px]">더 보기</span>
@@ -473,8 +502,12 @@ const RSS_SOURCES = [
   { name: '카오스큐브 (커뮤니티)', url: 'https://news.google.com/rss/search?q=디아블로2+카오스큐브&hl=ko&gl=KR&ceid=KR:ko', category: 'diablo2' },
   { name: '게임메카 디아2 뉴스', url: 'https://www.gamemeca.com/rss/news.php', category: 'diablo2' },
   
-  // Google Art (API Driven)
-  { name: 'Google Arts & Culture', url: 'https://api.artic.edu/api/v1/artworks', category: 'googleart' }
+  // Google Art (Pinterest Style Masonry)
+  { name: 'Google Arts & Culture', url: 'https://api.artic.edu/api/v1/artworks', category: 'googleart' },
+  { name: 'This Is Colossal', url: 'https://www.thisiscolossal.com/feed/', category: 'googleart', translate: true },
+  { name: 'Juxtapoz Art', url: 'https://www.juxtapoz.com/feed/', category: 'googleart', translate: true },
+  { name: 'Hi-Fructose', url: 'https://hifructose.com/feed/', category: 'googleart', translate: true },
+  { name: 'My Modern Met', url: 'https://mymodernmet.com/feed/', category: 'googleart', translate: true },
 ]
 
 const filteredNews = computed(() => {
