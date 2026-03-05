@@ -224,7 +224,7 @@
     <Transition name="toast">
       <div 
         v-if="isBackgroundLoading" 
-        class="fixed bottom-8 right-8 z-50 bg-zinc-50/90 dark:bg-[#131313]/90 backdrop-blur-xl border border-zinc-200 dark:border-white/10 rounded-full pl-5 pr-4 py-2.5 shadow-2xl flex flex-row-reverse items-center gap-3 transition-all duration-300"
+        class="fixed bottom-8 right-8 z-50 bg-white/70 dark:bg-black/50 backdrop-blur-3xl border-0 rounded-full pl-5 pr-4 py-2.5 shadow-[0_20px_50px_rgba(0,0,0,0.1)] dark:shadow-[0_20px_50px_rgba(0,0,0,0.4)] flex flex-row-reverse items-center gap-3 transition-all duration-300"
       >
         <!-- Spinner on the right for natural RTL expansion -->
         <svg class="animate-spin h-3.5 w-3.5 text-zinc-900 dark:text-white flex-shrink-0" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
@@ -258,7 +258,7 @@ import SiteFooter from '../components/SiteFooter.vue'
 import SiteHeader from '../components/SiteHeader.vue'
 import SiteBanner from '../components/SiteBanner.vue'
 
-const CURRENT_CACHE_VERSION = 'v16.0'
+const CURRENT_CACHE_VERSION = 'v16.1'
 const CACHE_KEY = `uxm_trends_cache_${CURRENT_CACHE_VERSION}`
 
 interface NewsItem {
