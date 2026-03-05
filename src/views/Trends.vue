@@ -536,6 +536,10 @@ const RSS_SOURCES = [
   { name: 'Wallpaper* Art', url: 'https://www.wallpaper.com/rss/art', category: 'googleart', translate: true },
   { name: 'Creative Review', url: 'https://www.creativereview.co.uk/feed/', category: 'googleart', translate: true },
   { name: 'ArtNews', url: 'https://www.artnews.com/feed/', category: 'googleart', translate: true },
+  { name: 'NGA Highlights', url: 'https://www.nga.gov/collection/collection-feeds/collection-highlights-feed.xml', category: 'googleart', translate: true },
+  { name: 'DailyArt Magazine', url: 'https://www.dailyartmagazine.com/feed/', category: 'googleart', translate: true },
+  { name: 'Booooooom', url: 'https://www.booooooom.com/feed/', category: 'googleart', translate: true },
+  { name: 'It\'s Nice That', url: 'https://www.itsnicethat.com/rss', category: 'googleart', translate: true },
 ]
 
 const filteredNews = computed(() => {
