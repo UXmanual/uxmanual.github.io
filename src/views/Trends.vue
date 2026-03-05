@@ -528,7 +528,6 @@ const RSS_SOURCES = [
   { name: '게임메카 디아2 뉴스', url: 'https://www.gamemeca.com/rss/news.php', category: 'diablo2' },
   
   // Google Art (Pinterest Style Masonry)
-  { name: 'Art Institute of Chicago', url: 'https://api.artic.edu/api/v1/artworks', category: 'googleart' },
   { name: 'Cleveland Museum of Art', url: 'https://openaccess-api.clevelandart.org/api/artworks', category: 'googleart' },
   { name: 'The Met Museum', url: 'https://collectionapi.metmuseum.org/public/collection/v1/objects', category: 'googleart' },
   { name: 'This Is Colossal', url: 'https://www.thisiscolossal.com/feed/', category: 'googleart', translate: true },
@@ -654,39 +653,7 @@ const fetchNews = async () => {
   const fetchSource = async (source: typeof RSS_SOURCES[0]) => {
     // Special handling for Museum APIs
     if (source.category === 'googleart') {
-      // 1. Art Institute of Chicago (AIC)
-      if (source.url.includes('artic.edu')) {
-        try {
-          const randomPage = Math.floor(Math.random() * 200) + 1;
-          const res = await fetch(`https://api.artic.edu/api/v1/artworks?page=${randomPage}&limit=25&fields=id,title,artist_display,image_id`);
-          const data = await res.json();
-          if (!data.data) return [];
-          
-          const artItems: NewsItem[] = await Promise.all(data.data
-            .filter((item: any) => item.image_id)
-            .slice(0, 30)
-            .map(async (item: any) => {
-              const [tTitle, tDesc] = await Promise.all([
-                translateText(item.title),
-                item.artist_display ? translateText(item.artist_display) : Promise.resolve('시카고 미술관 컬렉션')
-              ]);
-              return {
-                title: tTitle,
-                link: `https://www.artic.edu/artworks/${item.id}`,
-                pubDate: new Date().toISOString(),
-                description: tDesc,
-                source: 'AIC',
-                category: 'googleart',
-                provider: 'Art Institute of Chicago',
-                thumb: `https://www.artic.edu/iiif/2/${item.image_id}/full/843,/0/default.jpg`
-              };
-            }));
-          updateNewsList(artItems);
-          return artItems;
-        } catch (e) { return []; }
-      }
-
-      // 2. Cleveland Museum of Art (CMA)
+      // 1. Cleveland Museum of Art (CMA)
       if (source.url.includes('clevelandart.org')) {
         try {
           const randomSkip = Math.floor(Math.random() * 500);
