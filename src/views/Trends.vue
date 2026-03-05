@@ -258,7 +258,7 @@ import SiteFooter from '../components/SiteFooter.vue'
 import SiteHeader from '../components/SiteHeader.vue'
 import SiteBanner from '../components/SiteBanner.vue'
 
-const CURRENT_CACHE_VERSION = 'v16.2'
+const CURRENT_CACHE_VERSION = 'v16.3'
 const CACHE_KEY = `uxm_trends_cache_${CURRENT_CACHE_VERSION}`
 
 interface NewsItem {
@@ -960,8 +960,6 @@ const fetchNews = async () => {
   }
 
   try {
-    totalTaskSources.value = RSS_SOURCES.length
-    processedTaskSources.value = 0
     isBackgroundLoading.value = true
     
     // 1. Process current active category first (Fast parallel)
@@ -969,6 +967,9 @@ const fetchNews = async () => {
     if (prioritySources.length > 0) {
       if (sessionId !== currentFetchSession.value) return
       currentLoadingCategoryName.value = getCategoryName(activeCategory.value)
+      totalTaskSources.value = prioritySources.length
+      processedTaskSources.value = 0
+
       await Promise.all(prioritySources.map(source => 
         fetchSource(source).finally(() => {
           if (sessionId === currentFetchSession.value) processedTaskSources.value++
@@ -991,11 +992,12 @@ const fetchNews = async () => {
       const categoryIds = categories.map(c => c.id).filter(id => categoryGroups[id])
       
       for (const catId of categoryIds) {
-        // Strict Session Check: Kill loop if user switched categories or triggered new fetch
         if (sessionId !== currentFetchSession.value) return
         
-        currentLoadingCategoryName.value = getCategoryName(catId)
         const group = categoryGroups[catId]
+        currentLoadingCategoryName.value = getCategoryName(catId)
+        totalTaskSources.value = group.length
+        processedTaskSources.value = 0
         
         await Promise.all(group.map(s => 
           fetchSource(s).finally(() => {
@@ -1011,8 +1013,9 @@ const fetchNews = async () => {
       
       setTimeout(() => {
         if (sessionId === currentFetchSession.value) {
-          processedTaskSources.value = totalTaskSources.value
           currentLoadingCategoryName.value = 'Ready'
+          totalTaskSources.value = RSS_SOURCES.length
+          processedTaskSources.value = RSS_SOURCES.length
           setTimeout(() => {
             if (sessionId === currentFetchSession.value) isBackgroundLoading.value = false
           }, 2000)
