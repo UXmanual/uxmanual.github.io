@@ -545,11 +545,9 @@ const RSS_SOURCES = [
   { name: '보험신보', url: 'http://www.insweek.co.kr/rss/all.xml', category: 'insurance' },
   { name: '한국금융 보험', url: 'https://www.fntimes.com/rss/S1N6.xml', category: 'insurance' },
   { name: '대항뉴스 보험', url: 'https://www.dhns.co.kr/rss/S1N12.xml', category: 'insurance' },
-  { name: '매경 경제 (보험)', url: 'https://www.mk.co.kr/rss/30100041/', category: 'insurance' },
   { name: '조선비즈 보험', url: 'https://biz.chosun.com/rss/insurance/', category: 'insurance' },
   { name: '국민일보 보험', url: 'https://rss.kmib.co.kr/index.xml', category: 'insurance' },
   { name: '굿리치 공식 블로그', url: 'https://rss.blog.naver.com/goodrich_official.xml', category: 'insurance' },
-  { name: '플래텀 (Insurtech)', url: 'https://platum.kr/feed', category: 'insurance' },
 
   // Diablo2 (Google Bypass & Direct Bridge: Community Posts)
   // Using broad Google Search RSS bypass for strictly blocked sites (Inven, DC Inside, ChaosCube).
@@ -557,7 +555,6 @@ const RSS_SOURCES = [
   { name: '인벤 디아2 (커뮤니티)', url: 'https://news.google.com/rss/search?q=디아블로2+인벤&hl=ko&gl=KR&ceid=KR:ko', category: 'diablo2' },
   { name: '디시 디아2 (갤러리)', url: 'https://news.google.com/rss/search?q=디아블로2+디시인사이드&hl=ko&gl=KR&ceid=KR:ko', category: 'diablo2' },
   { name: '카오스큐브 (커뮤니티)', url: 'https://news.google.com/rss/search?q=디아블로2+카오스큐브&hl=ko&gl=KR&ceid=KR:ko', category: 'diablo2' },
-  { name: '게임메카 디아2 뉴스', url: 'https://www.gamemeca.com/rss/news.php', category: 'diablo2' },
   
   // Google Art (Pinterest Style Masonry)
   { name: 'Cleveland Museum of Art', url: 'https://openaccess-api.clevelandart.org/api/artworks', category: 'googleart' },
@@ -669,7 +666,7 @@ const fetchNews = async () => {
       if (cached) {
         const parsed = JSON.parse(cached)
         if (Array.isArray(parsed)) {
-          // Purge items from categories that no longer exist (like nasa)
+          // Purge items from categories that no longer exist
           const validCategoryIds = new Set(['all', ...categories.map(c => c.id)])
           const filtered = parsed.filter((item: any) => validCategoryIds.has(item.category))
           news.value = filtered.sort((a: NewsItem, b: NewsItem) => new Date(b.pubDate).getTime() - new Date(a.pubDate).getTime())
