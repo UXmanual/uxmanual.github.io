@@ -532,6 +532,7 @@ const RSS_SOURCES = [
   { name: 'UI/UX Design Trends', url: 'https://news.google.com/rss/search?q=modern+ui+ux+design+trends+figma&hl=en&gl=US&ceid=US:en', category: 'figma', translate: true },
   { name: 'Design Systems (Figma)', url: 'https://news.google.com/rss/search?q=figma+design+systems+workflow&hl=en&gl=US&ceid=US:en', category: 'figma', translate: true },
   { name: 'Figma for Developers', url: 'https://news.google.com/rss/search?q=figma+dev+mode+handoff&hl=en&gl=US&ceid=US:en', category: 'figma', translate: true },
+  { name: 'Figma (NEW)', url: 'https://www.youtube.com/feeds/videos.xml?channel_id=UCQsVmhSa4X-G3lHlUtejzLA', category: 'figma' },
 
   // YouTube (Curated Korean Hot Issues - Strictly User Specified)
   { name: '침착맨 (Channel)', url: 'https://www.youtube.com/feeds/videos.xml?channel_id=UCUj6rrhMTR9pipbAWBAMvUQ', category: 'youtube' },
@@ -539,7 +540,6 @@ const RSS_SOURCES = [
   { name: '코딩애플 (NEW)', url: 'https://www.youtube.com/feeds/videos.xml?channel_id=UCSLrpBAzr-ROVGHQ5EmxnUg', category: 'youtube' },
   { name: 'YouTube Creators (NEW)', url: 'https://www.youtube.com/feeds/videos.xml?channel_id=UCUZHFZ9jIKrLroW8LcyJEQQ', category: 'youtube' },
   { name: 'OpenAI (NEW)', url: 'https://www.youtube.com/feeds/videos.xml?channel_id=UCXZCJLdBC09xxGZ6gcdrc6A', category: 'youtube' },
-  { name: 'Figma (NEW)', url: 'https://www.youtube.com/feeds/videos.xml?channel_id=UCQsVmhSa4X-G3lHlUtejzLA', category: 'youtube' },
   { name: '잇섭 ITSub (Hot)', url: 'https://www.youtube.com/feeds/videos.xml?channel_id=UCdUcjkyZtf-1WJyPPiETF1g', category: 'youtube' },
   { name: '숏박스 (Hot)', url: 'https://www.youtube.com/feeds/videos.xml?channel_id=UC1B6SalAoiJD7eHfMUA9QrA', category: 'youtube' },
   { name: '워크맨 (Hot)', url: 'https://www.youtube.com/feeds/videos.xml?channel_id=UC-xN69Y4N4K7A8weaH_QyEQ', category: 'youtube' },
