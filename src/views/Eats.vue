@@ -17,14 +17,14 @@
       <div class="flex flex-col lg:flex-row gap-8 min-h-[600px]">
         
         <!-- Left: Restaurant List -->
-        <div class="w-full lg:w-1/3 space-y-4 overflow-y-auto max-h-[800px] pr-2 custom-scrollbar">
+        <div class="w-full lg:w-1/3 space-y-4 overflow-y-auto max-h-[800px] pr-6 custom-scrollbar">
           <div 
             v-for="shop in restaurantList" 
             :key="shop.id"
             @click="selectShop(shop)"
             class="p-5 rounded-2xl border transition-all duration-300 cursor-pointer group"
             :class="selectedId === shop.id 
-              ? 'bg-white dark:bg-white/10 border-zinc-900 dark:border-white shadow-xl scale-[1.02]' 
+              ? 'bg-white dark:bg-white/10 border-zinc-900 dark:border-white shadow-xl' 
               : 'bg-white dark:bg-zinc-900/50 border-zinc-200 dark:border-white/5 hover:border-zinc-400 dark:hover:border-white/20'"
           >
             <div class="flex justify-between items-start mb-2">
@@ -97,51 +97,51 @@ interface Shop {
 const restaurantList = ref<Shop[]>([
   {
     id: 1,
-    name: "Sushi Zen",
-    category: "Japanese",
+    name: "스시 젠 (Sushi Zen)",
+    category: "일식",
     rating: 4.8,
-    description: "Authentic Edo-style sushi with fresh seasonal ingredients from Tsukiji market.",
-    address: "Chuo City, Tokyo",
+    description: "츠키지 시장에서 공수한 신선한 제철 재료로 만든 정통 에도마에 스시를 경험해보세요.",
+    address: "일본 도쿄 주오구",
     lat: 35.6662,
     lng: 139.7755
   },
   {
     id: 2,
-    name: "La Table de Joel",
-    category: "French",
+    name: "라 테이블 드 조엘 (La Table de Joel)",
+    category: "프렌치",
     rating: 4.9,
-    description: "Modern French cuisine featuring exquisite plating and deep flavors.",
-    address: "Minato City, Tokyo",
+    description: "정교한 플레이팅과 깊은 풍미가 돋보이는 모던 프렌치 퀴진의 정수입니다.",
+    address: "일본 도쿄 미나토구",
     lat: 35.6605,
     lng: 139.7291
   },
   {
     id: 3,
-    name: "Ichiryu Ramen",
-    category: "Ramen",
+    name: "이치류 라멘 (Ichiryu Ramen)",
+    category: "라멘",
     rating: 4.6,
-    description: "Famous for its rich tonkotsu broth and handmade thin noodles.",
-    address: "Fukuoka, Japan",
+    description: "진한 돈코츠 육수와 직접 뽑은 얇은 면으로 유명한 후쿠오카 대표 라멘 맛집입니다.",
+    address: "일본 후쿠오카",
     lat: 33.5891,
     lng: 130.4017
   },
   {
     id: 4,
-    name: "Kyoto Kaiseki Tea House",
-    category: "Traditional",
+    name: "교토 가이세키 티 하우스",
+    category: "전통식",
     rating: 4.7,
-    description: "Experience the seasonal beauty of Kyoto through traditional multi-course dining.",
-    address: "Kyoto, Japan",
+    description: "전통적인 코스 요리를 통해 교토의 계절적 아름다움을 오감으로 느껴보세요.",
+    address: "일본 교토",
     lat: 35.0116,
     lng: 135.7681
   },
   {
     id: 5,
-    name: "Sapporo Seafood Grill",
-    category: "Seafood",
+    name: "삿포로 씨푸드 그릴",
+    category: "해산물",
     rating: 4.5,
-    description: "Freshly caught king crab and scallops grilled over charcoal.",
-    address: "Sapporo, Hokkaido",
+    description: "갓 잡은 킹크랩과 가리비를 숯불에 구워 바다의 향을 그대로 담아냈습니다.",
+    address: "일본 홋카이도 삿포로",
     lat: 43.0611,
     lng: 141.3564
   }
