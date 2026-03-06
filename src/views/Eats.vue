@@ -60,16 +60,7 @@
             ></iframe>
           </transition>
           
-          <!-- Map Overlay Label -->
-          <div class="absolute bottom-6 left-6 right-6 p-4 bg-white/80 dark:bg-black/80 backdrop-blur-xl rounded-2xl border border-white/20 shadow-2xl flex justify-between items-center">
-            <div>
-              <p class="text-[10px] font-bold text-zinc-400 uppercase tracking-widest mb-1">Current Location</p>
-              <h4 class="text-sm font-bold">{{ selectedShop?.name || 'Select a restaurant' }}</h4>
-            </div>
-            <button class="px-4 py-2 bg-zinc-900 dark:bg-white text-white dark:text-black rounded-xl text-xs font-bold hover:scale-105 active:scale-95 transition-all">
-              Open in Apps
-            </button>
-          </div>
+
         </div>
 
       </div>
