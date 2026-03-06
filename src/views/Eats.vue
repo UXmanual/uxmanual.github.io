@@ -7,10 +7,10 @@
     </div>
 
     <SiteHeader 
-      title="GOURMET GUIDE" 
+      title="EATS & PLACES" 
       description="Curated restaurant lists with real-time locations"
       padding-top="pt-16"
-      :enable-gradient="true"
+      :enable-gradient="false"
     />
 
     <main class="px-6 md:px-10 pb-20 max-w-[1800px] mx-auto pt-12">
