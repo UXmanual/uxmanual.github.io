@@ -690,8 +690,8 @@ const fetchNews = async () => {
       // 1. Cleveland Museum of Art (CMA)
       if (source.url.includes('clevelandart.org')) {
         try {
-          const randomSkip = Math.floor(Math.random() * 500);
-          const res = await fetch(`https://openaccess-api.clevelandart.org/api/artworks/?has_image=1&limit=25&skip=${randomSkip}`);
+          const designKeywords = ['design', 'graphic', 'poster', 'typography', 'modern art', 'drawing', 'architecture', 'industrial design', 'fashion'];
+          const res = await fetch(`https://openaccess-api.clevelandart.org/api/artworks/?has_image=1&limit=25&q=${designKeywords[Math.floor(Math.random() * designKeywords.length)]}`);
           const data = await res.json();
           if (!data.data) return [];
 
@@ -719,8 +719,9 @@ const fetchNews = async () => {
       // 3. The Metropolitan Museum of Art (The Met)
       if (source.url.includes('metmuseum.org')) {
         try {
-          // The Met requires two steps. We'll search for 'paintings' and pick random results.
-          const searchRes = await fetch('https://collectionapi.metmuseum.org/public/collection/v1/search?hasImages=true&q=paintings');
+          const designKeywords = ['design', 'graphic', 'poster', 'typography', 'modern art', 'drawing', 'architecture', 'textile', 'costume'];
+          const keyword = designKeywords[Math.floor(Math.random() * designKeywords.length)];
+          const searchRes = await fetch(`https://collectionapi.metmuseum.org/public/collection/v1/search?hasImages=true&q=${keyword}`);
           const searchData = await searchRes.json();
           if (!searchData.objectIDs) return [];
 
