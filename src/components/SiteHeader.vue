@@ -59,7 +59,7 @@ const props = withDefaults(defineProps<Props>(), {
   showDateTimeWeather: false
 })
 
-const weather = ref<{ temp: number; code: number } | null>(null)
+const weather = ref<{ temp: number; code: number; isDay: boolean } | null>(null)
 const now = ref(new Date())
 let clockInterval: any = null
 let weatherInterval: any = null
@@ -86,14 +86,40 @@ const formattedDate = computed(() => {
 
 const weatherEmoji = computed(() => {
   if (!weather.value) return ''
-  const code = weather.value.code
-  if (code === 0) return '☀️' // Clear
-  if (code >= 1 && code <= 3) return '🌤️' // Partly cloudy
-  if (code >= 45 && code <= 48) return '🌫️' // Fog
-  if (code >= 51 && code <= 67) return '🌧️' // Rain
-  if (code >= 71 && code <= 77) return '❄️' // Snow
-  if (code >= 80 && code <= 82) return '🌦️' // Rain showers
-  if (code >= 95) return '⛈️' // Thunderstorm
+  const { code, isDay } = weather.value
+  
+  // WMO Weather interpretation codes (WW)
+  // 0: Clear sky
+  if (code === 0) return isDay ? '☀️' : '🌙'
+  
+  // 1, 2, 3: Mainly clear, partly cloudy, and overcast
+  if (code === 1) return isDay ? '🌤️' : '🌙'
+  if (code === 2) return isDay ? '⛅' : '☁️'
+  if (code === 3) return '☁️'
+  
+  // 45, 48: Fog and depositing rime fog
+  if (code === 45 || code === 48) return '🌫️'
+  
+  // 51, 53, 55: Drizzle: Light, moderate, and dense intensity
+  if (code >= 51 && code <= 55) return '☂️'
+  
+  // 61, 63, 65: Rain: Slight, moderate and heavy intensity
+  // 66, 67: Freezing Rain: Light and heavy intensity
+  // 80, 81, 82: Rain showers: Slight, moderate, and violent
+  if (code === 61 || code === 80) return '☂️' // Slight rain or showers
+  if ((code >= 63 && code <= 67) || (code >= 81 && code <= 82)) return '☔' // Moderate/Heavy rain
+  
+  // 71, 73, 75: Snow fall: Slight, moderate, and heavy intensity
+  // 77: Snow grains
+  // 85, 86: Snow showers slight and heavy
+  if (code >= 71 && code <= 77) return code === 75 ? '❄️' : '🌨️'
+  if (code === 85 || code === 86) return '🌨️'
+  
+  // 95: Thunderstorm: Slight or moderate
+  // 96, 99: Thunderstorm with slight and heavy hail
+  if (code === 95) return '⛈️'
+  if (code === 96 || code === 99) return '🌩️'
+  
   return '☁️'
 })
 
@@ -105,7 +131,8 @@ const fetchWeather = async () => {
     if (data.current_weather) {
       weather.value = {
         temp: Math.round(data.current_weather.temperature),
-        code: data.current_weather.weathercode
+        code: data.current_weather.weathercode,
+        isDay: data.current_weather.is_day === 1
       }
     }
   } catch (e) {
