@@ -523,10 +523,15 @@ const RSS_SOURCES = [
 
   // Figma (Official Blog, Global News, Community, Config)
   { name: 'Figma Blog', url: 'https://www.figma.com/blog/feed/', category: 'figma', translate: true },
-  { name: 'Figma News (Global)', url: 'https://news.google.com/rss/search?q=figma+design+tool&hl=en&gl=US&ceid=US:en', category: 'figma', translate: true },
-  { name: '피그마 새소식 (KR)', url: 'https://news.google.com/rss/search?q=피그마+Figma+디자인&hl=ko&gl=KR&ceid=KR:ko', category: 'figma' },
+  { name: 'Figma News (Global)', url: 'https://news.google.com/rss/search?q=figma+design+tool+software&hl=en&gl=US&ceid=US:en', category: 'figma', translate: true },
+  { name: '피그마 새소식 (KR)', url: 'https://news.google.com/rss/search?q=피그마+Figma+디자인+업데이트&hl=ko&gl=KR&ceid=KR:ko', category: 'figma' },
   { name: 'Figma Community', url: 'https://news.google.com/rss/search?q=figma+community+plugins+widget&hl=en&gl=US&ceid=US:en', category: 'figma', translate: true },
   { name: 'Config News', url: 'https://news.google.com/rss/search?q=figma+config+conference+news&hl=en&gl=US&ceid=US:en', category: 'figma', translate: true },
+  { name: 'Figma Plugins (Hot)', url: 'https://news.google.com/rss/search?q=best+figma+plugins+2024+2025&hl=en&gl=US&ceid=US:en', category: 'figma', translate: true },
+  { name: 'Figma Variables & Prototyping', url: 'https://news.google.com/rss/search?q=figma+variables+advanced+prototyping&hl=en&gl=US&ceid=US:en', category: 'figma', translate: true },
+  { name: 'UI/UX Design Trends', url: 'https://news.google.com/rss/search?q=modern+ui+ux+design+trends+figma&hl=en&gl=US&ceid=US:en', category: 'figma', translate: true },
+  { name: 'Design Systems (Figma)', url: 'https://news.google.com/rss/search?q=figma+design+systems+workflow&hl=en&gl=US&ceid=US:en', category: 'figma', translate: true },
+  { name: 'Figma for Developers', url: 'https://news.google.com/rss/search?q=figma+dev+mode+handoff&hl=en&gl=US&ceid=US:en', category: 'figma', translate: true },
 
   // YouTube (Curated Korean Hot Issues - Strictly User Specified)
   { name: '침착맨 (Channel)', url: 'https://www.youtube.com/feeds/videos.xml?channel_id=UCUj6rrhMTR9pipbAWBAMvUQ', category: 'youtube' },
