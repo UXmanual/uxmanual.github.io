@@ -690,12 +690,17 @@ const fetchNews = async () => {
       // 1. Cleveland Museum of Art (CMA)
       if (source.url.includes('clevelandart.org')) {
         try {
-          const designKeywords = ['design', 'graphic', 'poster', 'typography', 'modern art', 'drawing', 'architecture', 'industrial design', 'fashion'];
-          const res = await fetch(`https://openaccess-api.clevelandart.org/api/artworks/?has_image=1&limit=25&q=${designKeywords[Math.floor(Math.random() * designKeywords.length)]}`);
+          const designKeywords = ['graphic design', 'poster', 'typography', 'modern art', 'drawing', 'architecture drawing', 'printmaking', 'photography'];
+          const res = await fetch(`https://openaccess-api.clevelandart.org/api/artworks/?has_image=1&limit=40&q=${designKeywords[Math.floor(Math.random() * designKeywords.length)]}`);
           const data = await res.json();
           if (!data.data) return [];
 
-          const artItems: NewsItem[] = await Promise.all(data.data.map(async (item: any) => {
+          const excludeSync = /ceramic|pottery|porcelain|sculpture|statue|vessel|bowl|jar|mask|figurine|marble|bronze|woodwork|craft|furniture/i;
+
+          const artItems: NewsItem[] = (await Promise.all(data.data.map(async (item: any) => {
+            // Filter out 3D objects/crafts
+            if (excludeSync.test(item.type) || excludeSync.test(item.title) || excludeSync.test(item.technique)) return null;
+
             const [tTitle, tDesc] = await Promise.all([
               translateText(item.title),
               item.creators?.[0]?.description ? translateText(item.creators[0].description) : Promise.resolve('클리블랜드 미술관 컬렉션')
@@ -710,7 +715,7 @@ const fetchNews = async () => {
               provider: 'Cleveland Museum of Art',
               thumb: item.images?.web?.url || item.images?.print?.url
             };
-          }));
+          }))).filter(Boolean) as NewsItem[];
           updateNewsList(artItems);
           return artItems;
         } catch (e) { return []; }
@@ -719,22 +724,27 @@ const fetchNews = async () => {
       // 3. The Metropolitan Museum of Art (The Met)
       if (source.url.includes('metmuseum.org')) {
         try {
-          const designKeywords = ['design', 'graphic', 'poster', 'typography', 'modern art', 'drawing', 'architecture', 'textile', 'costume'];
+          const designKeywords = ['graphic', 'poster', 'typography', 'modern', 'sketch', 'illustration', 'advertising'];
           const keyword = designKeywords[Math.floor(Math.random() * designKeywords.length)];
-          const searchRes = await fetch(`https://collectionapi.metmuseum.org/public/collection/v1/search?hasImages=true&q=${keyword}`);
+          // Using classification to narrow down to 2D art types
+          const searchRes = await fetch(`https://collectionapi.metmuseum.org/public/collection/v1/search?hasImages=true&classification=Drawings%20and%20Prints|Paintings|Photographs&q=${keyword}`);
           const searchData = await searchRes.json();
           if (!searchData.objectIDs) return [];
 
-          // Pick 15 random IDs to balance speed and variety
           const randomIds = searchData.objectIDs
             .sort(() => 0.5 - Math.random())
-            .slice(0, 15);
+            .slice(0, 20);
+
+          const excludeSync = /ceramic|pottery|porcelain|sculpture|statue|vessel|bowl|jar|mask|figurine|marble|bronze|furniture|terracotta/i;
 
           const artItems: NewsItem[] = (await Promise.all(randomIds.map(async (id: number) => {
             try {
               const objRes = await fetch(`https://collectionapi.metmuseum.org/public/collection/v1/objects/${id}`);
               const objData = await objRes.json();
               if (!objData.primaryImageSmall) return null;
+              
+              // Post-fetch filtering for excluded types
+              if (excludeSync.test(objData.objectName) || excludeSync.test(objData.title) || excludeSync.test(objData.medium)) return null;
 
               const [tTitle, tDesc] = await Promise.all([
                 translateText(objData.title),
