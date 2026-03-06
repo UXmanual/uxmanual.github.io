@@ -177,7 +177,7 @@ const mapUrl = computed(() => {
   const { lat, lng } = selectedShop.value
   // Using place search if we want specific pins, or view if we want coords.
   // For precise coord jumping with a pin, 'place' + 'q=lat,lng' is a robust choice for Embed API.
-  return `https://www.google.com/maps/embed/v1/place?key=YOUR_API_KEY_HERE&q=${lat},${lng}&zoom=16`
+  return `https://www.google.com/maps/embed/v1/place?key=AIzaSyAbcrzDVtglZAhgoFEkyc44E_4WMZGpSFE&q=${lat},${lng}&zoom=16`
 })
 </script>
 
