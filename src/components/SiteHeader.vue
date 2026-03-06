@@ -101,7 +101,8 @@ const weatherEmoji = computed(() => {
   if (code === 45 || code === 48) return '🌫️'
   
   // 51, 53, 55: Drizzle: Light, moderate, and dense intensity
-  if (code >= 51 && code <= 55) return '☂️'
+  // 56, 57: Freezing Drizzle: Light and dense intensity
+  if (code >= 51 && code <= 57) return '☂️'
   
   // 61, 63, 65: Rain: Slight, moderate and heavy intensity
   // 66, 67: Freezing Rain: Light and heavy intensity
@@ -109,10 +110,14 @@ const weatherEmoji = computed(() => {
   if (code === 61 || code === 80) return '☂️' // Slight rain or showers
   if ((code >= 63 && code <= 67) || (code >= 81 && code <= 82)) return '☔' // Moderate/Heavy rain
   
+  // 68, 69: Rain and snow mixed
+  // 83, 84: Snow showers mixed with rain
   // 71, 73, 75: Snow fall: Slight, moderate, and heavy intensity
   // 77: Snow grains
-  // 85, 86: Snow showers slight and heavy
-  if (code >= 71 && code <= 77) return code === 75 ? '❄️' : '🌨️'
+  // 79: Ice pellets
+  // 85, 86: Snow showers: Slight and heavy
+  if (code === 68 || code === 69 || code === 83 || code === 84) return '🌨️' // Mixed
+  if (code >= 71 && code <= 79) return code === 75 ? '❄️' : '🌨️'
   if (code === 85 || code === 86) return '🌨️'
   
   // 95: Thunderstorm: Slight or moderate
