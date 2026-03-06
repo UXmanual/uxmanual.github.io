@@ -17,6 +17,7 @@ const routes = [
         }
     },
     { path: '/feed', component: Feed },
+    { path: '/eats', component: () => import('../views/Eats.vue') },
     { path: '/:pathMatch(.*)*', redirect: '/' }
 ]
 

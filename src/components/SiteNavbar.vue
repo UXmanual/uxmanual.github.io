@@ -6,7 +6,7 @@
     <div class="site-nav-container px-6 md:px-10 flex justify-between items-center w-full">
       <router-link to="/" class="flex items-center gap-2 text-lg font-black uppercase tracking-tight text-zinc-900 dark:text-white transition-colors group">
         <img src="/favicon.svg" alt="Logo" class="w-6 h-6 rounded-md" />
-        <span>Todays News</span>
+        <span>TDNS</span>
       </router-link>
       
       <div class="flex items-center gap-4 md:gap-8">
@@ -17,6 +17,13 @@
             :class="route.path === '/' ? 'text-zinc-900 dark:text-white' : 'text-zinc-500'"
           >
             Trends
+          </router-link>
+          <router-link 
+            to="/eats" 
+            class="transition-colors"
+            :class="route.path === '/eats' ? 'text-zinc-900 dark:text-white' : 'text-zinc-500'"
+          >
+            Eats
           </router-link>
           <router-link 
             to="/feed" 
