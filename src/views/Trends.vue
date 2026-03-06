@@ -982,15 +982,32 @@ const fetchNews = async () => {
     lastGlobalSyncTime.value = now
   }
 
-  totalTaskSources.value = RSS_SOURCES.length
-  processedTaskSources.value = sessionProcessedSources.value.size
+  if (activeCategory.value === 'all') {
+    totalTaskSources.value = RSS_SOURCES.length
+    processedTaskSources.value = sessionProcessedSources.value.size
+  } else {
+    const catSources = RSS_SOURCES.filter(s => s.category === activeCategory.value)
+    totalTaskSources.value = catSources.length
+    processedTaskSources.value = catSources.filter(s => sessionProcessedSources.value.has(s.url)).length
+  }
 
   // If already full, just show updated message briefly or skip
   if (processedTaskSources.value === totalTaskSources.value && !isStale) {
-    currentLoadingCategoryName.value = 'Up to date'
-    isBackgroundLoading.value = true
-    setTimeout(() => { if (sessionId === currentFetchSession.value) isBackgroundLoading.value = false }, 1500)
-    return
+    if (activeCategory.value === 'all') {
+      totalTaskSources.value = RSS_SOURCES.length
+      processedTaskSources.value = sessionProcessedSources.value.size
+    } else {
+      const catSources = RSS_SOURCES.filter(s => s.category === activeCategory.value)
+      totalTaskSources.value = catSources.length
+      processedTaskSources.value = catSources.filter(s => sessionProcessedSources.value.has(s.url)).length
+    }
+    
+    if (processedTaskSources.value === totalTaskSources.value) {
+      currentLoadingCategoryName.value = 'Up to date'
+      isBackgroundLoading.value = true
+      setTimeout(() => { if (sessionId === currentFetchSession.value) isBackgroundLoading.value = false }, 1500)
+      return
+    }
   }
 
   try {
@@ -1006,12 +1023,18 @@ const fetchNews = async () => {
     if (realPriority.length > 0) {
       if (sessionId !== currentFetchSession.value) return
       currentLoadingCategoryName.value = getCategoryName(activeCategory.value)
-      
       await Promise.all(realPriority.map(source => 
         fetchSource(source).finally(() => {
           if (sessionId === currentFetchSession.value) {
             sessionProcessedSources.value.add(source.url)
-            processedTaskSources.value = sessionProcessedSources.value.size
+            if (activeCategory.value === 'all') {
+              totalTaskSources.value = RSS_SOURCES.length
+              processedTaskSources.value = sessionProcessedSources.value.size
+            } else {
+              const catSources = RSS_SOURCES.filter(s => s.category === activeCategory.value)
+              totalTaskSources.value = catSources.length
+              processedTaskSources.value = catSources.filter(s => sessionProcessedSources.value.has(s.url)).length
+            }
           }
         })
       ))
@@ -1041,7 +1064,14 @@ const fetchNews = async () => {
           fetchSource(s).finally(() => {
             if (sessionId === currentFetchSession.value) {
               sessionProcessedSources.value.add(s.url)
-              processedTaskSources.value = sessionProcessedSources.value.size
+              if (activeCategory.value === 'all') {
+                totalTaskSources.value = RSS_SOURCES.length
+                processedTaskSources.value = sessionProcessedSources.value.size
+              } else {
+                const catSources = RSS_SOURCES.filter(s => s.category === catId)
+                totalTaskSources.value = catSources.length
+                processedTaskSources.value = catSources.filter(s => sessionProcessedSources.value.has(s.url)).length
+              }
             }
           })
         ))
