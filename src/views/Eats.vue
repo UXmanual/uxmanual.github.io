@@ -30,7 +30,7 @@
           </div>
 
           <!-- List Container -->
-          <div class="bg-white dark:bg-[#131313] lg:bg-transparent h-[60vh] lg:h-[800px] overflow-y-auto px-6 lg:px-0 lg:pr-4 pt-10 pb-4 lg:py-0 border-x lg:border-0 border-zinc-200 dark:border-white/10 custom-scrollbar space-y-2.5">
+          <div class="bg-white dark:bg-[#131313] lg:bg-transparent h-[60vh] lg:h-[800px] overflow-y-auto px-6 lg:px-0 lg:pr-4 pt-10 pb-16 lg:py-0 border-x lg:border-0 border-zinc-200 dark:border-white/10 custom-scrollbar space-y-2.5">
             <div 
               v-for="shop in restaurantList" 
               :key="shop.id"
