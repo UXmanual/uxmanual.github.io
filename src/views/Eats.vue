@@ -45,7 +45,7 @@
           <div 
             class="fixed lg:relative inset-x-0 top-0 lg:inset-auto lg:top-0 lg:right-0 z-[60] lg:z-30 w-full lg:w-[400px] h-[100svh] lg:h-[calc(100vh-100px)] pointer-events-auto bg-white/60 dark:bg-[#131313]/60 backdrop-blur-2xl shadow-2xl rounded-t-[32px] lg:rounded-3xl transition-transform duration-500 ease-in-out transform touch-none select-none flex flex-col"
             :class="[
-              sheetMode === 'collapsed' && !isDragging ? 'translate-y-[calc(100svh-60px)]' : '',
+              sheetMode === 'collapsed' && !isDragging ? 'translate-y-[calc(100svh-110px)]' : '',
               sheetMode === 'half' && !isDragging ? 'translate-y-[60svh]' : '',
               sheetMode === 'full' && !isDragging ? 'translate-y-[120px]' : '',
               windowWidth >= 1024 ? '!translate-y-0' : ''
@@ -62,7 +62,7 @@
             </div>
 
             <!-- Country Tabs -->
-            <div class="shrink-0 px-6 lg:px-5 pb-5 lg:pt-8 flex gap-8 overflow-x-auto no-scrollbar border-b border-zinc-100 dark:border-white/5">
+            <div class="shrink-0 px-6 lg:px-5 pb-5 lg:pt-8 flex gap-5 overflow-x-auto no-scrollbar border-b border-zinc-100 dark:border-white/5">
               <button 
                 v-for="country in countries" 
                 :key="country"
@@ -253,9 +253,9 @@ const restaurantList = ref<Shop[]>([
   }
 ])
 
-const countries = ['한국', '일본'] as const
-const selectedCountry = ref<'한국' | '일본'>('한국')
-const selectedId = ref(101)
+const countries = ['일본', '한국'] as const
+const selectedCountry = ref<'한국' | '일본'>('일본')
+const selectedId = ref(1)
 
 const filteredRestaurants = computed(() => 
   restaurantList.value.filter(s => s.country === selectedCountry.value)
@@ -308,7 +308,7 @@ const dragTranslateY = ref(0)
 
 const getModeOffset = (mode: SheetMode) => {
   const containerHeight = window.innerHeight
-  if (mode === 'collapsed') return containerHeight - 60
+  if (mode === 'collapsed') return containerHeight - 110
   if (mode === 'half') return containerHeight * 0.6 // 2/5 visible = 60% offset
   return 120 // Stop 120px from top
 }
