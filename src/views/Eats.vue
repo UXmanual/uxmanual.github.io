@@ -32,13 +32,14 @@
               isListOpen && !isDragging ? 'translate-y-0' : ''
             ]"
             :style="isDragging ? { transform: `translateY(${dragTranslateY}px)`, transition: 'none' } : {}"
-            @touchstart="handleTouchStart"
-            @touchmove="handleTouchMove"
-            @touchend="handleTouchEnd"
+            @pointerdown="handlePointerDown"
+            @pointermove="handlePointerMove"
+            @pointerup="handlePointerUp"
+            @pointercancel="handlePointerUp"
           >
             <!-- Bottom Sheet Handle (Mobile Only) -->
             <div 
-              class="lg:hidden w-full h-[40px] bg-white dark:bg-[#1f1f1f] rounded-t-[32px] border-t border-x border-zinc-200 dark:border-white/10 flex flex-col items-center justify-center shadow-[0_-10px_40px_rgba(0,0,0,0.1)] touch-none"
+              class="lg:hidden w-full h-[40px] bg-white dark:bg-[#1f1f1f] rounded-t-[32px] flex flex-col items-center justify-center shadow-[0_-10px_40px_rgba(0,0,0,0.1)] touch-none select-none"
             >
               <div class="w-12 h-1.5 bg-zinc-200 dark:bg-white/10 rounded-full"></div>
             </div>
@@ -46,9 +47,11 @@
             <!-- List Container (Glassmorphism for Desktop) -->
             <div 
               ref="scrollContainer"
-              class="bg-white/90 dark:bg-[#131313]/90 backdrop-blur-xl lg:rounded-3xl shadow-2xl border border-zinc-200 dark:border-white/10 h-[calc(100vh-100px)] lg:h-full lg:max-h-[calc(100vh-140px)] px-6 lg:px-5 pt-10 lg:pt-6 pb-24 lg:pb-6 custom-scrollbar space-y-2.5"
+              class="bg-white/90 dark:bg-[#131313]/90 backdrop-blur-xl lg:rounded-3xl shadow-2xl h-[calc(100vh-100px)] lg:h-full lg:max-h-[calc(100vh-140px)] px-6 lg:px-5 pt-10 lg:pt-6 pb-24 lg:pb-6 custom-scrollbar space-y-2.5 relative"
               :class="isListOpen && !isDragging ? 'overflow-y-auto' : 'overflow-y-hidden'"
             >
+              <!-- Bottom Extension to prevent holes during over-drag -->
+              <div class="lg:hidden absolute top-[-1px] left-0 right-0 bottom-[-1000px] bg-white dark:bg-[#131313] z-[-1] pointer-events-none"></div>
               <!-- Header inside floating box: Dynamic Area Name (Mobile & Desktop) -->
               <div v-if="selectedShop" class="mb-8 pt-4">
                 <h1 class="text-2xl font-black tracking-tighter text-zinc-900 dark:text-white uppercase leading-tight">{{ selectedShop.address }}</h1>
@@ -185,55 +188,52 @@ const startY = ref(0)
 const isDragging = ref(false)
 const dragTranslateY = ref(0)
 
-const handleTouchStart = (e: TouchEvent) => {
+const handlePointerDown = (e: PointerEvent) => {
   if (window.innerWidth >= 1024) return
   
-  startY.value = e.touches[0].clientY
-  isDragging.value = false // Start with false, decide in Move
+  startY.value = e.clientY
+  isDragging.value = false
   isInitialPeek.value = false
   
   const sheetHeight = window.innerHeight - 100
   dragTranslateY.value = isListOpen.value ? 0 : (isInitialPeek.value ? sheetHeight - 80 : sheetHeight)
+  
+  // Capture pointer to continue receiving events even if leave target
+  ;(e.target as HTMLElement).setPointerCapture(e.pointerId)
 }
 
-const handleTouchMove = (e: TouchEvent) => {
+const handlePointerMove = (e: PointerEvent) => {
   if (window.innerWidth >= 1024) return
-  
-  const deltaY = e.touches[0].clientY - startY.value
+  if (e.buttons === 0) return // No button pressed
+
+  const deltaY = e.clientY - startY.value
   const sheetHeight = window.innerHeight - 100
   const scrollTop = scrollContainer.value?.scrollTop || 0
   
-  // Decide whether to drag the sheet or scroll content
-  // 1. Dragging down while list is at top
   const isDraggingDownAtTop = deltaY > 0 && scrollTop <= 0
-  // 2. Dragging up while sheet is NOT fully open
   const isDraggingUpWhileClosed = deltaY < 0 && !isListOpen.value
   
   if (isDraggingDownAtTop || isDraggingUpWhileClosed) {
     if (!isDragging.value) {
       isDragging.value = true
-      const sheetHeight = window.innerHeight - 100
       const currentTranslate = isListOpen.value ? 0 : sheetHeight
-      startY.value = e.touches[0].clientY - currentTranslate
+      startY.value = e.clientY - currentTranslate
     }
     
-    let newPos = e.touches[0].clientY - startY.value
+    let newPos = e.clientY - startY.value
     // Resistance at limits
     if (newPos < -20) newPos = -20 + (newPos + 20) * 0.2 
     dragTranslateY.value = newPos
     
-    // Prevent default scrolling when dragging the sheet
     if (e.cancelable) e.preventDefault()
   } else {
-    // Standard scrolling - stop sheet dragging if active
     if (isDragging.value) {
       isDragging.value = false
-      // If we stop dragging midway, snapping logic in End will take over
     }
   }
 }
 
-const handleTouchEnd = () => {
+const handlePointerUp = (e: PointerEvent) => {
   if (!isDragging.value) return
   
   isDragging.value = false
@@ -253,6 +253,10 @@ const handleTouchEnd = () => {
       isListOpen.value = false
     }
   }
+  
+  try {
+    ;(e.target as HTMLElement).releasePointerCapture(e.pointerId)
+  } catch (err) {}
 }
 
 /**
