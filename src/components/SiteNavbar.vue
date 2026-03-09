@@ -1,3 +1,4 @@
+<template>
   <nav 
     :class="[
       route.path === '/eats' ? 'relative' : 'fixed',
