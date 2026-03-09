@@ -43,7 +43,7 @@
           
           <!-- Desktop: Floating Sidebar (Right) | Mobile: Bottom Sheet -->
           <div 
-            class="fixed lg:relative inset-x-0 bottom-0 lg:inset-auto lg:top-0 lg:right-0 z-[60] lg:z-30 w-full lg:w-[400px] pointer-events-auto transition-transform duration-500 ease-in-out transform lg:translate-y-0 touch-none select-none"
+            class="fixed lg:relative inset-x-0 bottom-0 lg:inset-auto lg:top-0 lg:right-0 z-[60] lg:z-30 w-full lg:w-[400px] pointer-events-auto bg-white/60 dark:bg-[#131313]/60 backdrop-blur-2xl shadow-2xl rounded-t-[32px] lg:rounded-3xl transition-transform duration-500 ease-in-out transform lg:translate-y-0 touch-none select-none"
             :class="[
               sheetMode === 'collapsed' && !isDragging ? 'translate-y-[calc(100%-60px)]' : '',
               sheetMode === 'half' && !isDragging ? 'translate-y-[60%]' : '',
@@ -51,23 +51,22 @@
             ]"
             :style="isDragging ? { transform: `translateY(${dragTranslateY}px)`, transition: 'none' } : {}"
             @pointerdown="handlePointerDown"
-            @touchstart.stop
             @mousedown.stop
           >
             <!-- Swipe Handle Area (Visual only now, logic is on container) -->
             <div 
-              class="lg:hidden w-full h-[40px] bg-white/60 dark:bg-[#131313]/60 backdrop-blur-2xl rounded-t-[32px] flex flex-col items-center justify-center"
+              class="lg:hidden w-full h-[40px] flex flex-col items-center justify-center"
             >
               <div class="w-12 h-1.5 bg-zinc-400 dark:bg-white/20 rounded-full"></div>
             </div>
 
             <!-- Bottom Extension to prevent holes during over-drag (Moved outside scroll area) -->
-            <div class="lg:hidden absolute top-[40px] left-0 right-0 h-[2000px] bg-white/60 dark:bg-[#131313]/60 backdrop-blur-2xl z-[-1] pointer-events-none"></div>
+            <div class="lg:hidden absolute top-[40px] left-0 right-0 h-[2000px] bg-transparent z-[-1] pointer-events-none"></div>
 
             <!-- List Container (Glassmorphism for Desktop) -->
             <div 
               ref="scrollContainer"
-              class="bg-white/60 dark:bg-[#131313]/60 backdrop-blur-2xl lg:rounded-3xl shadow-2xl h-[100svh] lg:h-auto lg:max-h-[calc(100vh-100px)] px-6 lg:px-5 pt-10 lg:pt-6 pb-10 lg:pb-6 custom-scrollbar space-y-2.5 relative overscroll-contain"
+              class="h-[100svh] lg:h-auto lg:max-h-[calc(100vh-100px)] px-6 lg:px-5 pt-10 lg:pt-6 pb-10 lg:pb-6 custom-scrollbar space-y-2.5 relative overscroll-contain"
               :class="sheetMode === 'full' && !isDragging ? 'overflow-y-auto' : 'overflow-y-hidden'"
             >
               <!-- Header inside floating box: Dynamic Area Name (Mobile & Desktop) -->
