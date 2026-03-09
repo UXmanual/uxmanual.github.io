@@ -1,6 +1,6 @@
   <nav 
     :class="[
-      route.path === '/eats' ? 'absolute' : 'fixed',
+      route.path === '/eats' ? 'relative' : 'fixed',
       'top-0 left-0 right-0 z-50 bg-zinc-50/90 dark:bg-[#131313]/90 backdrop-blur-xl transition-transform duration-0'
     ]"
     :style="route.path === '/eats' ? {} : { transform: `translateY(${navTranslateY}px)` }"
