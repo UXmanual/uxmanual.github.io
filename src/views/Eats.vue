@@ -109,7 +109,12 @@
                   </span>
                   <span class="text-[11px] font-bold text-[#1a73e8]">★ {{ shop.rating }}</span>
                 </div>
-                <h3 class="text-base font-bold mb-0.5 group-hover:text-[#1a73e8] transition-colors">{{ shop.name }}</h3>
+                <h3 
+                  class="text-base font-bold mb-0.5 group-hover:text-[#1a73e8] transition-colors"
+                  :class="{ 'text-[#1a73e8]': selectedId === shop.id }"
+                >
+                  {{ shop.name }}
+                </h3>
                 <p class="text-xs text-zinc-500 dark:text-zinc-400 line-clamp-1 leading-relaxed">{{ shop.description }}</p>
                 <div class="mt-2.5 flex items-center gap-1.5 text-[10px] font-medium text-zinc-400 uppercase tracking-tight">
                   <svg xmlns="http://www.w3.org/2000/svg" class="w-2.5 h-2.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
