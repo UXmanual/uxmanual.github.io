@@ -24,17 +24,21 @@
       </div>
 
       <!-- Content Layer: Restaurant List -->
-      <div class="relative z-20 h-full pointer-events-none">
+      <div class="relative z-20 h-full pointer-events-none" @touchstart="handleMapInteraction">
         <div class="max-w-[1800px] mx-auto h-full px-6 lg:px-10 py-10 flex flex-col lg:flex-row gap-8">
           
           <!-- Desktop: Floating Sidebar | Mobile: Bottom Sheet -->
           <div 
             class="fixed lg:relative inset-x-0 bottom-0 lg:inset-auto lg:top-0 lg:left-0 z-[60] lg:z-30 w-full lg:w-[400px] pointer-events-auto transition-transform duration-500 ease-in-out transform lg:translate-y-0"
-            :class="isListOpen ? 'translate-y-0' : 'translate-y-[calc(100%-40px)] lg:translate-y-0'"
+            :class="[
+              isListOpen ? 'translate-y-0' : '',
+              !isListOpen && isInitialPeek ? 'translate-y-[calc(100%-120px)]' : '',
+              !isListOpen && !isInitialPeek ? 'translate-y-[calc(100%-40px)]' : ''
+            ]"
           >
             <!-- Bottom Sheet Handle (Mobile Only) -->
             <div 
-              @click="isListOpen = !isListOpen"
+              @click="toggleList"
               class="lg:hidden w-full h-[40px] bg-white dark:bg-[#1f1f1f] rounded-t-[32px] border-t border-x border-zinc-200 dark:border-white/10 flex flex-col items-center justify-center cursor-pointer shadow-[0_-10px_40px_rgba(0,0,0,0.1)]"
             >
               <div class="w-12 h-1.5 bg-zinc-200 dark:bg-white/10 rounded-full"></div>
@@ -77,7 +81,18 @@
             </div>
           </div>
           
-          <!-- ... rest of template ... -->
+          <!-- Floating Mobile Toggle Button -->
+          <div v-show="!isListOpen" class="lg:hidden fixed bottom-20 left-1/2 -translate-x-1/2 z-[50] pointer-events-auto">
+            <button 
+              @click="toggleList"
+              class="flex items-center gap-2 px-6 py-3.5 bg-zinc-900 dark:bg-white text-white dark:text-zinc-900 rounded-full font-bold text-sm shadow-2xl active:scale-95 transition-all duration-200 border border-zinc-800 dark:border-zinc-200"
+            >
+              <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
+              </svg>
+              목록보기
+            </button>
+          </div>
         </div>
       </div>
     </main>
@@ -164,7 +179,25 @@ const restaurantList = ref<Shop[]>([
 
 const selectedId = ref(1)
 const isListOpen = ref(false)
+const isInitialPeek = ref(true)
 const selectedShop = computed(() => restaurantList.value.find(s => s.id === selectedId.value))
+
+/**
+ * Handles map interaction to hide the initial peek
+ */
+const handleMapInteraction = () => {
+  if (isInitialPeek.value) {
+    isInitialPeek.value = false
+  }
+}
+
+/**
+ * Toggles the list open state and clears initial peek
+ */
+const toggleList = () => {
+  isListOpen.value = !isListOpen.value
+  isInitialPeek.value = false
+}
 
 /**
  * Updates the selected shop and triggers a map update.
@@ -173,6 +206,7 @@ const selectedShop = computed(() => restaurantList.value.find(s => s.id === sele
  */
 const handleShopSelect = (shop: Shop) => {
   selectedId.value = shop.id
+  isInitialPeek.value = false
   // Close the bottom sheet on mobile after selecting a shop
   if (window.innerWidth < 1024) {
     isListOpen.value = false
