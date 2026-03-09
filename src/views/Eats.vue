@@ -1,8 +1,8 @@
 <template>
   <div class="min-h-screen bg-zinc-50 dark:bg-[#131313] text-zinc-900 dark:text-white transition-colors duration-200">
-    <SiteNavbar />
+    <SiteNavbar :is-sheet-full="sheetMode === 'full'" />
     
-    <main class="relative w-full h-[calc(100svh-60px)] overflow-hidden bg-zinc-100 dark:bg-[#131313] touch-none overscroll-none">
+    <main class="relative w-full h-[100svh] overflow-hidden bg-zinc-100 dark:bg-[#131313] touch-none overscroll-none">
       <div 
         class="absolute inset-0 z-10 transition-all duration-300"
         :class="sheetMode === 'full' ? 'opacity-0' : 'opacity-100'"
@@ -68,7 +68,7 @@
             <!-- List Container (Glassmorphism for Desktop) -->
             <div 
               ref="scrollContainer"
-              class="bg-white/90 dark:bg-[#131313]/90 backdrop-blur-xl lg:rounded-3xl shadow-2xl h-[calc(100svh-60px)] lg:h-full lg:max-h-[calc(100vh-140px)] px-6 lg:px-5 pt-10 lg:pt-6 pb-10 lg:pb-6 custom-scrollbar space-y-2.5 relative overscroll-contain"
+              class="bg-white/90 dark:bg-[#131313]/90 backdrop-blur-xl lg:rounded-3xl shadow-2xl h-[100svh] lg:h-full lg:max-h-[calc(100vh-140px)] px-6 lg:px-5 pt-10 lg:pt-6 pb-10 lg:pb-6 custom-scrollbar space-y-2.5 relative overscroll-contain"
               :class="sheetMode === 'full' && !isDragging ? 'overflow-y-auto' : 'overflow-y-hidden'"
             >
               <!-- Header inside floating box: Dynamic Area Name (Mobile & Desktop) -->
@@ -224,7 +224,7 @@ const isDragging = ref(false)
 const dragTranslateY = ref(0)
 
 const getModeOffset = (mode: SheetMode) => {
-  const containerHeight = window.innerHeight - 60
+  const containerHeight = window.innerHeight
   if (mode === 'collapsed') return containerHeight - 60
   if (mode === 'half') return containerHeight * 0.6 // 2/5 visible = 60% offset
   return 0
