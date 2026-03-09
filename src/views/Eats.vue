@@ -201,70 +201,261 @@ const restaurantList = ref<Shop[]>([
     lng: 127.0413,
     country: '한국'
   },
+  // --- 일본 맛집 리스트 (평점순 20개, 지역별 정렬: 도쿄 > 오사카 > 교토 > 후쿠오카) ---
   {
     id: 1,
-    name: "스시 젠 (Sushi Zen)",
-    category: "일식",
-    rating: 4.8,
-    description: "츠키지 시장에서 공수한 신선한 제철 재료로 만든 정통 에도마에 스시를 경험해보세요.",
-    address: "일본 도쿄 주오구",
+    name: "타치구이 아키라 (Tachigui Akira)",
+    category: "스시",
+    rating: 4.9,
+    description: "신선한 네타와 정교한 샤리가 일품인 서서 먹는 정통 스시 바입니다.",
+    address: "일본 도쿄 미나토구",
     lat: 35.6662,
-    lng: 139.7755,
+    lng: 139.7583,
     country: '일본'
   },
   {
     id: 2,
-    name: "라 테이블 드 조엘 (La Table de Joel)",
-    category: "프렌치",
-    rating: 4.9,
-    description: "정교한 플레이팅과 깊은 풍미가 돋보이는 모던 프렌치 퀴진의 정수입니다.",
-    address: "일본 도쿄 미나토구",
-    lat: 35.6605,
-    lng: 139.7291,
+    name: "긴자 이부키 (Ginza Ibuki)",
+    category: "가이세키",
+    rating: 4.8,
+    description: "긴자의 품격이 느껴지는 제철 식재료 중심의 고급 가이세키 요리입니다.",
+    address: "일본 도쿄 주오구",
+    lat: 35.6720,
+    lng: 139.7710,
     country: '일본'
   },
   {
     id: 3,
-    name: "이치류 라멘 (Ichiryu Ramen)",
-    category: "라멘",
-    rating: 4.6,
-    description: "진한 돈코츠 육수와 직접 뽑은 얇은 면으로 유명한 후쿠오카 대표 라멘 맛집입니다.",
-    address: "일본 후쿠오카현 후쿠오카시",
-    lat: 33.5891,
-    lng: 130.4017,
+    name: "텐푸라 미카쿠 (Tempura Mikaku)",
+    category: "텐푸라",
+    rating: 4.7,
+    description: "1931년 창업, 장인의 손길로 튀겨낸 바삭하고 정갈한 텐푸라 전문점입니다.",
+    address: "일본 도쿄 미나토구",
+    lat: 35.6694,
+    lng: 139.7523,
     country: '일본'
   },
   {
-    id: 4,
-    name: "교토 가이세키 티 하우스",
-    category: "전통식",
+    id: 11,
+    name: "로쿠린샤 (Rokurinsha)",
+    category: "츠케멘",
+    rating: 4.6,
+    description: "도쿄역 캐릭터 스트리트의 명물, 진한 육수의 츠케멘 전문점입니다.",
+    address: "일본 도쿄 지요다구",
+    lat: 35.6814,
+    lng: 139.7677,
+    country: '일본'
+  },
+  {
+    id: 12,
+    name: "이마한 (Imahan)",
+    category: "스키야키",
+    rating: 4.8,
+    description: "100년 넘는 역사를 가진 최고급 쿠로게와규 스키야키 전문점입니다.",
+    address: "일본 도쿄 니혼바시",
+    lat: 35.6853,
+    lng: 139.7820,
+    country: '일본'
+  },
+  {
+    id: 6,
+    name: "호젠지 스시도코로 나카타니",
+    category: "스시",
+    rating: 4.8,
+    description: "오사카 호젠지 골목의 숨은 보석 같은 미쉐린 스타 스시야입니다.",
+    address: "일본 오사카부 오사카시",
+    lat: 34.6675,
+    lng: 135.5028,
+    country: '일본'
+  },
+  {
+    id: 7,
+    name: "이자카야 토요 (Izakaya Toyo)",
+    category: "해산물",
     rating: 4.7,
-    description: "전통적인 코스 요리를 통해 교토의 계절적 아름다움을 오감으로 느껴보세요.",
-    address: "일본 교토부 교토시",
-    lat: 35.0116,
-    lng: 135.7681,
+    description: "넷플릭스 출연으로 유명한, 활기찬 분위기의 노천 해산물 이자카야입니다.",
+    address: "일본 오사카부 오사카시",
+    lat: 34.6980,
+    lng: 135.5348,
+    country: '일본'
+  },
+  {
+    id: 8,
+    name: "후쿠타로 (Fukutaro)",
+    category: "오코노미야키",
+    rating: 4.6,
+    description: "오사카 3대 명물로 손꼽히는 겉바속촉 식감의 정통 오코노미야키입니다.",
+    address: "일본 오사카부 오사카시",
+    lat: 34.6657,
+    lng: 135.5033,
+    country: '일본'
+  },
+  {
+    id: 13,
+    name: "카니도라쿠 (Kani Doraku)",
+    category: "게 요리",
+    rating: 4.5,
+    description: "도톤보리의 상징적인 대게 요리 전문점으로 다양한 게 코스를 즐길 수 있습니다.",
+    address: "일본 오사카부 주오구",
+    lat: 34.6687,
+    lng: 135.5013,
+    country: '일본'
+  },
+  {
+    id: 14,
+    name: "쿠시카츠 다루마",
+    category: "쿠시카츠",
+    rating: 4.4,
+    description: "신세카이 명물, 바삭한 튀김옷과 소스가 일품인 원조 쿠시카츠 전문점입니다.",
+    address: "일본 오사카부 나니와구",
+    lat: 34.6506,
+    lng: 135.5065,
     country: '일본'
   },
   {
     id: 5,
-    name: "삿포로 씨푸드 그릴",
-    category: "해산물",
+    name: "텐푸라 마츠 (Tempura Matsu)",
+    category: "교토요리",
+    rating: 4.8,
+    description: "강변의 정취와 함께 즐기는 창의적이고 예술적인 가이세키 코스입니다.",
+    address: "일본 교토부 교토시",
+    lat: 35.0083,
+    lng: 135.6983,
+    country: '일본'
+  },
+  {
+    id: 4,
+    name: "멘야 이노이치 하나레",
+    category: "라멘",
+    rating: 4.7,
+    description: "교토 특유의 맑고 깊은 육수가 매력적인 프리미엄 라멘 맛집입니다.",
+    address: "일본 교토부 교토시",
+    lat: 35.0006,
+    lng: 135.7656,
+    country: '일본'
+  },
+  {
+    id: 15,
+    name: "혼케 오와리야",
+    category: "소바",
+    rating: 4.6,
+    description: "550년 역사를 자랑하는 교토에서 가장 오래된 메밀소바 전문점입니다.",
+    address: "일본 교토부 나카교구",
+    lat: 35.0125,
+    lng: 135.7593,
+    country: '일본'
+  },
+  {
+    id: 16,
+    name: "기온 쿄료리 가지로",
+    category: "가이세키",
     rating: 4.5,
-    description: "갓 잡은 킹크랩과 가리비를 숯불에 구워 바다의 향을 그대로 담아냈습니다.",
-    address: "일본 홋카이도 삿포로시",
-    lat: 43.0611,
-    lng: 141.3564,
+    description: "전통 기온 거리에서 즐기는 고즈넉하고 우아한 정통 교토 요리입니다.",
+    address: "일본 교토부 히가시야마구",
+    lat: 35.0034,
+    lng: 135.7735,
+    country: '일본'
+  },
+  {
+    id: 17,
+    name: "이즈우 (Izuu)",
+    category: "고등어스시",
+    rating: 4.4,
+    description: "교토 명물 사바스시(고등어 스시)의 원조격인 240년 전통의 맛집입니다.",
+    address: "일본 교토부 히가시야마구",
+    lat: 35.0045,
+    lng: 135.7720,
+    country: '일본'
+  },
+  {
+    id: 9,
+    name: "요시즈카 우나기야",
+    category: "장어",
+    rating: 4.8,
+    description: "140년 역사를 자랑하는 후쿠오카 최고의 장어구이 전문점입니다.",
+    address: "일본 후쿠오카현 후쿠오카시",
+    lat: 33.5910,
+    lng: 130.4070,
+    country: '일본'
+  },
+  {
+    id: 10,
+    name: "하카타 라멘 신신 (ShinShin)",
+    category: "라멘",
+    rating: 4.6,
+    description: "부드러운 돈코츠 육수와 얇은 면이 조화로운 후쿠오카 대표 맛집입니다.",
+    address: "일본 후쿠오카현 후쿠오카시",
+    lat: 33.5937,
+    lng: 130.3973,
+    country: '일본'
+  },
+  {
+    id: 18,
+    name: "이치란 본점",
+    category: "라멘",
+    rating: 4.5,
+    description: "전 세계적으로 유명한 돈코츠 라멘의 본고장, 후쿠오카 본점입니다.",
+    address: "일본 후쿠오카현 하카타구",
+    lat: 33.5932,
+    lng: 130.4017,
+    country: '일본'
+  },
+  {
+    id: 19,
+    name: "텐진 호르몬",
+    category: "철반구이",
+    rating: 4.4,
+    description: "눈앞에서 구워주는 신선한 곱창과 스테이크 철판 요리 전문점입니다.",
+    address: "일본 후쿠오카현 주오구",
+    lat: 33.5912,
+    lng: 130.3985,
+    country: '일본'
+  },
+  {
+    id: 20,
+    name: "미즈타키 코우류 (Koryu)",
+    category: "닭한마리",
+    rating: 4.5,
+    description: "후쿠오카의 전통 보양식인 진한 닭 육수 전골, 미즈타키 전문점입니다.",
+    address: "일본 후쿠오카현 주오구",
+    lat: 33.5895,
+    lng: 130.4002,
     country: '일본'
   }
+
 ])
 
 const countries = ['일본', '한국'] as const
 const selectedCountry = ref<'한국' | '일본'>('일본')
 const selectedId = ref(1)
 
-const filteredRestaurants = computed(() => 
-  restaurantList.value.filter(s => s.country === selectedCountry.value)
-)
+const filteredRestaurants = computed(() => {
+  const list = restaurantList.value.filter(s => s.country === selectedCountry.value)
+  
+  if (selectedCountry.value === '일본') {
+    const regionPriority: Record<string, number> = {
+      '도쿄': 1,
+      '오사카': 2,
+      '교토': 3,
+      '후쿠오카': 4
+    }
+
+    return [...list].sort((a, b) => {
+      const regionA = Object.keys(regionPriority).find(r => a.address.includes(r)) || '기타'
+      const regionB = Object.keys(regionPriority).find(r => b.address.includes(r)) || '기타'
+      
+      const priorityA = regionPriority[regionA] || 99
+      const priorityB = regionPriority[regionB] || 99
+
+      if (priorityA !== priorityB) {
+        return priorityA - priorityB
+      }
+      return b.rating - a.rating
+    })
+  }
+  
+  return list
+})
 
 type SheetMode = 'collapsed' | 'half' | 'full'
 const sheetMode = ref<SheetMode>('collapsed')
