@@ -48,7 +48,7 @@
             :class="[
               sheetMode === 'collapsed' && !isDragging ? 'translate-y-[calc(100%-60px)]' : '',
               sheetMode === 'half' && !isDragging ? 'translate-y-[60%]' : '',
-              sheetMode === 'full' && !isDragging ? 'translate-y-0' : ''
+              sheetMode === 'full' && !isDragging ? 'translate-y-[10svh]' : ''
             ]"
             :style="isDragging ? { transform: `translateY(${dragTranslateY}px)`, transition: 'none' } : {}"
             @pointerdown="handlePointerDown"
@@ -227,7 +227,7 @@ const getModeOffset = (mode: SheetMode) => {
   const containerHeight = window.innerHeight
   if (mode === 'collapsed') return containerHeight - 60
   if (mode === 'half') return containerHeight * 0.6 // 2/5 visible = 60% offset
-  return 0
+  return containerHeight * 0.1 // 90% visible = 10% offset
 }
 
 const handlePointerDown = (e: PointerEvent) => {
