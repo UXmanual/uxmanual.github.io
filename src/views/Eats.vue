@@ -63,12 +63,12 @@
             </div>
 
             <!-- Bottom Extension to prevent holes during over-drag (Moved outside scroll area) -->
-            <div class="lg:hidden absolute top-[40px] left-0 right-0 h-[2000px] bg-white/90 dark:bg-[#131313]/90 backdrop-blur-xl z-[-1] pointer-events-none"></div>
+            <div class="lg:hidden absolute top-[40px] left-0 right-0 h-[2000px] bg-white/60 dark:bg-[#131313]/60 backdrop-blur-2xl z-[-1] pointer-events-none"></div>
 
             <!-- List Container (Glassmorphism for Desktop) -->
             <div 
               ref="scrollContainer"
-              class="bg-white/90 dark:bg-[#131313]/90 backdrop-blur-xl lg:rounded-3xl shadow-2xl h-[100svh] lg:h-full lg:max-h-[calc(100vh-140px)] px-6 lg:px-5 pt-10 lg:pt-6 pb-10 lg:pb-6 custom-scrollbar space-y-2.5 relative overscroll-contain"
+              class="bg-white/60 dark:bg-[#131313]/60 backdrop-blur-2xl lg:rounded-3xl shadow-2xl h-[100svh] lg:h-full lg:max-h-[calc(100vh-140px)] px-6 lg:px-5 pt-10 lg:pt-6 pb-10 lg:pb-6 custom-scrollbar space-y-2.5 relative overscroll-contain"
               :class="sheetMode === 'full' && !isDragging ? 'overflow-y-auto' : 'overflow-y-hidden'"
             >
               <!-- Header inside floating box: Dynamic Area Name (Mobile & Desktop) -->
