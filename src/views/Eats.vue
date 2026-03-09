@@ -17,26 +17,26 @@
       <div class="flex flex-col lg:flex-row gap-8 min-h-[600px]">
         
         <!-- Left: Restaurant List -->
-        <div class="w-full lg:w-1/3 space-y-4 overflow-y-auto max-h-[800px] pr-6 custom-scrollbar">
+        <div class="w-full lg:w-1/3 space-y-2.5 overflow-y-auto max-h-[800px] pr-4 custom-scrollbar">
           <div 
             v-for="shop in restaurantList" 
             :key="shop.id"
             @click="selectShop(shop)"
-            class="p-5 rounded-2xl border transition-all duration-300 cursor-pointer group"
+            class="p-4 rounded-xl border transition-all duration-300 cursor-pointer group"
             :class="selectedId === shop.id 
               ? 'bg-white dark:bg-white/10 border-zinc-900 dark:border-white shadow-xl' 
               : 'bg-white dark:bg-zinc-900/50 border-zinc-200 dark:border-white/5 hover:border-zinc-400 dark:hover:border-white/20'"
           >
-            <div class="flex justify-between items-start mb-2">
-              <span class="px-2 py-0.5 rounded text-[10px] font-black uppercase tracking-wider bg-zinc-100 dark:bg-white/10 text-zinc-500 dark:text-zinc-400 border border-zinc-200 dark:border-white/5">
+            <div class="flex justify-between items-start mb-1">
+              <span class="px-2 py-0.5 rounded text-[9px] font-black uppercase tracking-wider bg-zinc-100 dark:bg-white/10 text-zinc-500 dark:text-zinc-400 border border-zinc-200 dark:border-white/5">
                 {{ shop.category }}
               </span>
-              <span class="text-xs font-bold text-orange-500">★ {{ shop.rating }}</span>
+              <span class="text-[10px] font-bold text-orange-500">★ {{ shop.rating }}</span>
             </div>
-            <h3 class="text-lg font-bold mb-1 group-hover:text-orange-500 transition-colors">{{ shop.name }}</h3>
-            <p class="text-sm text-zinc-500 dark:text-zinc-400 line-clamp-2">{{ shop.description }}</p>
-            <div class="mt-4 flex items-center gap-2 text-[11px] font-medium text-zinc-400 uppercase tracking-tight">
-              <svg xmlns="http://www.w3.org/2000/svg" class="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <h3 class="text-base font-bold mb-0.5 group-hover:text-orange-500 transition-colors">{{ shop.name }}</h3>
+            <p class="text-xs text-zinc-500 dark:text-zinc-400 line-clamp-1">{{ shop.description }}</p>
+            <div class="mt-2 flex items-center gap-1.5 text-[10px] font-medium text-zinc-400 uppercase tracking-tight">
+              <svg xmlns="http://www.w3.org/2000/svg" class="w-2.5 h-2.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
               </svg>
