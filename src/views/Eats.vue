@@ -62,17 +62,21 @@
             </div>
 
             <!-- Country Tabs -->
-            <div class="shrink-0 px-6 lg:px-5 pb-3 lg:pt-6 flex gap-2 overflow-x-auto no-scrollbar">
+            <div class="shrink-0 px-6 lg:px-5 pb-5 lg:pt-8 flex gap-8 overflow-x-auto no-scrollbar border-b border-zinc-100 dark:border-white/5">
               <button 
                 v-for="country in countries" 
                 :key="country"
-                @click.stop="handleCountryChange(country as 'Korea' | 'Japan')"
-                class="px-6 py-2.5 rounded-full text-xs font-black tracking-widest transition-all duration-300 whitespace-nowrap uppercase pointer-events-auto"
+                @click.stop="handleCountryChange(country as '한국' | '일본')"
+                class="relative py-1 text-sm font-bold tracking-tight transition-all duration-300 whitespace-nowrap pointer-events-auto"
                 :class="selectedCountry === country 
-                  ? 'bg-zinc-900 dark:bg-white text-white dark:text-zinc-900' 
-                  : 'bg-white/40 dark:bg-white/5 text-zinc-500 dark:text-zinc-400 hover:bg-white/60 dark:hover:bg-white/10'"
+                  ? 'text-zinc-900 dark:text-white' 
+                  : 'text-zinc-400 dark:text-zinc-500 hover:text-zinc-600 dark:hover:text-zinc-300'"
               >
                 {{ country }}
+                <div 
+                  v-if="selectedCountry === country"
+                  class="absolute -bottom-[1px] left-0 right-0 h-0.5 bg-zinc-900 dark:bg-white rounded-full"
+                ></div>
               </button>
             </div>
 
@@ -155,7 +159,7 @@ interface Shop {
   address: string
   lat: number
   lng: number
-  country: 'Korea' | 'Japan'
+  country: '한국' | '일본'
 }
 
 const restaurantList = ref<Shop[]>([
@@ -168,7 +172,7 @@ const restaurantList = ref<Shop[]>([
     address: "서울특별시 강남구 신사동",
     lat: 37.5256,
     lng: 127.0358,
-    country: 'Korea'
+    country: '한국'
   },
   {
     id: 102,
@@ -179,7 +183,7 @@ const restaurantList = ref<Shop[]>([
     address: "서울특별시 중구 주교동",
     lat: 37.5683,
     lng: 126.9995,
-    country: 'Korea'
+    country: '한국'
   },
   {
     id: 103,
@@ -190,7 +194,7 @@ const restaurantList = ref<Shop[]>([
     address: "서울특별시 강남구 논현동",
     lat: 37.5212,
     lng: 127.0413,
-    country: 'Korea'
+    country: '한국'
   },
   {
     id: 1,
@@ -201,7 +205,7 @@ const restaurantList = ref<Shop[]>([
     address: "일본 도쿄 주오구",
     lat: 35.6662,
     lng: 139.7755,
-    country: 'Japan'
+    country: '일본'
   },
   {
     id: 2,
@@ -212,7 +216,7 @@ const restaurantList = ref<Shop[]>([
     address: "일본 도쿄 미나토구",
     lat: 35.6605,
     lng: 139.7291,
-    country: 'Japan'
+    country: '일본'
   },
   {
     id: 3,
@@ -223,7 +227,7 @@ const restaurantList = ref<Shop[]>([
     address: "일본 후쿠오카현 후쿠오카시",
     lat: 33.5891,
     lng: 130.4017,
-    country: 'Japan'
+    country: '일본'
   },
   {
     id: 4,
@@ -234,7 +238,7 @@ const restaurantList = ref<Shop[]>([
     address: "일본 교토부 교토시",
     lat: 35.0116,
     lng: 135.7681,
-    country: 'Japan'
+    country: '일본'
   },
   {
     id: 5,
@@ -245,12 +249,12 @@ const restaurantList = ref<Shop[]>([
     address: "일본 홋카이도 삿포로시",
     lat: 43.0611,
     lng: 141.3564,
-    country: 'Japan'
+    country: '일본'
   }
 ])
 
-const countries = ['Korea', 'Japan'] as const
-const selectedCountry = ref<'Korea' | 'Japan'>('Korea')
+const countries = ['한국', '일본'] as const
+const selectedCountry = ref<'한국' | '일본'>('한국')
 const selectedId = ref(101)
 
 const filteredRestaurants = computed(() => 
@@ -264,7 +268,7 @@ const selectedShop = computed(() =>
   restaurantList.value.find(s => s.id === selectedId.value)
 )
 
-const handleCountryChange = (country: 'Korea' | 'Japan') => {
+const handleCountryChange = (country: '한국' | '일본') => {
   selectedCountry.value = country
   const firstInCountry = filteredRestaurants.value[0]
   if (firstInCountry) {
