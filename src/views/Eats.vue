@@ -1,5 +1,5 @@
 <template>
-  <div class="min-h-screen bg-zinc-50 dark:bg-[#131313] text-zinc-900 dark:text-white transition-colors duration-200">
+  <div class="min-h-screen bg-zinc-50 dark:bg-[#131313] text-zinc-900 dark:text-white transition-colors duration-200 pt-[60px]">
     <SiteNavbar />
     
     <main class="relative w-full h-[calc(100vh-60px)] overflow-hidden bg-zinc-100 dark:bg-[#131313]">
