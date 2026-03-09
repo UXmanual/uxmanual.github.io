@@ -61,14 +61,14 @@
             </div>
 
             <!-- Country Tabs -->
-            <div class="px-6 lg:px-5 pb-4 flex gap-2 overflow-x-auto no-scrollbar" @pointerdown.stop>
+            <div class="px-6 lg:px-5 pb-1 flex gap-2 overflow-x-auto no-scrollbar" @pointerdown.stop>
               <button 
                 v-for="country in countries" 
                 :key="country"
                 @click="handleCountryChange(country as 'Korea' | 'Japan')"
                 class="px-6 py-2.5 rounded-full text-xs font-black tracking-widest transition-all duration-300 whitespace-nowrap uppercase"
                 :class="selectedCountry === country 
-                  ? 'bg-zinc-900 dark:bg-white text-white dark:text-zinc-900 shadow-xl scale-105' 
+                  ? 'bg-zinc-900 dark:bg-white text-white dark:text-zinc-900' 
                   : 'bg-white/40 dark:bg-white/5 text-zinc-500 dark:text-zinc-400 hover:bg-white/60 dark:hover:bg-white/10'"
               >
                 {{ country }}
@@ -81,11 +81,11 @@
             <!-- List Container (Glassmorphism for Desktop) -->
             <div 
               ref="scrollContainer"
-              class="h-[100svh] lg:h-auto lg:max-h-[calc(100vh-100px)] px-6 lg:px-5 pt-4 lg:pt-6 pb-40 custom-scrollbar space-y-2.5 relative overscroll-contain"
+              class="h-[100svh] lg:h-auto lg:max-h-[calc(100vh-100px)] px-6 lg:px-5 pt-0 lg:pt-6 pb-40 custom-scrollbar space-y-2.5 relative overscroll-contain"
               :class="sheetMode === 'full' && !isDragging ? 'overflow-y-auto' : 'overflow-y-hidden'"
             >
               <!-- Header inside floating box: Dynamic Area Name (Mobile & Desktop) -->
-              <div v-if="selectedShop" class="mb-8 pt-4" @pointerdown.stop>
+              <div v-if="selectedShop" class="mb-5 pt-0" @pointerdown.stop>
                 <h1 class="text-2xl font-black tracking-tighter text-zinc-900 dark:text-white uppercase leading-tight">{{ selectedShop.address }}</h1>
               </div>
 
