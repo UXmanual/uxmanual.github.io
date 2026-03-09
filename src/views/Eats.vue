@@ -43,11 +43,12 @@
           
           <!-- Desktop: Floating Sidebar (Right) | Mobile: Bottom Sheet -->
           <div 
-            class="fixed lg:relative inset-x-0 bottom-0 lg:inset-auto lg:top-0 lg:right-0 z-[60] lg:z-30 w-full lg:w-[400px] lg:h-[calc(100vh-100px)] pointer-events-auto bg-white/60 dark:bg-[#131313]/60 backdrop-blur-2xl shadow-2xl rounded-t-[32px] lg:rounded-3xl transition-transform duration-500 ease-in-out transform lg:translate-y-0 touch-none select-none flex flex-col"
+            class="fixed lg:relative inset-x-0 top-0 lg:inset-auto lg:top-0 lg:right-0 z-[60] lg:z-30 w-full lg:w-[400px] h-[100svh] lg:h-[calc(100vh-100px)] pointer-events-auto bg-white/60 dark:bg-[#131313]/60 backdrop-blur-2xl shadow-2xl rounded-t-[32px] lg:rounded-3xl transition-transform duration-500 ease-in-out transform touch-none select-none flex flex-col"
             :class="[
-              sheetMode === 'collapsed' && !isDragging ? 'translate-y-[calc(100%-60px)]' : '',
-              sheetMode === 'half' && !isDragging ? 'translate-y-[60%]' : '',
-              sheetMode === 'full' && !isDragging ? 'translate-y-[120px]' : ''
+              sheetMode === 'collapsed' && !isDragging ? 'translate-y-[calc(100vh-60px)]' : '',
+              sheetMode === 'half' && !isDragging ? 'translate-y-[60svh]' : '',
+              sheetMode === 'full' && !isDragging ? 'translate-y-[120px]' : '',
+              windowWidth >= 1024 ? '!translate-y-0' : ''
             ]"
             :style="isDragging ? { transform: `translateY(${dragTranslateY}px)`, transition: 'none' } : {}"
             @pointerdown="handlePointerDown"
@@ -55,18 +56,18 @@
           >
             <!-- Swipe Handle Area (Visual only now, logic is on container) -->
             <div 
-              class="lg:hidden shrink-0 w-full h-[40px] flex flex-col items-center justify-center"
+              class="lg:hidden shrink-0 w-full h-[40px] flex flex-col items-center justify-center cursor-grab active:cursor-grabbing"
             >
               <div class="w-12 h-1.5 bg-zinc-400 dark:bg-white/20 rounded-full"></div>
             </div>
 
             <!-- Country Tabs -->
-            <div class="shrink-0 px-6 lg:px-5 pb-3 lg:pt-6 flex gap-2 overflow-x-auto no-scrollbar" @pointerdown.stop>
+            <div class="shrink-0 px-6 lg:px-5 pb-3 lg:pt-6 flex gap-2 overflow-x-auto no-scrollbar">
               <button 
                 v-for="country in countries" 
                 :key="country"
-                @click="handleCountryChange(country as 'Korea' | 'Japan')"
-                class="px-6 py-2.5 rounded-full text-xs font-black tracking-widest transition-all duration-300 whitespace-nowrap uppercase"
+                @click.stop="handleCountryChange(country as 'Korea' | 'Japan')"
+                class="px-6 py-2.5 rounded-full text-xs font-black tracking-widest transition-all duration-300 whitespace-nowrap uppercase pointer-events-auto"
                 :class="selectedCountry === country 
                   ? 'bg-zinc-900 dark:bg-white text-white dark:text-zinc-900' 
                   : 'bg-white/40 dark:bg-white/5 text-zinc-500 dark:text-zinc-400 hover:bg-white/60 dark:hover:bg-white/10'"
@@ -76,13 +77,13 @@
             </div>
 
             <!-- Bottom Extension to prevent holes during over-drag (Moved outside scroll area) -->
-            <div class="lg:hidden absolute top-[40px] left-0 right-0 h-[2000px] bg-transparent z-[-1] pointer-events-none"></div>
+            <div class="lg:hidden absolute top-[100%] left-0 right-0 h-[2000px] bg-white/60 dark:bg-[#131313]/60 backdrop-blur-2xl z-[-1] pointer-events-none"></div>
 
             <!-- List Container (Glassmorphism for Desktop) -->
             <div 
               ref="scrollContainer"
-              class="grow h-[100svh] lg:h-full px-6 lg:px-5 pt-0 pb-40 lg:pb-8 custom-scrollbar space-y-2.5 relative overscroll-contain overflow-x-hidden"
-              :class="sheetMode === 'full' || windowWidth >= 1024 ? 'overflow-y-auto' : 'overflow-y-hidden'"
+              class="grow px-6 lg:px-5 pt-0 pb-40 lg:pb-8 custom-scrollbar space-y-2.5 relative overscroll-contain overflow-x-hidden"
+              :class="(sheetMode === 'full' || windowWidth >= 1024) && !isDragging ? 'overflow-y-auto' : 'overflow-y-hidden'"
             >
               <!-- Header inside floating box: Dynamic Area Name (Mobile & Desktop) -->
               <div v-if="selectedShop" class="mb-6 pt-0" @pointerdown.stop>
@@ -310,7 +311,7 @@ const getModeOffset = (mode: SheetMode) => {
 
 const handlePointerDown = (e: PointerEvent) => {
   if (window.innerWidth >= 1024) return
-  e.stopPropagation()
+  // Don't stop propagation here to allow child clicks but start drag check
   
   startY.value = e.clientY
   isDragging.value = false
