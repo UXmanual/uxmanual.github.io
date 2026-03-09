@@ -56,9 +56,9 @@
           >
             <!-- Swipe Handle Area (Visual only now, logic is on container) -->
             <div 
-              class="lg:hidden w-full h-[40px] bg-white dark:bg-[#1f1f1f] rounded-t-[32px] flex flex-col items-center justify-center shadow-[0_-10px_40px_rgba(0,0,0,0.1)]"
+              class="lg:hidden w-full h-[40px] bg-white/60 dark:bg-[#131313]/60 backdrop-blur-2xl rounded-t-[32px] flex flex-col items-center justify-center"
             >
-              <div class="w-12 h-1.5 bg-zinc-200 dark:bg-white/10 rounded-full"></div>
+              <div class="w-12 h-1.5 bg-zinc-400 dark:bg-white/20 rounded-full"></div>
             </div>
 
             <!-- Bottom Extension to prevent holes during over-drag (Moved outside scroll area) -->
