@@ -31,22 +31,25 @@
           <div 
             class="fixed lg:relative inset-x-0 bottom-0 lg:inset-auto lg:top-0 lg:left-0 z-[60] lg:z-30 w-full lg:w-[400px] pointer-events-auto transition-transform duration-500 ease-in-out transform lg:translate-y-0"
             :class="[
-              isListOpen ? 'translate-y-0' : '',
-              !isListOpen && isInitialPeek ? 'translate-y-[calc(100%-120px)]' : '',
-              !isListOpen && !isInitialPeek ? 'translate-y-[calc(100%-40px)]' : ''
+              isInitialPeek && !isListOpen && !isDragging ? 'translate-y-[calc(100%-120px)]' : '',
+              !isInitialPeek && !isListOpen && !isDragging ? 'translate-y-[calc(100%-40px)]' : '',
+              isListOpen && !isDragging ? 'translate-y-0' : ''
             ]"
+            :style="isDragging ? { transform: `translateY(${dragTranslateY}px)`, transition: 'none' } : {}"
           >
             <!-- Bottom Sheet Handle (Mobile Only) -->
             <div 
-              @click="toggleList"
-              class="lg:hidden w-full h-[40px] bg-white dark:bg-[#1f1f1f] rounded-t-[32px] border-t border-x border-zinc-200 dark:border-white/10 flex flex-col items-center justify-center cursor-pointer shadow-[0_-10px_40px_rgba(0,0,0,0.1)]"
+              @touchstart="handleTouchStart"
+              @touchmove="handleTouchMove"
+              @touchend="handleTouchEnd"
+              class="lg:hidden w-full h-[40px] bg-white dark:bg-[#1f1f1f] rounded-t-[32px] border-t border-x border-zinc-200 dark:border-white/10 flex flex-col items-center justify-center cursor-pointer shadow-[0_-10px_40px_rgba(0,0,0,0.1)] touch-none"
             >
               <div class="w-12 h-1.5 bg-zinc-200 dark:bg-white/10 rounded-full"></div>
             </div>
 
             <!-- List Container (Glassmorphism for Desktop) -->
             <div 
-              class="bg-white/90 dark:bg-[#131313]/90 backdrop-blur-xl lg:rounded-3xl shadow-2xl border border-zinc-200 dark:border-white/10 h-[60vh] lg:h-full lg:max-h-[calc(100vh-140px)] overflow-y-auto px-6 lg:px-5 pt-10 lg:pt-6 pb-16 lg:pb-6 custom-scrollbar space-y-2.5"
+              class="bg-white/90 dark:bg-[#131313]/90 backdrop-blur-xl lg:rounded-3xl shadow-2xl border border-zinc-200 dark:border-white/10 h-[50vh] lg:h-full lg:max-h-[calc(100vh-140px)] overflow-y-auto px-6 lg:px-5 pt-10 lg:pt-6 pb-16 lg:pb-6 custom-scrollbar space-y-2.5"
             >
               <!-- Desktop Header inside floating box: Dynamic Area Name Only -->
               <div v-if="selectedShop" class="hidden lg:block mb-8 pt-4">
@@ -84,7 +87,7 @@
           <!-- Floating Mobile Toggle Button -->
           <div v-show="!isListOpen" class="lg:hidden fixed bottom-20 left-1/2 -translate-x-1/2 z-[50] pointer-events-auto">
             <button 
-              @click="toggleList"
+              @click="isListOpen = true; isInitialPeek = false"
               class="flex items-center gap-2 px-6 py-3.5 bg-zinc-900 dark:bg-white text-white dark:text-zinc-900 rounded-full font-bold text-sm shadow-2xl active:scale-95 transition-all duration-200 border border-zinc-800 dark:border-zinc-200"
             >
               <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -182,6 +185,43 @@ const isListOpen = ref(false)
 const isInitialPeek = ref(true)
 const selectedShop = computed(() => restaurantList.value.find(s => s.id === selectedId.value))
 
+// Swipe Interaction Logic
+const startY = ref(0)
+const isDragging = ref(false)
+const dragTranslateY = ref(0)
+
+const handleTouchStart = (e: TouchEvent) => {
+  startY.value = e.touches[0].clientY
+  isDragging.value = true
+  isInitialPeek.value = false
+  
+  const sheetHeight = window.innerHeight * 0.5
+  dragTranslateY.value = isListOpen.value ? 0 : sheetHeight
+}
+
+const handleTouchMove = (e: TouchEvent) => {
+  if (!isDragging.value) return
+  const deltaY = e.touches[0].clientY - startY.value
+  const sheetHeight = window.innerHeight * 0.5
+  const basePos = isListOpen.value ? 0 : sheetHeight
+  
+  let newPos = basePos + deltaY
+  if (newPos < -20) newPos = -20 + (newPos + 20) * 0.2 // Hard resistance upwards
+  dragTranslateY.value = newPos
+}
+
+const handleTouchEnd = () => {
+  isDragging.value = false
+  const sheetHeight = window.innerHeight * 0.5
+  const threshold = sheetHeight * 0.4
+  
+  if (dragTranslateY.value < threshold) {
+    isListOpen.value = true
+  } else {
+    isListOpen.value = false
+  }
+}
+
 /**
  * Handles map interaction to hide the initial peek
  */
@@ -189,14 +229,6 @@ const handleMapInteraction = () => {
   if (isInitialPeek.value) {
     isInitialPeek.value = false
   }
-}
-
-/**
- * Toggles the list open state and clears initial peek
- */
-const toggleList = () => {
-  isListOpen.value = !isListOpen.value
-  isInitialPeek.value = false
 }
 
 /**
