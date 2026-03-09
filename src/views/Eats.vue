@@ -2,10 +2,6 @@
   <div class="min-h-screen bg-zinc-50 dark:bg-[#131313] text-zinc-900 dark:text-white transition-colors duration-200">
     <SiteNavbar />
     
-    <div class="pt-[60px]">
-      <SiteBanner />
-    </div>
-
     <main class="relative w-full h-[calc(100vh-60px)] overflow-hidden bg-zinc-100 dark:bg-[#131313]">
       <!-- Map View (Background Layer) -->
       <div class="absolute inset-0 z-10">
@@ -32,7 +28,7 @@
             class="fixed lg:relative inset-x-0 bottom-0 lg:inset-auto lg:top-0 lg:right-0 z-[60] lg:z-30 w-full lg:w-[400px] pointer-events-auto transition-transform duration-500 ease-in-out transform lg:translate-y-0"
             :class="[
               isInitialPeek && !isListOpen && !isDragging ? 'translate-y-[calc(100%-120px)]' : '',
-              !isInitialPeek && !isListOpen && !isDragging ? 'translate-y-[calc(100%-40px)]' : '',
+              !isInitialPeek && !isListOpen && !isDragging ? 'translate-y-[calc(100%-60px)]' : '',
               isListOpen && !isDragging ? 'translate-y-0' : ''
             ]"
             :style="isDragging ? { transform: `translateY(${dragTranslateY}px)`, transition: 'none' } : {}"
@@ -50,7 +46,7 @@
             <!-- List Container (Glassmorphism for Desktop) -->
             <div 
               ref="scrollContainer"
-              class="bg-white/90 dark:bg-[#131313]/90 backdrop-blur-xl lg:rounded-3xl shadow-2xl border border-zinc-200 dark:border-white/10 h-[50vh] lg:h-full lg:max-h-[calc(100vh-140px)] px-6 lg:px-5 pt-10 lg:pt-6 pb-16 lg:pb-6 custom-scrollbar space-y-2.5"
+              class="bg-white/90 dark:bg-[#131313]/90 backdrop-blur-xl lg:rounded-3xl shadow-2xl border border-zinc-200 dark:border-white/10 h-[calc(100vh-100px)] lg:h-full lg:max-h-[calc(100vh-140px)] px-6 lg:px-5 pt-10 lg:pt-6 pb-24 lg:pb-6 custom-scrollbar space-y-2.5"
               :class="isListOpen && !isDragging ? 'overflow-y-auto' : 'overflow-y-hidden'"
             >
               <!-- Header inside floating box: Dynamic Area Name (Mobile & Desktop) -->
@@ -101,8 +97,6 @@
         </div>
       </div>
     </main>
-
-    <SiteFooter class="relative z-30" />
   </div>
 </template>
 
@@ -114,8 +108,6 @@
  */
 import { ref, computed } from 'vue'
 import SiteNavbar from '../components/SiteNavbar.vue'
-import SiteFooter from '../components/SiteFooter.vue'
-import SiteBanner from '../components/SiteBanner.vue'
 
 // Mock Data for Layout Demonstration
 interface Shop {
@@ -200,15 +192,15 @@ const handleTouchStart = (e: TouchEvent) => {
   isDragging.value = false // Start with false, decide in Move
   isInitialPeek.value = false
   
-  const sheetHeight = window.innerHeight * 0.5
-  dragTranslateY.value = isListOpen.value ? 0 : sheetHeight
+  const sheetHeight = window.innerHeight - 100
+  dragTranslateY.value = isListOpen.value ? 0 : (isInitialPeek.value ? sheetHeight - 80 : sheetHeight)
 }
 
 const handleTouchMove = (e: TouchEvent) => {
   if (window.innerWidth >= 1024) return
   
   const deltaY = e.touches[0].clientY - startY.value
-  const sheetHeight = window.innerHeight * 0.5
+  const sheetHeight = window.innerHeight - 100
   const scrollTop = scrollContainer.value?.scrollTop || 0
   
   // Decide whether to drag the sheet or scroll content
@@ -220,8 +212,9 @@ const handleTouchMove = (e: TouchEvent) => {
   if (isDraggingDownAtTop || isDraggingUpWhileClosed) {
     if (!isDragging.value) {
       isDragging.value = true
-      // Recalculate startY to prevent jumps when transition from scroll to drag
-      startY.value = e.touches[0].clientY - (isListOpen.value ? 0 : sheetHeight)
+      const sheetHeight = window.innerHeight - 100
+      const currentTranslate = isListOpen.value ? 0 : sheetHeight
+      startY.value = e.touches[0].clientY - currentTranslate
     }
     
     let newPos = e.touches[0].clientY - startY.value
@@ -244,7 +237,7 @@ const handleTouchEnd = () => {
   if (!isDragging.value) return
   
   isDragging.value = false
-  const sheetHeight = window.innerHeight * 0.5
+  const sheetHeight = window.innerHeight - 100
   const sensitivityTrigger = 30 
   
   if (isListOpen.value) {
