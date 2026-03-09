@@ -47,7 +47,7 @@
             class="fixed lg:relative inset-x-0 bottom-0 lg:inset-auto lg:top-0 lg:right-0 z-[60] lg:z-30 w-full lg:w-[400px] pointer-events-auto transition-transform duration-500 ease-in-out transform lg:translate-y-0 touch-none select-none"
             :class="[
               sheetMode === 'collapsed' && !isDragging ? 'translate-y-[calc(100%-60px)]' : '',
-              sheetMode === 'half' && !isDragging ? 'translate-y-[50%]' : '',
+              sheetMode === 'half' && !isDragging ? 'translate-y-[60%]' : '',
               sheetMode === 'full' && !isDragging ? 'translate-y-0' : ''
             ]"
             :style="isDragging ? { transform: `translateY(${dragTranslateY}px)`, transition: 'none' } : {}"
@@ -197,7 +197,7 @@ const restaurantList = ref<Shop[]>([
 
 const selectedId = ref(1)
 type SheetMode = 'collapsed' | 'half' | 'full'
-const sheetMode = ref<SheetMode>('collapsed')
+const sheetMode = ref<SheetMode>('half')
 const selectedShop = computed(() => restaurantList.value.find(s => s.id === selectedId.value))
 
 onMounted(() => {
@@ -225,7 +225,7 @@ const dragTranslateY = ref(0)
 const getModeOffset = (mode: SheetMode) => {
   const containerHeight = window.innerHeight - 60
   if (mode === 'collapsed') return containerHeight - 60
-  if (mode === 'half') return containerHeight * 0.5
+  if (mode === 'half') return containerHeight * 0.6 // 2/5 visible = 60% offset
   return 0
 }
 
