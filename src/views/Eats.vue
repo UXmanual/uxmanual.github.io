@@ -5,8 +5,11 @@
     <main class="relative w-full h-[calc(100vh-60px)] overflow-hidden bg-zinc-100 dark:bg-[#131313] touch-none overscroll-none">
       <!-- Map View (Background Layer) -->
       <div 
-        class="absolute inset-0 z-10 transition-opacity duration-300"
-        :class="isDragging ? 'pointer-events-none opacity-80' : 'pointer-events-auto'"
+        class="absolute inset-0 z-10 transition-all duration-300"
+        :class="[
+          isDragging ? 'pointer-events-none' : 'pointer-events-auto',
+          sheetMode === 'full' ? 'opacity-0' : 'opacity-100'
+        ]"
       >
         <transition name="fade" mode="out-in">
           <iframe
@@ -43,12 +46,11 @@
               sheetMode === 'full' && !isDragging ? 'translate-y-0' : ''
             ]"
             :style="isDragging ? { transform: `translateY(${dragTranslateY}px)`, transition: 'none' } : {}"
-            @pointerdown.stop
+            @pointerdown="handlePointerDown"
           >
-            <!-- Swipe Handle Area -->
+            <!-- Swipe Handle Area (Visual only now, logic is on container) -->
             <div 
-              class="lg:hidden w-full h-[40px] bg-white dark:bg-[#1f1f1f] rounded-t-[32px] flex flex-col items-center justify-center shadow-[0_-10px_40px_rgba(0,0,0,0.1)] cursor-grab active:cursor-grabbing"
-              @pointerdown="handlePointerDown"
+              class="lg:hidden w-full h-[40px] bg-white dark:bg-[#1f1f1f] rounded-t-[32px] flex flex-col items-center justify-center shadow-[0_-10px_40px_rgba(0,0,0,0.1)]"
             >
               <div class="w-12 h-1.5 bg-zinc-200 dark:bg-white/10 rounded-full"></div>
             </div>
@@ -225,12 +227,15 @@ const handlePointerMove = (e: PointerEvent) => {
   const scrollTop = scrollContainer.value?.scrollTop || 0
   
   // Distance check to ignore small jitter (taps)
-  if (!isDragging.value && Math.abs(deltaY) > 5) {
-    // Only start dragging if we are at top of list (scrolling down) or closed (scrolling up)
-    const isAtTop = scrollTop <= 0
-    const isNotFull = sheetMode.value !== 'full'
+  if (!isDragging.value && Math.abs(deltaY) > 8) {
+    // Decision logic to start dragging
+    const atTop = scrollTop <= 5 
+    const isSwipingDown = deltaY > 0
+    const isSwipingUp = deltaY < 0
     
-    if ((deltaY > 0 && isAtTop) || (deltaY < 0 && isNotFull)) {
+    // 1. Kéo xuống khi đang ở đỉnh danh sách (kể cả Full 모드 탈출)
+    // 2. Kéo lên khi chưa ở Full 모드
+    if ((isSwipingDown && atTop) || (isSwipingUp && sheetMode.value !== 'full')) {
       isDragging.value = true
       startY.value = e.clientY - getModeOffset(sheetMode.value)
     }
@@ -238,7 +243,7 @@ const handlePointerMove = (e: PointerEvent) => {
 
   if (isDragging.value) {
     let newPos = e.clientY - startY.value
-    // Top resistance
+    // Resistance at the very top
     if (newPos < -20) newPos = -20 + (newPos + 20) * 0.2 
     dragTranslateY.value = newPos
     
