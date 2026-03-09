@@ -4,7 +4,10 @@
     
     <main class="relative w-full h-[calc(100vh-60px)] overflow-hidden bg-zinc-100 dark:bg-[#131313] touch-none overscroll-none">
       <!-- Map View (Background Layer) -->
-      <div class="absolute inset-0 z-10 pointer-events-auto">
+      <div 
+        class="absolute inset-0 z-10 transition-opacity duration-300"
+        :class="isDragging ? 'pointer-events-none opacity-80' : 'pointer-events-auto'"
+      >
         <transition name="fade" mode="out-in">
           <iframe
             :key="mapUrl"
@@ -19,27 +22,32 @@
         </transition>
       </div>
 
+      <!-- Dragging Overlay: Blocks map interference during swipe -->
+      <div 
+        v-if="isDragging" 
+        class="fixed inset-0 z-[100] cursor-grabbing"
+        @pointermove="handlePointerMove"
+        @pointerup="handlePointerUp"
+      ></div>
+
       <!-- Content Layer: Restaurant List -->
       <div class="relative z-20 h-full pointer-events-none" @touchstart="handleMapInteraction">
         <div class="max-w-[1800px] mx-auto h-full px-6 lg:px-10 py-10 flex flex-col lg:flex-row lg:justify-end gap-8">
           
           <!-- Desktop: Floating Sidebar (Right) | Mobile: Bottom Sheet -->
           <div 
-            class="fixed lg:relative inset-x-0 bottom-0 lg:inset-auto lg:top-0 lg:right-0 z-[60] lg:z-30 w-full lg:w-[400px] pointer-events-auto transition-transform duration-500 ease-in-out transform lg:translate-y-0 touch-none"
+            class="fixed lg:relative inset-x-0 bottom-0 lg:inset-auto lg:top-0 lg:right-0 z-[60] lg:z-30 w-full lg:w-[400px] pointer-events-auto transition-transform duration-500 ease-in-out transform lg:translate-y-0 touch-none select-none"
             :class="[
               sheetMode === 'collapsed' && !isDragging ? 'translate-y-[calc(100%-60px)]' : '',
               sheetMode === 'half' && !isDragging ? 'translate-y-[50%]' : '',
               sheetMode === 'full' && !isDragging ? 'translate-y-0' : ''
             ]"
             :style="isDragging ? { transform: `translateY(${dragTranslateY}px)`, transition: 'none' } : {}"
-            @pointerdown="handlePointerDown"
-            @pointermove="handlePointerMove"
-            @pointerup="handlePointerUp"
-            @pointercancel="handlePointerUp"
           >
-            <!-- Bottom Sheet Handle (Mobile Only) -->
+            <!-- Swipe Handle Area -->
             <div 
-              class="lg:hidden w-full h-[40px] bg-white dark:bg-[#1f1f1f] rounded-t-[32px] flex flex-col items-center justify-center shadow-[0_-10px_40px_rgba(0,0,0,0.1)] touch-none select-none"
+              class="lg:hidden w-full h-[40px] bg-white dark:bg-[#1f1f1f] rounded-t-[32px] flex flex-col items-center justify-center shadow-[0_-10px_40px_rgba(0,0,0,0.1)] cursor-grab active:cursor-grabbing"
+              @pointerdown="handlePointerDown"
             >
               <div class="w-12 h-1.5 bg-zinc-200 dark:bg-white/10 rounded-full"></div>
             </div>
@@ -203,63 +211,62 @@ const handlePointerDown = (e: PointerEvent) => {
   isDragging.value = false
   dragTranslateY.value = getModeOffset(sheetMode.value)
   
-  ;(e.target as HTMLElement).setPointerCapture(e.pointerId)
+  // Attach move/up to window/overlay to ensure focus
+  window.addEventListener('pointermove', handlePointerMove, { passive: false })
+  window.addEventListener('pointerup', handlePointerUp)
 }
 
 const handlePointerMove = (e: PointerEvent) => {
   if (window.innerWidth >= 1024) return
-  if (e.buttons === 0) return 
   e.stopPropagation()
 
   const deltaY = e.clientY - startY.value
   const scrollTop = scrollContainer.value?.scrollTop || 0
   
-  const isDraggingDownAtTop = deltaY > 0 && scrollTop <= 0
-  const isDraggingUpWhileNotFull = deltaY < 0 && sheetMode.value !== 'full'
-  
-  if (isDraggingDownAtTop || isDraggingUpWhileNotFull) {
-    if (!isDragging.value) {
+  // Distance check to ignore small jitter (taps)
+  if (!isDragging.value && Math.abs(deltaY) > 5) {
+    // Only start dragging if we are at top of list (scrolling down) or closed (scrolling up)
+    const isAtTop = scrollTop <= 0
+    const isNotFull = sheetMode.value !== 'full'
+    
+    if ((deltaY > 0 && isAtTop) || (deltaY < 0 && isNotFull)) {
       isDragging.value = true
       startY.value = e.clientY - getModeOffset(sheetMode.value)
     }
-    
+  }
+
+  if (isDragging.value) {
     let newPos = e.clientY - startY.value
+    // Top resistance
     if (newPos < -20) newPos = -20 + (newPos + 20) * 0.2 
     dragTranslateY.value = newPos
     
-    // Explicitly prevent default to stop background scrolling/wiggling
     if (e.cancelable) e.preventDefault()
-  } else {
-    if (isDragging.value) isDragging.value = false
   }
 }
 
 const handlePointerUp = (e: PointerEvent) => {
   e.stopPropagation()
+  window.removeEventListener('pointermove', handlePointerMove)
+  window.removeEventListener('pointerup', handlePointerUp)
+  
   if (!isDragging.value) return
   
   isDragging.value = false
-  const containerHeight = window.innerHeight - 60
-  const sensitivity = 40 
-  
+  const sensitivity = 50 
   const currentOffset = dragTranslateY.value
   const prevOffset = getModeOffset(sheetMode.value)
   const diff = currentOffset - prevOffset
 
-  // Snap Logic based on direction and current state
   if (Math.abs(diff) > sensitivity) {
-    if (diff < 0) { // Swiped Up
+    if (diff < 0) { // Up
       if (sheetMode.value === 'collapsed') sheetMode.value = 'half'
       else if (sheetMode.value === 'half') sheetMode.value = 'full'
-    } else { // Swiped Down
+    } else { // Down
       if (sheetMode.value === 'full') sheetMode.value = 'half'
       else if (sheetMode.value === 'half') sheetMode.value = 'collapsed'
     }
   }
-  
-  try {
-    ;(e.target as HTMLElement).releasePointerCapture(e.pointerId)
-  } catch (err) {}
 }
 
 /**
