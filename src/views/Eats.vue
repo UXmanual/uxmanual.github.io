@@ -21,21 +21,22 @@
         </transition>
       </div>
 
-      <!-- Map Interaction Shield: Physically blocks all touches to map when sheet is active -->
-      <div 
-        v-if="sheetMode !== 'collapsed' || isDragging"
-        class="absolute inset-0 z-[15] bg-transparent pointer-events-auto touch-none"
-        @touchstart.stop.prevent
-        @mousedown.stop
-      ></div>
-
-      <!-- Dragging Overlay: Blocks map interference during swipe -->
-      <div 
-        v-if="isDragging" 
-        class="fixed inset-0 z-[100] cursor-grabbing"
-        @pointermove="handlePointerMove"
-        @pointerup="handlePointerUp"
-      ></div>
+      <!-- Dim Overlay: Blocks map, dims background, and collapses on click -->
+      <transition 
+        enter-active-class="transition-opacity duration-300 ease-out"
+        enter-from-class="opacity-0"
+        enter-to-class="opacity-100"
+        leave-active-class="transition-opacity duration-200 ease-in"
+        leave-from-class="opacity-100"
+        leave-to-class="opacity-0"
+      >
+        <div 
+          v-if="sheetMode !== 'collapsed' || isDragging"
+          class="fixed inset-0 z-[50] bg-black/40 backdrop-blur-[2px] pointer-events-auto cursor-pointer"
+          @click="sheetMode = 'collapsed'"
+          @touchstart.stop
+        ></div>
+      </transition>
 
       <!-- Content Layer: Restaurant List -->
       <div class="relative z-20 h-full pointer-events-none">
