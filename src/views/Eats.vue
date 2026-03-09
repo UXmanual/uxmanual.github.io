@@ -3,13 +3,9 @@
     <SiteNavbar />
     
     <main class="relative w-full h-[calc(100vh-60px)] overflow-hidden bg-zinc-100 dark:bg-[#131313] touch-none overscroll-none">
-      <!-- Map View (Background Layer) -->
       <div 
         class="absolute inset-0 z-10 transition-all duration-300"
-        :class="[
-          (isDragging || sheetMode !== 'collapsed') ? 'pointer-events-none' : 'pointer-events-auto',
-          sheetMode === 'full' ? 'opacity-0' : 'opacity-100'
-        ]"
+        :class="sheetMode === 'full' ? 'opacity-0' : 'opacity-100'"
       >
         <transition name="fade" mode="out-in">
           <iframe
@@ -24,6 +20,14 @@
           ></iframe>
         </transition>
       </div>
+
+      <!-- Map Interaction Shield: Physically blocks all touches to map when sheet is active -->
+      <div 
+        v-if="sheetMode !== 'collapsed' || isDragging"
+        class="absolute inset-0 z-[15] bg-transparent pointer-events-auto touch-none"
+        @touchstart.stop.prevent
+        @mousedown.stop
+      ></div>
 
       <!-- Dragging Overlay: Blocks map interference during swipe -->
       <div 
@@ -47,6 +51,8 @@
             ]"
             :style="isDragging ? { transform: `translateY(${dragTranslateY}px)`, transition: 'none' } : {}"
             @pointerdown="handlePointerDown"
+            @touchstart.stop
+            @mousedown.stop
           >
             <!-- Swipe Handle Area (Visual only now, logic is on container) -->
             <div 
