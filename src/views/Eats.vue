@@ -44,10 +44,15 @@
             <div 
               class="bg-white/90 dark:bg-[#131313]/90 backdrop-blur-xl lg:rounded-3xl shadow-2xl border border-zinc-200 dark:border-white/10 h-[60vh] lg:h-full lg:max-h-[calc(100vh-140px)] overflow-y-auto px-6 lg:px-5 pt-10 lg:pt-6 pb-16 lg:pb-6 custom-scrollbar space-y-2.5"
             >
-              <!-- Desktop Header inside floating box -->
-              <div class="hidden lg:block mb-6">
-                <h1 class="text-2xl font-black tracking-tighter text-zinc-900 dark:text-white uppercase leading-none mb-1">EATS & PLACES</h1>
-                <p class="text-[11px] font-bold text-zinc-400 dark:text-zinc-500 uppercase tracking-widest">Gourmet Guide & Maps</p>
+              <!-- Desktop Header inside floating box: Dynamic Location Info -->
+              <div v-if="selectedShop" class="hidden lg:block mb-6">
+                <h1 class="text-2xl font-black tracking-tighter text-zinc-900 dark:text-white uppercase leading-none mb-1">{{ selectedShop.name }}</h1>
+                <p class="text-[11px] font-bold text-orange-500 uppercase tracking-widest flex items-center gap-1">
+                  <svg xmlns="http://www.w3.org/2000/svg" class="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
+                  </svg>
+                  {{ selectedShop.address }}
+                </p>
               </div>
 
               <div 
@@ -77,19 +82,8 @@
               </div>
             </div>
           </div>
-
-          <!-- Floating Mobile Toggle Button -->
-          <div v-show="!isListOpen" class="lg:hidden fixed bottom-20 left-1/2 -translate-x-1/2 z-[50] pointer-events-auto">
-            <button 
-              @click="isListOpen = true"
-              class="flex items-center gap-2 px-6 py-3.5 bg-zinc-900 dark:bg-white text-white dark:text-zinc-900 rounded-full font-bold text-sm shadow-2xl active:scale-95 transition-all duration-200 border border-zinc-800 dark:border-zinc-200"
-            >
-              <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
-              </svg>
-              목록보기
-            </button>
-          </div>
+          
+          <!-- ... rest of template ... -->
         </div>
       </div>
     </main>
@@ -107,7 +101,6 @@
 import { ref, computed } from 'vue'
 import SiteNavbar from '../components/SiteNavbar.vue'
 import SiteFooter from '../components/SiteFooter.vue'
-import SiteHeader from '../components/SiteHeader.vue'
 import SiteBanner from '../components/SiteBanner.vue'
 
 // Mock Data for Layout Demonstration
@@ -149,7 +142,7 @@ const restaurantList = ref<Shop[]>([
     category: "라멘",
     rating: 4.6,
     description: "진한 돈코츠 육수와 직접 뽑은 얇은 면으로 유명한 후쿠오카 대표 라멘 맛집입니다.",
-    address: "일본 후쿠오카",
+    address: "일본 후쿠오카현 후쿠오카시",
     lat: 33.5891,
     lng: 130.4017
   },
@@ -159,7 +152,7 @@ const restaurantList = ref<Shop[]>([
     category: "전통식",
     rating: 4.7,
     description: "전통적인 코스 요리를 통해 교토의 계절적 아름다움을 오감으로 느껴보세요.",
-    address: "일본 교토",
+    address: "일본 교토부 교토시",
     lat: 35.0116,
     lng: 135.7681
   },
@@ -169,7 +162,7 @@ const restaurantList = ref<Shop[]>([
     category: "해산물",
     rating: 4.5,
     description: "갓 잡은 킹크랩과 가리비를 숯불에 구워 바다의 향을 그대로 담아냈습니다.",
-    address: "일본 홋카이도 삿포로",
+    address: "일본 홋카이도 삿포로시",
     lat: 43.0611,
     lng: 141.3564
   }
