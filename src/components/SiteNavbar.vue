@@ -121,13 +121,21 @@ const handleScroll = () => {
 }
 
 const updateThemeClass = (dark: boolean) => {
+  const themeColor = dark ? '#131313' : '#f9fafb'
+  const statusBarStyle = dark ? 'black-translucent' : 'default'
+
   if (dark) {
     document.documentElement.classList.add('dark')
-    document.querySelector('meta[name="theme-color"]')?.setAttribute('content', '#131313')
   } else {
     document.documentElement.classList.remove('dark')
-    document.querySelector('meta[name="theme-color"]')?.setAttribute('content', '#f9fafb') // zinc-50
   }
+
+  // Dynamic Meta Tag Updates for iOS/Mobile Chrome
+  document.querySelector('meta[name="theme-color"]')?.setAttribute('content', themeColor)
+  document.querySelector('meta[name="apple-mobile-web-app-status-bar-style"]')?.setAttribute('content', statusBarStyle)
+  
+  // Force body background sync to help iOS Safari Chrome tinting
+  document.body.style.backgroundColor = themeColor
 }
 
 const toggleTheme = () => {
