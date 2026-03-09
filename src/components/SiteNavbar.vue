@@ -75,6 +75,13 @@ const lastScrollY = ref(0)
 const isNaturalScroll = ref(true)
 
 const handleScroll = () => {
+  // If on Eats page, keep navbar fixed at top
+  if (route.path === '/eats') {
+    navTranslateY.value = 0
+    document.documentElement.style.setProperty('--nav-y', '0px')
+    return
+  }
+
   const currentScrollY = Math.max(0, window.scrollY)
   const delta = currentScrollY - lastScrollY.value
   

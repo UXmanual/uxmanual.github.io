@@ -27,9 +27,9 @@
           <div 
             class="fixed lg:relative inset-x-0 bottom-0 lg:inset-auto lg:top-0 lg:right-0 z-[60] lg:z-30 w-full lg:w-[400px] pointer-events-auto transition-transform duration-500 ease-in-out transform lg:translate-y-0 touch-none"
             :class="[
-              isInitialPeek && !isListOpen && !isDragging ? 'translate-y-[calc(100%-120px)]' : '',
-              !isInitialPeek && !isListOpen && !isDragging ? 'translate-y-[calc(100%-60px)]' : '',
-              isListOpen && !isDragging ? 'translate-y-0' : ''
+              sheetMode === 'collapsed' && !isDragging ? 'translate-y-[calc(100%-60px)]' : '',
+              sheetMode === 'half' && !isDragging ? 'translate-y-[50%]' : '',
+              sheetMode === 'full' && !isDragging ? 'translate-y-0' : ''
             ]"
             :style="isDragging ? { transform: `translateY(${dragTranslateY}px)`, transition: 'none' } : {}"
             @pointerdown="handlePointerDown"
@@ -47,8 +47,8 @@
             <!-- List Container (Glassmorphism for Desktop) -->
             <div 
               ref="scrollContainer"
-              class="bg-white/90 dark:bg-[#131313]/90 backdrop-blur-xl lg:rounded-3xl shadow-2xl h-[calc(100vh-100px)] lg:h-full lg:max-h-[calc(100vh-140px)] px-6 lg:px-5 pt-10 lg:pt-6 pb-24 lg:pb-6 custom-scrollbar space-y-2.5 relative"
-              :class="isListOpen && !isDragging ? 'overflow-y-auto' : 'overflow-y-hidden'"
+              class="bg-white/90 dark:bg-[#131313]/90 backdrop-blur-xl lg:rounded-3xl shadow-2xl h-[calc(100vh-60px)] lg:h-full lg:max-h-[calc(100vh-140px)] px-6 lg:px-5 pt-10 lg:pt-6 pb-24 lg:pb-6 custom-scrollbar space-y-2.5 relative"
+              :class="sheetMode === 'full' && !isDragging ? 'overflow-y-auto' : 'overflow-y-hidden'"
             >
               <!-- Bottom Extension to prevent holes during over-drag -->
               <div class="lg:hidden absolute top-[-1px] left-0 right-0 bottom-[-1000px] bg-white dark:bg-[#131313] z-[-1] pointer-events-none"></div>
@@ -86,9 +86,9 @@
           </div>
           
           <!-- Floating Mobile Toggle Button -->
-          <div v-show="!isListOpen" class="lg:hidden fixed bottom-20 left-1/2 -translate-x-1/2 z-[50] pointer-events-auto">
+          <div v-show="sheetMode === 'collapsed'" class="lg:hidden fixed bottom-20 left-1/2 -translate-x-1/2 z-[50] pointer-events-auto">
             <button 
-              @click="isListOpen = true; isInitialPeek = false"
+              @click="sheetMode = 'half'"
               class="flex items-center gap-2 px-6 py-3.5 bg-zinc-900 dark:bg-white text-white dark:text-zinc-900 rounded-full font-bold text-sm shadow-2xl active:scale-95 transition-all duration-200 border border-zinc-800 dark:border-zinc-200"
             >
               <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -178,8 +178,8 @@ const restaurantList = ref<Shop[]>([
 ])
 
 const selectedId = ref(1)
-const isListOpen = ref(false)
-const isInitialPeek = ref(true)
+type SheetMode = 'collapsed' | 'half' | 'full'
+const sheetMode = ref<SheetMode>('collapsed')
 const selectedShop = computed(() => restaurantList.value.find(s => s.id === selectedId.value))
 
 // Swipe Interaction Logic (Integrated with Scrolling)
@@ -188,50 +188,48 @@ const startY = ref(0)
 const isDragging = ref(false)
 const dragTranslateY = ref(0)
 
+const getModeOffset = (mode: SheetMode) => {
+  const containerHeight = window.innerHeight - 60
+  if (mode === 'collapsed') return containerHeight - 60
+  if (mode === 'half') return containerHeight * 0.5
+  return 0
+}
+
 const handlePointerDown = (e: PointerEvent) => {
   if (window.innerWidth >= 1024) return
   e.stopPropagation()
   
   startY.value = e.clientY
   isDragging.value = false
-  isInitialPeek.value = false
+  dragTranslateY.value = getModeOffset(sheetMode.value)
   
-  const sheetHeight = window.innerHeight - 100
-  dragTranslateY.value = isListOpen.value ? 0 : (isInitialPeek.value ? sheetHeight - 80 : sheetHeight)
-  
-  // Capture pointer to continue receiving events even if leave target
   ;(e.target as HTMLElement).setPointerCapture(e.pointerId)
 }
 
 const handlePointerMove = (e: PointerEvent) => {
   if (window.innerWidth >= 1024) return
-  if (e.buttons === 0) return // No button pressed
+  if (e.buttons === 0) return 
   e.stopPropagation()
 
   const deltaY = e.clientY - startY.value
-  const sheetHeight = window.innerHeight - 100
   const scrollTop = scrollContainer.value?.scrollTop || 0
   
   const isDraggingDownAtTop = deltaY > 0 && scrollTop <= 0
-  const isDraggingUpWhileClosed = deltaY < 0 && !isListOpen.value
+  const isDraggingUpWhileNotFull = deltaY < 0 && sheetMode.value !== 'full'
   
-  if (isDraggingDownAtTop || isDraggingUpWhileClosed) {
+  if (isDraggingDownAtTop || isDraggingUpWhileNotFull) {
     if (!isDragging.value) {
       isDragging.value = true
-      const currentTranslate = isListOpen.value ? 0 : sheetHeight
-      startY.value = e.clientY - currentTranslate
+      startY.value = e.clientY - getModeOffset(sheetMode.value)
     }
     
     let newPos = e.clientY - startY.value
-    // Resistance at limits
     if (newPos < -20) newPos = -20 + (newPos + 20) * 0.2 
     dragTranslateY.value = newPos
     
     if (e.cancelable) e.preventDefault()
   } else {
-    if (isDragging.value) {
-      isDragging.value = false
-    }
+    if (isDragging.value) isDragging.value = false
   }
 }
 
@@ -240,20 +238,21 @@ const handlePointerUp = (e: PointerEvent) => {
   if (!isDragging.value) return
   
   isDragging.value = false
-  const sheetHeight = window.innerHeight - 100
-  const sensitivityTrigger = 30 
+  const containerHeight = window.innerHeight - 60
+  const sensitivity = 40 
   
-  if (isListOpen.value) {
-    if (dragTranslateY.value > sensitivityTrigger) {
-      isListOpen.value = false
-    } else {
-      isListOpen.value = true
-    }
-  } else {
-    if (dragTranslateY.value < (sheetHeight - sensitivityTrigger)) {
-      isListOpen.value = true
-    } else {
-      isListOpen.value = false
+  const currentOffset = dragTranslateY.value
+  const prevOffset = getModeOffset(sheetMode.value)
+  const diff = currentOffset - prevOffset
+
+  // Snap Logic based on direction and current state
+  if (Math.abs(diff) > sensitivity) {
+    if (diff < 0) { // Swiped Up
+      if (sheetMode.value === 'collapsed') sheetMode.value = 'half'
+      else if (sheetMode.value === 'half') sheetMode.value = 'full'
+    } else { // Swiped Down
+      if (sheetMode.value === 'full') sheetMode.value = 'half'
+      else if (sheetMode.value === 'half') sheetMode.value = 'collapsed'
     }
   }
   
@@ -266,22 +265,19 @@ const handlePointerUp = (e: PointerEvent) => {
  * Handles map interaction to hide the initial peek
  */
 const handleMapInteraction = () => {
-  if (isInitialPeek.value) {
-    isInitialPeek.value = false
+  if (sheetMode.value !== 'collapsed') {
+    sheetMode.value = 'collapsed'
   }
 }
 
 /**
  * Updates the selected shop and triggers a map update.
- * Closes the mobile bottom sheet after selection.
  * @param shop The shop object to select
  */
 const handleShopSelect = (shop: Shop) => {
   selectedId.value = shop.id
-  isInitialPeek.value = false
-  // Close the bottom sheet on mobile after selecting a shop
   if (window.innerWidth < 1024) {
-    isListOpen.value = false
+    sheetMode.value = 'collapsed'
   }
 }
 
