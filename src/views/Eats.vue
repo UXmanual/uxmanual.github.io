@@ -44,15 +44,9 @@
             <div 
               class="bg-white/90 dark:bg-[#131313]/90 backdrop-blur-xl lg:rounded-3xl shadow-2xl border border-zinc-200 dark:border-white/10 h-[60vh] lg:h-full lg:max-h-[calc(100vh-140px)] overflow-y-auto px-6 lg:px-5 pt-10 lg:pt-6 pb-16 lg:pb-6 custom-scrollbar space-y-2.5"
             >
-              <!-- Desktop Header inside floating box: Dynamic Location Info -->
-              <div v-if="selectedShop" class="hidden lg:block mb-6">
-                <h1 class="text-2xl font-black tracking-tighter text-zinc-900 dark:text-white uppercase leading-none mb-1">{{ selectedShop.name }}</h1>
-                <p class="text-[11px] font-bold text-orange-500 uppercase tracking-widest flex items-center gap-1">
-                  <svg xmlns="http://www.w3.org/2000/svg" class="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
-                  </svg>
-                  {{ selectedShop.address }}
-                </p>
+              <!-- Desktop Header inside floating box: Dynamic Area Name Only -->
+              <div v-if="selectedShop" class="hidden lg:block mb-8 pt-4">
+                <h1 class="text-2xl font-black tracking-tighter text-zinc-900 dark:text-white uppercase leading-tight">{{ selectedShop.address }}</h1>
               </div>
 
               <div 
