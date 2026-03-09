@@ -7,7 +7,7 @@
       <div 
         class="absolute inset-0 z-10 transition-all duration-300"
         :class="[
-          isDragging ? 'pointer-events-none' : 'pointer-events-auto',
+          (isDragging || sheetMode !== 'collapsed') ? 'pointer-events-none' : 'pointer-events-auto',
           sheetMode === 'full' ? 'opacity-0' : 'opacity-100'
         ]"
       >
@@ -64,7 +64,7 @@
               <!-- Bottom Extension to prevent holes during over-drag -->
               <div class="lg:hidden absolute top-[-1px] left-0 right-0 bottom-[-1000px] bg-white dark:bg-[#131313] z-[-1] pointer-events-none"></div>
               <!-- Header inside floating box: Dynamic Area Name (Mobile & Desktop) -->
-              <div v-if="selectedShop" class="mb-8 pt-4">
+              <div v-if="selectedShop" class="mb-8 pt-4" @pointerdown.stop>
                 <h1 class="text-2xl font-black tracking-tighter text-zinc-900 dark:text-white uppercase leading-tight">{{ selectedShop.address }}</h1>
               </div>
 
