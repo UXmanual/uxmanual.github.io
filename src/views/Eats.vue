@@ -103,11 +103,11 @@
                   ? 'bg-white dark:bg-white/10 border-[#1a73e8]' 
                   : 'bg-transparent border-zinc-100 dark:border-white/5 hover:bg-zinc-50 dark:hover:bg-white/5'"
               >
-                <div class="flex justify-between items-start mb-1">
-                  <span class="px-2 py-0.5 rounded text-[9px] font-black uppercase tracking-wider bg-zinc-100 dark:bg-white/10 text-zinc-500 dark:text-zinc-400 border border-zinc-200 dark:border-white/5">
+                <div class="flex justify-between items-center mb-1.5">
+                  <span class="px-2 py-0.5 inline-flex items-center rounded text-[10px] font-black uppercase tracking-wider bg-zinc-100 dark:bg-white/10 text-zinc-500 dark:text-zinc-400 border border-zinc-200 dark:border-white/5 leading-none">
                     {{ shop.category }}
                   </span>
-                  <span class="text-[10px] font-bold text-[#1a73e8]">★ {{ shop.rating }}</span>
+                  <span class="text-[11px] font-bold text-[#1a73e8]">★ {{ shop.rating }}</span>
                 </div>
                 <h3 class="text-base font-bold mb-0.5 group-hover:text-[#1a73e8] transition-colors">{{ shop.name }}</h3>
                 <p class="text-xs text-zinc-500 dark:text-zinc-400 line-clamp-1 leading-relaxed">{{ shop.description }}</p>
