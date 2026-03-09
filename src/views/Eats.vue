@@ -280,10 +280,15 @@ const windowWidth = ref(typeof window !== 'undefined' ? window.innerWidth : 1200
 
 const handleResize = () => {
   windowWidth.value = window.innerWidth
+  if (!isDragging.value) {
+    dragTranslateY.value = getModeOffset(sheetMode.value)
+  }
 }
 
 onMounted(() => {
   window.addEventListener('resize', handleResize)
+  handleResize() // Sync state immediately
+  
   // Lock body scroll to prevent browser UI hiding/showing
   document.documentElement.style.overflow = 'hidden'
   document.documentElement.style.height = '100svh'
