@@ -31,7 +31,7 @@
       ></div>
 
       <!-- Content Layer: Restaurant List -->
-      <div class="relative z-20 h-full pointer-events-none" @touchstart="handleMapInteraction">
+      <div class="relative z-20 h-full pointer-events-none">
         <div class="max-w-[1800px] mx-auto h-full px-6 lg:px-10 py-10 flex flex-col lg:flex-row lg:justify-end gap-8">
           
           <!-- Desktop: Floating Sidebar (Right) | Mobile: Bottom Sheet -->
@@ -43,6 +43,7 @@
               sheetMode === 'full' && !isDragging ? 'translate-y-0' : ''
             ]"
             :style="isDragging ? { transform: `translateY(${dragTranslateY}px)`, transition: 'none' } : {}"
+            @pointerdown.stop
           >
             <!-- Swipe Handle Area -->
             <div 
