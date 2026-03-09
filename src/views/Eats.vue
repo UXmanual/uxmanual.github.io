@@ -25,11 +25,11 @@
 
       <!-- Content Layer: Restaurant List -->
       <div class="relative z-20 h-full pointer-events-none" @touchstart="handleMapInteraction">
-        <div class="max-w-[1800px] mx-auto h-full px-6 lg:px-10 py-10 flex flex-col lg:flex-row gap-8">
+        <div class="max-w-[1800px] mx-auto h-full px-6 lg:px-10 py-10 flex flex-col lg:flex-row lg:justify-end gap-8">
           
-          <!-- Desktop: Floating Sidebar | Mobile: Bottom Sheet -->
+          <!-- Desktop: Floating Sidebar (Right) | Mobile: Bottom Sheet -->
           <div 
-            class="fixed lg:relative inset-x-0 bottom-0 lg:inset-auto lg:top-0 lg:left-0 z-[60] lg:z-30 w-full lg:w-[400px] pointer-events-auto transition-transform duration-500 ease-in-out transform lg:translate-y-0"
+            class="fixed lg:relative inset-x-0 bottom-0 lg:inset-auto lg:top-0 lg:right-0 z-[60] lg:z-30 w-full lg:w-[400px] pointer-events-auto transition-transform duration-500 ease-in-out transform lg:translate-y-0"
             :class="[
               isInitialPeek && !isListOpen && !isDragging ? 'translate-y-[calc(100%-120px)]' : '',
               !isInitialPeek && !isListOpen && !isDragging ? 'translate-y-[calc(100%-40px)]' : '',
@@ -206,16 +206,17 @@ const handleTouchMove = (e: TouchEvent) => {
   const basePos = isListOpen.value ? 0 : sheetHeight
   
   let newPos = basePos + deltaY
-  if (newPos < -20) newPos = -20 + (newPos + 20) * 0.2 // Hard resistance upwards
+  if (newPos < -20) newPos = -20 + (newPos + 20) * 0.2 // Resistance upwards
   dragTranslateY.value = newPos
 }
 
 const handleTouchEnd = () => {
   isDragging.value = false
   const sheetHeight = window.innerHeight * 0.5
-  const threshold = sheetHeight * 0.4
+  // Sensitivity: Smaller value means easier to trigger open
+  const threshold = sheetHeight * 0.2
   
-  if (dragTranslateY.value < threshold) {
+  if (dragTranslateY.value < (sheetHeight - threshold)) {
     isListOpen.value = true
   } else {
     isListOpen.value = false
