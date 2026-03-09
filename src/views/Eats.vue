@@ -4,8 +4,7 @@
     
     <main class="relative w-full h-[100svh] overflow-hidden bg-zinc-100 dark:bg-[#131313] touch-none overscroll-none">
       <div 
-        class="absolute inset-0 z-10 transition-all duration-300"
-        :class="sheetMode === 'full' ? 'opacity-0' : 'opacity-100'"
+        class="absolute inset-0 z-10"
       >
         <transition name="fade" mode="out-in">
           <iframe
