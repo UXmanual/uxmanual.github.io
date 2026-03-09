@@ -51,8 +51,8 @@
             <div 
               class="bg-white/90 dark:bg-[#131313]/90 backdrop-blur-xl lg:rounded-3xl shadow-2xl border border-zinc-200 dark:border-white/10 h-[50vh] lg:h-full lg:max-h-[calc(100vh-140px)] overflow-y-auto px-6 lg:px-5 pt-10 lg:pt-6 pb-16 lg:pb-6 custom-scrollbar space-y-2.5"
             >
-              <!-- Desktop Header inside floating box: Dynamic Area Name Only -->
-              <div v-if="selectedShop" class="hidden lg:block mb-8 pt-4">
+              <!-- Header inside floating box: Dynamic Area Name (Mobile & Desktop) -->
+              <div v-if="selectedShop" class="mb-8 pt-4">
                 <h1 class="text-2xl font-black tracking-tighter text-zinc-900 dark:text-white uppercase leading-tight">{{ selectedShop.address }}</h1>
               </div>
 
@@ -60,10 +60,10 @@
                 v-for="shop in restaurantList" 
                 :key="shop.id"
                 @click="handleShopSelect(shop)"
-                class="p-4 rounded-2xl border transition-all duration-300 cursor-pointer group"
+                class="p-4 rounded-2xl transition-all duration-300 cursor-pointer group"
                 :class="selectedId === shop.id 
-                  ? 'bg-white dark:bg-white/10 border-zinc-900 dark:border-white shadow-md' 
-                  : 'bg-white/50 dark:bg-zinc-900/30 border-zinc-100 dark:border-white/5 hover:border-zinc-300 dark:hover:border-white/20'"
+                  ? 'bg-white dark:bg-white/10 shadow-md' 
+                  : 'bg-white/50 dark:bg-zinc-900/30 hover:bg-white/80 dark:hover:bg-zinc-900/50'"
               >
                 <div class="flex justify-between items-start mb-1">
                   <span class="px-2 py-0.5 rounded text-[9px] font-black uppercase tracking-wider bg-zinc-100 dark:bg-white/10 text-zinc-500 dark:text-zinc-400 border border-zinc-200 dark:border-white/5">
