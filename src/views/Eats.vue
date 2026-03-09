@@ -1,10 +1,13 @@
 <template>
-  <div class="min-h-screen bg-zinc-50 dark:bg-[#131313] text-zinc-900 dark:text-white transition-colors duration-200 pt-[60px]">
+  <div class="min-h-screen bg-zinc-50 dark:bg-[#131313] text-zinc-900 dark:text-white transition-colors duration-200">
     <SiteNavbar />
     
-    <main class="relative w-full h-[calc(100vh-60px)] overflow-hidden bg-zinc-100 dark:bg-[#131313]">
+    <!-- Hero/Navbar space that can scroll away -->
+    <div class="h-[60px]"></div>
+
+    <main class="relative w-full h-[calc(100vh-60px)] overflow-hidden bg-zinc-100 dark:bg-[#131313] touch-none overscroll-none">
       <!-- Map View (Background Layer) -->
-      <div class="absolute inset-0 z-10">
+      <div class="absolute inset-0 z-10 pointer-events-auto">
         <transition name="fade" mode="out-in">
           <iframe
             :key="mapUrl"
@@ -227,6 +230,7 @@ const handlePointerMove = (e: PointerEvent) => {
     if (newPos < -20) newPos = -20 + (newPos + 20) * 0.2 
     dragTranslateY.value = newPos
     
+    // Explicitly prevent default to stop background scrolling/wiggling
     if (e.cancelable) e.preventDefault()
   } else {
     if (isDragging.value) isDragging.value = false
