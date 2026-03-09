@@ -86,7 +86,7 @@
             <!-- List Container (Glassmorphism for Desktop) -->
             <div 
               ref="scrollContainer"
-              class="grow px-6 lg:px-5 pt-0 pb-40 lg:pb-8 custom-scrollbar space-y-2.5 relative overscroll-contain overflow-x-hidden"
+              class="grow px-6 lg:px-5 pt-0 pb-[60vh] lg:pb-8 custom-scrollbar space-y-2.5 relative overscroll-contain overflow-x-hidden"
               :class="(sheetMode === 'full' || sheetMode === 'half' || windowWidth >= 1024) && !isDragging ? 'overflow-y-auto' : 'overflow-y-hidden'"
             >
               <!-- Header inside floating box: Dynamic Area Name (Mobile & Desktop) -->
