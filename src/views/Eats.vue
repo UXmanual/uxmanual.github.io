@@ -1,6 +1,6 @@
 <template>
   <div class="min-h-screen bg-zinc-50 dark:bg-[#131313] text-zinc-900 dark:text-white transition-colors duration-200">
-    <SiteNavbar :is-sheet-full="false" />
+    <SiteNavbar :is-sheet-full="sheetMode === 'full'" />
     
     <main class="relative w-full h-[100svh] overflow-hidden bg-zinc-100 dark:bg-[#131313] touch-none overscroll-none">
       <div 
@@ -345,8 +345,10 @@ const handlePointerMove = (e: PointerEvent) => {
 
   if (isDragging.value) {
     let newPos = e.clientY - startY.value
-    // Resistance at the very top
-    if (newPos < -20) newPos = -20 + (newPos + 20) * 0.2 
+    // Aggressive resistance near the top limit (120px)
+    if (newPos < 120) {
+      newPos = 120 + (newPos - 120) * 0.1 // Strong rubber-banding
+    }
     dragTranslateY.value = newPos
     
     if (e.cancelable) e.preventDefault()
