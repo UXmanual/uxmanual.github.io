@@ -4,7 +4,7 @@
     
     <main class="relative w-full h-[100svh] overflow-hidden bg-zinc-100 dark:bg-[#131313] touch-none overscroll-none">
       <div 
-        class="absolute inset-0 z-10"
+        class="absolute top-[60px] left-0 right-0 bottom-0 z-10"
       >
         <transition name="fade" mode="out-in">
           <iframe
@@ -31,7 +31,7 @@
       >
         <div 
           v-if="sheetMode !== 'collapsed' || isDragging"
-          class="fixed inset-0 z-[50] bg-transparent pointer-events-auto cursor-pointer"
+          class="fixed top-[60px] left-0 right-0 bottom-0 z-[50] bg-transparent pointer-events-auto cursor-pointer"
           @click="sheetMode = 'collapsed'"
           @touchstart.stop
         ></div>
