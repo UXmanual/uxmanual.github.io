@@ -213,13 +213,24 @@ const handleTouchMove = (e: TouchEvent) => {
 const handleTouchEnd = () => {
   isDragging.value = false
   const sheetHeight = window.innerHeight * 0.5
-  // Sensitivity: Smaller value means easier to trigger open
-  const threshold = sheetHeight * 0.2
   
-  if (dragTranslateY.value < (sheetHeight - threshold)) {
-    isListOpen.value = true
+  // High Sensitivity: Just 30px of movement triggers the snap
+  const sensitivityTrigger = 30 
+  
+  if (isListOpen.value) {
+    // If it was open, it stays open unless dragged down more than 30px
+    if (dragTranslateY.value > sensitivityTrigger) {
+      isListOpen.value = false
+    } else {
+      isListOpen.value = true
+    }
   } else {
-    isListOpen.value = false
+    // If it was closed, it stays closed unless dragged up more than 30px
+    if (dragTranslateY.value < (sheetHeight - sensitivityTrigger)) {
+      isListOpen.value = true
+    } else {
+      isListOpen.value = false
+    }
   }
 }
 
