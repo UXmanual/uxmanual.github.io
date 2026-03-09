@@ -9,7 +9,7 @@
     <div class="site-nav-container px-6 md:px-10 flex justify-between items-center w-full">
       <router-link to="/" class="flex items-center gap-2 text-lg font-black uppercase tracking-tight text-zinc-900 dark:text-white transition-colors group">
         <img src="/favicon.svg" alt="Logo" class="w-6 h-6 rounded-md" />
-        <span>NUA</span>
+        <span>NUXA</span>
       </router-link>
       
       <div class="flex items-center gap-4 md:gap-8">
@@ -131,6 +131,12 @@ const updateThemeClass = (dark: boolean) => {
   }
 
   // Dynamic Meta Tag Updates for iOS/Mobile Chrome
+  const metaTitle = document.querySelector('meta[name="apple-mobile-web-app-title"]')
+  const appName = document.querySelector('meta[name="application-name"]')
+  
+  metaTitle?.setAttribute('content', 'NUXA')
+  appName?.setAttribute('content', 'NUXA')
+  
   document.querySelector('meta[name="theme-color"]')?.setAttribute('content', themeColor)
   document.querySelector('meta[name="apple-mobile-web-app-status-bar-style"]')?.setAttribute('content', statusBarStyle)
   

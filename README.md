@@ -1,4 +1,4 @@
-# NUA | New UX AVENUE Portfolio Archive
+# NUXA | New UX AVENUE Portfolio Archive
 
 미드저니(Midjourney)의 탐색 페이지 스타일을 벤치마킹하여 제작된, 고해상도 디자인 작업물 및 영상 아카이브 포트폴리오 사이트입니다. Vue 3와 Tailwind CSS v4를 기반으로 현대적이고 직관적인 사용자 경험을 제공합니다.
 
@@ -76,4 +76,4 @@ npm run build
 
 ---
 
-© 2026 New UX AVENUE. Built with Love & Vue.js.
+© 2026 NUXA. Built with Love & Vue.js.
