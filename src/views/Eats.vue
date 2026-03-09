@@ -123,10 +123,10 @@
           </div>
           
           <!-- Floating Mobile Toggle Button -->
-          <div v-show="sheetMode === 'collapsed'" class="lg:hidden fixed bottom-20 left-1/2 -translate-x-1/2 z-[50] pointer-events-auto">
+          <div v-show="sheetMode === 'collapsed'" class="lg:hidden fixed bottom-[105px] left-1/2 -translate-x-1/2 z-[50] pointer-events-auto">
             <button 
               @click="sheetMode = 'half'"
-              class="flex items-center gap-2 px-6 py-3.5 bg-zinc-900 dark:bg-white text-white dark:text-zinc-900 rounded-full font-bold text-sm shadow-2xl active:scale-95 transition-all duration-200 border border-zinc-800 dark:border-zinc-200"
+              class="flex items-center gap-2 px-6 py-3.5 bg-[#1a73e8] text-white rounded-full font-bold text-sm shadow-2xl active:scale-95 transition-all duration-200 border border-white/10"
             >
               <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
