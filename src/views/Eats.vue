@@ -98,10 +98,10 @@
                 v-for="shop in filteredRestaurants" 
                 :key="shop.id"
                 @click="handleShopSelect(shop)"
-                class="p-4 rounded-2xl transition-all duration-300 cursor-pointer group"
+                class="p-4 rounded-2xl transition-all duration-300 cursor-pointer group border"
                 :class="selectedId === shop.id 
-                  ? 'bg-white dark:bg-white/10 shadow-md' 
-                  : 'bg-white/30 dark:bg-zinc-900/20 hover:bg-white/50 dark:hover:bg-zinc-900/40'"
+                  ? 'bg-white dark:bg-white/10 border-[#1a73e8]' 
+                  : 'bg-transparent border-zinc-100 dark:border-white/5 hover:bg-zinc-50 dark:hover:bg-white/5'"
               >
                 <div class="flex justify-between items-start mb-1">
                   <span class="px-2 py-0.5 rounded text-[9px] font-black uppercase tracking-wider bg-zinc-100 dark:bg-white/10 text-zinc-500 dark:text-zinc-400 border border-zinc-200 dark:border-white/5">
