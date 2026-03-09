@@ -1,10 +1,10 @@
 <template>
   <div class="min-h-screen bg-zinc-50 dark:bg-[#131313] text-zinc-900 dark:text-white transition-colors duration-200">
-    <SiteNavbar :is-sheet-full="sheetMode === 'full'" />
+    <SiteNavbar :is-sheet-full="false" />
     
     <main class="relative w-full h-[100svh] overflow-hidden bg-zinc-100 dark:bg-[#131313] touch-none overscroll-none">
       <div 
-        class="absolute inset-0 z-10"
+        class="absolute top-[60px] left-0 right-0 bottom-0 z-10"
       >
         <transition name="fade" mode="out-in">
           <iframe
@@ -31,7 +31,7 @@
       >
         <div 
           v-if="sheetMode !== 'collapsed' || isDragging"
-          class="fixed inset-0 z-[45] bg-transparent pointer-events-auto cursor-pointer"
+          class="fixed top-[60px] left-0 right-0 bottom-0 z-[50] bg-transparent pointer-events-auto cursor-pointer"
           @click="sheetMode = 'collapsed'"
           @touchstart.stop
         ></div>
@@ -47,7 +47,7 @@
             :class="[
               sheetMode === 'collapsed' && !isDragging ? 'translate-y-[calc(100%-60px)]' : '',
               sheetMode === 'half' && !isDragging ? 'translate-y-[60%]' : '',
-              sheetMode === 'full' && !isDragging ? 'translate-y-[10svh]' : ''
+              sheetMode === 'full' && !isDragging ? 'translate-y-[60px]' : ''
             ]"
             :style="isDragging ? { transform: `translateY(${dragTranslateY}px)`, transition: 'none' } : {}"
             @pointerdown="handlePointerDown"
@@ -226,7 +226,7 @@ const getModeOffset = (mode: SheetMode) => {
   const containerHeight = window.innerHeight
   if (mode === 'collapsed') return containerHeight - 60
   if (mode === 'half') return containerHeight * 0.6 // 2/5 visible = 60% offset
-  return containerHeight * 0.1 // 90% visible = 10% offset
+  return 60 // Stop exactly below navbar (60px)
 }
 
 const handlePointerDown = (e: PointerEvent) => {
