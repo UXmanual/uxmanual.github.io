@@ -13,40 +13,55 @@
       :enable-gradient="false"
     />
 
-    <main class="px-6 md:px-10 pb-20 max-w-[1800px] mx-auto pt-12">
-      <div class="flex flex-col lg:flex-row gap-8 min-h-[600px]">
+    <main class="px-0 lg:px-6 md:px-10 pb-0 lg:pb-20 max-w-[1800px] mx-auto pt-12 relative overflow-hidden lg:overflow-visible h-[calc(100vh-200px)] lg:h-auto">
+      <div class="flex flex-col lg:flex-row gap-0 lg:gap-8 h-full min-h-[500px] lg:min-h-[600px] relative">
         
-        <!-- Left: Restaurant List -->
-        <div class="w-full lg:w-1/3 space-y-2.5 overflow-y-auto max-h-[800px] pr-4 custom-scrollbar">
+        <!-- Left: Restaurant List (Mobile: Bottom Sheet | Desktop: Sidebar) -->
+        <div 
+          class="fixed lg:relative inset-x-0 bottom-0 z-[60] lg:z-0 lg:w-1/3 transition-transform duration-500 ease-in-out transform lg:translate-y-0"
+          :class="isListOpen ? 'translate-y-0' : 'translate-y-[calc(100%-60px)] lg:translate-y-0'"
+        >
+          <!-- Bottom Sheet Handle (Mobile Only) -->
           <div 
-            v-for="shop in restaurantList" 
-            :key="shop.id"
-            @click="selectShop(shop)"
-            class="p-4 rounded-xl border transition-all duration-300 cursor-pointer group"
-            :class="selectedId === shop.id 
-              ? 'bg-white dark:bg-white/10 border-zinc-900 dark:border-white shadow-xl' 
-              : 'bg-white dark:bg-zinc-900/50 border-zinc-200 dark:border-white/5 hover:border-zinc-400 dark:hover:border-white/20'"
+            @click="isListOpen = !isListOpen"
+            class="lg:hidden w-full h-[60px] bg-white dark:bg-[#1f1f1f] rounded-t-[32px] border-t border-x border-zinc-200 dark:border-white/10 flex flex-col items-center justify-center cursor-pointer shadow-[0_-10px_40px_rgba(0,0,0,0.1)]"
           >
-            <div class="flex justify-between items-start mb-1">
-              <span class="px-2 py-0.5 rounded text-[9px] font-black uppercase tracking-wider bg-zinc-100 dark:bg-white/10 text-zinc-500 dark:text-zinc-400 border border-zinc-200 dark:border-white/5">
-                {{ shop.category }}
-              </span>
-              <span class="text-[10px] font-bold text-orange-500">★ {{ shop.rating }}</span>
-            </div>
-            <h3 class="text-base font-bold mb-0.5 group-hover:text-orange-500 transition-colors">{{ shop.name }}</h3>
-            <p class="text-xs text-zinc-500 dark:text-zinc-400 line-clamp-1">{{ shop.description }}</p>
-            <div class="mt-2 flex items-center gap-1.5 text-[10px] font-medium text-zinc-400 uppercase tracking-tight">
-              <svg xmlns="http://www.w3.org/2000/svg" class="w-2.5 h-2.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
-              </svg>
-              {{ shop.address }}
+            <div class="w-12 h-1.5 bg-zinc-200 dark:bg-white/10 rounded-full mb-2"></div>
+            <span class="text-xs font-bold text-zinc-400 uppercase tracking-widest">{{ isListOpen ? 'CLOSE' : 'OPEN LIST' }}</span>
+          </div>
+
+          <!-- List Container -->
+          <div class="bg-white dark:bg-[#131313] lg:bg-transparent h-[60vh] lg:h-[800px] overflow-y-auto px-6 lg:px-0 lg:pr-4 py-4 lg:py-0 border-x lg:border-0 border-zinc-200 dark:border-white/10 custom-scrollbar space-y-2.5">
+            <div 
+              v-for="shop in restaurantList" 
+              :key="shop.id"
+              @click="handleShopSelect(shop)"
+              class="p-4 rounded-xl border transition-all duration-300 cursor-pointer group"
+              :class="selectedId === shop.id 
+                ? 'bg-white dark:bg-white/10 border-zinc-900 dark:border-white shadow-xl' 
+                : 'bg-white dark:bg-zinc-900/50 border-zinc-200 dark:border-white/5 hover:border-zinc-400 dark:hover:border-white/20'"
+            >
+              <div class="flex justify-between items-start mb-1">
+                <span class="px-2 py-0.5 rounded text-[9px] font-black uppercase tracking-wider bg-zinc-100 dark:bg-white/10 text-zinc-500 dark:text-zinc-400 border border-zinc-200 dark:border-white/5">
+                  {{ shop.category }}
+                </span>
+                <span class="text-[10px] font-bold text-orange-500">★ {{ shop.rating }}</span>
+              </div>
+              <h3 class="text-base font-bold mb-0.5 group-hover:text-orange-500 transition-colors">{{ shop.name }}</h3>
+              <p class="text-xs text-zinc-500 dark:text-zinc-400 line-clamp-1">{{ shop.description }}</p>
+              <div class="mt-2 flex items-center gap-1.5 text-[10px] font-medium text-zinc-400 uppercase tracking-tight">
+                <svg xmlns="http://www.w3.org/2000/svg" class="w-2.5 h-2.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+                </svg>
+                {{ shop.address }}
+              </div>
             </div>
           </div>
         </div>
 
-        <!-- Right: Map View (Google Maps Embed) -->
-        <div class="w-full lg:w-2/3 h-[400px] lg:h-[800px] sticky top-[100px] rounded-3xl overflow-hidden border border-zinc-200 dark:border-white/10 bg-zinc-100 dark:bg-zinc-900 shadow-2xl">
+        <!-- Right: Map View (Main on Mobile) -->
+        <div class="w-full lg:w-2/3 h-full lg:h-[800px] sticky top-[100px] lg:rounded-3xl overflow-hidden border-y lg:border border-zinc-200 dark:border-white/10 bg-zinc-100 dark:bg-zinc-900 shadow-2xl z-10">
           <transition name="fade" mode="out-in">
             <iframe
               :key="mapUrl"
@@ -59,9 +74,27 @@
               :src="mapUrl"
             ></iframe>
           </transition>
-          
-
         </div>
+
+        <!-- Floating Mobile Toggle Button -->
+        <div v-show="!isListOpen" class="lg:hidden fixed bottom-10 left-1/2 -translate-x-1/2 z-[50]">
+          <button 
+            @click="isListOpen = true"
+            class="flex items-center gap-2 px-6 py-3.5 bg-zinc-900 dark:bg-white text-white dark:text-zinc-900 rounded-full font-bold text-sm shadow-2xl active:scale-95 transition-all duration-200"
+          >
+            <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
+            </svg>
+            목록보기
+          </button>
+        </div>
+
+        <!-- Overlay for Mobile Bottom Sheet -->
+        <div 
+          v-if="isListOpen" 
+          @click="isListOpen = false"
+          class="lg:hidden fixed inset-0 bg-black/40 backdrop-blur-sm z-[55] transition-opacity duration-300"
+        ></div>
 
       </div>
     </main>
@@ -148,15 +181,27 @@ const restaurantList = ref<Shop[]>([
 ])
 
 const selectedId = ref(1)
+const isListOpen = ref(false)
 const selectedShop = computed(() => restaurantList.value.find(s => s.id === selectedId.value))
 
 /**
  * Updates the selected shop and triggers a map update.
+ * Closes the mobile bottom sheet after selection.
  * @param shop The shop object to select
  */
-const selectShop = (shop: Shop) => {
+const handleShopSelect = (shop: Shop) => {
   selectedId.value = shop.id
+  // Close the bottom sheet on mobile after selecting a shop
+  if (window.innerWidth < 1024) {
+    isListOpen.value = false
+  }
 }
+
+/**
+ * Legacy wrapper for compatibility if needed, 
+ * but Template now uses handleShopSelect.
+ */
+const selectShop = (shop: Shop) => handleShopSelect(shop)
 
 /**
  * Generates the Google Maps Embed URL based on selected shop coordinates.
