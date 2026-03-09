@@ -32,7 +32,7 @@
       >
         <div 
           v-if="sheetMode !== 'collapsed' || isDragging"
-          class="fixed inset-0 z-[50] bg-black/40 backdrop-blur-[2px] pointer-events-auto cursor-pointer"
+          class="fixed inset-0 z-[50] bg-transparent pointer-events-auto cursor-pointer"
           @click="sheetMode = 'collapsed'"
           @touchstart.stop
         ></div>
