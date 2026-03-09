@@ -24,10 +24,9 @@
           <!-- Bottom Sheet Handle (Mobile Only) -->
           <div 
             @click="isListOpen = !isListOpen"
-            class="lg:hidden w-full h-[60px] bg-white dark:bg-[#1f1f1f] rounded-t-[32px] border-t border-x border-zinc-200 dark:border-white/10 flex flex-col items-center justify-center cursor-pointer shadow-[0_-10px_40px_rgba(0,0,0,0.1)]"
+            class="lg:hidden w-full h-[40px] bg-white dark:bg-[#1f1f1f] rounded-t-[32px] border-t border-x border-zinc-200 dark:border-white/10 flex flex-col items-center justify-center cursor-pointer shadow-[0_-10px_40px_rgba(0,0,0,0.1)]"
           >
-            <div class="w-12 h-1.5 bg-zinc-200 dark:bg-white/10 rounded-full mb-2"></div>
-            <span class="text-xs font-bold text-zinc-400 uppercase tracking-widest">{{ isListOpen ? 'CLOSE' : 'OPEN LIST' }}</span>
+            <div class="w-12 h-1.5 bg-zinc-200 dark:bg-white/10 rounded-full"></div>
           </div>
 
           <!-- List Container -->
@@ -77,7 +76,7 @@
         </div>
 
         <!-- Floating Mobile Toggle Button -->
-        <div v-show="!isListOpen" class="lg:hidden fixed bottom-10 left-1/2 -translate-x-1/2 z-[50]">
+        <div v-show="!isListOpen" class="lg:hidden fixed bottom-24 left-1/2 -translate-x-1/2 z-[50]">
           <button 
             @click="isListOpen = true"
             class="flex items-center gap-2 px-6 py-3.5 bg-zinc-900 dark:bg-white text-white dark:text-zinc-900 rounded-full font-bold text-sm shadow-2xl active:scale-95 transition-all duration-200"
@@ -89,12 +88,6 @@
           </button>
         </div>
 
-        <!-- Overlay for Mobile Bottom Sheet -->
-        <div 
-          v-if="isListOpen" 
-          @click="isListOpen = false"
-          class="lg:hidden fixed inset-0 bg-black/40 backdrop-blur-sm z-[55] transition-opacity duration-300"
-        ></div>
 
       </div>
     </main>
