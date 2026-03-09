@@ -38,8 +38,8 @@
       </transition>
 
       <!-- Content Layer: Restaurant List -->
-      <div class="relative z-[60] h-full pointer-events-none">
-        <div class="max-w-[1800px] mx-auto h-full px-6 lg:px-10 py-10 flex flex-col lg:flex-row lg:justify-end gap-8">
+      <div class="relative z-40 h-full pointer-events-none">
+        <div class="max-w-[1800px] mx-auto h-full px-6 lg:px-10 flex flex-col lg:flex-row lg:items-center lg:justify-end gap-8 lg:pt-[60px]">
           
           <!-- Desktop: Floating Sidebar (Right) | Mobile: Bottom Sheet -->
           <div 
@@ -67,7 +67,7 @@
             <!-- List Container (Glassmorphism for Desktop) -->
             <div 
               ref="scrollContainer"
-              class="bg-white/60 dark:bg-[#131313]/60 backdrop-blur-2xl lg:rounded-3xl shadow-2xl h-[100svh] lg:h-full lg:max-h-[calc(100vh-140px)] px-6 lg:px-5 pt-10 lg:pt-6 pb-10 lg:pb-6 custom-scrollbar space-y-2.5 relative overscroll-contain"
+              class="bg-white/60 dark:bg-[#131313]/60 backdrop-blur-2xl lg:rounded-3xl shadow-2xl h-[100svh] lg:h-auto lg:max-h-[calc(100vh-100px)] px-6 lg:px-5 pt-10 lg:pt-6 pb-10 lg:pb-6 custom-scrollbar space-y-2.5 relative overscroll-contain"
               :class="sheetMode === 'full' && !isDragging ? 'overflow-y-auto' : 'overflow-y-hidden'"
             >
               <!-- Header inside floating box: Dynamic Area Name (Mobile & Desktop) -->
