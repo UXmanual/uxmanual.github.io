@@ -87,7 +87,7 @@
             <div 
               ref="scrollContainer"
               class="grow px-6 lg:px-5 pt-0 pb-40 lg:pb-8 custom-scrollbar space-y-2.5 relative overscroll-contain overflow-x-hidden"
-              :class="(sheetMode === 'full' || windowWidth >= 1024) && !isDragging ? 'overflow-y-auto' : 'overflow-y-hidden'"
+              :class="(sheetMode === 'full' || sheetMode === 'half' || windowWidth >= 1024) && !isDragging ? 'overflow-y-auto' : 'overflow-y-hidden'"
             >
               <!-- Header inside floating box: Dynamic Area Name (Mobile & Desktop) -->
               <div v-if="selectedShop" class="mb-6 pt-0" @pointerdown.stop>
@@ -97,6 +97,7 @@
               <div 
                 v-for="shop in filteredRestaurants" 
                 :key="shop.id"
+                :data-id="shop.id"
                 @click="handleShopSelect(shop)"
                 class="p-4 rounded-2xl transition-all duration-300 cursor-pointer group border"
                 :class="selectedId === shop.id 
@@ -151,7 +152,7 @@
  * Draft layout for the Gourmet Guide section.
  * Integrates a restaurant list with a Google Maps Embed API.
  */
-import { ref, computed, onMounted, onUnmounted } from 'vue'
+import { ref, computed, onMounted, onUnmounted, nextTick } from 'vue'
 import SiteNavbar from '../components/SiteNavbar.vue'
 
 // Mock Data for Layout Demonstration
@@ -598,10 +599,24 @@ const handleMapInteraction = () => {
  * Updates the selected shop and triggers a map update.
  * @param shop The shop object to select
  */
-const handleShopSelect = (shop: Shop) => {
+const handleShopSelect = async (shop: Shop) => {
   selectedId.value = shop.id
+  
   if (window.innerWidth < 1024) {
-    sheetMode.value = 'collapsed'
+    // Change to 'half' mode (showing 2/5 of the screen) instead of collapsing
+    sheetMode.value = 'half'
+    
+    // Use nextTick and then find the selected element to scroll it to the top
+    await nextTick()
+    const container = scrollContainer.value
+    if (container) {
+      const selectedElement = container.querySelector(`[data-id="${shop.id}"]`) as HTMLElement
+      if (selectedElement) {
+        // Calculate offset: selectedElement.offsetTop - container.offsetTop
+        // Using scrollIntoView with block: 'start' is the simplest way
+        selectedElement.scrollIntoView({ behavior: 'smooth', block: 'start' })
+      }
+    }
   }
 }
 
