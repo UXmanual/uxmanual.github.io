@@ -31,7 +31,7 @@
       >
         <div 
           v-if="sheetMode !== 'collapsed' || isDragging"
-          class="fixed top-[60px] left-0 right-0 bottom-0 z-[45] bg-transparent pointer-events-auto cursor-pointer"
+          class="lg:hidden fixed top-[60px] left-0 right-0 bottom-0 z-[45] bg-transparent pointer-events-auto"
           @click="sheetMode = 'collapsed'"
           @touchstart.stop
         ></div>
@@ -262,7 +262,7 @@ const filteredRestaurants = computed(() =>
 )
 
 type SheetMode = 'collapsed' | 'half' | 'full'
-const sheetMode = ref<SheetMode>('half')
+const sheetMode = ref<SheetMode>('collapsed')
 
 const selectedShop = computed(() => 
   restaurantList.value.find(s => s.id === selectedId.value)
