@@ -31,14 +31,14 @@
       >
         <div 
           v-if="sheetMode !== 'collapsed' || isDragging"
-          class="fixed top-[60px] left-0 right-0 bottom-0 z-[50] bg-transparent pointer-events-auto cursor-pointer"
+          class="fixed top-[60px] left-0 right-0 bottom-0 z-[45] bg-transparent pointer-events-auto cursor-pointer"
           @click="sheetMode = 'collapsed'"
           @touchstart.stop
         ></div>
       </transition>
 
       <!-- Content Layer: Restaurant List -->
-      <div class="relative z-40 h-full pointer-events-none">
+      <div class="relative z-[60] lg:z-40 h-full pointer-events-none">
         <div class="max-w-[1800px] mx-auto h-full px-6 lg:px-10 flex flex-col lg:flex-row lg:items-center lg:justify-end gap-8 lg:pt-[60px]">
           
           <!-- Desktop: Floating Sidebar (Right) | Mobile: Bottom Sheet -->
