@@ -81,7 +81,7 @@
             <!-- List Container (Glassmorphism for Desktop) -->
             <div 
               ref="scrollContainer"
-              class="h-[100svh] lg:h-auto lg:max-h-[calc(100vh-100px)] px-6 lg:px-5 pt-4 lg:pt-6 pb-20 custom-scrollbar space-y-2.5 relative overscroll-contain"
+              class="h-[100svh] lg:h-auto lg:max-h-[calc(100vh-100px)] px-6 lg:px-5 pt-4 lg:pt-6 pb-40 custom-scrollbar space-y-2.5 relative overscroll-contain"
               :class="sheetMode === 'full' && !isDragging ? 'overflow-y-auto' : 'overflow-y-hidden'"
             >
               <!-- Header inside floating box: Dynamic Area Name (Mobile & Desktop) -->
@@ -102,9 +102,9 @@
                   <span class="px-2 py-0.5 rounded text-[9px] font-black uppercase tracking-wider bg-zinc-100 dark:bg-white/10 text-zinc-500 dark:text-zinc-400 border border-zinc-200 dark:border-white/5">
                     {{ shop.category }}
                   </span>
-                  <span class="text-[10px] font-bold text-orange-500">★ {{ shop.rating }}</span>
+                  <span class="text-[10px] font-bold text-[#1a73e8]">★ {{ shop.rating }}</span>
                 </div>
-                <h3 class="text-base font-bold mb-0.5 group-hover:text-orange-500 transition-colors">{{ shop.name }}</h3>
+                <h3 class="text-base font-bold mb-0.5 group-hover:text-[#1a73e8] transition-colors">{{ shop.name }}</h3>
                 <p class="text-xs text-zinc-500 dark:text-zinc-400 line-clamp-1 leading-relaxed">{{ shop.description }}</p>
                 <div class="mt-2.5 flex items-center gap-1.5 text-[10px] font-medium text-zinc-400 uppercase tracking-tight">
                   <svg xmlns="http://www.w3.org/2000/svg" class="w-2.5 h-2.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
