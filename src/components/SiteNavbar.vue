@@ -1,7 +1,9 @@
-<template>
   <nav 
-    class="fixed top-0 left-0 right-0 z-50 bg-zinc-50/90 dark:bg-[#131313]/90 backdrop-blur-xl transition-transform duration-0"
-    :style="{ transform: `translateY(${navTranslateY}px)` }"
+    :class="[
+      route.path === '/eats' ? 'absolute' : 'fixed',
+      'top-0 left-0 right-0 z-50 bg-zinc-50/90 dark:bg-[#131313]/90 backdrop-blur-xl transition-transform duration-0'
+    ]"
+    :style="route.path === '/eats' ? {} : { transform: `translateY(${navTranslateY}px)` }"
   >
     <div class="site-nav-container px-6 md:px-10 flex justify-between items-center w-full">
       <router-link to="/" class="flex items-center gap-2 text-lg font-black uppercase tracking-tight text-zinc-900 dark:text-white transition-colors group">
