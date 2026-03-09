@@ -43,7 +43,7 @@
           
           <!-- Desktop: Floating Sidebar (Right) | Mobile: Bottom Sheet -->
           <div 
-            class="fixed lg:relative inset-x-0 top-0 lg:inset-auto lg:top-0 lg:right-0 z-[60] lg:z-30 w-full lg:w-[400px] h-[100svh] lg:h-[calc(100vh-100px)] pointer-events-auto bg-white/60 dark:bg-[#131313]/60 backdrop-blur-2xl shadow-2xl rounded-t-[32px] lg:rounded-3xl transition-transform duration-500 ease-in-out transform touch-none select-none flex flex-col"
+            class="fixed lg:relative inset-x-0 top-0 lg:inset-auto lg:top-0 lg:right-0 z-[60] lg:z-30 w-full lg:w-[400px] h-[100svh] lg:h-[calc(100vh-100px)] pointer-events-auto bg-white dark:bg-zinc-900 shadow-2xl rounded-t-[32px] lg:rounded-3xl transition-transform duration-500 ease-in-out transform touch-none select-none flex flex-col"
             :class="[
               sheetMode === 'collapsed' && !isDragging ? 'translate-y-[calc(100svh-85px)]' : '',
               sheetMode === 'half' && !isDragging ? 'translate-y-[60svh]' : '',
@@ -62,7 +62,7 @@
             </div>
 
             <!-- Country Tabs -->
-            <div class="shrink-0 px-6 lg:px-5 pb-5 lg:pt-8 flex gap-5 overflow-x-auto no-scrollbar border-b border-zinc-100 dark:border-white/5">
+            <div class="shrink-0 px-6 lg:px-5 pb-5 lg:pt-8 flex gap-5 overflow-x-auto no-scrollbar">
               <button 
                 v-for="country in countries" 
                 :key="country"
@@ -81,7 +81,7 @@
             </div>
 
             <!-- Bottom Extension to prevent holes during over-drag (Moved outside scroll area) -->
-            <div class="lg:hidden absolute top-[100%] left-0 right-0 h-[2000px] bg-white/60 dark:bg-[#131313]/60 backdrop-blur-2xl z-[-1] pointer-events-none"></div>
+            <div class="lg:hidden absolute top-[100%] left-0 right-0 h-[2000px] bg-white dark:bg-zinc-900 z-[-1] pointer-events-none"></div>
 
             <!-- List Container (Glassmorphism for Desktop) -->
             <div 
