@@ -30,7 +30,7 @@
           </div>
 
           <!-- List Container -->
-          <div class="bg-white dark:bg-[#131313] lg:bg-transparent h-[60vh] lg:h-[800px] overflow-y-auto px-6 lg:px-0 lg:pr-4 py-4 lg:py-0 border-x lg:border-0 border-zinc-200 dark:border-white/10 custom-scrollbar space-y-2.5">
+          <div class="bg-white dark:bg-[#131313] lg:bg-transparent h-[60vh] lg:h-[800px] overflow-y-auto px-6 lg:px-0 lg:pr-4 pt-10 pb-4 lg:py-0 border-x lg:border-0 border-zinc-200 dark:border-white/10 custom-scrollbar space-y-2.5">
             <div 
               v-for="shop in restaurantList" 
               :key="shop.id"
@@ -76,7 +76,7 @@
         </div>
 
         <!-- Floating Mobile Toggle Button -->
-        <div v-show="!isListOpen" class="lg:hidden fixed bottom-24 left-1/2 -translate-x-1/2 z-[50]">
+        <div v-show="!isListOpen" class="lg:hidden fixed bottom-20 left-1/2 -translate-x-1/2 z-[50]">
           <button 
             @click="isListOpen = true"
             class="flex items-center gap-2 px-6 py-3.5 bg-zinc-900 dark:bg-white text-white dark:text-zinc-900 rounded-full font-bold text-sm shadow-2xl active:scale-95 transition-all duration-200"
