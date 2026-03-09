@@ -2,7 +2,7 @@
   <div class="min-h-screen bg-zinc-50 dark:bg-[#131313] text-zinc-900 dark:text-white transition-colors duration-200">
     <SiteNavbar />
     
-    <main class="relative w-full h-[calc(100vh-60px)] overflow-hidden bg-zinc-100 dark:bg-[#131313] touch-none overscroll-none">
+    <main class="relative w-full h-[calc(100svh-60px)] overflow-hidden bg-zinc-100 dark:bg-[#131313] touch-none overscroll-none">
       <div 
         class="absolute inset-0 z-10 transition-all duration-300"
         :class="sheetMode === 'full' ? 'opacity-0' : 'opacity-100'"
@@ -65,7 +65,7 @@
             <!-- List Container (Glassmorphism for Desktop) -->
             <div 
               ref="scrollContainer"
-              class="bg-white/90 dark:bg-[#131313]/90 backdrop-blur-xl lg:rounded-3xl shadow-2xl h-[calc(100vh-60px)] lg:h-full lg:max-h-[calc(100vh-140px)] px-6 lg:px-5 pt-10 lg:pt-6 pb-24 lg:pb-6 custom-scrollbar space-y-2.5 relative overscroll-contain"
+              class="bg-white/90 dark:bg-[#131313]/90 backdrop-blur-xl lg:rounded-3xl shadow-2xl h-[calc(100svh-60px)] lg:h-full lg:max-h-[calc(100vh-140px)] px-6 lg:px-5 pt-10 lg:pt-6 pb-24 lg:pb-6 custom-scrollbar space-y-2.5 relative overscroll-contain"
               :class="sheetMode === 'full' && !isDragging ? 'overflow-y-auto' : 'overflow-y-hidden'"
             >
               <!-- Bottom Extension to prevent holes during over-drag -->
@@ -127,7 +127,7 @@
  * Draft layout for the Gourmet Guide section.
  * Integrates a restaurant list with a Google Maps Embed API.
  */
-import { ref, computed } from 'vue'
+import { ref, computed, onMounted, onUnmounted } from 'vue'
 import SiteNavbar from '../components/SiteNavbar.vue'
 
 // Mock Data for Layout Demonstration
@@ -199,6 +199,22 @@ const selectedId = ref(1)
 type SheetMode = 'collapsed' | 'half' | 'full'
 const sheetMode = ref<SheetMode>('collapsed')
 const selectedShop = computed(() => restaurantList.value.find(s => s.id === selectedId.value))
+
+onMounted(() => {
+  // Lock body scroll to prevent browser UI hiding/showing
+  document.documentElement.style.overflow = 'hidden'
+  document.documentElement.style.height = '100svh'
+  document.body.style.overflow = 'hidden'
+  document.body.style.height = '100svh'
+})
+
+onUnmounted(() => {
+  // Restore body scroll
+  document.documentElement.style.overflow = ''
+  document.documentElement.style.height = ''
+  document.body.style.overflow = ''
+  document.body.style.height = ''
+})
 
 // Swipe Interaction Logic (Integrated with Scrolling)
 const scrollContainer = ref<HTMLElement | null>(null)
