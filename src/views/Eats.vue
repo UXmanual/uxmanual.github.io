@@ -62,14 +62,15 @@
               <div class="w-12 h-1.5 bg-zinc-200 dark:bg-white/10 rounded-full"></div>
             </div>
 
+            <!-- Bottom Extension to prevent holes during over-drag (Moved outside scroll area) -->
+            <div class="lg:hidden absolute top-[40px] left-0 right-0 h-[2000px] bg-white/90 dark:bg-[#131313]/90 backdrop-blur-xl z-[-1] pointer-events-none"></div>
+
             <!-- List Container (Glassmorphism for Desktop) -->
             <div 
               ref="scrollContainer"
-              class="bg-white/90 dark:bg-[#131313]/90 backdrop-blur-xl lg:rounded-3xl shadow-2xl h-[calc(100svh-60px)] lg:h-full lg:max-h-[calc(100vh-140px)] px-6 lg:px-5 pt-10 lg:pt-6 pb-24 lg:pb-6 custom-scrollbar space-y-2.5 relative overscroll-contain"
+              class="bg-white/90 dark:bg-[#131313]/90 backdrop-blur-xl lg:rounded-3xl shadow-2xl h-[calc(100svh-60px)] lg:h-full lg:max-h-[calc(100vh-140px)] px-6 lg:px-5 pt-10 lg:pt-6 pb-10 lg:pb-6 custom-scrollbar space-y-2.5 relative overscroll-contain"
               :class="sheetMode === 'full' && !isDragging ? 'overflow-y-auto' : 'overflow-y-hidden'"
             >
-              <!-- Bottom Extension to prevent holes during over-drag -->
-              <div class="lg:hidden absolute top-[-1px] left-0 right-0 bottom-[-1000px] bg-white dark:bg-[#131313] z-[-1] pointer-events-none"></div>
               <!-- Header inside floating box: Dynamic Area Name (Mobile & Desktop) -->
               <div v-if="selectedShop" class="mb-8 pt-4" @pointerdown.stop>
                 <h1 class="text-2xl font-black tracking-tighter text-zinc-900 dark:text-white uppercase leading-tight">{{ selectedShop.address }}</h1>
