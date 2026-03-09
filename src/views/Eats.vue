@@ -36,20 +36,22 @@
               isListOpen && !isDragging ? 'translate-y-0' : ''
             ]"
             :style="isDragging ? { transform: `translateY(${dragTranslateY}px)`, transition: 'none' } : {}"
+            @touchstart="handleTouchStart"
+            @touchmove="handleTouchMove"
+            @touchend="handleTouchEnd"
           >
             <!-- Bottom Sheet Handle (Mobile Only) -->
             <div 
-              @touchstart="handleTouchStart"
-              @touchmove="handleTouchMove"
-              @touchend="handleTouchEnd"
-              class="lg:hidden w-full h-[40px] bg-white dark:bg-[#1f1f1f] rounded-t-[32px] border-t border-x border-zinc-200 dark:border-white/10 flex flex-col items-center justify-center cursor-pointer shadow-[0_-10px_40px_rgba(0,0,0,0.1)] touch-none"
+              class="lg:hidden w-full h-[40px] bg-white dark:bg-[#1f1f1f] rounded-t-[32px] border-t border-x border-zinc-200 dark:border-white/10 flex flex-col items-center justify-center shadow-[0_-10px_40px_rgba(0,0,0,0.1)] touch-none"
             >
               <div class="w-12 h-1.5 bg-zinc-200 dark:bg-white/10 rounded-full"></div>
             </div>
 
             <!-- List Container (Glassmorphism for Desktop) -->
             <div 
-              class="bg-white/90 dark:bg-[#131313]/90 backdrop-blur-xl lg:rounded-3xl shadow-2xl border border-zinc-200 dark:border-white/10 h-[50vh] lg:h-full lg:max-h-[calc(100vh-140px)] overflow-y-auto px-6 lg:px-5 pt-10 lg:pt-6 pb-16 lg:pb-6 custom-scrollbar space-y-2.5"
+              ref="scrollContainer"
+              class="bg-white/90 dark:bg-[#131313]/90 backdrop-blur-xl lg:rounded-3xl shadow-2xl border border-zinc-200 dark:border-white/10 h-[50vh] lg:h-full lg:max-h-[calc(100vh-140px)] px-6 lg:px-5 pt-10 lg:pt-6 pb-16 lg:pb-6 custom-scrollbar space-y-2.5"
+              :class="isListOpen && !isDragging ? 'overflow-y-auto' : 'overflow-y-hidden'"
             >
               <!-- Header inside floating box: Dynamic Area Name (Mobile & Desktop) -->
               <div v-if="selectedShop" class="mb-8 pt-4">
@@ -185,14 +187,17 @@ const isListOpen = ref(false)
 const isInitialPeek = ref(true)
 const selectedShop = computed(() => restaurantList.value.find(s => s.id === selectedId.value))
 
-// Swipe Interaction Logic
+// Swipe Interaction Logic (Integrated with Scrolling)
+const scrollContainer = ref<HTMLElement | null>(null)
 const startY = ref(0)
 const isDragging = ref(false)
 const dragTranslateY = ref(0)
 
 const handleTouchStart = (e: TouchEvent) => {
+  if (window.innerWidth >= 1024) return
+  
   startY.value = e.touches[0].clientY
-  isDragging.value = true
+  isDragging.value = false // Start with false, decide in Move
   isInitialPeek.value = false
   
   const sheetHeight = window.innerHeight * 0.5
@@ -200,32 +205,55 @@ const handleTouchStart = (e: TouchEvent) => {
 }
 
 const handleTouchMove = (e: TouchEvent) => {
-  if (!isDragging.value) return
+  if (window.innerWidth >= 1024) return
+  
   const deltaY = e.touches[0].clientY - startY.value
   const sheetHeight = window.innerHeight * 0.5
-  const basePos = isListOpen.value ? 0 : sheetHeight
+  const scrollTop = scrollContainer.value?.scrollTop || 0
   
-  let newPos = basePos + deltaY
-  if (newPos < -20) newPos = -20 + (newPos + 20) * 0.2 // Resistance upwards
-  dragTranslateY.value = newPos
+  // Decide whether to drag the sheet or scroll content
+  // 1. Dragging down while list is at top
+  const isDraggingDownAtTop = deltaY > 0 && scrollTop <= 0
+  // 2. Dragging up while sheet is NOT fully open
+  const isDraggingUpWhileClosed = deltaY < 0 && !isListOpen.value
+  
+  if (isDraggingDownAtTop || isDraggingUpWhileClosed) {
+    if (!isDragging.value) {
+      isDragging.value = true
+      // Recalculate startY to prevent jumps when transition from scroll to drag
+      startY.value = e.touches[0].clientY - (isListOpen.value ? 0 : sheetHeight)
+    }
+    
+    let newPos = e.touches[0].clientY - startY.value
+    // Resistance at limits
+    if (newPos < -20) newPos = -20 + (newPos + 20) * 0.2 
+    dragTranslateY.value = newPos
+    
+    // Prevent default scrolling when dragging the sheet
+    if (e.cancelable) e.preventDefault()
+  } else {
+    // Standard scrolling - stop sheet dragging if active
+    if (isDragging.value) {
+      isDragging.value = false
+      // If we stop dragging midway, snapping logic in End will take over
+    }
+  }
 }
 
 const handleTouchEnd = () => {
+  if (!isDragging.value) return
+  
   isDragging.value = false
   const sheetHeight = window.innerHeight * 0.5
-  
-  // High Sensitivity: Just 30px of movement triggers the snap
   const sensitivityTrigger = 30 
   
   if (isListOpen.value) {
-    // If it was open, it stays open unless dragged down more than 30px
     if (dragTranslateY.value > sensitivityTrigger) {
       isListOpen.value = false
     } else {
       isListOpen.value = true
     }
   } else {
-    // If it was closed, it stays closed unless dragged up more than 30px
     if (dragTranslateY.value < (sheetHeight - sensitivityTrigger)) {
       isListOpen.value = true
     } else {
