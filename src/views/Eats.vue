@@ -60,13 +60,28 @@
               <div class="w-12 h-1.5 bg-zinc-400 dark:bg-white/20 rounded-full"></div>
             </div>
 
+            <!-- Country Tabs -->
+            <div class="px-6 lg:px-5 pb-4 flex gap-2 overflow-x-auto no-scrollbar" @pointerdown.stop>
+              <button 
+                v-for="country in countries" 
+                :key="country"
+                @click="handleCountryChange(country as 'Korea' | 'Japan')"
+                class="px-6 py-2.5 rounded-full text-xs font-black tracking-widest transition-all duration-300 whitespace-nowrap uppercase"
+                :class="selectedCountry === country 
+                  ? 'bg-zinc-900 dark:bg-white text-white dark:text-zinc-900 shadow-xl scale-105' 
+                  : 'bg-white/40 dark:bg-white/5 text-zinc-500 dark:text-zinc-400 hover:bg-white/60 dark:hover:bg-white/10'"
+              >
+                {{ country }}
+              </button>
+            </div>
+
             <!-- Bottom Extension to prevent holes during over-drag (Moved outside scroll area) -->
             <div class="lg:hidden absolute top-[40px] left-0 right-0 h-[2000px] bg-transparent z-[-1] pointer-events-none"></div>
 
             <!-- List Container (Glassmorphism for Desktop) -->
             <div 
               ref="scrollContainer"
-              class="h-[100svh] lg:h-auto lg:max-h-[calc(100vh-100px)] px-6 lg:px-5 pt-10 lg:pt-6 pb-10 lg:pb-6 custom-scrollbar space-y-2.5 relative overscroll-contain"
+              class="h-[100svh] lg:h-auto lg:max-h-[calc(100vh-100px)] px-6 lg:px-5 pt-4 lg:pt-6 pb-20 custom-scrollbar space-y-2.5 relative overscroll-contain"
               :class="sheetMode === 'full' && !isDragging ? 'overflow-y-auto' : 'overflow-y-hidden'"
             >
               <!-- Header inside floating box: Dynamic Area Name (Mobile & Desktop) -->
@@ -75,13 +90,13 @@
               </div>
 
               <div 
-                v-for="shop in restaurantList" 
+                v-for="shop in filteredRestaurants" 
                 :key="shop.id"
                 @click="handleShopSelect(shop)"
                 class="p-4 rounded-2xl transition-all duration-300 cursor-pointer group"
                 :class="selectedId === shop.id 
                   ? 'bg-white dark:bg-white/10 shadow-md' 
-                  : 'bg-white/50 dark:bg-zinc-900/30 hover:bg-white/80 dark:hover:bg-zinc-900/50'"
+                  : 'bg-white/30 dark:bg-zinc-900/20 hover:bg-white/50 dark:hover:bg-zinc-900/40'"
               >
                 <div class="flex justify-between items-start mb-1">
                   <span class="px-2 py-0.5 rounded text-[9px] font-black uppercase tracking-wider bg-zinc-100 dark:bg-white/10 text-zinc-500 dark:text-zinc-400 border border-zinc-200 dark:border-white/5">
@@ -139,9 +154,43 @@ interface Shop {
   address: string
   lat: number
   lng: number
+  country: 'Korea' | 'Japan'
 }
 
 const restaurantList = ref<Shop[]>([
+  {
+    id: 101,
+    name: "가온 (Gaon)",
+    category: "한식",
+    rating: 4.9,
+    description: "전통 한식의 정수를 보여주는 미쉐린 3스타 레스토랑입니다.",
+    address: "서울특별시 강남구 신사동",
+    lat: 37.5256,
+    lng: 127.0358,
+    country: 'Korea'
+  },
+  {
+    id: 102,
+    name: "우래옥 (Wooraeok)",
+    category: "고기요리",
+    rating: 4.7,
+    description: "70년 전통의 평양냉면과 불고기 명가입니다.",
+    address: "서울특별시 중구 주교동",
+    lat: 37.5683,
+    lng: 126.9995,
+    country: 'Korea'
+  },
+  {
+    id: 103,
+    name: "밍글스 (Mingles)",
+    category: "퓨전한식",
+    rating: 4.8,
+    description: "한국 전통 식재료를 현대적으로 재해석한 창의적인 요리입니다.",
+    address: "서울특별시 강남구 논현동",
+    lat: 37.5212,
+    lng: 127.0413,
+    country: 'Korea'
+  },
   {
     id: 1,
     name: "스시 젠 (Sushi Zen)",
@@ -150,7 +199,8 @@ const restaurantList = ref<Shop[]>([
     description: "츠키지 시장에서 공수한 신선한 제철 재료로 만든 정통 에도마에 스시를 경험해보세요.",
     address: "일본 도쿄 주오구",
     lat: 35.6662,
-    lng: 139.7755
+    lng: 139.7755,
+    country: 'Japan'
   },
   {
     id: 2,
@@ -160,7 +210,8 @@ const restaurantList = ref<Shop[]>([
     description: "정교한 플레이팅과 깊은 풍미가 돋보이는 모던 프렌치 퀴진의 정수입니다.",
     address: "일본 도쿄 미나토구",
     lat: 35.6605,
-    lng: 139.7291
+    lng: 139.7291,
+    country: 'Japan'
   },
   {
     id: 3,
@@ -170,7 +221,8 @@ const restaurantList = ref<Shop[]>([
     description: "진한 돈코츠 육수와 직접 뽑은 얇은 면으로 유명한 후쿠오카 대표 라멘 맛집입니다.",
     address: "일본 후쿠오카현 후쿠오카시",
     lat: 33.5891,
-    lng: 130.4017
+    lng: 130.4017,
+    country: 'Japan'
   },
   {
     id: 4,
@@ -180,7 +232,8 @@ const restaurantList = ref<Shop[]>([
     description: "전통적인 코스 요리를 통해 교토의 계절적 아름다움을 오감으로 느껴보세요.",
     address: "일본 교토부 교토시",
     lat: 35.0116,
-    lng: 135.7681
+    lng: 135.7681,
+    country: 'Japan'
   },
   {
     id: 5,
@@ -190,14 +243,33 @@ const restaurantList = ref<Shop[]>([
     description: "갓 잡은 킹크랩과 가리비를 숯불에 구워 바다의 향을 그대로 담아냈습니다.",
     address: "일본 홋카이도 삿포로시",
     lat: 43.0611,
-    lng: 141.3564
+    lng: 141.3564,
+    country: 'Japan'
   }
 ])
 
-const selectedId = ref(1)
+const countries = ['Korea', 'Japan'] as const
+const selectedCountry = ref<'Korea' | 'Japan'>('Korea')
+const selectedId = ref(101)
+
+const filteredRestaurants = computed(() => 
+  restaurantList.value.filter(s => s.country === selectedCountry.value)
+)
+
 type SheetMode = 'collapsed' | 'half' | 'full'
 const sheetMode = ref<SheetMode>('half')
-const selectedShop = computed(() => restaurantList.value.find(s => s.id === selectedId.value))
+
+const selectedShop = computed(() => 
+  restaurantList.value.find(s => s.id === selectedId.value)
+)
+
+const handleCountryChange = (country: 'Korea' | 'Japan') => {
+  selectedCountry.value = country
+  const firstInCountry = filteredRestaurants.value[0]
+  if (firstInCountry) {
+    selectedId.value = firstInCountry.id
+  }
+}
 
 onMounted(() => {
   // Lock body scroll to prevent browser UI hiding/showing
