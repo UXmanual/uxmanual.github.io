@@ -25,7 +25,7 @@
           
           <!-- Desktop: Floating Sidebar (Right) | Mobile: Bottom Sheet -->
           <div 
-            class="fixed lg:relative inset-x-0 bottom-0 lg:inset-auto lg:top-0 lg:right-0 z-[60] lg:z-30 w-full lg:w-[400px] pointer-events-auto transition-transform duration-500 ease-in-out transform lg:translate-y-0"
+            class="fixed lg:relative inset-x-0 bottom-0 lg:inset-auto lg:top-0 lg:right-0 z-[60] lg:z-30 w-full lg:w-[400px] pointer-events-auto transition-transform duration-500 ease-in-out transform lg:translate-y-0 touch-none"
             :class="[
               isInitialPeek && !isListOpen && !isDragging ? 'translate-y-[calc(100%-120px)]' : '',
               !isInitialPeek && !isListOpen && !isDragging ? 'translate-y-[calc(100%-60px)]' : '',
@@ -190,6 +190,7 @@ const dragTranslateY = ref(0)
 
 const handlePointerDown = (e: PointerEvent) => {
   if (window.innerWidth >= 1024) return
+  e.stopPropagation()
   
   startY.value = e.clientY
   isDragging.value = false
@@ -205,6 +206,7 @@ const handlePointerDown = (e: PointerEvent) => {
 const handlePointerMove = (e: PointerEvent) => {
   if (window.innerWidth >= 1024) return
   if (e.buttons === 0) return // No button pressed
+  e.stopPropagation()
 
   const deltaY = e.clientY - startY.value
   const sheetHeight = window.innerHeight - 100
@@ -234,6 +236,7 @@ const handlePointerMove = (e: PointerEvent) => {
 }
 
 const handlePointerUp = (e: PointerEvent) => {
+  e.stopPropagation()
   if (!isDragging.value) return
   
   isDragging.value = false
