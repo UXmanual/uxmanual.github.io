@@ -112,7 +112,12 @@
                 <div class="flex gap-4">
                   <!-- Thumbnail Image (Optional) -->
                   <div v-if="shop.imageUrl" class="flex-shrink-0 w-24 h-24 rounded-xl overflow-hidden bg-zinc-100 dark:bg-white/5 border border-zinc-200 dark:border-white/10">
-                    <img :src="shop.imageUrl" :alt="shop.name" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
+                    <img 
+                      :src="shop.imageUrl" 
+                      :alt="shop.name" 
+                      class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                      @error="(e) => (e.target as HTMLImageElement).src = 'https://images.unsplash.com/photo-1546069901-ba9599a7e63c?auto=format&fit=crop&q=80&w=200&h=200'"
+                    >
                   </div>
                   
                   <div class="flex-1 min-w-0">
@@ -459,7 +464,7 @@ const restaurantList = ref<Shop[]>([
     lat: 35.6814,
     lng: 139.7677,
     country: '일본',
-    imageUrl: "https://images.unsplash.com/photo-1591814448473-7f27bc553970?auto=format&fit=crop&q=80&w=200&h=200"
+    imageUrl: "https://images.unsplash.com/photo-1569718212165-3a8278d5f624?auto=format&fit=crop&q=80&w=200&h=200"
   },
   {
     id: 12,
@@ -471,7 +476,7 @@ const restaurantList = ref<Shop[]>([
     lat: 35.6853,
     lng: 139.7820,
     country: '일본',
-    imageUrl: "https://images.unsplash.com/photo-1598514983318-2f64f8f4796c?auto=format&fit=crop&q=80&w=200&h=200"
+    imageUrl: "https://images.unsplash.com/photo-1504416285472-eccf03dd31eb?auto=format&fit=crop&q=80&w=200&h=200"
   },
   {
     id: 6,
@@ -483,7 +488,7 @@ const restaurantList = ref<Shop[]>([
     lat: 34.6675,
     lng: 135.5028,
     country: '일본',
-    imageUrl: "https://images.unsplash.com/photo-1553621042-f6e147245754?auto=format&fit=crop&q=80&w=200&h=200"
+    imageUrl: "https://images.unsplash.com/photo-1534483909716-dd79199797a1?auto=format&fit=crop&q=80&w=200&h=200"
   },
   {
     id: 7,
@@ -495,7 +500,7 @@ const restaurantList = ref<Shop[]>([
     lat: 34.6980,
     lng: 135.5348,
     country: '일본',
-    imageUrl: "https://images.unsplash.com/photo-1551460410-c4e976694384?auto=format&fit=crop&q=80&w=200&h=200"
+    imageUrl: "https://images.unsplash.com/photo-1467003909585-2f8a72700288?auto=format&fit=crop&q=80&w=200&h=200"
   },
   {
     id: 8,
@@ -507,7 +512,7 @@ const restaurantList = ref<Shop[]>([
     lat: 34.6657,
     lng: 135.5033,
     country: '일본',
-    imageUrl: "https://images.unsplash.com/photo-1625938146369-adc8335464e8?auto=format&fit=crop&q=80&w=200&h=200"
+    imageUrl: "https://images.unsplash.com/photo-1617196034183-421b4917c92b?auto=format&fit=crop&q=80&w=200&h=200"
   },
   {
     id: 13,
@@ -531,7 +536,7 @@ const restaurantList = ref<Shop[]>([
     lat: 34.6506,
     lng: 135.5065,
     country: '일본',
-    imageUrl: "https://images.unsplash.com/photo-1615361413105-8eb05452375d?auto=format&fit=crop&q=80&w=200&h=200"
+    imageUrl: "https://images.unsplash.com/photo-1541529086526-db283c563270?auto=format&fit=crop&q=80&w=200&h=200"
   },
   {
     id: 5,
@@ -543,7 +548,7 @@ const restaurantList = ref<Shop[]>([
     lat: 35.0083,
     lng: 135.6983,
     country: '일본',
-    imageUrl: "https://images.unsplash.com/photo-1582390142013-16786cacc45c?auto=format&fit=crop&q=80&w=200&h=200"
+    imageUrl: "https://images.unsplash.com/photo-1549438102-193c7628256a?auto=format&fit=crop&q=80&w=200&h=200"
   },
   {
     id: 4,
@@ -555,7 +560,7 @@ const restaurantList = ref<Shop[]>([
     lat: 35.0006,
     lng: 135.7656,
     country: '일본',
-    imageUrl: "https://images.unsplash.com/photo-1623341214825-9f4f963727da?auto=format&fit=crop&q=80&w=200&h=200"
+    imageUrl: "https://images.unsplash.com/photo-1557872242-50387cae1764?auto=format&fit=crop&q=80&w=200&h=200"
   },
   {
     id: 15,
@@ -567,7 +572,7 @@ const restaurantList = ref<Shop[]>([
     lat: 35.0125,
     lng: 135.7593,
     country: '일본',
-    imageUrl: "https://images.unsplash.com/photo-1547592166-23ac45744acd?auto=format&fit=crop&q=80&w=200&h=200"
+    imageUrl: "https://images.unsplash.com/photo-1511910849309-0dffb8785146?auto=format&fit=crop&q=80&w=200&h=200"
   },
   {
     id: 16,
@@ -579,7 +584,7 @@ const restaurantList = ref<Shop[]>([
     lat: 35.0034,
     lng: 135.7735,
     country: '일본',
-    imageUrl: "https://images.unsplash.com/photo-1626200419199-391ae4be7a41?auto=format&fit=crop&q=80&w=200&h=200"
+    imageUrl: "https://images.unsplash.com/photo-1582390142013-16786cacc45c?auto=format&fit=crop&q=80&w=200&h=200"
   },
   {
     id: 17,
@@ -591,7 +596,7 @@ const restaurantList = ref<Shop[]>([
     lat: 35.0045,
     lng: 135.7720,
     country: '일본',
-    imageUrl: "https://images.unsplash.com/photo-1607301406283-bc241c242fb7?auto=format&fit=crop&q=80&w=200&h=200"
+    imageUrl: "https://images.unsplash.com/photo-1617196035154-1e7e6e28b0db?auto=format&fit=crop&q=80&w=200&h=200"
   },
   {
     id: 9,
@@ -603,7 +608,7 @@ const restaurantList = ref<Shop[]>([
     lat: 33.5910,
     lng: 130.4070,
     country: '일본',
-    imageUrl: "https://images.unsplash.com/photo-1584270354949-c26b0d5b4a0c?auto=format&fit=crop&q=80&w=200&h=200"
+    imageUrl: "https://images.unsplash.com/photo-1563805042-7684c019e1cb?auto=format&fit=crop&q=80&w=200&h=200"
   },
   {
     id: 10,
@@ -615,7 +620,7 @@ const restaurantList = ref<Shop[]>([
     lat: 33.5937,
     lng: 130.3973,
     country: '일본',
-    imageUrl: "https://images.unsplash.com/photo-1552611052-33e04de081de?auto=format&fit=crop&q=80&w=200&h=200"
+    imageUrl: "https://images.unsplash.com/photo-1569718212165-3a8278d5f624?auto=format&fit=crop&q=80&w=200&h=200"
   },
   {
     id: 18,
@@ -627,7 +632,7 @@ const restaurantList = ref<Shop[]>([
     lat: 33.5932,
     lng: 130.4017,
     country: '일본',
-    imageUrl: "https://images.unsplash.com/photo-1591814448473-7f27bc553970?auto=format&fit=crop&q=80&w=200&h=200"
+    imageUrl: "https://images.unsplash.com/photo-1596733430284-f74313f8c5b0?auto=format&fit=crop&q=80&w=200&h=200"
   },
   {
     id: 19,
@@ -639,7 +644,7 @@ const restaurantList = ref<Shop[]>([
     lat: 33.5912,
     lng: 130.3985,
     country: '일본',
-    imageUrl: "https://images.unsplash.com/photo-1544025162-d76694265947?auto=format&fit=crop&q=80&w=200&h=200"
+    imageUrl: "https://images.unsplash.com/photo-1559190394-df5a28aab5c5?auto=format&fit=crop&q=80&w=200&h=200"
   },
   {
     id: 20,
@@ -651,7 +656,7 @@ const restaurantList = ref<Shop[]>([
     lat: 33.5895,
     lng: 130.4002,
     country: '일본',
-    imageUrl: "https://images.unsplash.com/photo-1604152135912-04a022e23696?auto=format&fit=crop&q=80&w=200&h=200"
+    imageUrl: "https://images.unsplash.com/photo-1547592166-23ac45744acd?auto=format&fit=crop&q=80&w=200&h=200"
   }
 
 ])
