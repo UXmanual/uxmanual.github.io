@@ -52,6 +52,7 @@
             ]"
             :style="isDragging ? { transform: `translateY(${dragTranslateY}px)`, transition: 'none' } : {}"
             @pointerdown="handlePointerDown"
+            @mouseleave="() => { stopMouseDrag(); stopRegionDrag(); }"
             @mousedown.stop
           >
             <!-- Swipe Handle Area (Visual only now, logic is on container) -->
@@ -675,7 +676,7 @@ const applyRegionMomentum = () => {
   if (!container || Math.abs(regionVelocity) < 0.1) return
   
   container.scrollLeft -= regionVelocity
-  regionVelocity *= 0.95 // Friction
+  regionVelocity *= 0.975 // Smoother friction
   
   regionMomentumRafId = requestAnimationFrame(applyRegionMomentum)
 }
@@ -960,7 +961,7 @@ const applyMomentum = () => {
   if (!container || Math.abs(mouseVelocity.value) < 0.1) return
   
   container.scrollTop -= mouseVelocity.value
-  mouseVelocity.value *= 0.95 // Friction factor
+  mouseVelocity.value *= 0.975 // Smoother friction for vertical scroll
   
   momentumRafId = requestAnimationFrame(applyMomentum)
 }
@@ -981,8 +982,8 @@ const onMouseDrag = (e: MouseEvent) => {
     // Smoothly accumulate velocity for better inertia
     if (deltaTime > 0) {
       const currentVel = (e.clientY - lastMouseY.value)
-      // Weighted average to smooth out jitter (0.3 prev + 0.7 current)
-      mouseVelocity.value = mouseVelocity.value * 0.3 + currentVel * 0.7
+      // High responsiveness for momentum (0.1 prev + 0.9 current)
+      mouseVelocity.value = mouseVelocity.value * 0.1 + currentVel * 0.9
     }
     
     if (e.cancelable) e.preventDefault()
