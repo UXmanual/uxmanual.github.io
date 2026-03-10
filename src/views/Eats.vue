@@ -90,7 +90,7 @@
               :class="[
                 (sheetMode === 'full' || sheetMode === 'half' || windowWidth >= 1024) && !isDragging ? 'overflow-y-auto' : 'overflow-y-hidden',
                 (sheetMode === 'half' || sheetMode === 'collapsed') ? 'pb-[50svh]' : 'pb-10 lg:pb-8',
-                windowWidth >= 1024 ? (isMouseDragging ? 'cursor-grabbing select-none dragging-active' : 'cursor-grab') : ''
+                (windowWidth >= 1024 || true) ? (isMouseDragging ? 'cursor-grabbing select-none dragging-active' : 'cursor-grab') : ''
               ]"
               @mousedown="startMouseDrag"
             >
@@ -614,7 +614,7 @@ const handleMapInteraction = () => {
  * @param shop The shop object to select
  */
 const onMouseDrag = (e: MouseEvent) => {
-  if (!isMouseDragging.value) return
+  if (!isMouseDragging.value || isDragging.value) return
   const container = scrollContainer.value
   if (!container) return
   
@@ -629,12 +629,14 @@ const onMouseDrag = (e: MouseEvent) => {
 }
 
 const startMouseDrag = (e: MouseEvent) => {
-  if (window.innerWidth < 1024) return
   const container = scrollContainer.value
   if (!container) return
   
   // Only handle left click
   if (e.button !== 0) return
+  
+  // If we are already dragging the sheet, don't start list drag
+  if (isDragging.value) return
   
   isMouseDragging.value = true
   mouseStartY.value = e.clientY
