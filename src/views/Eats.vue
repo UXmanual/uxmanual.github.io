@@ -89,8 +89,8 @@
               class="grow px-6 lg:px-5 pt-0 custom-scrollbar space-y-2.5 relative overscroll-contain overflow-x-hidden"
               :class="[
                 (sheetMode === 'full' || sheetMode === 'half' || windowWidth >= 1024) && !isDragging ? 'overflow-y-auto' : 'overflow-y-hidden',
-                (sheetMode === 'half' || sheetMode === 'collapsed') ? 'pb-[50svh]' : 'pb-10 lg:pb-8',
-                (windowWidth >= 1024 || true) ? (isMouseDragging ? 'cursor-grabbing select-none dragging-active' : 'cursor-grab') : ''
+                (windowWidth < 1024 && (sheetMode === 'half' || sheetMode === 'collapsed')) ? 'pb-[50svh]' : 'pb-10 lg:pb-8',
+                isMouseDragging ? 'cursor-grabbing select-none dragging-active' : 'cursor-grab'
               ]"
               @mousedown="startMouseDrag"
             >
