@@ -81,17 +81,23 @@
             </div>
 
             <!-- Fixed Header Area: Region Tabs (Horizontal Scroll) -->
-            <div class="shrink-0 px-6 lg:px-5 pb-5 pt-0 flex gap-1.5 overflow-x-auto no-scrollbar pointer-events-auto" @pointerdown.stop>
+            <div 
+              ref="regionContainer"
+              class="shrink-0 px-6 lg:px-5 pb-5 pt-0 flex gap-1.5 overflow-x-auto no-scrollbar pointer-events-auto" 
+              @pointerdown.stop
+              @mousedown="startRegionDrag"
+            >
               <button 
                 v-for="region in regionsByCountry[selectedCountry]" 
                 :key="region"
-                @click="selectedRegion = region"
-                class="shrink-0 px-3 py-1.5 rounded-full text-[13px] font-bold transition-all duration-300 border"
+                :data-region="region"
+                @click="selectRegion(region)"
+                class="shrink-0 px-3 py-1.5 rounded-full text-[13px] font-bold transition-all duration-300 border whitespace-nowrap"
                 :class="selectedRegion === region 
-                  ? 'bg-zinc-900 border-zinc-900 text-white dark:bg-white dark:border-white dark:text-black' 
+                  ? 'bg-[#1a73e8] border-[#1a73e8] text-white' 
                   : 'bg-transparent border-zinc-200 dark:border-white/10 text-zinc-400 dark:text-zinc-500 hover:text-zinc-600 dark:hover:text-zinc-300'"
               >
-                {{ region }}
+                {{ region }} <span class="ml-0.5 opacity-60 text-[11px] font-medium">{{ getRegionCount(region) }}</span>
               </button>
             </div>
 
@@ -649,6 +655,67 @@ const regionsByCountry: Record<'한국' | '일본', string[]> = {
 }
 const selectedRegion = ref('도쿄')
 
+const getRegionCount = (region: string) => {
+  return restaurantList.value.filter(s => 
+    s.country === selectedCountry.value && s.address.includes(region)
+  ).length
+}
+
+const regionContainer = ref<HTMLElement | null>(null)
+let isRegionDragging = false
+let regionStartX = 0
+let regionScrollLeft = 0
+
+const startRegionDrag = (e: MouseEvent) => {
+  isRegionDragging = true
+  regionStartX = e.pageX - (regionContainer.value?.offsetLeft || 0)
+  regionScrollLeft = regionContainer.value?.scrollLeft || 0
+  
+  window.addEventListener('mousemove', handleRegionDrag)
+  window.addEventListener('mouseup', stopRegionDrag)
+}
+
+const handleRegionDrag = (e: MouseEvent) => {
+  if (!isRegionDragging || !regionContainer.value) return
+  e.preventDefault()
+  const x = e.pageX - (regionContainer.value.offsetLeft || 0)
+  const walk = (x - regionStartX) * 1.5
+  regionContainer.value.scrollLeft = regionScrollLeft - walk
+}
+
+const stopRegionDrag = () => {
+  isRegionDragging = false
+  window.removeEventListener('mousemove', handleRegionDrag)
+  window.removeEventListener('mouseup', stopRegionDrag)
+}
+
+const selectRegion = async (region: string) => {
+  selectedRegion.value = region
+  
+  // Center scroll the tab
+  await nextTick()
+  const container = regionContainer.value
+  const targetTab = container?.querySelector(`[data-region="${region}"]`) as HTMLElement
+  if (targetTab) {
+    targetTab.scrollIntoView({
+      behavior: 'smooth',
+      block: 'nearest',
+      inline: 'center'
+    })
+  }
+
+  // Reset main list scroll
+  if (scrollContainer.value) {
+    scrollContainer.value.scrollTop = 0
+  }
+  
+  // Select first shop in new filtered list
+  const firstInFilter = filteredRestaurants.value[0]
+  if (firstInFilter) {
+    selectedId.value = firstInFilter.id
+  }
+}
+
 const filteredRestaurants = computed(() => {
   let list = restaurantList.value.filter(s => s.country === selectedCountry.value)
   
@@ -691,17 +758,8 @@ const selectedShop = computed(() =>
 
 const handleCountryChange = (country: '한국' | '일본') => {
   selectedCountry.value = country
-  selectedRegion.value = country === '일본' ? '도쿄' : '서울' // Smart default
-  
-  const firstInCountry = filteredRestaurants.value[0]
-  if (firstInCountry) {
-    selectedId.value = firstInCountry.id
-  }
-  
-  // Reset scroll position to top on tab change
-  if (scrollContainer.value) {
-    scrollContainer.value.scrollTop = 0
-  }
+  const defaultRegion = country === '일본' ? '도쿄' : '서울' // Smart default
+  selectRegion(defaultRegion)
 }
 
 const windowWidth = ref(typeof window !== 'undefined' ? window.innerWidth : 1200)
