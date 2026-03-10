@@ -86,7 +86,7 @@
             <!-- List Container (Glassmorphism for Desktop) -->
             <div 
               ref="scrollContainer"
-              class="grow px-6 lg:px-5 pt-0 pb-32 lg:pb-8 custom-scrollbar space-y-2.5 relative overscroll-contain overflow-x-hidden"
+              class="grow px-6 lg:px-5 pt-0 pb-[40vh] lg:pb-8 custom-scrollbar space-y-2.5 relative overscroll-contain overflow-x-hidden"
               :class="(sheetMode === 'full' || sheetMode === 'half' || windowWidth >= 1024) && !isDragging ? 'overflow-y-auto' : 'overflow-y-hidden'"
             >
               <!-- Header inside floating box: Dynamic Area Name (Mobile & Desktop) -->
@@ -127,8 +127,8 @@
               </div>
 
               <!-- End of List Indicator -->
-              <div class="pt-8 pb-12 text-center">
-                <p class="text-[10px] font-bold text-zinc-300 dark:text-zinc-700 uppercase tracking-widest">
+              <div class="pt-8 pb-10 text-center">
+                <p class="text-[11px] font-bold text-zinc-300 dark:text-zinc-700 uppercase tracking-normal">
                   마지막 리스트입니다
                 </p>
               </div>
