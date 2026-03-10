@@ -90,7 +90,7 @@
               :class="[
                 (sheetMode === 'full' || sheetMode === 'half' || windowWidth >= 1024) && !isDragging ? 'overflow-y-auto' : 'overflow-y-hidden',
                 (windowWidth < 1024 && (sheetMode === 'half' || sheetMode === 'collapsed')) ? 'pb-[50svh]' : 'pb-10 lg:pb-8',
-                isMouseDragging ? 'cursor-grabbing select-none dragging-active' : 'cursor-grab'
+                (isMouseDragging && hasMoved) ? 'cursor-grabbing select-none dragging-active' : 'cursor-grab'
               ]"
               @mousedown="startMouseDrag"
             >
