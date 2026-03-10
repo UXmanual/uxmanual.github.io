@@ -80,6 +80,11 @@
               </button>
             </div>
 
+            <!-- Fixed Header Area: Dynamic Area Name (Mobile & Desktop) -->
+            <div v-if="selectedShop" class="shrink-0 px-6 lg:px-5 pb-6 pt-0" @pointerdown.stop>
+              <h1 class="text-2xl font-black text-zinc-900 dark:text-white uppercase leading-tight">{{ selectedShop.address }}</h1>
+            </div>
+
             <!-- Bottom Extension to prevent holes during over-drag (Moved outside scroll area) -->
             <div class="lg:hidden absolute top-[100%] left-0 right-0 h-[2000px] bg-white dark:bg-zinc-900 z-[-1] pointer-events-none"></div>
 
@@ -94,11 +99,6 @@
               ]"
               @mousedown="startMouseDrag"
             >
-              <!-- Header inside floating box: Dynamic Area Name (Mobile & Desktop) -->
-              <div v-if="selectedShop" class="mb-6 pt-3" @pointerdown.stop>
-                <h1 class="text-2xl font-black text-zinc-900 dark:text-white uppercase leading-tight">{{ selectedShop.address }}</h1>
-              </div>
-
               <div 
                 v-for="shop in filteredRestaurants" 
                 :key="shop.id"
