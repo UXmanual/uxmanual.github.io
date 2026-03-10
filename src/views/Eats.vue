@@ -682,14 +682,15 @@ const handleResize = () => {
   // Transition from Desktop to Mobile
   if (prevWidth >= 1024 && windowWidth.value < 1024) {
     sheetMode.value = 'half'
-    // Trigger "slide up from bottom" animation
+    // 1. 우선 시트를 화면 아래(바닥)로 즉시 강제 이동 (트랜지션 없이)
     isDragging.value = true
-    dragTranslateY.value = window.innerHeight
+    dragTranslateY.value = window.innerHeight 
     
-    nextTick(() => {
+    // 2. 브라우저가 바닥 위치를 인식할 수 있도록 아주 짧은 지연 후 트랜지션 활성화
+    setTimeout(() => {
       isDragging.value = false
-      dragTranslateY.value = getModeOffset(sheetMode.value)
-    })
+      dragTranslateY.value = getModeOffset('half')
+    }, 20)
   } else if (!isDragging.value) {
     dragTranslateY.value = getModeOffset(sheetMode.value)
   }
