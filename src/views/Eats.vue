@@ -196,7 +196,7 @@ interface Shop {
 }
 
 const restaurantList = ref<Shop[]>([
-  // --- 한국 맛집 리스트 (서울 주요 지역별 정렬: 종로 > 중구 > 용산 > 강남 > 서초 > 마포 > 송파) ---
+  // --- 한국 맛집 리스트 ---
   {
     id: 104,
     name: "황생가칼국수",
@@ -206,7 +206,8 @@ const restaurantList = ref<Shop[]>([
     address: "서울특별시 종로구 소격동",
     lat: 37.5801,
     lng: 126.9814,
-    country: '한국'
+    country: '한국',
+    imageUrl: "https://loremflickr.com/200/200/food,korean,noodles"
   },
   {
     id: 105,
@@ -217,7 +218,8 @@ const restaurantList = ref<Shop[]>([
     address: "서울특별시 종로구 부암동",
     lat: 37.5936,
     lng: 126.9658,
-    country: '한국'
+    country: '한국',
+    imageUrl: "https://loremflickr.com/200/200/food,korean,dumplings"
   },
   {
     id: 106,
@@ -228,7 +230,8 @@ const restaurantList = ref<Shop[]>([
     address: "서울특별시 종로구 체부동",
     lat: 37.5776,
     lng: 126.9717,
-    country: '한국'
+    country: '한국',
+    imageUrl: "https://loremflickr.com/200/200/food,korean,chicken"
   },
   {
     id: 102,
@@ -239,7 +242,8 @@ const restaurantList = ref<Shop[]>([
     address: "서울특별시 중구 주교동",
     lat: 37.5683,
     lng: 126.9995,
-    country: '한국'
+    country: '한국',
+    imageUrl: "https://loremflickr.com/200/200/food,korean,bbq"
   },
   {
     id: 107,
@@ -250,7 +254,8 @@ const restaurantList = ref<Shop[]>([
     address: "서울특별시 중구 명동",
     lat: 37.5625,
     lng: 126.9856,
-    country: '한국'
+    country: '한국',
+    imageUrl: "https://loremflickr.com/200/200/food,korean,noodels,soup"
   },
   {
     id: 108,
@@ -261,7 +266,8 @@ const restaurantList = ref<Shop[]>([
     address: "서울특별시 중구 명동",
     lat: 37.5668,
     lng: 126.9840,
-    country: '한국'
+    country: '한국',
+    imageUrl: "https://loremflickr.com/200/200/food,korean,soup"
   },
   {
     id: 109,
@@ -272,7 +278,8 @@ const restaurantList = ref<Shop[]>([
     address: "서울특별시 중구 서소문동",
     lat: 37.5623,
     lng: 126.9754,
-    country: '한국'
+    country: '한국',
+    imageUrl: "https://loremflickr.com/200/200/food,korean,cold,noodles"
   },
   {
     id: 110,
@@ -283,7 +290,8 @@ const restaurantList = ref<Shop[]>([
     address: "서울특별시 용산구 이태원동",
     lat: 37.5401,
     lng: 126.9922,
-    country: '한국'
+    country: '한국',
+    imageUrl: "https://loremflickr.com/200/200/food,ramen"
   },
   {
     id: 111,
@@ -294,7 +302,8 @@ const restaurantList = ref<Shop[]>([
     address: "서울특별시 용산구 한남동",
     lat: 37.5385,
     lng: 127.0001,
-    country: '한국'
+    country: '한국',
+    imageUrl: "https://loremflickr.com/200/200/food,korean,pork,bbq"
   },
   {
     id: 112,
@@ -305,7 +314,8 @@ const restaurantList = ref<Shop[]>([
     address: "서울특별시 용산구 한남동",
     lat: 37.5388,
     lng: 127.0012,
-    country: '한국'
+    country: '한국',
+    imageUrl: "https://loremflickr.com/200/200/food,pizza"
   },
   {
     id: 101,
@@ -316,7 +326,8 @@ const restaurantList = ref<Shop[]>([
     address: "서울특별시 강남구 신사동",
     lat: 37.5246,
     lng: 127.0355,
-    country: '한국'
+    country: '한국',
+    imageUrl: "https://loremflickr.com/200/200/food,korean,gourmet"
   },
   {
     id: 113,
@@ -327,7 +338,8 @@ const restaurantList = ref<Shop[]>([
     address: "서울특별시 강남구 청담동",
     lat: 37.5255,
     lng: 127.0407,
-    country: '한국'
+    country: '한국',
+    imageUrl: "https://loremflickr.com/200/200/food,korean,modern"
   },
   {
     id: 103,
@@ -338,7 +350,8 @@ const restaurantList = ref<Shop[]>([
     address: "서울특별시 강남구 삼성동",
     lat: 37.5212,
     lng: 127.0413,
-    country: '한국'
+    country: '한국',
+    imageUrl: "https://loremflickr.com/200/200/food,korean,fusion"
   },
   {
     id: 114,
@@ -349,7 +362,8 @@ const restaurantList = ref<Shop[]>([
     address: "서울특별시 강남구 청담동",
     lat: 37.5252,
     lng: 127.0505,
-    country: '한국'
+    country: '한국',
+    imageUrl: "https://loremflickr.com/200/200/food,korean,meat,steak"
   },
   {
     id: 115,
@@ -360,7 +374,8 @@ const restaurantList = ref<Shop[]>([
     address: "서울특별시 강남구 논현동",
     lat: 37.5161,
     lng: 127.0360,
-    country: '한국'
+    country: '한국',
+    imageUrl: "https://loremflickr.com/200/200/food,korean,cold,noodels"
   },
   {
     id: 116,
@@ -371,7 +386,8 @@ const restaurantList = ref<Shop[]>([
     address: "서울특별시 서초구 서초동",
     lat: 37.4912,
     lng: 127.0125,
-    country: '한국'
+    country: '한국',
+    imageUrl: "https://loremflickr.com/200/200/food,korean,spicy,octopus"
   },
   {
     id: 117,
@@ -382,7 +398,8 @@ const restaurantList = ref<Shop[]>([
     address: "서울특별시 서초구 서초동",
     lat: 37.4877,
     lng: 127.0315,
-    country: '한국'
+    country: '한국',
+    imageUrl: "https://loremflickr.com/200/200/food,korean,ribs,bbq"
   },
   {
     id: 118,
@@ -393,7 +410,8 @@ const restaurantList = ref<Shop[]>([
     address: "서울특별시 마포구 서교동",
     lat: 37.5507,
     lng: 126.9145,
-    country: '한국'
+    country: '한국',
+    imageUrl: "https://loremflickr.com/200/200/food,korean,soup,pork"
   },
   {
     id: 119,
@@ -404,7 +422,8 @@ const restaurantList = ref<Shop[]>([
     address: "서울특별시 마포구 서교동",
     lat: 37.5555,
     lng: 126.9115,
-    country: '한국'
+    country: '한국',
+    imageUrl: "https://loremflickr.com/200/200/food,chinese,dish"
   },
   {
     id: 121,
@@ -415,9 +434,11 @@ const restaurantList = ref<Shop[]>([
     address: "서울특별시 송파구 방이동",
     lat: 37.5115,
     lng: 127.1245,
-    country: '한국'
+    country: '한국',
+    imageUrl: "https://loremflickr.com/200/200/food,korean,bbq,meat"
   },
-  // --- 일본 맛집 리스트 (평점순 20개, 지역별 정렬: 도쿄 > 오사카 > 교토 > 후쿠오카) ---
+
+  // --- 일본 맛집 리스트 ---
   {
     id: 1,
     name: "타치구이 아키라 (Tachigui Akira)",
@@ -428,7 +449,7 @@ const restaurantList = ref<Shop[]>([
     lat: 35.6662,
     lng: 139.7583,
     country: '일본',
-    imageUrl: "https://images.unsplash.com/photo-1579871494447-9811cf80d66c?auto=format&fit=crop&q=80&w=200&h=200"
+    imageUrl: "https://loremflickr.com/200/200/food,japanese,sushi"
   },
   {
     id: 2,
@@ -440,7 +461,7 @@ const restaurantList = ref<Shop[]>([
     lat: 35.6720,
     lng: 139.7710,
     country: '일본',
-    imageUrl: "https://images.unsplash.com/photo-1626200419199-391ae4be7a41?auto=format&fit=crop&q=80&w=200&h=200"
+    imageUrl: "https://loremflickr.com/200/200/food,japanese,cuisine"
   },
   {
     id: 3,
@@ -452,7 +473,7 @@ const restaurantList = ref<Shop[]>([
     lat: 35.6694,
     lng: 139.7523,
     country: '일본',
-    imageUrl: "https://images.unsplash.com/photo-1583953623787-ada99d338235?auto=format&fit=crop&q=80&w=200&h=200"
+    imageUrl: "https://loremflickr.com/200/200/food,japanese,tempura"
   },
   {
     id: 11,
@@ -464,7 +485,7 @@ const restaurantList = ref<Shop[]>([
     lat: 35.6814,
     lng: 139.7677,
     country: '일본',
-    imageUrl: "https://images.unsplash.com/photo-1569718212165-3a8278d5f624?auto=format&fit=crop&q=80&w=200&h=200"
+    imageUrl: "https://loremflickr.com/200/200/food,ramen,noodles"
   },
   {
     id: 12,
@@ -476,7 +497,7 @@ const restaurantList = ref<Shop[]>([
     lat: 35.6853,
     lng: 139.7820,
     country: '일본',
-    imageUrl: "https://images.unsplash.com/photo-1504416285472-eccf03dd31eb?auto=format&fit=crop&q=80&w=200&h=200"
+    imageUrl: "https://loremflickr.com/200/200/food,japanese,sukiyaki"
   },
   {
     id: 6,
@@ -488,7 +509,7 @@ const restaurantList = ref<Shop[]>([
     lat: 34.6675,
     lng: 135.5028,
     country: '일본',
-    imageUrl: "https://images.unsplash.com/photo-1534483909716-dd79199797a1?auto=format&fit=crop&q=80&w=200&h=200"
+    imageUrl: "https://loremflickr.com/200/200/food,japanese,sushi"
   },
   {
     id: 7,
@@ -500,7 +521,7 @@ const restaurantList = ref<Shop[]>([
     lat: 34.6980,
     lng: 135.5348,
     country: '일본',
-    imageUrl: "https://images.unsplash.com/photo-1467003909585-2f8a72700288?auto=format&fit=crop&q=80&w=200&h=200"
+    imageUrl: "https://loremflickr.com/200/200/food,japanese,seafood"
   },
   {
     id: 8,
@@ -512,7 +533,7 @@ const restaurantList = ref<Shop[]>([
     lat: 34.6657,
     lng: 135.5033,
     country: '일본',
-    imageUrl: "https://images.unsplash.com/photo-1617196034183-421b4917c92b?auto=format&fit=crop&q=80&w=200&h=200"
+    imageUrl: "https://loremflickr.com/200/200/food,japanese,pancake"
   },
   {
     id: 13,
@@ -524,7 +545,7 @@ const restaurantList = ref<Shop[]>([
     lat: 34.6687,
     lng: 135.5013,
     country: '일본',
-    imageUrl: "https://images.unsplash.com/photo-1559737558-2f5a35f4523b?auto=format&fit=crop&q=80&w=200&h=200"
+    imageUrl: "https://loremflickr.com/200/200/crab,dish"
   },
   {
     id: 14,
@@ -536,7 +557,7 @@ const restaurantList = ref<Shop[]>([
     lat: 34.6506,
     lng: 135.5065,
     country: '일본',
-    imageUrl: "https://images.unsplash.com/photo-1541529086526-db283c563270?auto=format&fit=crop&q=80&w=200&h=200"
+    imageUrl: "https://loremflickr.com/200/200/food,japanese,fried"
   },
   {
     id: 5,
@@ -548,7 +569,7 @@ const restaurantList = ref<Shop[]>([
     lat: 35.0083,
     lng: 135.6983,
     country: '일본',
-    imageUrl: "https://images.unsplash.com/photo-1549438102-193c7628256a?auto=format&fit=crop&q=80&w=200&h=200"
+    imageUrl: "https://loremflickr.com/200/200/food,japanese,kaiseki"
   },
   {
     id: 4,
@@ -560,7 +581,7 @@ const restaurantList = ref<Shop[]>([
     lat: 35.0006,
     lng: 135.7656,
     country: '일본',
-    imageUrl: "https://images.unsplash.com/photo-1557872242-50387cae1764?auto=format&fit=crop&q=80&w=200&h=200"
+    imageUrl: "https://loremflickr.com/200/200/food,ramen"
   },
   {
     id: 15,
@@ -572,7 +593,7 @@ const restaurantList = ref<Shop[]>([
     lat: 35.0125,
     lng: 135.7593,
     country: '일본',
-    imageUrl: "https://images.unsplash.com/photo-1511910849309-0dffb8785146?auto=format&fit=crop&q=80&w=200&h=200"
+    imageUrl: "https://loremflickr.com/200/200/food,japanese,soba"
   },
   {
     id: 16,
@@ -584,7 +605,7 @@ const restaurantList = ref<Shop[]>([
     lat: 35.0034,
     lng: 135.7735,
     country: '일본',
-    imageUrl: "https://images.unsplash.com/photo-1582390142013-16786cacc45c?auto=format&fit=crop&q=80&w=200&h=200"
+    imageUrl: "https://loremflickr.com/200/200/food,japanese,cuisine"
   },
   {
     id: 17,
@@ -596,7 +617,7 @@ const restaurantList = ref<Shop[]>([
     lat: 35.0045,
     lng: 135.7720,
     country: '일본',
-    imageUrl: "https://images.unsplash.com/photo-1617196035154-1e7e6e28b0db?auto=format&fit=crop&q=80&w=200&h=200"
+    imageUrl: "https://loremflickr.com/200/200/food,japanese,sushi"
   },
   {
     id: 9,
@@ -608,7 +629,7 @@ const restaurantList = ref<Shop[]>([
     lat: 33.5910,
     lng: 130.4070,
     country: '일본',
-    imageUrl: "https://images.unsplash.com/photo-1563805042-7684c019e1cb?auto=format&fit=crop&q=80&w=200&h=200"
+    imageUrl: "https://loremflickr.com/200/200/food,japanese,eel"
   },
   {
     id: 10,
@@ -620,7 +641,7 @@ const restaurantList = ref<Shop[]>([
     lat: 33.5937,
     lng: 130.3973,
     country: '일본',
-    imageUrl: "https://images.unsplash.com/photo-1569718212165-3a8278d5f624?auto=format&fit=crop&q=80&w=200&h=200"
+    imageUrl: "https://loremflickr.com/200/200/food,ramen"
   },
   {
     id: 18,
@@ -632,7 +653,7 @@ const restaurantList = ref<Shop[]>([
     lat: 33.5932,
     lng: 130.4017,
     country: '일본',
-    imageUrl: "https://images.unsplash.com/photo-1596733430284-f74313f8c5b0?auto=format&fit=crop&q=80&w=200&h=200"
+    imageUrl: "https://loremflickr.com/200/200/food,japanese,ramen"
   },
   {
     id: 19,
@@ -644,7 +665,7 @@ const restaurantList = ref<Shop[]>([
     lat: 33.5912,
     lng: 130.3985,
     country: '일본',
-    imageUrl: "https://images.unsplash.com/photo-1559190394-df5a28aab5c5?auto=format&fit=crop&q=80&w=200&h=200"
+    imageUrl: "https://loremflickr.com/200/200/food,japanese,steak"
   },
   {
     id: 20,
@@ -656,7 +677,7 @@ const restaurantList = ref<Shop[]>([
     lat: 33.5895,
     lng: 130.4002,
     country: '일본',
-    imageUrl: "https://images.unsplash.com/photo-1547592166-23ac45744acd?auto=format&fit=crop&q=80&w=200&h=200"
+    imageUrl: "https://loremflickr.com/200/200/food,japanese,chicken,soup"
   }
 
 ])
