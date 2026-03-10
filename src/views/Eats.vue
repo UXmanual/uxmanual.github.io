@@ -109,38 +109,26 @@
                   ? 'bg-white dark:bg-white/10 border-[#1a73e8]' 
                   : 'bg-transparent border-zinc-200 dark:border-white/10 hover:bg-zinc-50 dark:hover:bg-white/5'"
               >
-                <div class="flex gap-3">
-                  <!-- Thumbnail Image (Optional) -->
-                  <div v-if="shop.imageUrl" class="flex-shrink-0 w-24 h-24 rounded-xl overflow-hidden bg-zinc-100 dark:bg-white/5 border border-zinc-200 dark:border-white/10">
-                    <img 
-                      :src="shop.imageUrl" 
-                      :alt="shop.name" 
-                      class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-                      @error="(e) => (e.target as HTMLImageElement).src = 'https://images.unsplash.com/photo-1546069901-ba9599a7e63c?auto=format&fit=crop&q=80&w=200&h=200'"
-                    >
+                <div class="min-w-0">
+                  <div class="flex justify-between items-center mb-1.5">
+                    <span class="px-1.5 py-1 inline-flex items-center rounded text-[10px] font-bold uppercase tracking-wider bg-zinc-100 dark:bg-white/10 text-zinc-500 dark:text-zinc-400 border border-zinc-200 dark:border-white/5 leading-none">
+                      {{ shop.category }}
+                    </span>
+                    <span class="text-[11px] font-bold text-[#1a73e8]">★ {{ shop.rating }}</span>
                   </div>
-                  
-                  <div class="flex-1 min-w-0">
-                    <div class="flex justify-between items-center mb-1.5">
-                      <span class="px-1.5 py-1 inline-flex items-center rounded text-[10px] font-bold uppercase tracking-wider bg-zinc-100 dark:bg-white/10 text-zinc-500 dark:text-zinc-400 border border-zinc-200 dark:border-white/5 leading-none">
-                        {{ shop.category }}
-                      </span>
-                      <span class="text-[11px] font-bold text-[#1a73e8]">★ {{ shop.rating }}</span>
-                    </div>
-                    <h3 
-                      class="text-base font-bold mb-0.5 group-hover:text-[#1a73e8] transition-colors line-clamp-1"
-                      :class="{ 'text-[#1a73e8]': selectedId === shop.id }"
-                    >
-                      {{ shop.name }}
-                    </h3>
-                    <p class="text-xs text-zinc-500 dark:text-zinc-400 line-clamp-1 leading-relaxed">{{ shop.description }}</p>
-                    <div class="mt-1.5 flex items-center gap-1.5 text-[11px] font-medium text-zinc-400 uppercase tracking-tight">
-                      <svg xmlns="http://www.w3.org/2000/svg" class="w-2.5 h-2.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
-                      </svg>
-                      {{ shop.address }}
-                    </div>
+                  <h3 
+                    class="text-base font-bold mb-0.5 group-hover:text-[#1a73e8] transition-colors line-clamp-1"
+                    :class="{ 'text-[#1a73e8]': selectedId === shop.id }"
+                  >
+                    {{ shop.name }}
+                  </h3>
+                  <p class="text-xs text-zinc-500 dark:text-zinc-400 line-clamp-1 leading-relaxed">{{ shop.description }}</p>
+                  <div class="mt-1.5 flex items-center gap-1.5 text-[11px] font-medium text-zinc-400 uppercase tracking-tight">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="w-2.5 h-2.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+                    </svg>
+                    {{ shop.address }}
                   </div>
                 </div>
               </div>
@@ -192,7 +180,6 @@ interface Shop {
   lat: number
   lng: number
   country: '한국' | '일본'
-  imageUrl?: string
 }
 
 const restaurantList = ref<Shop[]>([
@@ -206,8 +193,7 @@ const restaurantList = ref<Shop[]>([
     address: "서울특별시 종로구 소격동",
     lat: 37.5801,
     lng: 126.9814,
-    country: '한국',
-    imageUrl: "https://images.unsplash.com/photo-1582878826629-29b7ad8cd305?auto=format&fit=crop&q=80&w=200&h=200"
+    country: '한국'
   },
   {
     id: 105,
@@ -218,8 +204,7 @@ const restaurantList = ref<Shop[]>([
     address: "서울특별시 종로구 부암동",
     lat: 37.5936,
     lng: 126.9658,
-    country: '한국',
-    imageUrl: "https://images.unsplash.com/photo-1541696432-82c6da8ce7bc?auto=format&fit=crop&q=80&w=200&h=200"
+    country: '한국'
   },
   {
     id: 106,
@@ -230,8 +215,7 @@ const restaurantList = ref<Shop[]>([
     address: "서울특별시 종로구 체부동",
     lat: 37.5776,
     lng: 126.9717,
-    country: '한국',
-    imageUrl: "https://images.unsplash.com/photo-1598511726623-d3066929949d?auto=format&fit=crop&q=80&w=200&h=200"
+    country: '한국'
   },
   {
     id: 102,
@@ -242,8 +226,7 @@ const restaurantList = ref<Shop[]>([
     address: "서울특별시 중구 주교동",
     lat: 37.5683,
     lng: 126.9995,
-    country: '한국',
-    imageUrl: "https://images.unsplash.com/photo-1544025162-d76694265947?auto=format&fit=crop&q=80&w=200&h=200"
+    country: '한국'
   },
   {
     id: 107,
@@ -254,8 +237,7 @@ const restaurantList = ref<Shop[]>([
     address: "서울특별시 중구 명동",
     lat: 37.5625,
     lng: 126.9856,
-    country: '한국',
-    imageUrl: "https://images.unsplash.com/photo-1552611052-cd39a3f0b2da?auto=format&fit=crop&q=80&w=200&h=200"
+    country: '한국'
   },
   {
     id: 108,
@@ -266,8 +248,7 @@ const restaurantList = ref<Shop[]>([
     address: "서울특별시 중구 명동",
     lat: 37.5668,
     lng: 126.9840,
-    country: '한국',
-    imageUrl: "https://images.unsplash.com/photo-1547928576-9653193f7644?auto=format&fit=crop&q=80&w=200&h=200"
+    country: '한국'
   },
   {
     id: 109,
@@ -278,8 +259,7 @@ const restaurantList = ref<Shop[]>([
     address: "서울특별시 중구 서소문동",
     lat: 37.5623,
     lng: 126.9754,
-    country: '한국',
-    imageUrl: "https://images.unsplash.com/photo-1511910849309-0dffb8785146?auto=format&fit=crop&q=80&w=200&h=200"
+    country: '한국'
   },
   {
     id: 110,
@@ -290,8 +270,7 @@ const restaurantList = ref<Shop[]>([
     address: "서울특별시 용산구 이태원동",
     lat: 37.5401,
     lng: 126.9922,
-    country: '한국',
-    imageUrl: "https://images.unsplash.com/photo-1569718212165-3a8278d5f624?auto=format&fit=crop&q=80&w=200&h=200"
+    country: '한국'
   },
   {
     id: 111,
@@ -302,8 +281,7 @@ const restaurantList = ref<Shop[]>([
     address: "서울특별시 용산구 한남동",
     lat: 37.5385,
     lng: 127.0001,
-    country: '한국',
-    imageUrl: "https://images.unsplash.com/photo-1617196034183-421b4917c92b?auto=format&fit=crop&q=80&w=200&h=200"
+    country: '한국'
   },
   {
     id: 112,
@@ -314,8 +292,7 @@ const restaurantList = ref<Shop[]>([
     address: "서울특별시 용산구 한남동",
     lat: 37.5388,
     lng: 127.0012,
-    country: '한국',
-    imageUrl: "https://images.unsplash.com/photo-1513104890138-7c749659a591?auto=format&fit=crop&q=80&w=200&h=200"
+    country: '한국'
   },
   {
     id: 101,
@@ -326,8 +303,7 @@ const restaurantList = ref<Shop[]>([
     address: "서울특별시 강남구 신사동",
     lat: 37.5246,
     lng: 127.0355,
-    country: '한국',
-    imageUrl: "https://images.unsplash.com/photo-1552611052-cd39a3f0b2da?auto=format&fit=crop&q=80&w=200&h=200"
+    country: '한국'
   },
   {
     id: 113,
@@ -338,8 +314,7 @@ const restaurantList = ref<Shop[]>([
     address: "서울특별시 강남구 청담동",
     lat: 37.5255,
     lng: 127.0407,
-    country: '한국',
-    imageUrl: "https://images.unsplash.com/photo-1626200419199-391ae4be7a41?auto=format&fit=crop&q=80&w=200&h=200"
+    country: '한국'
   },
   {
     id: 103,
@@ -350,8 +325,7 @@ const restaurantList = ref<Shop[]>([
     address: "서울특별시 강남구 삼성동",
     lat: 37.5212,
     lng: 127.0413,
-    country: '한국',
-    imageUrl: "https://images.unsplash.com/photo-1627308595229-7830a5c91f9f?auto=format&fit=crop&q=80&w=200&h=200"
+    country: '한국'
   },
   {
     id: 114,
@@ -362,8 +336,7 @@ const restaurantList = ref<Shop[]>([
     address: "서울특별시 강남구 청담동",
     lat: 37.5252,
     lng: 127.0505,
-    country: '한국',
-    imageUrl: "https://images.unsplash.com/photo-1559190394-df5a28aab5c5?auto=format&fit=crop&q=80&w=200&h=200"
+    country: '한국'
   },
   {
     id: 115,
@@ -374,8 +347,7 @@ const restaurantList = ref<Shop[]>([
     address: "서울특별시 강남구 논현동",
     lat: 37.5161,
     lng: 127.0360,
-    country: '한국',
-    imageUrl: "https://images.unsplash.com/photo-1511910849309-0dffb8785146?auto=format&fit=crop&q=80&w=200&h=200"
+    country: '한국'
   },
   {
     id: 116,
@@ -386,8 +358,7 @@ const restaurantList = ref<Shop[]>([
     address: "서울특별시 서초구 서초동",
     lat: 37.4912,
     lng: 127.0125,
-    country: '한국',
-    imageUrl: "https://images.unsplash.com/photo-1467003909585-2f8a72700288?auto=format&fit=crop&q=80&w=200&h=200"
+    country: '한국'
   },
   {
     id: 117,
@@ -398,8 +369,7 @@ const restaurantList = ref<Shop[]>([
     address: "서울특별시 서초구 서초동",
     lat: 37.4877,
     lng: 127.0315,
-    country: '한국',
-    imageUrl: "https://images.unsplash.com/photo-1544025162-d76694265947?auto=format&fit=crop&q=80&w=200&h=200"
+    country: '한국'
   },
   {
     id: 118,
@@ -410,8 +380,7 @@ const restaurantList = ref<Shop[]>([
     address: "서울특별시 마포구 서교동",
     lat: 37.5507,
     lng: 126.9145,
-    country: '한국',
-    imageUrl: "https://images.unsplash.com/photo-1547928576-9653193f7644?auto=format&fit=crop&q=80&w=200&h=200"
+    country: '한국'
   },
   {
     id: 119,
@@ -422,8 +391,7 @@ const restaurantList = ref<Shop[]>([
     address: "서울특별시 마포구 서교동",
     lat: 37.5555,
     lng: 126.9115,
-    country: '한국',
-    imageUrl: "https://images.unsplash.com/photo-1525755662778-989d0524087e?auto=format&fit=crop&q=80&w=200&h=200"
+    country: '한국'
   },
   {
     id: 121,
@@ -434,8 +402,7 @@ const restaurantList = ref<Shop[]>([
     address: "서울특별시 송파구 방이동",
     lat: 37.5115,
     lng: 127.1245,
-    country: '한국',
-    imageUrl: "https://images.unsplash.com/photo-1544025162-d76694265947?auto=format&fit=crop&q=80&w=200&h=200"
+    country: '한국'
   },
 
   // --- 일본 맛집 리스트 ---
@@ -448,8 +415,7 @@ const restaurantList = ref<Shop[]>([
     address: "일본 도쿄 미나토구",
     lat: 35.6662,
     lng: 139.7583,
-    country: '일본',
-    imageUrl: "https://images.unsplash.com/photo-1579871494447-9811cf80d66c?auto=format&fit=crop&q=80&w=200&h=200"
+    country: '일본'
   },
   {
     id: 2,
@@ -460,8 +426,7 @@ const restaurantList = ref<Shop[]>([
     address: "일본 도쿄 주오구",
     lat: 35.6720,
     lng: 139.7710,
-    country: '일본',
-    imageUrl: "https://images.unsplash.com/photo-1626200419199-391ae4be7a41?auto=format&fit=crop&q=80&w=200&h=200"
+    country: '일본'
   },
   {
     id: 3,
@@ -472,8 +437,7 @@ const restaurantList = ref<Shop[]>([
     address: "일본 도쿄 미나토구",
     lat: 35.6694,
     lng: 139.7523,
-    country: '일본',
-    imageUrl: "https://images.unsplash.com/photo-1583953623787-ada99d338235?auto=format&fit=crop&q=80&w=200&h=200"
+    country: '일본'
   },
   {
     id: 11,
@@ -484,8 +448,7 @@ const restaurantList = ref<Shop[]>([
     address: "일본 도쿄 지요다구",
     lat: 35.6814,
     lng: 139.7677,
-    country: '일본',
-    imageUrl: "https://images.unsplash.com/photo-1557872242-50387cae1764?auto=format&fit=crop&q=80&w=200&h=200"
+    country: '일본'
   },
   {
     id: 12,
@@ -496,8 +459,7 @@ const restaurantList = ref<Shop[]>([
     address: "일본 도쿄 니혼바시",
     lat: 35.6853,
     lng: 139.7820,
-    country: '일본',
-    imageUrl: "https://images.unsplash.com/photo-1504416285472-eccf03dd31eb?auto=format&fit=crop&q=80&w=200&h=200"
+    country: '일본'
   },
   {
     id: 6,
@@ -508,8 +470,7 @@ const restaurantList = ref<Shop[]>([
     address: "일본 오사카부 오사카시",
     lat: 34.6675,
     lng: 135.5028,
-    country: '일본',
-    imageUrl: "https://images.unsplash.com/photo-1534483909716-dd79199797a1?auto=format&fit=crop&q=80&w=200&h=200"
+    country: '일본'
   },
   {
     id: 7,
@@ -520,8 +481,7 @@ const restaurantList = ref<Shop[]>([
     address: "일본 오사카부 오사카시",
     lat: 34.6980,
     lng: 135.5348,
-    country: '일본',
-    imageUrl: "https://images.unsplash.com/photo-1467003909585-2f8a72700288?auto=format&fit=crop&q=80&w=200&h=200"
+    country: '일본'
   },
   {
     id: 8,
@@ -532,8 +492,7 @@ const restaurantList = ref<Shop[]>([
     address: "일본 오사카부 오사카시",
     lat: 34.6657,
     lng: 135.5033,
-    country: '일본',
-    imageUrl: "https://images.unsplash.com/photo-1625938146369-adc8335464e8?auto=format&fit=crop&q=80&w=200&h=200"
+    country: '일본'
   },
   {
     id: 13,
@@ -544,8 +503,7 @@ const restaurantList = ref<Shop[]>([
     address: "일본 오사카부 주오구",
     lat: 34.6687,
     lng: 135.5013,
-    country: '일본',
-    imageUrl: "https://images.unsplash.com/photo-1559737558-2f5a35f4523b?auto=format&fit=crop&q=80&w=200&h=200"
+    country: '일본'
   },
   {
     id: 14,
@@ -556,8 +514,7 @@ const restaurantList = ref<Shop[]>([
     address: "일본 오사카부 나니와구",
     lat: 34.6506,
     lng: 135.5065,
-    country: '일본',
-    imageUrl: "https://images.unsplash.com/photo-1541529086526-db283c563270?auto=format&fit=crop&q=80&w=200&h=200"
+    country: '일본'
   },
   {
     id: 5,
@@ -568,8 +525,7 @@ const restaurantList = ref<Shop[]>([
     address: "일본 교토부 교토시",
     lat: 35.0083,
     lng: 135.6983,
-    country: '일본',
-    imageUrl: "https://images.unsplash.com/photo-1549438102-193c7628256a?auto=format&fit=crop&q=80&w=200&h=200"
+    country: '일본'
   },
   {
     id: 4,
@@ -580,8 +536,7 @@ const restaurantList = ref<Shop[]>([
     address: "일본 교토부 교토시",
     lat: 35.0006,
     lng: 135.7656,
-    country: '일본',
-    imageUrl: "https://images.unsplash.com/photo-1557872242-50387cae1764?auto=format&fit=crop&q=80&w=200&h=200"
+    country: '일본'
   },
   {
     id: 15,
@@ -592,8 +547,7 @@ const restaurantList = ref<Shop[]>([
     address: "일본 교토부 나카교구",
     lat: 35.0125,
     lng: 135.7593,
-    country: '일본',
-    imageUrl: "https://images.unsplash.com/photo-1511910849309-0dffb8785146?auto=format&fit=crop&q=80&w=200&h=200"
+    country: '일본'
   },
   {
     id: 16,
@@ -604,8 +558,7 @@ const restaurantList = ref<Shop[]>([
     address: "일본 교토부 히가시야마구",
     lat: 35.0034,
     lng: 135.7735,
-    country: '일본',
-    imageUrl: "https://images.unsplash.com/photo-1582390142013-16786cacc45c?auto=format&fit=crop&q=80&w=200&h=200"
+    country: '일본'
   },
   {
     id: 17,
@@ -616,8 +569,7 @@ const restaurantList = ref<Shop[]>([
     address: "일본 교토부 히가시야마구",
     lat: 35.0045,
     lng: 135.7720,
-    country: '일본',
-    imageUrl: "https://images.unsplash.com/photo-1617196035154-1e7e6e28b0db?auto=format&fit=crop&q=80&w=200&h=200"
+    country: '일본'
   },
   {
     id: 9,
@@ -628,8 +580,7 @@ const restaurantList = ref<Shop[]>([
     address: "일본 후쿠오카현 후쿠오카시",
     lat: 33.5910,
     lng: 130.4070,
-    country: '일본',
-    imageUrl: "https://images.unsplash.com/photo-1563805042-7684c019e1cb?auto=format&fit=crop&q=80&w=200&h=200"
+    country: '일본'
   },
   {
     id: 10,
@@ -640,8 +591,7 @@ const restaurantList = ref<Shop[]>([
     address: "일본 후쿠오카현 후쿠오카시",
     lat: 33.5937,
     lng: 130.3973,
-    country: '일본',
-    imageUrl: "https://images.unsplash.com/photo-1569718212165-3a8278d5f624?auto=format&fit=crop&q=80&w=200&h=200"
+    country: '일본'
   },
   {
     id: 18,
@@ -652,8 +602,7 @@ const restaurantList = ref<Shop[]>([
     address: "일본 후쿠오카현 하카타구",
     lat: 33.5932,
     lng: 130.4017,
-    country: '일본',
-    imageUrl: "https://images.unsplash.com/photo-1596733430284-f74313f8c5b0?auto=format&fit=crop&q=80&w=200&h=200"
+    country: '일본'
   },
   {
     id: 19,
@@ -664,8 +613,7 @@ const restaurantList = ref<Shop[]>([
     address: "일본 후쿠오카현 주오구",
     lat: 33.5912,
     lng: 130.3985,
-    country: '일본',
-    imageUrl: "https://images.unsplash.com/photo-1559190394-df5a28aab5c5?auto=format&fit=crop&q=80&w=200&h=200"
+    country: '일본'
   },
   {
     id: 20,
@@ -676,8 +624,7 @@ const restaurantList = ref<Shop[]>([
     address: "일본 후쿠오카현 주오구",
     lat: 33.5895,
     lng: 130.4002,
-    country: '일본',
-    imageUrl: "https://images.unsplash.com/photo-1598511726623-d3066929949d?auto=format&fit=crop&q=80&w=200&h=200"
+    country: '일본'
   }
 
 ])
