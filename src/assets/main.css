@@ -1,13 +1,9 @@
 @import "tailwindcss";
-@import url("https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap");
 
 @theme {
     --color-dark-bg: #131313;
     --color-card-bg: #1f1f1f;
 }
-
-/* Explicitly define dark mode variant to use .dark class */
-@custom-variant dark (&:where(.dark, .dark *));
 
 /* Fonts */
 
@@ -18,17 +14,23 @@
 
 /* Ensure body and html follow the theme */
 html {
-    @apply bg-zinc-50 dark:bg-[#131313] transition-colors duration-200;
-    /* 스크롤바가 콘텐츠 위에 뜨도록 설정 (Windows에서도 컨텐츠 밀림 방지) */
+    background-color: #f9fafb;
+    /* zinc-50 */
+    transition: background-color 0.2s duration;
     overflow-y: overlay;
 }
 
 html.dark {
+    background-color: #131313;
     color-scheme: dark;
 }
 
 body {
-    @apply bg-zinc-50 text-zinc-900 transition-colors duration-200;
+    background-color: #f9fafb;
+    /* zinc-50 */
+    color: #18181b;
+    /* zinc-900 */
+    transition: background-color 0.2s, color 0.2s;
     font-family: "Pretendard Variable", "Pretendard", -apple-system, BlinkMacSystemFont, "Apple SD Gothic Neo", "Inter", sans-serif;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
@@ -36,7 +38,9 @@ body {
 }
 
 html.dark body {
-    @apply bg-[#131313] text-zinc-100;
+    background-color: #131313;
+    color: #f4f4f5;
+    /* zinc-100 */
 }
 
 /* Custom scrollbar - Floating & Transparent 스타일 */
