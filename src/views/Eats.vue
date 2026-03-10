@@ -527,6 +527,12 @@ const mouseStartY = ref(0)
 const mouseScrollTop = ref(0)
 const hasMoved = ref(false)
 
+// Momentum (Sliding) State
+const mouseVelocity = ref(0)
+const lastMouseY = ref(0)
+const lastTimestamp = ref(0)
+let momentumRafId: number | null = null
+
 const getModeOffset = (mode: SheetMode) => {
   const containerHeight = window.innerHeight
   if (mode === 'collapsed') return containerHeight - 85
@@ -613,34 +619,60 @@ const handleMapInteraction = () => {
  * Updates the selected shop and triggers a map update.
  * @param shop The shop object to select
  */
+const applyMomentum = () => {
+  const container = scrollContainer.value
+  if (!container || Math.abs(mouseVelocity.value) < 0.1) return
+  
+  container.scrollTop -= mouseVelocity.value
+  mouseVelocity.value *= 0.95 // Friction factor
+  
+  momentumRafId = requestAnimationFrame(applyMomentum)
+}
+
 const onMouseDrag = (e: MouseEvent) => {
   if (!isMouseDragging.value || isDragging.value) return
   const container = scrollContainer.value
   if (!container) return
   
+  const currentTimestamp = performance.now()
   const deltaY = e.clientY - mouseStartY.value
+  const deltaTime = currentTimestamp - lastTimestamp.value
   
   if (Math.abs(deltaY) > 5) {
     hasMoved.value = true
     container.scrollTop = mouseScrollTop.value - deltaY
-    // Prevent text selection while dragging
+    
+    // Calculate velocity (px per frame roughly)
+    if (deltaTime > 0) {
+      mouseVelocity.value = (e.clientY - lastMouseY.value)
+    }
+    
     if (e.cancelable) e.preventDefault()
   }
+  
+  lastMouseY.value = e.clientY
+  lastTimestamp.value = currentTimestamp
 }
 
 const startMouseDrag = (e: MouseEvent) => {
   const container = scrollContainer.value
   if (!container) return
   
-  // Only handle left click
   if (e.button !== 0) return
-  
-  // If we are already dragging the sheet, don't start list drag
   if (isDragging.value) return
+  
+  // Cancel previous momentum
+  if (momentumRafId) {
+    cancelAnimationFrame(momentumRafId)
+    momentumRafId = null
+  }
   
   isMouseDragging.value = true
   mouseStartY.value = e.clientY
   mouseScrollTop.value = container.scrollTop
+  lastMouseY.value = e.clientY
+  lastTimestamp.value = performance.now()
+  mouseVelocity.value = 0
   hasMoved.value = false
   
   window.addEventListener('mousemove', onMouseDrag, { passive: false })
@@ -651,6 +683,11 @@ const stopMouseDrag = () => {
   isMouseDragging.value = false
   window.removeEventListener('mousemove', onMouseDrag)
   window.removeEventListener('mouseup', stopMouseDrag)
+  
+  // Start sliding effect
+  if (hasMoved.value) {
+    applyMomentum()
+  }
 }
 
 const handleShopSelect = async (shop: Shop) => {
