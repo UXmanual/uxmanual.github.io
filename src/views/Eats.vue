@@ -181,15 +181,38 @@ interface Shop {
 }
 
 const restaurantList = ref<Shop[]>([
+  // --- 한국 맛집 리스트 (서울 주요 지역별 정렬: 종로 > 중구 > 용산 > 강남 > 서초 > 마포 > 송파) ---
   {
-    id: 101,
-    name: "가온 (Gaon)",
-    category: "한식",
-    rating: 4.9,
-    description: "전통 한식의 정수를 보여주는 미쉐린 3스타 레스토랑입니다.",
-    address: "서울특별시 강남구 신사동",
-    lat: 37.5256,
-    lng: 127.0358,
+    id: 104,
+    name: "황생가칼국수",
+    category: "칼국수",
+    rating: 4.5,
+    description: "북촌의 자부심, 깊은 사골 육수로 맛을 낸 정성 가득한 칼국수와 만두입니다.",
+    address: "서울특별시 종로구 소격동",
+    lat: 37.5801,
+    lng: 126.9814,
+    country: '한국'
+  },
+  {
+    id: 105,
+    name: "자하손만두",
+    category: "만두부문",
+    rating: 4.4,
+    description: "부암동 산비탈에서 즐기는 정갈하고 담백한 개성식 손만두 전문점입니다.",
+    address: "서울특별시 종로구 부암동",
+    lat: 37.5936,
+    lng: 126.9658,
+    country: '한국'
+  },
+  {
+    id: 106,
+    name: "토속촌 삼계탕",
+    category: "삼계탕",
+    rating: 4.3,
+    description: "경복궁 옆, 견과류가 들어간 진한 국물의 원조 삼계탕 맛집입니다.",
+    address: "서울특별시 종로구 체부동",
+    lat: 37.5776,
+    lng: 126.9717,
     country: '한국'
   },
   {
@@ -197,10 +220,98 @@ const restaurantList = ref<Shop[]>([
     name: "우래옥 (Wooraeok)",
     category: "고기요리",
     rating: 4.7,
-    description: "70년 전통의 평양냉면과 불고기 명가입니다.",
+    description: "70년 전통의 평양냉면과 불고기 명가, 명실상부 서울 최고의 노포입니다.",
     address: "서울특별시 중구 주교동",
     lat: 37.5683,
     lng: 126.9995,
+    country: '한국'
+  },
+  {
+    id: 107,
+    name: "명동교자",
+    category: "칼국수",
+    rating: 4.6,
+    description: "명동의 랜드마크, 진한 닭 육수와 부드러운 만두가 어우러진 맛의 명소입니다.",
+    address: "서울특별시 중구 명동",
+    lat: 37.5625,
+    lng: 126.9856,
+    country: '한국'
+  },
+  {
+    id: 108,
+    name: "하동관",
+    category: "곰탕",
+    rating: 4.4,
+    description: "1939년부터 이어온, 맑고 깊은 국물 맛이 일품인 대표 곰탕집입니다.",
+    address: "서울특별시 중구 명동",
+    lat: 37.5668,
+    lng: 126.9840,
+    country: '한국'
+  },
+  {
+    id: 109,
+    name: "진주회관",
+    category: "콩국수",
+    rating: 4.5,
+    description: "여름철 필수 코스, 걸쭉하고 진한 맛의 냉콩국수로 전국적인 명성을 가진 곳입니다.",
+    address: "서울특별시 중구 서소문동",
+    lat: 37.5623,
+    lng: 126.9754,
+    country: '한국'
+  },
+  {
+    id: 110,
+    name: "오레노라멘",
+    category: "라멘",
+    rating: 4.7,
+    description: "진한 닭 육수의 토리파이탄 라멘으로 사랑받는 미쉐린 가이드 선정 맛집입니다.",
+    address: "서울특별시 용산구 이태원동",
+    lat: 37.5401,
+    lng: 126.9922,
+    country: '한국'
+  },
+  {
+    id: 111,
+    name: "나리식당",
+    category: "냉동삼겹살",
+    rating: 4.2,
+    description: "한남동 냉삼 열풍의 주역, 청국장과 함께 즐기는 추억의 맛입니다.",
+    address: "서울특별시 용산구 한남동",
+    lat: 37.5385,
+    lng: 127.0001,
+    country: '한국'
+  },
+  {
+    id: 112,
+    name: "부자피자",
+    category: "화덕피자",
+    rating: 4.4,
+    description: "한남동에서 즐기는 정통 이탈리안 화덕피자, 신선한 재료 본연의 맛을 살립니다.",
+    address: "서울특별시 용산구 한남동",
+    lat: 37.5388,
+    lng: 127.0012,
+    country: '한국'
+  },
+  {
+    id: 101,
+    name: "가온 (Gaon)",
+    category: "한식",
+    rating: 4.9,
+    description: "전통 한식의 정수를 보여주는 미쉐린 3스타 레스토랑의 품격을 경험하세요.",
+    address: "서울특별시 강남구 신사동",
+    lat: 37.5256,
+    lng: 127.0358,
+    country: '한국'
+  },
+  {
+    id: 113,
+    name: "정식당 (Jungsik)",
+    category: "모던한식",
+    rating: 4.9,
+    description: "뉴욕과 서울을 잇는 뉴 코리안 퀴진의 선구자, 독창적인 메뉴를 선보입니다.",
+    address: "서울특별시 강남구 청담동",
+    lat: 37.5255,
+    lng: 127.0407,
     country: '한국'
   },
   {
@@ -208,10 +319,87 @@ const restaurantList = ref<Shop[]>([
     name: "밍글스 (Mingles)",
     category: "퓨전한식",
     rating: 4.8,
-    description: "한국 전통 식재료를 현대적으로 재해석한 창의적인 요리입니다.",
-    address: "서울특별시 강남구 논현동",
+    description: "전통과 현대의 조화, 제철 식재료를 사용한 창의적인 코스 요리입니다.",
+    address: "서울특별시 강남구 삼성동",
     lat: 37.5212,
     lng: 127.0413,
+    country: '한국'
+  },
+  {
+    id: 114,
+    name: "새벽집",
+    category: "육류요리",
+    rating: 4.5,
+    description: "청담동 24시간 맛집, 최고급 한우 구이와 육회비빔밥이 유명한 곳입니다.",
+    address: "서울특별시 강남구 청담동",
+    lat: 37.5252,
+    lng: 127.0505,
+    country: '한국'
+  },
+  {
+    id: 115,
+    name: "진미평양냉면",
+    category: "평양냉면",
+    rating: 4.6,
+    description: "강남권 평양냉면의 신흥 강자, 깔끔한 육수와 제육의 조화가 완벽합니다.",
+    address: "서울특별시 강남구 논현동",
+    lat: 37.5161,
+    lng: 127.0360,
+    country: '한국'
+  },
+  {
+    id: 116,
+    name: "무교동 유정낙지",
+    category: "낙지요리",
+    rating: 4.2,
+    description: "매콤한 낙지볶음의 대명사, 스트레스를 날려버리는 화끈한 맛입니다.",
+    address: "서울특별시 서초구 서초동",
+    lat: 37.4912,
+    lng: 127.0125,
+    country: '한국'
+  },
+  {
+    id: 117,
+    name: "버드나무집",
+    category: "갈비",
+    rating: 4.4,
+    description: "서초동 갈비 명가, 한우 갈비탕의 푸짐함으로 항상 붐비는 곳입니다.",
+    address: "서울특별시 서초구 서초동",
+    lat: 37.4877,
+    lng: 127.0315,
+    country: '한국'
+  },
+  {
+    id: 118,
+    name: "옥동식",
+    category: "돼지곰탕",
+    rating: 4.7,
+    description: "맑은 국물의 돼지곰탕이라는 새로운 장르를 개척한 미쉐린 선정 맛집입니다.",
+    address: "서울특별시 마포구 서교동",
+    lat: 37.5507,
+    lng: 126.9145,
+    country: '한국'
+  },
+  {
+    id: 119,
+    name: "진진 (Jin Jin)",
+    category: "중식",
+    rating: 4.6,
+    description: "왕육성 셰프의 멘보샤가 일품인, 실리적이고 맛있는 중식 전문점입니다.",
+    address: "서울특별시 마포구 서교동",
+    lat: 37.5555,
+    lng: 126.9115,
+    country: '한국'
+  },
+  {
+    id: 121,
+    name: "벽제갈비",
+    category: "소갈비",
+    rating: 4.7,
+    description: "한우 등급 관리팀을 별도로 운영하는 자타공인 최고급 한우 명가입니다.",
+    address: "서울특별시 송파구 방이동",
+    lat: 37.5115,
+    lng: 127.1245,
     country: '한국'
   },
   // --- 일본 맛집 리스트 (평점순 20개, 지역별 정렬: 도쿄 > 오사카 > 교토 > 후쿠오카) ---
