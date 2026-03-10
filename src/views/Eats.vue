@@ -680,6 +680,18 @@ const applyRegionMomentum = () => {
   regionMomentumRafId = requestAnimationFrame(applyRegionMomentum)
 }
 
+const stopRegionDrag = () => {
+  if (!isRegionDragging) return
+  isRegionDragging = false
+  window.removeEventListener('mousemove', handleRegionDrag)
+  window.removeEventListener('mouseup', stopRegionDrag)
+  window.removeEventListener('mouseleave', stopRegionDrag)
+  window.removeEventListener('blur', stopRegionDrag)
+  document.body.style.userSelect = ''
+  
+  applyRegionMomentum()
+}
+
 const startRegionDrag = (e: MouseEvent) => {
   if (e.button !== 0) return
   isRegionDragging = true
@@ -689,6 +701,8 @@ const startRegionDrag = (e: MouseEvent) => {
   lastRegionTime = performance.now()
   regionVelocity = 0
   
+  document.body.style.userSelect = 'none'
+  
   if (regionMomentumRafId) {
     cancelAnimationFrame(regionMomentumRafId)
     regionMomentumRafId = null
@@ -696,6 +710,8 @@ const startRegionDrag = (e: MouseEvent) => {
   
   window.addEventListener('mousemove', handleRegionDrag)
   window.addEventListener('mouseup', stopRegionDrag)
+  window.addEventListener('mouseleave', stopRegionDrag)
+  window.addEventListener('blur', stopRegionDrag)
 }
 
 const handleRegionDrag = (e: MouseEvent) => {
@@ -710,19 +726,12 @@ const handleRegionDrag = (e: MouseEvent) => {
   regionContainer.value.scrollLeft = regionScrollLeft - walk
   
   if (deltaTime > 0) {
-    regionVelocity = (e.pageX - lastRegionX)
+    const currentVel = (e.pageX - lastRegionX)
+    regionVelocity = regionVelocity * 0.3 + currentVel * 0.7
   }
   
   lastRegionX = e.pageX
   lastRegionTime = currentTime
-}
-
-const stopRegionDrag = () => {
-  isRegionDragging = false
-  window.removeEventListener('mousemove', handleRegionDrag)
-  window.removeEventListener('mouseup', stopRegionDrag)
-  
-  applyRegionMomentum()
 }
 
 const selectRegion = async (region: string) => {
@@ -962,17 +971,18 @@ const onMouseDrag = (e: MouseEvent) => {
   if (!container) return
   
   const currentTimestamp = performance.now()
-  const deltaY = e.clientY - mouseStartY.value
   const deltaTime = currentTimestamp - lastTimestamp.value
+  const deltaY = e.clientY - mouseStartY.value
   
   if (Math.abs(deltaY) > 3) {
     hasMoved.value = true
     container.scrollTop = mouseScrollTop.value - deltaY
     
+    // Smoothly accumulate velocity for better inertia
     if (deltaTime > 0) {
-      // Smoothened velocity over last move
       const currentVel = (e.clientY - lastMouseY.value)
-      mouseVelocity.value = mouseVelocity.value * 0.2 + currentVel * 0.8
+      // Weighted average to smooth out jitter (0.3 prev + 0.7 current)
+      mouseVelocity.value = mouseVelocity.value * 0.3 + currentVel * 0.7
     }
     
     if (e.cancelable) e.preventDefault()
@@ -985,11 +995,9 @@ const onMouseDrag = (e: MouseEvent) => {
 const startMouseDrag = (e: MouseEvent) => {
   const container = scrollContainer.value
   if (!container) return
-  
   if (e.button !== 0) return
   if (isDragging.value) return
   
-  // Cancel previous momentum
   if (momentumRafId) {
     cancelAnimationFrame(momentumRafId)
     momentumRafId = null
@@ -1003,16 +1011,23 @@ const startMouseDrag = (e: MouseEvent) => {
   mouseVelocity.value = 0
   hasMoved.value = false
   
+  document.body.style.userSelect = 'none'
+  
   window.addEventListener('mousemove', onMouseDrag, { passive: false })
   window.addEventListener('mouseup', stopMouseDrag)
+  window.addEventListener('mouseleave', stopMouseDrag)
+  window.addEventListener('blur', stopMouseDrag)
 }
 
 const stopMouseDrag = () => {
+  if (!isMouseDragging.value) return
   isMouseDragging.value = false
   window.removeEventListener('mousemove', onMouseDrag)
   window.removeEventListener('mouseup', stopMouseDrag)
+  window.removeEventListener('mouseleave', stopMouseDrag)
+  window.removeEventListener('blur', stopMouseDrag)
+  document.body.style.userSelect = ''
   
-  // Start sliding effect
   if (hasMoved.value) {
     applyMomentum()
   }
