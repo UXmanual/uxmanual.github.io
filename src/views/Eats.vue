@@ -80,51 +80,19 @@
               </button>
             </div>
 
-            <!-- Fixed Header Area: Area Selector Dropdown (Mobile & Desktop) -->
-            <div class="relative shrink-0 px-6 lg:px-5 pb-6 pt-0" @pointerdown.stop>
+            <!-- Fixed Header Area: Region Tabs (Horizontal Scroll) -->
+            <div class="shrink-0 px-6 lg:px-5 pb-5 pt-0 flex gap-4 overflow-x-auto no-scrollbar pointer-events-auto" @pointerdown.stop>
               <button 
-                @click="isRegionMenuOpen = !isRegionMenuOpen"
-                class="flex items-center gap-2 group pointer-events-auto"
+                v-for="region in regionsByCountry[selectedCountry]" 
+                :key="region"
+                @click="selectedRegion = region"
+                class="shrink-0 px-3 py-1.5 rounded-full text-[13px] font-bold transition-all duration-300 border"
+                :class="selectedRegion === region 
+                  ? 'bg-zinc-900 border-zinc-900 text-white dark:bg-white dark:border-white dark:text-black' 
+                  : 'bg-transparent border-zinc-200 dark:border-white/10 text-zinc-400 dark:text-zinc-500 hover:text-zinc-600 dark:hover:text-zinc-300'"
               >
-                <h1 class="text-2xl font-black text-zinc-900 dark:text-white uppercase leading-tight">
-                  {{ selectedRegion === '전체' ? (selectedCountry === '일본' ? '일본 전체' : '한국 전체') : selectedRegion }}
-                </h1>
-                <svg 
-                  xmlns="http://www.w3.org/2000/svg" 
-                  class="w-6 h-6 text-zinc-400 group-hover:text-zinc-900 dark:group-hover:text-white transition-all duration-300"
-                  :class="{ 'rotate-180': isRegionMenuOpen }"
-                  fill="none" 
-                  viewBox="0 0 24 24" 
-                  stroke="currentColor"
-                >
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M19 9l-7 7-7-7" />
-                </svg>
+                {{ region }}
               </button>
-
-              <!-- Region Selector Menu -->
-              <div 
-                v-if="isRegionMenuOpen"
-                class="absolute top-full left-6 lg:left-5 z-[100] mt-1 w-48 bg-white dark:bg-zinc-800 border border-zinc-200 dark:border-white/10 rounded-2xl shadow-2xl overflow-hidden py-2 animate-in fade-in zoom-in duration-200"
-              >
-                <button 
-                  v-for="region in regionsByCountry[selectedCountry]" 
-                  :key="region"
-                  @click="selectedRegion = region; isRegionMenuOpen = false"
-                  class="w-full px-4 py-2.5 text-left text-sm font-bold transition-colors"
-                  :class="selectedRegion === region 
-                    ? 'bg-zinc-50 dark:bg-white/10 text-[#1a73e8]' 
-                    : 'text-zinc-600 dark:text-zinc-400 hover:bg-zinc-50 dark:hover:bg-white/5 hover:text-zinc-900 dark:hover:text-white'"
-                >
-                  {{ region }}
-                </button>
-              </div>
-
-              <!-- Overlay to close menu -->
-              <div 
-                v-if="isRegionMenuOpen" 
-                class="fixed inset-0 z-[90]" 
-                @click="isRegionMenuOpen = false"
-              ></div>
             </div>
 
             <!-- Bottom Extension to prevent holes during over-drag (Moved outside scroll area) -->
@@ -676,11 +644,10 @@ const selectedCountry = ref<'한국' | '일본'>('일본')
 const selectedId = ref(1)
 
 const regionsByCountry: Record<'한국' | '일본', string[]> = {
-  '한국': ['전체', '서울', '경기', '인천', '제주도'],
-  '일본': ['전체', '도쿄', '오사카', '후쿠오카', '교토', '아오모리', '삿포로']
+  '한국': ['서울', '경기', '인천', '제주도'],
+  '일본': ['도쿄', '오사카', '후쿠오카', '교토', '아오모리', '삿포로']
 }
-const selectedRegion = ref('전체')
-const isRegionMenuOpen = ref(false)
+const selectedRegion = ref('도쿄')
 
 const filteredRestaurants = computed(() => {
   let list = restaurantList.value.filter(s => s.country === selectedCountry.value)
@@ -724,8 +691,7 @@ const selectedShop = computed(() =>
 
 const handleCountryChange = (country: '한국' | '일본') => {
   selectedCountry.value = country
-  selectedRegion.value = '전체' // Reset region on country change
-  isRegionMenuOpen.value = false
+  selectedRegion.value = country === '일본' ? '도쿄' : '서울' // Smart default
   
   const firstInCountry = filteredRestaurants.value[0]
   if (firstInCountry) {
