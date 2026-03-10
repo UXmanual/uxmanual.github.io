@@ -81,7 +81,7 @@
             </div>
 
             <!-- Fixed Header Area: Region Tabs (Horizontal Scroll) -->
-            <div class="shrink-0 px-6 lg:px-5 pb-5 pt-0 flex gap-4 overflow-x-auto no-scrollbar pointer-events-auto" @pointerdown.stop>
+            <div class="shrink-0 px-6 lg:px-5 pb-5 pt-0 flex gap-1.5 overflow-x-auto no-scrollbar pointer-events-auto" @pointerdown.stop>
               <button 
                 v-for="region in regionsByCountry[selectedCountry]" 
                 :key="region"
@@ -644,8 +644,8 @@ const selectedCountry = ref<'한국' | '일본'>('일본')
 const selectedId = ref(1)
 
 const regionsByCountry: Record<'한국' | '일본', string[]> = {
-  '한국': ['서울', '경기', '인천', '제주도'],
-  '일본': ['도쿄', '오사카', '후쿠오카', '교토', '아오모리', '삿포로']
+  '한국': ['서울', '경기', '인천', '강원', '충북', '충남', '대전', '전북', '전남', '광주', '경북', '경남', '대구', '울산', '부산', '세종', '제주도'],
+  '일본': ['도쿄', '오사카', '교토', '후쿠오카', '삿포로', '아오모리', '요코하마', '나고야', '나라', '히로시마', '센다이', '오키나와', '시즈오카', '구마모토', '가고시마']
 }
 const selectedRegion = ref('도쿄')
 
