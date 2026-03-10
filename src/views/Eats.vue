@@ -671,6 +671,11 @@ const handleCountryChange = (country: '한국' | '일본') => {
   if (firstInCountry) {
     selectedId.value = firstInCountry.id
   }
+  
+  // Reset scroll position to top on tab change
+  if (scrollContainer.value) {
+    scrollContainer.value.scrollTop = 0
+  }
 }
 
 const windowWidth = ref(typeof window !== 'undefined' ? window.innerWidth : 1200)
