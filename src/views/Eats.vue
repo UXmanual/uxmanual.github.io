@@ -665,11 +665,34 @@ const regionContainer = ref<HTMLElement | null>(null)
 let isRegionDragging = false
 let regionStartX = 0
 let regionScrollLeft = 0
+let lastRegionX = 0
+let lastRegionTime = 0
+let regionVelocity = 0
+let regionMomentumRafId: number | null = null
+
+const applyRegionMomentum = () => {
+  const container = regionContainer.value
+  if (!container || Math.abs(regionVelocity) < 0.1) return
+  
+  container.scrollLeft -= regionVelocity
+  regionVelocity *= 0.95 // Friction
+  
+  regionMomentumRafId = requestAnimationFrame(applyRegionMomentum)
+}
 
 const startRegionDrag = (e: MouseEvent) => {
+  if (e.button !== 0) return
   isRegionDragging = true
   regionStartX = e.pageX - (regionContainer.value?.offsetLeft || 0)
   regionScrollLeft = regionContainer.value?.scrollLeft || 0
+  lastRegionX = e.pageX
+  lastRegionTime = performance.now()
+  regionVelocity = 0
+  
+  if (regionMomentumRafId) {
+    cancelAnimationFrame(regionMomentumRafId)
+    regionMomentumRafId = null
+  }
   
   window.addEventListener('mousemove', handleRegionDrag)
   window.addEventListener('mouseup', stopRegionDrag)
@@ -678,15 +701,28 @@ const startRegionDrag = (e: MouseEvent) => {
 const handleRegionDrag = (e: MouseEvent) => {
   if (!isRegionDragging || !regionContainer.value) return
   e.preventDefault()
+  
+  const currentTime = performance.now()
+  const deltaTime = currentTime - lastRegionTime
+  
   const x = e.pageX - (regionContainer.value.offsetLeft || 0)
-  const walk = (x - regionStartX) * 1.5
+  const walk = (x - regionStartX) * 1.2
   regionContainer.value.scrollLeft = regionScrollLeft - walk
+  
+  if (deltaTime > 0) {
+    regionVelocity = (e.pageX - lastRegionX)
+  }
+  
+  lastRegionX = e.pageX
+  lastRegionTime = currentTime
 }
 
 const stopRegionDrag = () => {
   isRegionDragging = false
   window.removeEventListener('mousemove', handleRegionDrag)
   window.removeEventListener('mouseup', stopRegionDrag)
+  
+  applyRegionMomentum()
 }
 
 const selectRegion = async (region: string) => {
@@ -929,13 +965,14 @@ const onMouseDrag = (e: MouseEvent) => {
   const deltaY = e.clientY - mouseStartY.value
   const deltaTime = currentTimestamp - lastTimestamp.value
   
-  if (Math.abs(deltaY) > 5) {
+  if (Math.abs(deltaY) > 3) {
     hasMoved.value = true
     container.scrollTop = mouseScrollTop.value - deltaY
     
-    // Calculate velocity (px per frame roughly)
     if (deltaTime > 0) {
-      mouseVelocity.value = (e.clientY - lastMouseY.value)
+      // Smoothened velocity over last move
+      const currentVel = (e.clientY - lastMouseY.value)
+      mouseVelocity.value = mouseVelocity.value * 0.2 + currentVel * 0.8
     }
     
     if (e.cancelable) e.preventDefault()
