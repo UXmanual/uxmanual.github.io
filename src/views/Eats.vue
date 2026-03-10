@@ -618,18 +618,17 @@ const handleMapInteraction = () => {
  */
 const onMouseDrag = (e: MouseEvent) => {
   if (!isMouseDragging.value) return
-  e.preventDefault()
   const container = scrollContainer.value
   if (!container) return
   
-  const y = e.pageY - container.offsetTop
-  const walk = (y - mouseStartY.value) * 1.5 // Scroll speed multiplier
+  const deltaY = e.clientY - mouseStartY.value
   
-  if (Math.abs(walk) > 5) {
+  if (Math.abs(deltaY) > 2) {
     hasMoved.value = true
+    container.scrollTop = mouseScrollTop.value - deltaY
+    // Prevent text selection while dragging
+    if (e.cancelable) e.preventDefault()
   }
-  
-  container.scrollTop = mouseScrollTop.value - walk
 }
 
 const startMouseDrag = (e: MouseEvent) => {
@@ -637,20 +636,28 @@ const startMouseDrag = (e: MouseEvent) => {
   const container = scrollContainer.value
   if (!container) return
   
+  // Only handle left click
+  if (e.button !== 0) return
+  
   isMouseDragging.value = true
-  mouseStartY.value = e.pageY - container.offsetTop
+  mouseStartY.value = e.clientY
   mouseScrollTop.value = container.scrollTop
   hasMoved.value = false
+  
+  window.addEventListener('mousemove', onMouseDrag, { passive: false })
+  window.addEventListener('mouseup', stopMouseDrag)
 }
 
 const stopMouseDrag = () => {
   isMouseDragging.value = false
+  window.removeEventListener('mousemove', onMouseDrag)
+  window.removeEventListener('mouseup', stopMouseDrag)
 }
 
 const handleShopSelect = async (shop: Shop) => {
   // Prevent selection if mouse was dragging on desktop
+  // Small wiggle room (5px) for accidental slight movements during click
   if (window.innerWidth >= 1024 && hasMoved.value) {
-    hasMoved.value = false
     return
   }
   
@@ -664,8 +671,6 @@ const handleShopSelect = async (shop: Shop) => {
     if (container) {
       const selectedElement = container.querySelector(`[data-id="${shop.id}"]`) as HTMLElement
       if (selectedElement) {
-        // Use scrollTop directly for absolute positioning consistency
-        // Deducting 8px for slightly better breathing room from the top
         container.scrollTo({
           top: selectedElement.offsetTop - 8,
           behavior: 'smooth'
