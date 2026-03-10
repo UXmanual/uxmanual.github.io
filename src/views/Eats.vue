@@ -80,9 +80,51 @@
               </button>
             </div>
 
-            <!-- Fixed Header Area: Dynamic Area Name (Mobile & Desktop) -->
-            <div v-if="selectedShop" class="shrink-0 px-6 lg:px-5 pb-6 pt-0" @pointerdown.stop>
-              <h1 class="text-2xl font-black text-zinc-900 dark:text-white uppercase leading-tight">{{ selectedShop.address.replace(/^(일본|한국|대한민국)\s/, '') }}</h1>
+            <!-- Fixed Header Area: Area Selector Dropdown (Mobile & Desktop) -->
+            <div class="relative shrink-0 px-6 lg:px-5 pb-6 pt-0" @pointerdown.stop>
+              <button 
+                @click="isRegionMenuOpen = !isRegionMenuOpen"
+                class="flex items-center gap-2 group pointer-events-auto"
+              >
+                <h1 class="text-2xl font-black text-zinc-900 dark:text-white uppercase leading-tight">
+                  {{ selectedRegion === '전체' ? (selectedCountry === '일본' ? '일본 전체' : '한국 전체') : selectedRegion }}
+                </h1>
+                <svg 
+                  xmlns="http://www.w3.org/2000/svg" 
+                  class="w-6 h-6 text-zinc-400 group-hover:text-zinc-900 dark:group-hover:text-white transition-all duration-300"
+                  :class="{ 'rotate-180': isRegionMenuOpen }"
+                  fill="none" 
+                  viewBox="0 0 24 24" 
+                  stroke="currentColor"
+                >
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M19 9l-7 7-7-7" />
+                </svg>
+              </button>
+
+              <!-- Region Selector Menu -->
+              <div 
+                v-if="isRegionMenuOpen"
+                class="absolute top-full left-6 lg:left-5 z-[100] mt-1 w-48 bg-white dark:bg-zinc-800 border border-zinc-200 dark:border-white/10 rounded-2xl shadow-2xl overflow-hidden py-2 animate-in fade-in zoom-in duration-200"
+              >
+                <button 
+                  v-for="region in regionsByCountry[selectedCountry]" 
+                  :key="region"
+                  @click="selectedRegion = region; isRegionMenuOpen = false"
+                  class="w-full px-4 py-2.5 text-left text-sm font-bold transition-colors"
+                  :class="selectedRegion === region 
+                    ? 'bg-zinc-50 dark:bg-white/10 text-[#1a73e8]' 
+                    : 'text-zinc-600 dark:text-zinc-400 hover:bg-zinc-50 dark:hover:bg-white/5 hover:text-zinc-900 dark:hover:text-white'"
+                >
+                  {{ region }}
+                </button>
+              </div>
+
+              <!-- Overlay to close menu -->
+              <div 
+                v-if="isRegionMenuOpen" 
+                class="fixed inset-0 z-[90]" 
+                @click="isRegionMenuOpen = false"
+              ></div>
             </div>
 
             <!-- Bottom Extension to prevent holes during over-drag (Moved outside scroll area) -->
@@ -633,9 +675,21 @@ const countries = ['일본', '한국'] as const
 const selectedCountry = ref<'한국' | '일본'>('일본')
 const selectedId = ref(1)
 
+const regionsByCountry: Record<'한국' | '일본', string[]> = {
+  '한국': ['전체', '서울', '경기', '인천', '제주도'],
+  '일본': ['전체', '도쿄', '오사카', '후쿠오카', '교토', '아오모리', '삿포로']
+}
+const selectedRegion = ref('전체')
+const isRegionMenuOpen = ref(false)
+
 const filteredRestaurants = computed(() => {
-  const list = restaurantList.value.filter(s => s.country === selectedCountry.value)
+  let list = restaurantList.value.filter(s => s.country === selectedCountry.value)
   
+  // Region filtering
+  if (selectedRegion.value !== '전체') {
+    list = list.filter(s => s.address.includes(selectedRegion.value))
+  }
+
   if (selectedCountry.value === '일본') {
     const regionPriority: Record<string, number> = {
       '도쿄': 1,
@@ -670,6 +724,9 @@ const selectedShop = computed(() =>
 
 const handleCountryChange = (country: '한국' | '일본') => {
   selectedCountry.value = country
+  selectedRegion.value = '전체' // Reset region on country change
+  isRegionMenuOpen.value = false
+  
   const firstInCountry = filteredRestaurants.value[0]
   if (firstInCountry) {
     selectedId.value = firstInCountry.id
