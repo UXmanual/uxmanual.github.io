@@ -86,7 +86,7 @@
             <!-- List Container (Glassmorphism for Desktop) -->
             <div 
               ref="scrollContainer"
-              class="grow px-6 lg:px-5 pt-0 pb-10 lg:pb-8 custom-scrollbar space-y-2.5 relative overscroll-contain overflow-x-hidden"
+              class="grow px-6 lg:px-5 pt-0 pb-[40vh] lg:pb-8 custom-scrollbar space-y-2.5 relative overscroll-contain overflow-x-hidden"
               :class="(sheetMode === 'full' || sheetMode === 'half' || windowWidth >= 1024) && !isDragging ? 'overflow-y-auto' : 'overflow-y-hidden'"
             >
               <!-- Header inside floating box: Dynamic Area Name (Mobile & Desktop) -->
@@ -617,13 +617,10 @@ const handleShopSelect = async (shop: Shop) => {
     if (container) {
       const selectedElement = container.querySelector(`[data-id="${shop.id}"]`) as HTMLElement
       if (selectedElement) {
-        // Find index to decide scroll position
-        const index = filteredRestaurants.value.findIndex(s => s.id === shop.id)
-        const isNearBottom = index >= filteredRestaurants.value.length - 2
-
+        // Force scroll to top even for the last items
         selectedElement.scrollIntoView({ 
           behavior: 'smooth', 
-          block: isNearBottom ? 'end' : 'start' 
+          block: 'start' 
         })
       }
     }
