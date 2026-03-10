@@ -89,8 +89,13 @@
               class="grow px-6 lg:px-5 pt-0 custom-scrollbar space-y-2.5 relative overscroll-contain overflow-x-hidden"
               :class="[
                 (sheetMode === 'full' || sheetMode === 'half' || windowWidth >= 1024) && !isDragging ? 'overflow-y-auto' : 'overflow-y-hidden',
-                (sheetMode === 'half' || sheetMode === 'collapsed') ? 'pb-[50svh]' : 'pb-10 lg:pb-8'
+                (sheetMode === 'half' || sheetMode === 'collapsed') ? 'pb-[50svh]' : 'pb-10 lg:pb-8',
+                windowWidth >= 1024 ? (isMouseDragging ? 'cursor-grabbing select-none' : 'cursor-grab') : ''
               ]"
+              @mousedown="startMouseDrag"
+              @mousemove="onMouseDrag"
+              @mouseup="stopMouseDrag"
+              @mouseleave="stopMouseDrag"
             >
               <!-- Header inside floating box: Dynamic Area Name (Mobile & Desktop) -->
               <div v-if="selectedShop" class="mb-6 pt-0" @pointerdown.stop>
@@ -519,6 +524,12 @@ const isDragging = ref(false)
 const isHandleInteraction = ref(false)
 const dragTranslateY = ref(0)
 
+// Desktop Drag-to-Scroll State
+const isMouseDragging = ref(false)
+const mouseStartY = ref(0)
+const mouseScrollTop = ref(0)
+const hasMoved = ref(false)
+
 const getModeOffset = (mode: SheetMode) => {
   const containerHeight = window.innerHeight
   if (mode === 'collapsed') return containerHeight - 85
@@ -605,7 +616,44 @@ const handleMapInteraction = () => {
  * Updates the selected shop and triggers a map update.
  * @param shop The shop object to select
  */
+const onMouseDrag = (e: MouseEvent) => {
+  if (!isMouseDragging.value) return
+  e.preventDefault()
+  const container = scrollContainer.value
+  if (!container) return
+  
+  const y = e.pageY - container.offsetTop
+  const walk = (y - mouseStartY.value) * 1.5 // Scroll speed multiplier
+  
+  if (Math.abs(walk) > 5) {
+    hasMoved.value = true
+  }
+  
+  container.scrollTop = mouseScrollTop.value - walk
+}
+
+const startMouseDrag = (e: MouseEvent) => {
+  if (window.innerWidth < 1024) return
+  const container = scrollContainer.value
+  if (!container) return
+  
+  isMouseDragging.value = true
+  mouseStartY.value = e.pageY - container.offsetTop
+  mouseScrollTop.value = container.scrollTop
+  hasMoved.value = false
+}
+
+const stopMouseDrag = () => {
+  isMouseDragging.value = false
+}
+
 const handleShopSelect = async (shop: Shop) => {
+  // Prevent selection if mouse was dragging on desktop
+  if (window.innerWidth >= 1024 && hasMoved.value) {
+    hasMoved.value = false
+    return
+  }
+  
   selectedId.value = shop.id
   
   if (window.innerWidth < 1024) {
