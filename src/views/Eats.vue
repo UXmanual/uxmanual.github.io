@@ -109,25 +109,34 @@
                   ? 'bg-white dark:bg-white/10 border-[#1a73e8]' 
                   : 'bg-transparent border-zinc-200 dark:border-white/10 hover:bg-zinc-50 dark:hover:bg-white/5'"
               >
-                <div class="flex justify-between items-center mb-1.5">
-                  <span class="px-1.5 py-1 inline-flex items-center rounded text-[10px] font-bold uppercase tracking-wider bg-zinc-100 dark:bg-white/10 text-zinc-500 dark:text-zinc-400 border border-zinc-200 dark:border-white/5 leading-none">
-                    {{ shop.category }}
-                  </span>
-                  <span class="text-[11px] font-bold text-[#1a73e8]">★ {{ shop.rating }}</span>
-                </div>
-                <h3 
-                  class="text-base font-bold mb-0.5 group-hover:text-[#1a73e8] transition-colors"
-                  :class="{ 'text-[#1a73e8]': selectedId === shop.id }"
-                >
-                  {{ shop.name }}
-                </h3>
-                <p class="text-xs text-zinc-500 dark:text-zinc-400 line-clamp-1 leading-relaxed">{{ shop.description }}</p>
-                <div class="mt-2.5 flex items-center gap-1.5 text-[11px] font-medium text-zinc-400 uppercase tracking-tight">
-                  <svg xmlns="http://www.w3.org/2000/svg" class="w-2.5 h-2.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
-                  </svg>
-                  {{ shop.address }}
+                <div class="flex gap-4">
+                  <!-- Thumbnail Image (Optional) -->
+                  <div v-if="shop.imageUrl" class="flex-shrink-0 w-20 h-20 rounded-xl overflow-hidden bg-zinc-100 dark:bg-white/5 border border-zinc-200 dark:border-white/10">
+                    <img :src="shop.imageUrl" :alt="shop.name" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
+                  </div>
+                  
+                  <div class="flex-1 min-w-0">
+                    <div class="flex justify-between items-center mb-1.5">
+                      <span class="px-1.5 py-1 inline-flex items-center rounded text-[10px] font-bold uppercase tracking-wider bg-zinc-100 dark:bg-white/10 text-zinc-500 dark:text-zinc-400 border border-zinc-200 dark:border-white/5 leading-none">
+                        {{ shop.category }}
+                      </span>
+                      <span class="text-[11px] font-bold text-[#1a73e8]">★ {{ shop.rating }}</span>
+                    </div>
+                    <h3 
+                      class="text-base font-bold mb-0.5 group-hover:text-[#1a73e8] transition-colors"
+                      :class="{ 'text-[#1a73e8]': selectedId === shop.id }"
+                    >
+                      {{ shop.name }}
+                    </h3>
+                    <p class="text-xs text-zinc-500 dark:text-zinc-400 line-clamp-1 leading-relaxed">{{ shop.description }}</p>
+                    <div class="mt-2.5 flex items-center gap-1.5 text-[11px] font-medium text-zinc-400 uppercase tracking-tight">
+                      <svg xmlns="http://www.w3.org/2000/svg" class="w-2.5 h-2.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+                      </svg>
+                      {{ shop.address }}
+                    </div>
+                  </div>
                 </div>
               </div>
 
@@ -178,6 +187,7 @@ interface Shop {
   lat: number
   lng: number
   country: '한국' | '일본'
+  imageUrl?: string
 }
 
 const restaurantList = ref<Shop[]>([
@@ -412,7 +422,8 @@ const restaurantList = ref<Shop[]>([
     address: "일본 도쿄 미나토구",
     lat: 35.6662,
     lng: 139.7583,
-    country: '일본'
+    country: '일본',
+    imageUrl: "https://images.unsplash.com/photo-1579871494447-9811cf80d66c?auto=format&fit=crop&q=80&w=200&h=200"
   },
   {
     id: 2,
@@ -423,7 +434,8 @@ const restaurantList = ref<Shop[]>([
     address: "일본 도쿄 주오구",
     lat: 35.6720,
     lng: 139.7710,
-    country: '일본'
+    country: '일본',
+    imageUrl: "https://images.unsplash.com/photo-1626200419199-391ae4be7a41?auto=format&fit=crop&q=80&w=200&h=200"
   },
   {
     id: 3,
@@ -434,7 +446,8 @@ const restaurantList = ref<Shop[]>([
     address: "일본 도쿄 미나토구",
     lat: 35.6694,
     lng: 139.7523,
-    country: '일본'
+    country: '일본',
+    imageUrl: "https://images.unsplash.com/photo-1615361413105-8eb05452375d?auto=format&fit=crop&q=80&w=200&h=200"
   },
   {
     id: 11,
