@@ -109,7 +109,7 @@
                   ? 'bg-white dark:bg-white/10 border-[#1a73e8]' 
                   : 'bg-transparent border-zinc-200 dark:border-white/10 hover:bg-zinc-50 dark:hover:bg-white/5'"
               >
-                <div class="flex gap-4">
+                <div class="flex gap-3">
                   <!-- Thumbnail Image (Optional) -->
                   <div v-if="shop.imageUrl" class="flex-shrink-0 w-24 h-24 rounded-xl overflow-hidden bg-zinc-100 dark:bg-white/5 border border-zinc-200 dark:border-white/10">
                     <img 
@@ -128,13 +128,13 @@
                       <span class="text-[11px] font-bold text-[#1a73e8]">★ {{ shop.rating }}</span>
                     </div>
                     <h3 
-                      class="text-base font-bold mb-0.5 group-hover:text-[#1a73e8] transition-colors"
+                      class="text-base font-bold mb-0.5 group-hover:text-[#1a73e8] transition-colors line-clamp-1"
                       :class="{ 'text-[#1a73e8]': selectedId === shop.id }"
                     >
                       {{ shop.name }}
                     </h3>
                     <p class="text-xs text-zinc-500 dark:text-zinc-400 line-clamp-1 leading-relaxed">{{ shop.description }}</p>
-                    <div class="mt-2.5 flex items-center gap-1.5 text-[11px] font-medium text-zinc-400 uppercase tracking-tight">
+                    <div class="mt-1.5 flex items-center gap-1.5 text-[11px] font-medium text-zinc-400 uppercase tracking-tight">
                       <svg xmlns="http://www.w3.org/2000/svg" class="w-2.5 h-2.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
