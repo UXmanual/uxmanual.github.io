@@ -111,7 +111,7 @@
               >
                 <div class="flex gap-4">
                   <!-- Thumbnail Image (Optional) -->
-                  <div v-if="shop.imageUrl" class="flex-shrink-0 w-20 h-20 rounded-xl overflow-hidden bg-zinc-100 dark:bg-white/5 border border-zinc-200 dark:border-white/10">
+                  <div v-if="shop.imageUrl" class="flex-shrink-0 w-24 rounded-xl overflow-hidden bg-zinc-100 dark:bg-white/5 border border-zinc-200 dark:border-white/10 self-stretch">
                     <img :src="shop.imageUrl" :alt="shop.name" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
                   </div>
                   
@@ -447,7 +447,7 @@ const restaurantList = ref<Shop[]>([
     lat: 35.6694,
     lng: 139.7523,
     country: '일본',
-    imageUrl: "https://images.unsplash.com/photo-1615361413105-8eb05452375d?auto=format&fit=crop&q=80&w=200&h=200"
+    imageUrl: "https://images.unsplash.com/photo-1583953623787-ada99d338235?auto=format&fit=crop&q=80&w=200&h=200"
   },
   {
     id: 11,
