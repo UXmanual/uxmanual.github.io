@@ -90,12 +90,9 @@
               :class="[
                 (sheetMode === 'full' || sheetMode === 'half' || windowWidth >= 1024) && !isDragging ? 'overflow-y-auto' : 'overflow-y-hidden',
                 (sheetMode === 'half' || sheetMode === 'collapsed') ? 'pb-[50svh]' : 'pb-10 lg:pb-8',
-                windowWidth >= 1024 ? (isMouseDragging ? 'cursor-grabbing select-none' : 'cursor-grab') : ''
+                windowWidth >= 1024 ? (isMouseDragging ? 'cursor-grabbing select-none dragging-active' : 'cursor-grab') : ''
               ]"
               @mousedown="startMouseDrag"
-              @mousemove="onMouseDrag"
-              @mouseup="stopMouseDrag"
-              @mouseleave="stopMouseDrag"
             >
               <!-- Header inside floating box: Dynamic Area Name (Mobile & Desktop) -->
               <div v-if="selectedShop" class="mb-6 pt-0" @pointerdown.stop>
@@ -623,7 +620,7 @@ const onMouseDrag = (e: MouseEvent) => {
   
   const deltaY = e.clientY - mouseStartY.value
   
-  if (Math.abs(deltaY) > 2) {
+  if (Math.abs(deltaY) > 5) {
     hasMoved.value = true
     container.scrollTop = mouseScrollTop.value - deltaY
     // Prevent text selection while dragging
@@ -656,8 +653,10 @@ const stopMouseDrag = () => {
 
 const handleShopSelect = async (shop: Shop) => {
   // Prevent selection if mouse was dragging on desktop
-  // Small wiggle room (5px) for accidental slight movements during click
+  // If we moved significantly, ignore this click
   if (window.innerWidth >= 1024 && hasMoved.value) {
+    // Reset for next click attempt
+    hasMoved.value = false
     return
   }
   
@@ -722,5 +721,10 @@ const mapUrl = computed(() => {
 .fade-enter-from,
 .fade-leave-to {
   opacity: 0;
+}
+
+/* Prevent child interaction during desktop mouse drag scroll */
+.dragging-active * {
+  pointer-events: none !important;
 }
 </style>
