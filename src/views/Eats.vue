@@ -82,7 +82,7 @@
 
             <!-- Fixed Header Area: Dynamic Area Name (Mobile & Desktop) -->
             <div v-if="selectedShop" class="shrink-0 px-6 lg:px-5 pb-6 pt-0" @pointerdown.stop>
-              <h1 class="text-2xl font-black text-zinc-900 dark:text-white uppercase leading-tight">{{ selectedShop.address }}</h1>
+              <h1 class="text-2xl font-black text-zinc-900 dark:text-white uppercase leading-tight">{{ selectedShop.address.replace(/^(일본|한국|대한민국)\s/, '') }}</h1>
             </div>
 
             <!-- Bottom Extension to prevent holes during over-drag (Moved outside scroll area) -->
