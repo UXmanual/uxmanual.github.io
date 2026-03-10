@@ -86,7 +86,7 @@
             <!-- List Container (Glassmorphism for Desktop) -->
             <div 
               ref="scrollContainer"
-              class="grow px-6 lg:px-5 pt-0 pb-[40vh] lg:pb-8 custom-scrollbar space-y-2.5 relative overscroll-contain overflow-x-hidden"
+              class="grow px-6 lg:px-5 pt-0 pb-[80vh] lg:pb-8 custom-scrollbar space-y-2.5 relative overscroll-contain overflow-x-hidden"
               :class="(sheetMode === 'full' || sheetMode === 'half' || windowWidth >= 1024) && !isDragging ? 'overflow-y-auto' : 'overflow-y-hidden'"
             >
               <!-- Header inside floating box: Dynamic Area Name (Mobile & Desktop) -->
@@ -127,7 +127,7 @@
               </div>
 
               <!-- End of List Indicator -->
-              <div class="pt-8 pb-8 text-center text-zinc-200 dark:text-zinc-800">
+              <div class="pt-8 pb-32 text-center text-zinc-200 dark:text-zinc-800">
                 <p class="text-[11px] font-bold uppercase tracking-normal">
                   마지막 리스트입니다
                 </p>
@@ -513,6 +513,7 @@ onUnmounted(() => {
 const scrollContainer = ref<HTMLElement | null>(null)
 const startY = ref(0)
 const isDragging = ref(false)
+const isHandleInteraction = ref(false)
 const dragTranslateY = ref(0)
 
 const getModeOffset = (mode: SheetMode) => {
@@ -524,13 +525,15 @@ const getModeOffset = (mode: SheetMode) => {
 
 const handlePointerDown = (e: PointerEvent) => {
   if (window.innerWidth >= 1024) return
-  // Don't stop propagation here to allow child clicks but start drag check
   
   startY.value = e.clientY
   isDragging.value = false
   dragTranslateY.value = getModeOffset(sheetMode.value)
   
-  // Attach move/up to window/overlay to ensure focus
+  // Detect if the interaction started on the handle area (top 40px)
+  const rect = (e.currentTarget as HTMLElement).getBoundingClientRect()
+  isHandleInteraction.value = (e.clientY - rect.top) <= 50 // Increased slightly for better touch target
+  
   window.addEventListener('pointermove', handlePointerMove, { passive: false })
   window.addEventListener('pointerup', handlePointerUp)
 }
@@ -542,16 +545,13 @@ const handlePointerMove = (e: PointerEvent) => {
   const deltaY = e.clientY - startY.value
   const scrollTop = scrollContainer.value?.scrollTop || 0
   
-  // Distance check to ignore small jitter (taps)
   if (!isDragging.value && Math.abs(deltaY) > 8) {
-    // Decision logic to start dragging
     const atTop = scrollTop <= 5 
     const isSwipingDown = deltaY > 0
     const isSwipingUp = deltaY < 0
     
-    // 1. Kéo xuống khi đang ở đỉnh danh sách (kể cả Full 모드 탈출)
-    // 2. Kéo lên khi chưa ở Full 모드
-    if ((isSwipingDown && atTop) || (isSwipingUp && sheetMode.value !== 'full')) {
+    // Allow dragging if pulling from handle OR at top & pulling down OR not full & pulling up
+    if (isHandleInteraction.value || (isSwipingDown && atTop) || (isSwipingUp && sheetMode.value !== 'full')) {
       isDragging.value = true
       startY.value = e.clientY - getModeOffset(sheetMode.value)
     }
@@ -559,12 +559,8 @@ const handlePointerMove = (e: PointerEvent) => {
 
   if (isDragging.value) {
     let newPos = e.clientY - startY.value
-    // Aggressive resistance near the top limit (120px)
-    if (newPos < 120) {
-      newPos = 120
-    }
+    if (newPos < 120) newPos = 120
     dragTranslateY.value = newPos
-    
     if (e.cancelable) e.preventDefault()
   }
 }
@@ -617,10 +613,11 @@ const handleShopSelect = async (shop: Shop) => {
     if (container) {
       const selectedElement = container.querySelector(`[data-id="${shop.id}"]`) as HTMLElement
       if (selectedElement) {
-        // Force scroll to top even for the last items
-        selectedElement.scrollIntoView({ 
-          behavior: 'smooth', 
-          block: 'start' 
+        // Use scrollTop directly for absolute positioning consistency
+        // Deducting 8px for slightly better breathing room from the top
+        container.scrollTo({
+          top: selectedElement.offsetTop - 8,
+          behavior: 'smooth'
         })
       }
     }
