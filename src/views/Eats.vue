@@ -95,7 +95,7 @@
               @mousedown="startMouseDrag"
             >
               <!-- Header inside floating box: Dynamic Area Name (Mobile & Desktop) -->
-              <div v-if="selectedShop" class="mb-6 pt-0" @pointerdown.stop>
+              <div v-if="selectedShop" class="mb-6 pt-3" @pointerdown.stop>
                 <h1 class="text-2xl font-black text-zinc-900 dark:text-white uppercase leading-tight">{{ selectedShop.address }}</h1>
               </div>
 
