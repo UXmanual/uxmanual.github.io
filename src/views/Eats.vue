@@ -86,7 +86,7 @@
             <!-- List Container (Glassmorphism for Desktop) -->
             <div 
               ref="scrollContainer"
-              class="grow px-6 lg:px-5 pt-0 pb-[40vh] lg:pb-8 custom-scrollbar space-y-2.5 relative overscroll-contain overflow-x-hidden"
+              class="grow px-6 lg:px-5 pt-0 pb-10 lg:pb-8 custom-scrollbar space-y-2.5 relative overscroll-contain overflow-x-hidden"
               :class="(sheetMode === 'full' || sheetMode === 'half' || windowWidth >= 1024) && !isDragging ? 'overflow-y-auto' : 'overflow-y-hidden'"
             >
               <!-- Header inside floating box: Dynamic Area Name (Mobile & Desktop) -->
@@ -127,8 +127,8 @@
               </div>
 
               <!-- End of List Indicator -->
-              <div class="pt-8 pb-10 text-center">
-                <p class="text-[11px] font-bold text-zinc-300 dark:text-zinc-700 uppercase tracking-normal">
+              <div class="pt-8 pb-8 text-center text-zinc-200 dark:text-zinc-800">
+                <p class="text-[11px] font-bold uppercase tracking-normal">
                   마지막 리스트입니다
                 </p>
               </div>
@@ -610,18 +610,21 @@ const handleShopSelect = async (shop: Shop) => {
   selectedId.value = shop.id
   
   if (window.innerWidth < 1024) {
-    // Change to 'half' mode (showing 2/5 of the screen) instead of collapsing
     sheetMode.value = 'half'
     
-    // Use nextTick and then find the selected element to scroll it to the top
     await nextTick()
     const container = scrollContainer.value
     if (container) {
       const selectedElement = container.querySelector(`[data-id="${shop.id}"]`) as HTMLElement
       if (selectedElement) {
-        // Calculate offset: selectedElement.offsetTop - container.offsetTop
-        // Using scrollIntoView with block: 'start' is the simplest way
-        selectedElement.scrollIntoView({ behavior: 'smooth', block: 'start' })
+        // Find index to decide scroll position
+        const index = filteredRestaurants.value.findIndex(s => s.id === shop.id)
+        const isNearBottom = index >= filteredRestaurants.value.length - 2
+
+        selectedElement.scrollIntoView({ 
+          behavior: 'smooth', 
+          block: isNearBottom ? 'end' : 'start' 
+        })
       }
     }
   }
