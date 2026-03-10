@@ -86,8 +86,11 @@
             <!-- List Container (Glassmorphism for Desktop) -->
             <div 
               ref="scrollContainer"
-              class="grow px-6 lg:px-5 pt-0 pb-[45svh] lg:pb-8 custom-scrollbar space-y-2.5 relative overscroll-contain overflow-x-hidden"
-              :class="(sheetMode === 'full' || sheetMode === 'half' || windowWidth >= 1024) && !isDragging ? 'overflow-y-auto' : 'overflow-y-hidden'"
+              class="grow px-6 lg:px-5 pt-0 custom-scrollbar space-y-2.5 relative overscroll-contain overflow-x-hidden"
+              :class="[
+                (sheetMode === 'full' || sheetMode === 'half' || windowWidth >= 1024) && !isDragging ? 'overflow-y-auto' : 'overflow-y-hidden',
+                (sheetMode === 'half' || sheetMode === 'collapsed') ? 'pb-[50svh]' : 'pb-10 lg:pb-8'
+              ]"
             >
               <!-- Header inside floating box: Dynamic Area Name (Mobile & Desktop) -->
               <div v-if="selectedShop" class="mb-6 pt-0" @pointerdown.stop>
@@ -530,9 +533,9 @@ const handlePointerDown = (e: PointerEvent) => {
   isDragging.value = false
   dragTranslateY.value = getModeOffset(sheetMode.value)
   
-  // Detect if the interaction started on the handle area (top 40px)
+  // Detect if the interaction started on the handle or tabs area (~100px)
   const rect = (e.currentTarget as HTMLElement).getBoundingClientRect()
-  isHandleInteraction.value = (e.clientY - rect.top) <= 50 // Increased slightly for better touch target
+  isHandleInteraction.value = (e.clientY - rect.top) <= 100
   
   window.addEventListener('pointermove', handlePointerMove, { passive: false })
   window.addEventListener('pointerup', handlePointerUp)
