@@ -107,7 +107,7 @@
                 class="p-4 rounded-2xl transition-all duration-300 cursor-pointer group border"
                 :class="selectedId === shop.id 
                   ? 'bg-white dark:bg-white/10 border-[#1a73e8]' 
-                  : 'bg-transparent border-zinc-100 dark:border-white/5 hover:bg-zinc-50 dark:hover:bg-white/5'"
+                  : 'bg-transparent border-zinc-200 dark:border-white/10 hover:bg-zinc-50 dark:hover:bg-white/5'"
               >
                 <div class="flex justify-between items-center mb-1.5">
                   <span class="px-1.5 py-1 inline-flex items-center rounded text-[10px] font-bold uppercase tracking-wider bg-zinc-100 dark:bg-white/10 text-zinc-500 dark:text-zinc-400 border border-zinc-200 dark:border-white/5 leading-none">
