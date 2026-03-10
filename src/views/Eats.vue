@@ -294,13 +294,13 @@ const restaurantList = ref<Shop[]>([
   },
   {
     id: 101,
-    name: "가온 (Gaon)",
+    name: "권숙수 (Kwon Sook Soo)",
     category: "한식",
-    rating: 4.9,
-    description: "전통 한식의 정수를 보여주는 미쉐린 3스타 레스토랑의 품격을 경험하세요.",
+    rating: 4.8,
+    description: "한국의 전통 미학을 요리에 담아낸 미쉐린 2스타 한식 파인 다이닝입니다.",
     address: "서울특별시 강남구 신사동",
-    lat: 37.5256,
-    lng: 127.0358,
+    lat: 37.5246,
+    lng: 127.0355,
     country: '한국'
   },
   {
