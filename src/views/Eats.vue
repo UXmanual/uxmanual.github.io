@@ -659,7 +659,7 @@ const filteredRestaurants = computed(() => {
 })
 
 type SheetMode = 'collapsed' | 'half' | 'full'
-const sheetMode = ref<SheetMode>('collapsed')
+const sheetMode = ref<SheetMode>('half')
 
 const selectedShop = computed(() => 
   restaurantList.value.find(s => s.id === selectedId.value)
@@ -676,8 +676,21 @@ const handleCountryChange = (country: '한국' | '일본') => {
 const windowWidth = ref(typeof window !== 'undefined' ? window.innerWidth : 1200)
 
 const handleResize = () => {
+  const prevWidth = windowWidth.value
   windowWidth.value = window.innerWidth
-  if (!isDragging.value) {
+  
+  // Transition from Desktop to Mobile
+  if (prevWidth >= 1024 && windowWidth.value < 1024) {
+    sheetMode.value = 'half'
+    // Trigger "slide up from bottom" animation
+    isDragging.value = true
+    dragTranslateY.value = window.innerHeight
+    
+    nextTick(() => {
+      isDragging.value = false
+      dragTranslateY.value = getModeOffset(sheetMode.value)
+    })
+  } else if (!isDragging.value) {
     dragTranslateY.value = getModeOffset(sheetMode.value)
   }
 }
