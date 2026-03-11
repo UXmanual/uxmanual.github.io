@@ -752,7 +752,7 @@ const initNaverMap = () => {
     backgroundColor: 'transparent',
     borderWidth: 0,
     disableAnchor: true,
-    pixelOffset: new window.naver.maps.Point(0, -42) // Reduced gap to bring it closer to marker
+    pixelOffset: new window.naver.maps.Point(0, -30) // Tightened gap to bring it much closer to marker tip
   })
 
   // After init, if we have a selected shop, update it immediately
