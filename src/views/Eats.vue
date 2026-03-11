@@ -1025,6 +1025,7 @@ declare global {
 
 let naverMap: any = null
 let naverMarker: any = null
+let naverInfoWindow: any = null
 
 const initNaverMap = () => {
   if (!window.naver || !window.naver.maps) return
@@ -1043,14 +1044,24 @@ const initNaverMap = () => {
   }
   
   naverMap = new window.naver.maps.Map(container, mapOptions)
+  
+  // Initialize InfoWindow with modern styling
+  naverInfoWindow = new window.naver.maps.InfoWindow({
+    content: '',
+    backgroundColor: 'transparent',
+    borderWidth: 0,
+    disableAnchor: true,
+    pixelOffset: new window.naver.maps.Point(0, -20)
+  })
 }
 
 const updateNaverMap = (shop: Shop) => {
   if (!naverMap || !window.naver) return
   
   const latlng = new window.naver.maps.LatLng(shop.lat, shop.lng)
-  naverMap.setCenter(latlng)
+  naverMap.panTo(latlng)
   
+  // Marker Update
   if (naverMarker) {
     naverMarker.setPosition(latlng)
   } else {
@@ -1067,6 +1078,38 @@ const updateNaverMap = (shop: Shop) => {
         anchor: new window.naver.maps.Point(16, 16)
       }
     })
+  }
+
+  // InfoWindow Update
+  if (naverInfoWindow) {
+    const isDark = document.documentElement.classList.contains('dark')
+    const content = `
+      <div style="
+        padding: 16px;
+        background: ${isDark ? '#1f1f1f' : '#ffffff'};
+        border: 1px solid ${isDark ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.05)'};
+        border-radius: 12px;
+        box-shadow: 0 10px 25px -5px rgba(0,0,0,0.2);
+        min-width: 200px;
+        font-family: 'Pretendard Variable', sans-serif;
+      ">
+        <div style="font-size: 11px; font-weight: 700; color: #1a73e8; margin-bottom: 4px; text-transform: uppercase; letter-spacing: 0.05em;">
+          ${shop.category}
+        </div>
+        <div style="font-size: 16px; font-weight: 900; color: ${isDark ? '#f4f4f5' : '#18181b'}; margin-bottom: 6px; line-height: 1.2;">
+          ${shop.name}
+        </div>
+        <div style="font-size: 12px; color: ${isDark ? '#a1a1aa' : '#71717a'}; line-height: 1.5;">
+          ${shop.address}
+        </div>
+        <div style="margin-top: 10px; display: flex; align-items: center; gap: 4px;">
+           <span style="color: #fbbf24;">★</span>
+           <span style="font-size: 13px; font-weight: 700; color: ${isDark ? '#f4f4f5' : '#18181b'};">${shop.rating}</span>
+        </div>
+      </div>
+    `
+    naverInfoWindow.setContent(content)
+    naverInfoWindow.open(naverMap, latlng)
   }
 }
 
