@@ -17,7 +17,7 @@
       <!-- Version Section -->
       <div class="pt-4 border-t border-zinc-100 dark:border-white/5 w-full flex justify-center items-center gap-x-2 text-[10px] font-bold uppercase tracking-widest">
         <span class="text-zinc-400 dark:text-zinc-500">VERSION RECORD</span>
-        <span class="text-zinc-950 dark:text-zinc-300 italic">v47.0 (LATEST)</span>
+        <span class="text-zinc-950 dark:text-zinc-300 italic">v47.1</span>
       </div>
     </div>
   </footer>
