@@ -416,10 +416,10 @@ const selectedCountry = ref<'한국' | '일본'>('한국')
 const selectedId = ref(104)
 
 const regionsByCountry: Record<'한국' | '일본', string[]> = {
-  '한국': ['서울', '경기', '인천', '강원', '충북', '충남', '대전', '전북', '전남', '광주', '경북', '경남', '대구', '울산', '부산', '세종', '제주'],
-  '일본': ['도쿄', '오사카', '교토', '후쿠오카', '삿포로', '아오모리', '요코하마', '나고야', '나라', '히로시마', '센다이', '오키나와', '시즈오카', '구마모토', '가고시마']
+  '한국': ['전체', '서울', '경기', '인천', '강원', '충북', '충남', '대전', '전북', '전남', '광주', '경북', '경남', '대구', '울산', '부산', '세종', '제주'],
+  '일본': ['전체', '도쿄', '오사카', '교토', '후쿠오카', '삿포로', '아오모리', '요코하마', '나고야', '나라', '히로시마', '센다이', '오키나와', '시즈오카', '구마모토', '가고시마']
 }
-const selectedRegion = ref('서울')
+const selectedRegion = ref('전체')
 
 const getRegionCount = (region: string) => {
   return restaurantList.value.filter(s => 
@@ -598,8 +598,7 @@ const selectedShop = computed(() =>
 
 const handleCountryChange = (country: '한국' | '일본') => {
   selectedCountry.value = country
-  const defaultRegion = country === '일본' ? '도쿄' : '서울' // Smart default
-  selectRegion(defaultRegion)
+  selectRegion('전체')
 }
 
 const windowWidth = ref(typeof window !== 'undefined' ? window.innerWidth : 1200)
@@ -635,8 +634,8 @@ onMounted(() => {
   document.body.style.overflow = 'hidden'
   document.body.style.height = '100svh'
 
-  // Initial random pick for Korean Seoul - moved here to ensure scrollContainer is ready
-  selectRegion('서울')
+  // Initial random pick for Entire Korea - moved here to ensure scrollContainer is ready
+  selectRegion('전체')
 })
 
 onUnmounted(() => {
