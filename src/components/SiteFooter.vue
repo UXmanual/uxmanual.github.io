@@ -23,11 +23,11 @@
 
         <!-- Bottom Section: Copyright & Version -->
         <div class="flex flex-col gap-1">
-          <p class="text-[24px] font-black text-zinc-300 dark:text-[#ddd] tracking-tight">
+          <p class="text-[24px] font-black text-zinc-300 dark:text-zinc-700 tracking-tight">
             © DUX
           </p>
-          <div class="text-[12px] font-bold text-zinc-300 dark:text-[#ddd]">
-            ver. 54.0
+          <div class="text-[12px] font-bold text-zinc-300 dark:text-zinc-700">
+            ver. 55.0
           </div>
         </div>
       </div>
