@@ -1102,6 +1102,6 @@ onUnmounted(() => {
 .dark #naver-map .group,
 .dark #naver-map [style*="z-index: 100"],
 .dark #naver-map [style*="font-size"] {
-  filter: invert(100%) hue-rotate(-185deg) brightness(1.2) contrast(1.1);
+  filter: invert(100%) hue-rotate(-185deg) saturate(1.4) brightness(1.3) contrast(1.1);
 }
 </style>
