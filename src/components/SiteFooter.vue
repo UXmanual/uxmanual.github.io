@@ -1,6 +1,6 @@
 <template>
   <footer class="border-t border-zinc-200 dark:border-white/5 py-16 bg-white dark:bg-[#131313]">
-    <div class="max-w-[1800px] mx-auto px-6 md:px-10 flex flex-col items-start text-left space-y-4">
+    <div class="max-w-[1800px] mx-auto px-6 md:px-10 flex flex-col items-start text-left space-y-5">
       <!-- Copyright Section -->
       <p class="text-[14px] font-black text-zinc-400 dark:text-zinc-600 tracking-tight">
         © NUXA
@@ -15,8 +15,8 @@
       </div>
 
       <!-- Version Section -->
-      <div class="flex justify-start items-center text-[10px] font-bold uppercase">
-        <span class="text-zinc-400 dark:text-zinc-600">Ver.47.5</span>
+      <div class="flex justify-start items-center text-[10px] font-bold">
+        <span class="text-zinc-400 dark:text-zinc-600">ver. 47.6</span>
       </div>
     </div>
   </footer>
