@@ -936,17 +936,17 @@ const updateNaverMap = (shop: Shop) => {
     map: naverMap,
     icon: {
       content: `
-        <div class="relative group">
-          <!-- Ping Effect -->
-          <div class="absolute -top-1 -left-1 w-10 h-10 bg-[#1a73e8]/20 rounded-full animate-ping"></div>
+        <div class="relative group" style="width: 34px; height: 42px;">
+          <!-- Ping Effect (Centered on the Pin Head 17, 17) -->
+          <div class="absolute -top-[3px] -left-[3px] w-10 h-10 bg-[#1a73e8]/20 rounded-full animate-ping"></div>
           <!-- Google Style Pin SVG -->
-          <svg width="34" height="42" viewBox="0 0 34 42" fill="none" xmlns="http://www.w3.org/2000/svg" style="filter: drop-shadow(0 4px 6px rgba(0,0,0,0.3));">
+          <svg width="34" height="42" viewBox="0 0 34 42" fill="none" xmlns="http://www.w3.org/2000/svg" style="filter: drop-shadow(0 4px 6px rgba(0,0,0,0.3)); display: block;">
             <path d="M17 0C7.61116 0 0 7.61116 0 17C0 26.3888 17 42 17 42C17 42 34 26.3888 34 17C34 7.61116 26.3888 0 17 0Z" fill="#1a73e8"/>
             <path d="M17 23C20.3137 23 23 20.3137 23 17C23 13.6863 20.3137 11 17 11C13.6863 11 11 13.6863 11 17C11 20.3137 13.6863 23 17 23Z" fill="white"/>
           </svg>
         </div>
       `,
-      anchor: new window.naver.maps.Point(17, 42) // Anchor at the bottom tip of the pin
+      anchor: new window.naver.maps.Point(17, 42) // Accurate anchor at the bottom tip
     }
   })
 
