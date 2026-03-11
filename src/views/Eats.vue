@@ -1033,6 +1033,9 @@ const initNaverMap = () => {
   const container = document.getElementById('naver-map')
   if (!container) return
 
+  // If a map instance already exists, we should check if it's attached correctly.
+  // When switching tabs with v-if, the container element is recreated.
+  // We re-initialize to ensure the map is bound to the current DOM element.
   const mapOptions = {
     center: new window.naver.maps.LatLng(37.5665, 126.9780),
     zoom: 16,
@@ -1045,13 +1048,13 @@ const initNaverMap = () => {
   
   naverMap = new window.naver.maps.Map(container, mapOptions)
   
-  // Initialize InfoWindow with modern styling
+  // Always recreate InfoWindow for the new map instance
   naverInfoWindow = new window.naver.maps.InfoWindow({
     content: '',
     backgroundColor: 'transparent',
     borderWidth: 0,
     disableAnchor: true,
-    pixelOffset: new window.naver.maps.Point(0, -45) // Adjusting offset to be further from marker
+    pixelOffset: new window.naver.maps.Point(0, -45)
   })
 }
 
@@ -1061,24 +1064,24 @@ const updateNaverMap = (shop: Shop) => {
   const latlng = new window.naver.maps.LatLng(shop.lat, shop.lng)
   naverMap.panTo(latlng)
   
-  // Marker Update
+  // Marker Update (recreate for new map instance)
   if (naverMarker) {
-    naverMarker.setPosition(latlng)
-  } else {
-    naverMarker = new window.naver.maps.Marker({
-      position: latlng,
-      map: naverMap,
-      icon: {
-        content: `
-          <div class="relative flex items-center justify-center">
-            <div class="absolute w-8 h-8 bg-[#1a73e8]/20 rounded-full animate-ping"></div>
-            <div class="relative w-4 h-4 bg-[#1a73e8] border-2 border-white rounded-full shadow-lg"></div>
-          </div>
-        `,
-        anchor: new window.naver.maps.Point(16, 16)
-      }
-    })
+    naverMarker.setMap(null)
   }
+  
+  naverMarker = new window.naver.maps.Marker({
+    position: latlng,
+    map: naverMap,
+    icon: {
+      content: `
+        <div class="relative flex items-center justify-center">
+          <div class="absolute w-8 h-8 bg-[#1a73e8]/20 rounded-full animate-ping"></div>
+          <div class="relative w-4 h-4 bg-[#1a73e8] border-2 border-white rounded-full shadow-lg"></div>
+        </div>
+      `,
+      anchor: new window.naver.maps.Point(16, 16)
+    }
+  })
 
   // InfoWindow Update
   if (naverInfoWindow) {
@@ -1137,20 +1140,21 @@ const updateNaverMap = (shop: Shop) => {
 // Watch for shop changes to update Naver Map
 watch(() => selectedShop.value, (newShop) => {
   if (newShop && selectedCountry.value === '한국') {
-    if (!naverMap) {
-      initNaverMap()
-    }
-    updateNaverMap(newShop)
+    nextTick(() => {
+      if (!naverMap) initNaverMap()
+      if (naverMap) updateNaverMap(newShop)
+    })
   }
 }, { immediate: true })
 
-// Watch for country changes to re-init Naver Map if needed
+// Watch for country changes to handle map re-initialization
 watch(() => selectedCountry.value, (newCountry) => {
   if (newCountry === '한국') {
-    nextTick(() => {
-      if (!naverMap) initNaverMap()
+    // Small delay to ensure transition and v-if have inserted the element
+    setTimeout(() => {
+      initNaverMap()
       if (selectedShop.value) updateNaverMap(selectedShop.value)
-    })
+    }, 50)
   }
 })
 
