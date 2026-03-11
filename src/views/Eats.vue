@@ -216,7 +216,7 @@ const restaurantList = ref<Shop[]>([
   { id: 118, name: "옥동식", category: "돼지곰탕", rating: 4.7, description: "맑은 국물의 돼지곰탕이라는 새로운 장르를 개척한 미쉐린 선정 맛집입니다.", address: "서울특별시 마포구 서교동", lat: 37.5507, lng: 126.9145, country: '한국' },
   
   // [부산] --------------------------------------------------
-  { id: 201, name: "본전돼지국밥", category: "돼지국밥", rating: 4.6, description: "부산역 인근, 맑고 진한 국물과 잡내 없는 고기로 사랑받는 국밥 명소입니다.", address: "부산광역시 동구 초량동", lat: 35.1158, lng: 129.0401, country: '한국' },
+  { id: 201, name: "양산왕돼지국밥", category: "돼지국밥", rating: 4.5, description: "진하고 뽀얀 사골 국물과 부드러운 수육의 조화가 일품인 부산의 대표 국밥 전문점입니다.", address: "부산광역시 해운대구 재송동", lat: 35.1912, lng: 129.1235, country: '한국' },
   { id: 202, name: "신발원", category: "만두", rating: 4.1, description: "백종원의 3대천왕 출연, 70년 전통의 수제 만두와 공갈빵이 유명한 곳입니다.", address: "부산광역시 동구 초량동", lat: 35.1223, lng: 129.0410, country: '한국' },
   { id: 203, name: "금수복국", category: "복어", rating: 4.4, description: "1970년부터 이어진 해운대의 상징, 시원한 복국과 다양한 복어 요리를 제공합니다.", address: "부산광역시 해운대구 중동", lat: 35.1636, lng: 129.1764, country: '한국' },
   { id: 204, name: "이재모피자", category: "피자", rating: 4.5, description: "부산 현지인들의 인생 피자집, 아낌없이 들어간 치즈와 담백한 도우가 특징입니다.", address: "부산광역시 중구 신창동1가", lat: 35.1021, lng: 129.0315, country: '한국' },
