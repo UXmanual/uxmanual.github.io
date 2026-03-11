@@ -223,6 +223,14 @@ const restaurantList = ref<Shop[]>([
   { id: 205, name: "상국이네", category: "분식", rating: 4.2, description: "해운대 시장의 명물, 걸쭉하고 매콤한 떡볶이와 바삭한 튀김이 일품입니다.", address: "부산광역시 해운대구 중동", lat: 35.1615, lng: 129.1634, country: '한국' },
   { id: 206, name: "개미집 본점", category: "낙곱새", rating: 4.1, description: "부산 해운대의 줄 서서 먹는 맛집, 중독성 강한 매콤한 낙곱새 볶음 전문점입니다.", address: "부산광역시 해운대구 우동", lat: 35.1587, lng: 129.1598, country: '한국' },
 
+  // [대구] --------------------------------------------------
+  { id: 701, name: "걸리버막창", category: "막창", rating: 4.6, description: "대구 3대 막창 중 하나, 초벌되어 나오는 고소하고 쫄깃한 막창의 진수를 맛보세요.", address: "대구광역시 북구 노원동", lat: 35.8892, lng: 128.5830, country: '한국' },
+  { id: 702, name: "중앙떡볶이", category: "분식", rating: 4.3, description: "대구 동성로의 전설, 두툼한 쌀떡과 카레향이 감도는 중독성 강한 소스가 매력입니다.", address: "대구광역시 중구 남일동", lat: 35.8701, lng: 128.5945, country: '한국' },
+  { id: 703, name: "왕거미식당", category: "뭉티기", rating: 4.5, description: "백종원의 3대천왕 출연, 신선한 당일 도축 한우 뭉티기와 오드레기가 유명한 노포입니다.", address: "대구광역시 중구 동인동", lat: 35.8725, lng: 128.6055, country: '한국' },
+  { id: 704, name: "삼송빵집 본점", category: "베이커리", rating: 4.2, description: "일명 '마약옥수수빵'의 원조, 입안 가득 톡톡 터지는 옥수수의 달콤한 맛이 일품입니다.", address: "대구광역시 중구 남일동", lat: 35.8695, lng: 128.5935, country: '한국' },
+  { id: 705, name: "가창찐빵골목", category: "분식", rating: 4.4, description: "가창면의 명물, 김이 모락모락 나는 담백한 팥소의 수제 찐빵과 만두가 별미입니다.", address: "대구광역시 달성군 가창면", lat: 35.7925, lng: 128.6055, country: '한국' },
+  { id: 706, name: "커피명가 본점", category: "카페", rating: 4.5, description: "대구에서 시작된 대한민국 1세대 로스터리 카페, 겨울철 딸기 케이크가 상징적입니다.", address: "대구광역시 중구 삼덕동", lat: 35.8655, lng: 128.6045, country: '한국' },
+
   // [제주] --------------------------------------------------
   { id: 301, name: "숙성도 함덕점", category: "흑돼지", rating: 4.7, description: "제주 흑돼지의 정점, 드라이에이징으로 깊은 맛을 낸 숙성 고기를 선보입니다.", address: "제주특별자치도 제주시 조천읍", lat: 33.5435, lng: 126.6690, country: '한국' },
   { id: 302, name: "명진전복", category: "전복", rating: 4.4, description: "구좌 해안가 위치, 고소한 전복 돌솥밥과 구이가 유명한 제주의 줄 서는 맛집입니다.", address: "제주특별자치도 제주시 구좌읍", lat: 33.5352, lng: 126.8524, country: '한국' },
