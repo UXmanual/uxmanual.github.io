@@ -24,8 +24,8 @@
         <p class="text-[24px] font-black text-zinc-300 dark:text-[#dddddd] tracking-tight">
           © NUXA
         </p>
-        <div class="text-[12px] font-bold text-zinc-400 dark:text-[#ddd]">
-          ver. 47.8
+        <div class="text-[12px] font-bold text-zinc-300 dark:text-[#dddddd]">
+          ver. 47.9
         </div>
       </div>
     </div>
