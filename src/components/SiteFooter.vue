@@ -21,11 +21,11 @@
 
       <!-- Bottom Section: Copyright & Version -->
       <div class="flex flex-col gap-1">
-        <p class="text-[24px] font-black text-zinc-300 dark:text-[#dddddd] tracking-tight">
+        <p class="text-[24px] font-black text-zinc-400 dark:text-zinc-600 tracking-tight">
           © NUXA
         </p>
-        <div class="text-[12px] font-bold text-zinc-300 dark:text-[#dddddd]">
-          ver. 47.9
+        <div class="text-[12px] font-bold text-zinc-400 dark:text-zinc-600">
+          ver. 48.0
         </div>
       </div>
     </div>
