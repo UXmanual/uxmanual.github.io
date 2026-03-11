@@ -7,7 +7,9 @@
         class="absolute top-[60px] left-0 right-0 bottom-0 z-10"
       >
         <transition name="fade" mode="out-in">
+          <div v-if="selectedCountry === '한국'" id="naver-map" class="w-full h-full bg-zinc-100 dark:bg-zinc-800"></div>
           <iframe
+            v-else-if="selectedCountry === '일본'"
             :key="mapUrl"
             width="100%"
             height="100%"
@@ -183,7 +185,7 @@
  * Draft layout for the Gourmet Guide section.
  * Integrates a restaurant list with a Google Maps Embed API.
  */
-import { ref, computed, onMounted, onUnmounted, nextTick } from 'vue'
+import { ref, computed, onMounted, onUnmounted, nextTick, watch } from 'vue'
 import SiteNavbar from '../components/SiteNavbar.vue'
 
 // Mock Data for Layout Demonstration
@@ -1013,6 +1015,105 @@ const mapUrl = computed(() => {
   const query = encodeURIComponent(`${name}, ${address}`)
   return `https://www.google.com/maps/embed/v1/place?key=AIzaSyAbcrzDVtglZAhgoFEkyc44E_4WMZGpSFE&q=${query}&zoom=16`
 })
+
+// --- Naver Maps Integration ---
+declare global {
+  interface Window {
+    naver: any
+  }
+}
+
+let naverMap: any = null
+let naverMarker: any = null
+
+const initNaverMap = () => {
+  if (!window.naver || !window.naver.maps) return
+  
+  const container = document.getElementById('naver-map')
+  if (!container) return
+
+  const mapOptions = {
+    center: new window.naver.maps.LatLng(37.5665, 126.9780),
+    zoom: 16,
+    mapTypeId: document.documentElement.classList.contains('dark') ? window.naver.maps.MapTypeId.NAVY : window.naver.maps.MapTypeId.NORMAL,
+    zoomControl: true,
+    zoomControlOptions: {
+      position: window.naver.maps.Position.RIGHT_BOTTOM
+    }
+  }
+  
+  naverMap = new window.naver.maps.Map(container, mapOptions)
+}
+
+const updateNaverMap = (shop: Shop) => {
+  if (!naverMap || !window.naver) return
+  
+  const latlng = new window.naver.maps.LatLng(shop.lat, shop.lng)
+  naverMap.setCenter(latlng)
+  
+  if (naverMarker) {
+    naverMarker.setPosition(latlng)
+  } else {
+    naverMarker = new window.naver.maps.Marker({
+      position: latlng,
+      map: naverMap,
+      icon: {
+        content: `
+          <div class="relative flex items-center justify-center">
+            <div class="absolute w-8 h-8 bg-[#1a73e8]/20 rounded-full animate-ping"></div>
+            <div class="relative w-4 h-4 bg-[#1a73e8] border-2 border-white rounded-full shadow-lg"></div>
+          </div>
+        `,
+        anchor: new window.naver.maps.Point(16, 16)
+      }
+    })
+  }
+}
+
+// Watch for shop changes to update Naver Map
+watch(() => selectedShop.value, (newShop) => {
+  if (newShop && selectedCountry.value === '한국') {
+    if (!naverMap) {
+      initNaverMap()
+    }
+    updateNaverMap(newShop)
+  }
+}, { immediate: true })
+
+// Watch for country changes to re-init Naver Map if needed
+watch(() => selectedCountry.value, (newCountry) => {
+  if (newCountry === '한국') {
+    nextTick(() => {
+      if (!naverMap) initNaverMap()
+      if (selectedShop.value) updateNaverMap(selectedShop.value)
+    })
+  }
+})
+
+// Watch for theme changes
+const observer = new MutationObserver((mutations) => {
+  mutations.forEach((mutation) => {
+    if (mutation.attributeName === 'class' && naverMap && window.naver) {
+      const isDark = document.documentElement.classList.contains('dark')
+      naverMap.setMapTypeId(isDark ? window.naver.maps.MapTypeId.NAVY : window.naver.maps.MapTypeId.NORMAL)
+    }
+  })
+})
+
+onMounted(() => {
+  observer.observe(document.documentElement, { attributes: true })
+  if (selectedCountry.value === '한국') {
+    nextTick(() => {
+      initNaverMap()
+      if (selectedShop.value) updateNaverMap(selectedShop.value)
+    })
+  }
+})
+
+onUnmounted(() => {
+  observer.disconnect()
+})
+
 </script>
 
 <style scoped>
