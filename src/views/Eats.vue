@@ -202,219 +202,50 @@ interface Shop {
 }
 
 const restaurantList = ref<Shop[]>([
-  // --- 한국 맛집 리스트 ---
-  { id: 104, name: "황생가칼국수", category: "칼국수", rating: 4.5, description: "북촌의 자부심, 깊은 사골 육수로 맛을 낸 정성 가득한 칼국수와 만두입니다.", address: "서울특별시 종로구 소격동", lat: 37.5801, lng: 126.9814,
-    country: '한국'
-  },
-  {
-    id: 105,
-    name: "자하손만두",
-    category: "만두부문",
-    rating: 4.4,
-    description: "부암동 산비탈에서 즐기는 정갈하고 담백한 개성식 손만두 전문점입니다.",
-    address: "서울특별시 종로구 부암동",
-    lat: 37.5936,
-    lng: 126.9658,
-    country: '한국'
-  },
-  {
-    id: 106,
-    name: "토속촌 삼계탕",
-    category: "삼계탕",
-    rating: 4.3,
-    description: "경복궁 옆, 견과류가 들어간 진한 국물의 원조 삼계탕 맛집입니다.",
-    address: "서울특별시 종로구 체부동",
-    lat: 37.5776,
-    lng: 126.9717,
-    country: '한국'
-  },
-  {
-    id: 102,
-    name: "우래옥 (Wooraeok)",
-    category: "고기요리",
-    rating: 4.7,
-    description: "70년 전통의 평양냉면과 불고기 명가, 명실상부 서울 최고의 노포입니다.",
-    address: "서울특별시 중구 주교동",
-    lat: 37.5683,
-    lng: 126.9995,
-    country: '한국'
-  },
-  {
-    id: 107,
-    name: "명동교자",
-    category: "칼국수",
-    rating: 4.6,
-    description: "명동의 랜드마크, 진한 닭 육수와 부드러운 만두가 어우러진 맛의 명소입니다.",
-    address: "서울특별시 중구 명동",
-    lat: 37.5625,
-    lng: 126.9856,
-    country: '한국'
-  },
-  {
-    id: 108,
-    name: "하동관",
-    category: "곰탕",
-    rating: 4.4,
-    description: "1939년부터 이어온, 맑고 깊은 국물 맛이 일품인 대표 곰탕집입니다.",
-    address: "서울특별시 중구 명동",
-    lat: 37.5668,
-    lng: 126.9840,
-    country: '한국'
-  },
-  {
-    id: 109,
-    name: "진주회관",
-    category: "콩국수",
-    rating: 4.5,
-    description: "여름철 필수 코스, 걸쭉하고 진한 맛의 냉콩국수로 전국적인 명성을 가진 곳입니다.",
-    address: "서울특별시 중구 서소문동",
-    lat: 37.5623,
-    lng: 126.9754,
-    country: '한국'
-  },
-  {
-    id: 110,
-    name: "오레노라멘",
-    category: "라멘",
-    rating: 4.7,
-    description: "진한 닭 육수의 토리파이탄 라멘으로 사랑받는 미쉐린 가이드 선정 맛집입니다.",
-    address: "서울특별시 용산구 이태원동",
-    lat: 37.5401,
-    lng: 126.9922,
-    country: '한국'
-  },
-  {
-    id: 111,
-    name: "나리식당",
-    category: "냉동삼겹살",
-    rating: 4.2,
-    description: "한남동 냉삼 열풍의 주역, 청국장과 함께 즐기는 추억의 맛입니다.",
-    address: "서울특별시 용산구 한남동",
-    lat: 37.5385,
-    lng: 127.0001,
-    country: '한국'
-  },
-  {
-    id: 112,
-    name: "부자피자",
-    category: "화덕피자",
-    rating: 4.4,
-    description: "한남동에서 즐기는 정통 이탈리안 화덕피자, 신선한 재료 본연의 맛을 살립니다.",
-    address: "서울특별시 용산구 한남동",
-    lat: 37.5388,
-    lng: 127.0012,
-    country: '한국'
-  },
-  {
-    id: 101,
-    name: "권숙수 (Kwon Sook Soo)",
-    category: "한식",
-    rating: 4.8,
-    description: "한국의 전통 미학을 요리에 담아낸 미쉐린 2스타 한식 파인 다이닝입니다.",
-    address: "서울특별시 강남구 신사동",
-    lat: 37.5246,
-    lng: 127.0355,
-    country: '한국'
-  },
-  {
-    id: 113,
-    name: "정식당 (Jungsik)",
-    category: "모던한식",
-    rating: 4.9,
-    description: "뉴욕과 서울을 잇는 뉴 코리안 퀴진의 선구자, 독창적인 메뉴를 선보입니다.",
-    address: "서울특별시 강남구 청담동",
-    lat: 37.5255,
-    lng: 127.0407,
-    country: '한국'
-  },
-  {
-    id: 103,
-    name: "밍글스 (Mingles)",
-    category: "퓨전한식",
-    rating: 4.8,
-    description: "전통과 현대의 조화, 제철 식재료를 사용한 창의적인 코스 요리입니다.",
-    address: "서울특별시 강남구 삼성동",
-    lat: 37.5212,
-    lng: 127.0413,
-    country: '한국'
-  },
-  {
-    id: 114,
-    name: "새벽집",
-    category: "육류요리",
-    rating: 4.5,
-    description: "청담동 24시간 맛집, 최고급 한우 구이와 육회비빔밥이 유명한 곳입니다.",
-    address: "서울특별시 강남구 청담동",
-    lat: 37.5252,
-    lng: 127.0505,
-    country: '한국'
-  },
-  {
-    id: 115,
-    name: "진미평양냉면",
-    category: "평양냉면",
-    rating: 4.6,
-    description: "강남권 평양냉면의 신흥 강자, 깔끔한 육수와 제육의 조화가 완벽합니다.",
-    address: "서울특별시 강남구 논현동",
-    lat: 37.5161,
-    lng: 127.0360,
-    country: '한국'
-  },
-  {
-    id: 116,
-    name: "무교동 유정낙지",
-    category: "낙지요리",
-    rating: 4.2,
-    description: "매콤한 낙지볶음의 대명사, 스트레스를 날려버리는 화끈한 맛입니다.",
-    address: "서울특별시 서초구 서초동",
-    lat: 37.4912,
-    lng: 127.0125,
-    country: '한국'
-  },
-  {
-    id: 117,
-    name: "버드나무집",
-    category: "갈비",
-    rating: 4.4,
-    description: "서초동 갈비 명가, 한우 갈비탕의 푸짐함으로 항상 붐비는 곳입니다.",
-    address: "서울특별시 서초구 서초동",
-    lat: 37.4877,
-    lng: 127.0315,
-    country: '한국'
-  },
-  {
-    id: 118,
-    name: "옥동식",
-    category: "돼지곰탕",
-    rating: 4.7,
-    description: "맑은 국물의 돼지곰탕이라는 새로운 장르를 개척한 미쉐린 선정 맛집입니다.",
-    address: "서울특별시 마포구 서교동",
-    lat: 37.5507,
-    lng: 126.9145,
-    country: '한국'
-  },
-  {
-    id: 119,
-    name: "진진 (Jin Jin)",
-    category: "중식",
-    rating: 4.6,
-    description: "왕육성 셰프의 멘보샤가 일품인, 실리적이고 맛있는 중식 전문점입니다.",
-    address: "서울특별시 마포구 서교동",
-    lat: 37.5555,
-    lng: 126.9115,
-    country: '한국'
-  },
-  {
-    id: 121,
-    name: "벽제갈비",
-    category: "소갈비",
-    rating: 4.7,
-    description: "한우 등급 관리팀을 별도로 운영하는 자타공인 최고급 한우 명가입니다.",
-    address: "서울특별시 송파구 방이동",
-    lat: 37.5115,
-    lng: 127.1245,
-    country: '한국'
-  },  // --- 일본 맛집 리스트 (도쿄, 오사카, 교토, 후쿠오카, 삿포로, 요코하마, 나고야) ---
+  // --- 한국 맛집 리스트 (서울, 부산, 제주, 경주, 전주, 강원 등) ---
+  // [서울] --------------------------------------------------
+  { id: 104, name: "황생가칼국수", category: "칼국수", rating: 4.5, description: "북촌의 자부심, 깊은 사골 육수로 맛을 낸 정성 가득한 칼국수와 만두입니다.", address: "서울특별시 종로구 소격동", lat: 37.5801, lng: 126.9814, country: '한국' },
+  { id: 105, name: "자하손만두", category: "만두", rating: 4.4, description: "부암동 산비탈에서 즐기는 정갈하고 담백한 개성식 손만두 전문점입니다.", address: "서울특별시 종로구 부암동", lat: 37.5936, lng: 126.9658, country: '한국' },
+  { id: 106, name: "토속촌 삼계탕", category: "삼계탕", rating: 4.3, description: "경복궁 옆, 견과류가 들어간 진한 국물의 원조 삼계탕 맛집입니다.", address: "서울특별시 종로구 체부동", lat: 37.5776, lng: 126.9717, country: '한국' },
+  { id: 102, name: "우래옥", category: "냉면/불고기", rating: 4.7, description: "70년 전통의 평양냉면과 불고기 명가, 명실상부 서울 최고의 노포입니다.", address: "서울특별시 중구 주교동", lat: 37.5683, lng: 126.9995, country: '한국' },
+  { id: 107, name: "명동교자", category: "칼국수", rating: 4.6, description: "명동의 랜드마크, 진한 닭 육수와 부드러운 만두가 어우러진 맛의 명소입니다.", address: "서울특별시 중구 명동", lat: 37.5625, lng: 126.9856, country: '한국' },
+  { id: 108, name: "하동관", category: "곰탕", rating: 4.4, description: "1939년부터 이어온, 맑고 깊은 국물 맛이 일품인 대표 곰탕집입니다.", address: "서울특별시 중구 명동", lat: 37.5668, lng: 126.9840, country: '한국' },
+  { id: 109, name: "진주회관", category: "콩국수", rating: 4.5, description: "여름철 필수 코스, 걸쭉하고 진한 맛의 냉콩국수로 전국적인 명성을 가진 곳입니다.", address: "서울특별시 중구 서소문동", lat: 37.5623, lng: 126.9754, country: '한국' },
+  { id: 110, name: "오레노라멘", category: "라멘", rating: 4.7, description: "진한 닭 육수의 토리파이탄 라멘으로 사랑받는 미쉐린 가이드 선정 맛집입니다.", address: "서울특별시 용산구 이태원동", lat: 37.5401, lng: 126.9922, country: '한국' },
+  { id: 112, name: "부자피자", category: "화덕피자", rating: 4.4, description: "한남동에서 즐기는 정통 이탈리안 화덕피자, 신선한 재료 본연의 맛을 살립니다.", address: "서울특별시 용산구 한남동", lat: 37.5388, lng: 127.0012, country: '한국' },
+  { id: 113, name: "정식당", category: "파인 다이닝", rating: 4.9, description: "뉴욕과 서울을 잇는 뉴 코리안 퀴진의 선구자, 독창적인 메뉴를 선보입니다.", address: "서울특별시 강남구 청담동", lat: 37.5255, lng: 127.0407, country: '한국' },
+  { id: 115, name: "진미평양냉면", category: "냉면", rating: 4.6, description: "강남권 평양냉면의 신흥 강자, 깔끔한 육수와 제육의 조화가 완벽합니다.", address: "서울특별시 강남구 논현동", lat: 37.5161, lng: 127.0360, country: '한국' },
+  { id: 118, name: "옥동식", category: "돼지곰탕", rating: 4.7, description: "맑은 국물의 돼지곰탕이라는 새로운 장르를 개척한 미쉐린 선정 맛집입니다.", address: "서울특별시 마포구 서교동", lat: 37.5507, lng: 126.9145, country: '한국' },
+  
+  // [부산] --------------------------------------------------
+  { id: 201, name: "본전돼지국밥", category: "돼지국밥", rating: 4.6, description: "부산역 인근, 맑고 진한 국물과 잡내 없는 고기로 사랑받는 국밥 명소입니다.", address: "부산광역시 동구 초량동", lat: 35.1158, lng: 129.0401, country: '한국' },
+  { id: 202, name: "신발원", category: "만두", rating: 4.1, description: "백종원의 3대천왕 출연, 70년 전통의 수제 만두와 공갈빵이 유명한 곳입니다.", address: "부산광역시 동구 초량동", lat: 35.1223, lng: 129.0410, country: '한국' },
+  { id: 203, name: "금수복국", category: "복어", rating: 4.4, description: "1970년부터 이어진 해운대의 상징, 시원한 복국과 다양한 복어 요리를 제공합니다.", address: "부산광역시 해운대구 중동", lat: 35.1636, lng: 129.1764, country: '한국' },
+  { id: 204, name: "이재모피자", category: "피자", rating: 4.5, description: "부산 현지인들의 인생 피자집, 아낌없이 들어간 치즈와 담백한 도우가 특징입니다.", address: "부산광역시 중구 신창동1가", lat: 35.1021, lng: 129.0315, country: '한국' },
+  { id: 205, name: "상국이네", category: "분식", rating: 4.2, description: "해운대 시장의 명물, 걸쭉하고 매콤한 떡볶이와 바삭한 튀김이 일품입니다.", address: "부산광역시 해운대구 중동", lat: 35.1615, lng: 129.1634, country: '한국' },
+  { id: 206, name: "개미집 본점", category: "낙곱새", rating: 4.1, description: "부산 해운대의 줄 서서 먹는 맛집, 중독성 강한 매콤한 낙곱새 볶음 전문점입니다.", address: "부산광역시 해운대구 우동", lat: 35.1587, lng: 129.1598, country: '한국' },
+
+  // [제주] --------------------------------------------------
+  { id: 301, name: "숙성도 함덕점", category: "흑돼지", rating: 4.7, description: "제주 흑돼지의 정점, 드라이에이징으로 깊은 맛을 낸 숙성 고기를 선보입니다.", address: "제주특별자치도 제주시 조천읍", lat: 33.5435, lng: 126.6690, country: '한국' },
+  { id: 302, name: "명진전복", category: "전복", rating: 4.4, description: "구좌 해안가 위치, 고소한 전복 돌솥밥과 구이가 유명한 제주의 줄 서는 맛집입니다.", address: "제주특별자치도 제주시 구좌읍", lat: 33.5352, lng: 126.8524, country: '한국' },
+  { id: 303, name: "자매국수", category: "고기국수", rating: 4.1, description: "제주 고기국수 거리의 대표 주자, 진한 사골 육수에 큼직한 수육이 올라갑니다.", address: "제주특별자치도 제주시 삼도이동", lat: 33.5182, lng: 126.5414, country: '한국' },
+  { id: 304, name: "우진해장국", category: "해장국", rating: 4.3, description: "제주식 고사리 해장국으로 유명한 곳, 걸쭉하고 구수한 맛이 독특한 별미입니다.", address: "제주특별자치도 제주시 삼도이동", lat: 33.5115, lng: 126.5201, country: '한국' },
+  { id: 305, name: "연돈", category: "돈카츠", rating: 4.6, description: "백종원의 골목식당 출연, 정성껏 튀겨낸 완벽한 식감의 수제 돈카츠 전문점입니다.", address: "제주특별자치도 서귀포시 색달동", lat: 33.2548, lng: 126.4055, country: '한국' },
+  { id: 306, name: "올래국수", category: "고기국수", rating: 4.4, description: "제주 공항 인근, 담백하고 깔끔한 육수 맛으로 수많은 단골을 보유한 국수집입니다.", address: "제주특별자치도 제주시 연동", lat: 33.4915, lng: 126.4955, country: '한국' },
+
+  // [경주/전주] ----------------------------------------------
+  { id: 401, name: "함양집", category: "한우물회", rating: 4.3, description: "90년 전통, 경주를 대표하는 시원하고 매콤한 한우물회가 유명한 노포입니다.", address: "경상북도 경주시 북군동", lat: 35.8415, lng: 129.2155, country: '한국' },
+  { id: 402, name: "교리김밥", category: "분식", rating: 4.0, description: "경주의 명물 달걀 김밥, 폭신한 달걀 지단이 가득 들어가 담백한 맛이 일품입니다.", address: "경상북도 경주시 탑동", lat: 35.8295, lng: 129.2155, country: '한국' },
+  { id: 501, name: "한국집", category: "비빔밥", rating: 4.2, description: "1952년 창업, 전주 비빔밥의 원조로 불리는 정갈하고 깊은 맛의 맛집입니다.", address: "전북특별자치도 전주시 완산구", lat: 35.8165, lng: 127.1475, country: '한국' },
+  { id: 502, name: "베테랑칼국수", category: "칼국수", rating: 4.1, description: "전주 한옥마을의 명물, 들깨가루와 가득한 계란이 어우러진 걸쭉한 칼국수입니다.", address: "전북특별자치도 전주시 완산구", lat: 35.8145, lng: 127.1515, country: '한국' },
+  { id: 503, name: "삼백집", category: "콩나물국밥", rating: 4.1, description: "하루 삼백 그릇만 판다는 정신으로 시작된, 전주 정통 콩나물 국밥 명소입니다.", address: "전북특별자치도 전주시 완산구", lat: 35.8185, lng: 127.1425, country: '한국' },
+
+  // [강원] --------------------------------------------------
+  { id: 601, name: "봉포머구리집", category: "물회", rating: 4.2, description: "속초 바다가 한눈에 보이는 곳에서 즐기는 신선하고 푸짐한 제철 물회입니다.", address: "강원특별자치도 속초시 영랑동", lat: 38.2255, lng: 128.5875, country: '한국' },
+  { id: 602, name: "동화가든", category: "짬뽕순두부", rating: 4.3, description: "강릉 초당두부 마을의 명소, 불맛 나는 짬뽕과 부드러운 순두부의 환상적인 만남입니다.", address: "강원특별자치도 강릉시 초당동", lat: 37.7915, lng: 128.9165, country: '한국' },
+  { id: 603, name: "엄지네포장마차", category: "꼬막비빔밥", rating: 4.3, description: "강릉 꼬막비빔밥 열풍의 주역, 짭쪼름한 양념과 신선한 꼬막이 어우러진 별미입니다.", address: "강원특별자치도 강릉시 포남동", lat: 37.7655, lng: 128.9085, country: '한국' },
+
+  // --- 일본 맛집 리스트 (도쿄, 오사카, 교토, 후쿠오카, 삿포로, 요코하마, 나고야) ---
   { id: 1001, name: "타치구이 아키라", category: "스시", rating: 4.9, description: "신선한 네타와 정교한 샤리가 일품인 서서 먹는 정통 스시 바입니다.", address: "일본 도쿄 미나토구", lat: 35.6662, lng: 139.7583, country: '일본' },
   { id: 1002, name: "긴자 이부키", category: "가이세키", rating: 4.8, description: "긴자의 품격이 느껴지는 제철 식재료 중심의 고급 가이세키 요리입니다.", address: "일본 도쿄 주오구", lat: 35.6720, lng: 139.7710, country: '일본' },
   { id: 1003, name: "텐푸라 미카쿠", category: "텐푸라", rating: 4.7, description: "1931년 창업, 장인의 손길로 튀겨낸 바삭하고 정갈한 텐푸라 전문점입니다.", address: "일본 도쿄 미나토구", lat: 35.6694, lng: 139.7523, country: '일본' },
@@ -587,7 +418,7 @@ const selectedCountry = ref<'한국' | '일본'>('한국')
 const selectedId = ref(104)
 
 const regionsByCountry: Record<'한국' | '일본', string[]> = {
-  '한국': ['서울', '경기', '인천', '강원', '충북', '충남', '대전', '전북', '전남', '광주', '경북', '경남', '대구', '울산', '부산', '세종', '제주도'],
+  '한국': ['서울', '경기', '인천', '강원', '충북', '충남', '대전', '전북', '전남', '광주', '경북', '경남', '대구', '울산', '부산', '세종', '제주'],
   '일본': ['도쿄', '오사카', '교토', '후쿠오카', '삿포로', '아오모리', '요코하마', '나고야', '나라', '히로시마', '센다이', '오키나와', '시즈오카', '구마모토', '가고시마']
 }
 const selectedRegion = ref('서울')
