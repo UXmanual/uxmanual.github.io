@@ -422,6 +422,9 @@ const regionsByCountry: Record<'한국' | '일본', string[]> = {
 const selectedRegion = ref('전체')
 
 const getRegionCount = (region: string) => {
+  if (region === '전체') {
+    return restaurantList.value.filter(s => s.country === selectedCountry.value).length
+  }
   return restaurantList.value.filter(s => 
     s.country === selectedCountry.value && s.address.includes(region)
   ).length
