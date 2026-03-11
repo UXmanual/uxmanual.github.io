@@ -435,6 +435,7 @@ let lastRegionX = 0
 let lastRegionTime = 0
 let regionVelocity = 0
 let regionMomentumRafId: number | null = null
+const hasRegionMoved = ref(false)
 
 const applyRegionMomentum = () => {
   const container = regionContainer.value
@@ -466,6 +467,7 @@ const startRegionDrag = (e: MouseEvent) => {
   lastRegionX = e.pageX
   lastRegionTime = performance.now()
   regionVelocity = 0
+  hasRegionMoved.value = false
   
   document.body.style.userSelect = 'none'
   
@@ -489,6 +491,11 @@ const handleRegionDrag = (e: MouseEvent) => {
   
   const x = e.pageX - (regionContainer.value.offsetLeft || 0)
   const walk = (x - regionStartX) * 1.2
+  
+  if (Math.abs(walk) > 5) {
+    hasRegionMoved.value = true
+  }
+  
   regionContainer.value.scrollLeft = regionScrollLeft - walk
   
   if (deltaTime > 0) {
@@ -518,6 +525,10 @@ const scrollToShop = async (shopId: number) => {
 }
 
 const selectRegion = async (region: string) => {
+  if (hasRegionMoved.value) {
+    hasRegionMoved.value = false
+    return
+  }
   selectedRegion.value = region
   
   // Center scroll the tab
