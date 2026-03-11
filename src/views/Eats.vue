@@ -752,7 +752,7 @@ const initNaverMap = () => {
     backgroundColor: 'transparent',
     borderWidth: 0,
     disableAnchor: true,
-    pixelOffset: new window.naver.maps.Point(0, -50) // Slightly adjusted for pin height
+    pixelOffset: new window.naver.maps.Point(0, -42) // Reduced gap to bring it closer to marker
   })
 
   // After init, if we have a selected shop, update it immediately
@@ -796,10 +796,10 @@ const updateNaverMap = (shop: Shop) => {
     const isDark = document.documentElement.classList.contains('dark')
     const naverSearchUrl = `https://map.naver.com/v5/search/${encodeURIComponent(shop.name + ' ' + shop.address)}`
     const content = `
-      <div style="
+      <div class="naver-info-window" style="
         padding: 18px;
-        background: ${isDark ? '#1f1f1f' : '#ffffff'};
-        border: 1px solid ${isDark ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.05)'};
+        background: #ffffff;
+        border: 1px solid rgba(0,0,0,0.05);
         border-radius: 16px;
         box-shadow: 0 15px 35px -5px rgba(0,0,0,0.3);
         width: 260px;
@@ -809,17 +809,17 @@ const updateNaverMap = (shop: Shop) => {
           <div style="font-size: 11px; font-weight: 700; color: #1a73e8; text-transform: uppercase; letter-spacing: 0.05em;">
             ${shop.category}
           </div>
-          <div style="display: flex; align-items: center; gap: 3px; font-size: 12px; font-weight: 800; color: ${isDark ? '#f4f4f5' : '#18181b'};">
+          <div style="display: flex; align-items: center; gap: 3px; font-size: 12px; font-weight: 800; color: #18181b;">
              <span style="color: #fbbf24;">★</span> ${shop.rating}
           </div>
         </div>
-        <div style="font-size: 18px; font-weight: 950; color: ${isDark ? '#f4f4f5' : '#18181b'}; margin-bottom: 6px; line-height: 1.2;">
+        <div style="font-size: 18px; font-weight: 950; color: #18181b; margin-bottom: 6px; line-height: 1.2;">
           ${shop.name}
         </div>
-        <div style="font-size: 13px; color: ${isDark ? '#a1a1aa' : '#71717a'}; line-height: 1.5; margin-bottom: 12px;">
+        <div style="font-size: 13px; color: #71717a; line-height: 1.5; margin-bottom: 12px;">
           ${shop.description}
         </div>
-        <div style="font-size: 12px; color: ${isDark ? '#71717a' : '#a1a1aa'}; margin-bottom: 14px; display: flex; align-items: center; gap: 4px;">
+        <div style="font-size: 12px; color: #a1a1aa; margin-bottom: 14px; display: flex; align-items: center; gap: 4px;">
           <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path><circle cx="12" cy="10" r="3"></circle></svg>
           ${shop.address}
         </div>
@@ -842,8 +842,8 @@ const updateNaverMap = (shop: Shop) => {
     `
     naverInfoWindow.setContent(content)
     
-    // Ensure window is closed when switching shops
-    naverInfoWindow.close()
+    // Open by default
+    naverInfoWindow.open(naverMap, naverMarker)
 
     // Add click listener to marker for TOGGLE behavior
     window.naver.maps.Event.addListener(naverMarker, 'click', () => {
@@ -957,15 +957,15 @@ onUnmounted(() => {
 }
 
 /* Invert overlays back so they look normal (Markers, InfoWindows, Labels) */
-.dark #naver-map div:not([style*="background-image"]), 
+.dark #naver-map div:not([style*="background-image"]):not(.naver-info-window), 
 .dark #naver-map .group,
 .dark #naver-map [style*="z-index: 100"],
 .dark #naver-map [style*="font-size"] {
-  filter: invert(100%) hue-rotate(-185deg) saturate(1.8) brightness(1.3) contrast(1.2);
+  filter: invert(100%) hue-rotate(-185deg) saturate(1.8) brightness(1.2) contrast(1.1);
 }
 
-/* Ensure the marker's Brand Blue remains vibrant in Dark Mode */
-.dark #naver-map .group svg path[fill="#1a73e8"] {
-  fill: #60a5fa !important; /* Brighter vivid blue for better dark contrast */
+/* Specific fix for our custom info window to ensure it doesn't get double-inverted */
+.dark #naver-map .naver-info-window {
+  filter: none !important; /* Let the parent wrapper's filter handle the inversion */
 }
 </style>
