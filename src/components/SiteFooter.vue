@@ -1,5 +1,5 @@
 <template>
-  <footer class="border-t border-zinc-200 dark:border-white/5 pt-20 pb-24 bg-white dark:bg-[#131313]">
+  <footer class="pt-20 pb-24 bg-white dark:bg-[#131313]">
     <div class="max-w-[1800px] mx-auto px-6 md:px-10 flex flex-col gap-12">
       <!-- Top Section: Navigators & Menu -->
       <div class="flex flex-col md:flex-row gap-8 md:gap-24 items-start md:items-center">
@@ -25,7 +25,7 @@
           © DUX
         </p>
         <div class="text-[12px] font-bold text-zinc-300 dark:text-[#ddd]">
-          ver. 52.0
+          ver. 53.0
         </div>
       </div>
     </div>
