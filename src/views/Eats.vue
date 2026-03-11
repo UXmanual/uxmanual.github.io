@@ -1043,6 +1043,11 @@ const observer = new MutationObserver((mutations) => {
     if (mutation.attributeName === 'class' && naverMap && window.naver) {
       // NAVY 타입은 GL 인증 오류로 인해 NORMAL 사용하되 CSS 필터로 대체
       naverMap.setMapTypeId(window.naver.maps.MapTypeId.NORMAL)
+      
+      // 테마 변경 시 정보창도 즉시 다시 그려서 배경색 동기화 (라이트 모드 블랙 오류 해결)
+      if (selectedShop.value) {
+        updateNaverMap(selectedShop.value)
+      }
     }
   })
 })
