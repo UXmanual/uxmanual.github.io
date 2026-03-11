@@ -72,6 +72,19 @@ description: uxmanual.github.io Technical & UI constraints (Workspace Rules)
 4.  **UI 검증**: 스켈레톤 UI를 유지하고, 임의의 텍스트 알림창 등을 추가하지 않았는가?
 
 ---
+---
+
+## 🧩 6. 영역별 독립 관리 정책 (Area Isolation Policy)
+
+프로젝트의 안정적인 관리를 위해 에이전트는 다음 세 영역을 엄격히 구분하여 작업한다. 사용자가 프롬프트에서 특정 영역을 명시하여 수정을 요청하지 않는 한, 다른 영역의 코드를 임의로 수정하거나 간섭하지 않는다.
+
+1.  **상단 영역 (Header/Nav)**: `SiteNavbar.vue`, `SiteHeader.vue`, `SiteBanner.vue` 등 상단 공통 컴포넌트.
+2.  **중앙 콘텐츠 영역 (Content)**: `Trends.vue`, `Eats.vue` 등 페이지 메인 레이아웃 및 뉴스/데이터 처리 로직.
+3.  **하단 영역 (Footer)**: `SiteFooter.vue`. 버전 업데이트 및 뉴스 저작권 안내 영역.
+
+*   **수정 원칙**: 요청받은 영역 외의 파일은 읽기(Read)는 가능하나, 쓰기(Write) 작업은 오직 요청된 영역에 한정한다.
+
+---
 
 > [!IMPORTANT]
 > **준수 사항**: 위 원칙은 글로벌 대화 규칙보다 우선하며, 저장소의 안정성을 위해 최우선으로 적용된다. 모든 보고 시 업데이트된 버전 번호를 가장 먼저 언급한다.
