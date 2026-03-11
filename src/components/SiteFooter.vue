@@ -25,7 +25,7 @@
           © NUXA
         </p>
         <div class="text-[12px] font-bold text-zinc-400 dark:text-zinc-600">
-          ver. 48.0
+          ver. 48.1
         </div>
       </div>
     </div>
