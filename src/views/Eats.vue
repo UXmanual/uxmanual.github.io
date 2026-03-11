@@ -43,7 +43,7 @@
           
           <!-- Desktop: Floating Sidebar (Right) | Mobile: Bottom Sheet -->
           <div 
-            class="fixed lg:relative inset-x-0 top-0 lg:inset-auto lg:top-0 lg:right-0 z-[60] lg:z-30 w-full lg:w-[400px] h-[100svh] lg:h-[calc(100vh-100px)] pointer-events-auto bg-zinc-50 dark:bg-[#131313] shadow-2xl rounded-t-[32px] lg:rounded-3xl transition-transform duration-500 ease-in-out transform touch-none select-none flex flex-col"
+            class="fixed lg:relative inset-x-0 top-0 lg:inset-auto lg:top-0 lg:right-0 z-[60] lg:z-30 w-full lg:w-[400px] h-[100svh] lg:h-[calc(100vh-100px)] pointer-events-auto bg-zinc-50 dark:bg-[#131313] shadow-[0_-20px_50px_-15px_rgba(0,0,0,0.3)] dark:shadow-[0_-20px_50px_-15px_rgba(0,0,0,0.6)] lg:shadow-2xl rounded-t-[32px] lg:rounded-3xl transition-transform duration-500 ease-in-out transform touch-none select-none flex flex-col"
             :class="[
               sheetMode === 'collapsed' && !isDragging ? 'translate-y-[calc(100svh-85px)]' : '',
               sheetMode === 'half' && !isDragging ? 'translate-y-[60svh]' : '',
