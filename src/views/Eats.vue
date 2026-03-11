@@ -11,9 +11,7 @@
           <iframe
             v-else-if="selectedCountry === '일본'"
             :key="mapUrl"
-            width="100%"
-            height="100%"
-            style="border:0"
+            class="w-full h-full border-0 google-map-iframe"
             loading="lazy"
             allowfullscreen
             referrerpolicy="no-referrer-when-downgrade"
@@ -1085,8 +1083,9 @@ onUnmounted(() => {
   pointer-events: none !important;
 }
 
-/* Naver Map Dark Mode Fix: CSS Filter to simulate dark theme without JS error */
-.dark #naver-map {
+/* Naver & Google Map Dark Mode Fix: CSS Filter to simulate dark theme */
+.dark #naver-map,
+.dark .google-map-iframe {
   filter: invert(90%) hue-rotate(185deg) brightness(85%) contrast(95%);
 }
 
