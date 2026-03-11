@@ -16,7 +16,7 @@
 html {
     background-color: #f9fafb;
     /* zinc-50 */
-    transition: background-color 0.2s duration;
+    transition: background-color 0.2s;
     overflow-y: overlay;
 }
 

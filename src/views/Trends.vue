@@ -1,6 +1,6 @@
 <template>
   <div 
-    class="min-h-screen bg-zinc-50 dark:bg-[#131313] text-zinc-900 dark:text-white relative transition-colors duration-200"
+    class="min-h-screen bg-[#f9fafb] dark:bg-[#131313] text-zinc-900 dark:text-white relative transition-colors duration-200"
   >
     <SiteNavbar />
     

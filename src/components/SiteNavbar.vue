@@ -74,7 +74,7 @@ const props = defineProps<{
 }>()
 
 const route = useRoute()
-const isDark = ref(true)
+const isDark = ref(false)
 
 // Navigation logic moved to component for global consistency
 const navTranslateY = ref(0)
@@ -154,6 +154,9 @@ onMounted(() => {
   const savedTheme = localStorage.getItem('theme')
   if (savedTheme) {
     isDark.value = savedTheme === 'dark'
+  } else {
+    // Default to system preference if no saved setting
+    isDark.value = window.matchMedia('(prefers-color-scheme: dark)').matches
   }
   updateThemeClass(isDark.value)
   
