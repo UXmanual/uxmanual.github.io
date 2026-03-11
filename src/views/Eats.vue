@@ -203,7 +203,7 @@ interface Shop {
 
 const restaurantList = ref<Shop[]>([
   // --- 한국 맛집 리스트 ---
-  { id: 104, name: "황생가칼국수", category: "칼국수", rating: 4.5, description: "북촌의 자부심, 깊은 사골 육수로 맛을 낸 정성 가득한 칼국수와 만두입니다.", address: "일본 서울특별시 종로구 소격동", lat: 37.5801, lng: 126.9814,
+  { id: 104, name: "황생가칼국수", category: "칼국수", rating: 4.5, description: "북촌의 자부심, 깊은 사골 육수로 맛을 낸 정성 가득한 칼국수와 만두입니다.", address: "서울특별시 종로구 소격동", lat: 37.5801, lng: 126.9814,
     country: '한국'
   },
   {
