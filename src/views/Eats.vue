@@ -1031,11 +1031,14 @@ const initNaverMap = () => {
   if (!window.naver || !window.naver.maps) return
   
   const container = document.getElementById('naver-map')
-  if (!container) return
+  if (!container) {
+    // Retry if the transition/v-if hasn't finished yet
+    setTimeout(initNaverMap, 100)
+    return
+  }
 
   // If a map instance already exists, we should check if it's attached correctly.
   // When switching tabs with v-if, the container element is recreated.
-  // We re-initialize to ensure the map is bound to the current DOM element.
   const mapOptions = {
     center: new window.naver.maps.LatLng(37.5665, 126.9780),
     zoom: 16,
@@ -1056,6 +1059,11 @@ const initNaverMap = () => {
     disableAnchor: true,
     pixelOffset: new window.naver.maps.Point(0, -45)
   })
+
+  // After init, if we have a selected shop, update it immediately
+  if (selectedShop.value && selectedCountry.value === '한국') {
+    updateNaverMap(selectedShop.value)
+  }
 }
 
 const updateNaverMap = (shop: Shop) => {
@@ -1150,11 +1158,14 @@ watch(() => selectedShop.value, (newShop) => {
 // Watch for country changes to handle map re-initialization
 watch(() => selectedCountry.value, (newCountry) => {
   if (newCountry === '한국') {
-    // Small delay to ensure transition and v-if have inserted the element
-    setTimeout(() => {
-      initNaverMap()
-      if (selectedShop.value) updateNaverMap(selectedShop.value)
-    }, 50)
+    // Reset map variable to trigger a fresh init through the watcher or explicit call
+    naverMap = null 
+    initNaverMap()
+  } else {
+    // Clear references when leaving Korea tab
+    naverMap = null
+    naverMarker = null
+    naverInfoWindow = null
   }
 })
 
