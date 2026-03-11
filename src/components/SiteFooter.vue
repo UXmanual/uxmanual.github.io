@@ -2,9 +2,9 @@
   <footer class="border-t border-zinc-200 dark:border-white/5 pt-20 pb-24 bg-white dark:bg-[#131313]">
     <div class="max-w-[1800px] mx-auto px-6 md:px-10 flex flex-col gap-12">
       <!-- Top Section: Navigators & Menu -->
-      <div class="flex flex-col md:flex-row gap-8 md:gap-24 items-start md:items-end">
+      <div class="flex flex-col md:flex-row gap-8 md:gap-24 items-start md:items-center">
         <span class="text-[32px] font-black uppercase text-zinc-900 dark:text-zinc-200 tracking-[0]">Navigators</span>
-        <nav class="flex flex-wrap gap-x-8 gap-y-4 text-[14px] font-bold text-zinc-400 dark:text-zinc-500 pb-1.5">
+        <nav class="flex flex-wrap gap-x-8 gap-y-4 text-[14px] font-bold text-zinc-400 dark:text-zinc-500">
           <router-link to="/" class="hover:text-zinc-900 dark:hover:text-zinc-300 transition-colors">Trends</router-link>
           <router-link to="/eats" class="hover:text-zinc-900 dark:hover:text-zinc-300 transition-colors">Eats</router-link>
           <router-link to="/feed" class="hover:text-zinc-900 dark:hover:text-zinc-300 transition-colors">Feed</router-link>
@@ -25,7 +25,7 @@
           © NUXA
         </p>
         <div class="text-[12px] font-bold text-zinc-300 dark:text-[#ddd]">
-          ver. 48.4
+          ver. 48.5
         </div>
       </div>
     </div>
