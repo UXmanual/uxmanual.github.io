@@ -522,12 +522,16 @@ const selectRegion = async (region: string) => {
     scrollContainer.value.scrollTop = 0
   }
   
-  // Select first shop in new filtered list
-  const firstInFilter = filteredRestaurants.value[0]
-  if (firstInFilter) {
-    selectedId.value = firstInFilter.id
+  // Select a random shop in new filtered list to keep it fresh
+  const list = filteredRestaurants.value
+  if (list.length > 0) {
+    const randomIndex = Math.floor(Math.random() * list.length)
+    selectedId.value = list[randomIndex].id
   }
 }
+
+// Initial random pick for Korean Seoul
+selectRegion('서울')
 
 const filteredRestaurants = computed(() => {
   let list = restaurantList.value.filter(s => s.country === selectedCountry.value)
