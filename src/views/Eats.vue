@@ -433,9 +433,16 @@ const getRegionCount = (region: string) => {
   if (region === '전체') {
     return restaurantList.value.filter(s => s.country === selectedCountry.value).length
   }
-  return restaurantList.value.filter(s => 
-    s.country === selectedCountry.value && s.address.includes(region)
-  ).length
+  return restaurantList.value.filter(s => {
+    if (s.country !== selectedCountry.value) return false
+    if (s.country === '일본') {
+      // 일본 주소 형식: "일본 도쿄 ..." -> 두 번째 세그먼트 확인
+      return s.address.split(' ')[1]?.includes(region)
+    } else {
+      // 한국 주소 형식: "대구광역시 ..." -> 첫 번째 세그먼트 확인
+      return s.address.split(' ')[0]?.includes(region)
+    }
+  }).length
 }
 
 const regionContainer = ref<HTMLElement | null>(null)
@@ -572,7 +579,13 @@ const filteredRestaurants = computed(() => {
   
   // Region filtering
   if (selectedRegion.value !== '전체') {
-    list = list.filter(s => s.address.includes(selectedRegion.value))
+    list = list.filter(s => {
+      if (selectedCountry.value === '일본') {
+        return s.address.split(' ')[1]?.includes(selectedRegion.value)
+      } else {
+        return s.address.split(' ')[0]?.includes(selectedRegion.value)
+      }
+    })
   }
 
   if (selectedCountry.value === '일본') {
