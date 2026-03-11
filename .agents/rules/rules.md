@@ -86,5 +86,15 @@ description: uxmanual.github.io Technical & UI constraints (Workspace Rules)
 
 ---
 
+## 💎 7. 글로벌 스킬을 활용한 고도화 (Global Skills Integration)
+
+모든 새로운 페이지 개발 및 대규모 리팩토링 시, 다음의 글로벌 전문 스킬(Global Skills) 지침을 우선적으로 반영하여 구현의 정교함을 극대화한다.
+
+*   **UI/UX Sophistication**: `ui-ux-pro-max`, `frontend-design`, `ui-styling` 스킬을 참조하여 마이크로 애니메이션, 세밀한 타이포그래피, 고해상도 에스테틱을 구현한다.
+*   **Design System Integrity**: `design-system` 스킬을 통해 컴포넌트의 재사용성과 일관된 토큰 관리를 유지한다.
+*   **Quality Assurance**: `moai-workflow-testing` 및 `webapp-testing` 스킬을 활용하여 배포 전 무결성을 검증한다.
+
+---
+
 > [!IMPORTANT]
 > **준수 사항**: 위 원칙은 글로벌 대화 규칙보다 우선하며, 저장소의 안정성을 위해 최우선으로 적용된다. 모든 보고 시 업데이트된 버전 번호를 가장 먼저 언급한다.
