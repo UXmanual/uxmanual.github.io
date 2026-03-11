@@ -1051,7 +1051,7 @@ const initNaverMap = () => {
     backgroundColor: 'transparent',
     borderWidth: 0,
     disableAnchor: true,
-    pixelOffset: new window.naver.maps.Point(0, -20)
+    pixelOffset: new window.naver.maps.Point(0, -45) // Adjusting offset to be further from marker
   })
 }
 
@@ -1083,29 +1083,50 @@ const updateNaverMap = (shop: Shop) => {
   // InfoWindow Update
   if (naverInfoWindow) {
     const isDark = document.documentElement.classList.contains('dark')
+    const naverSearchUrl = `https://map.naver.com/v5/search/${encodeURIComponent(shop.name + ' ' + shop.address)}`
     const content = `
       <div style="
-        padding: 16px;
+        padding: 18px;
         background: ${isDark ? '#1f1f1f' : '#ffffff'};
         border: 1px solid ${isDark ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.05)'};
-        border-radius: 12px;
-        box-shadow: 0 10px 25px -5px rgba(0,0,0,0.2);
-        min-width: 200px;
+        border-radius: 16px;
+        box-shadow: 0 15px 35px -5px rgba(0,0,0,0.3);
+        width: 260px;
         font-family: 'Pretendard Variable', sans-serif;
       ">
-        <div style="font-size: 11px; font-weight: 700; color: #1a73e8; margin-bottom: 4px; text-transform: uppercase; letter-spacing: 0.05em;">
-          ${shop.category}
+        <div style="display: flex; justify-content: space-between; align-items: start; margin-bottom: 8px;">
+          <div style="font-size: 11px; font-weight: 700; color: #1a73e8; text-transform: uppercase; letter-spacing: 0.05em;">
+            ${shop.category}
+          </div>
+          <div style="display: flex; align-items: center; gap: 3px; font-size: 12px; font-weight: 800; color: ${isDark ? '#f4f4f5' : '#18181b'};">
+             <span style="color: #fbbf24;">★</span> ${shop.rating}
+          </div>
         </div>
-        <div style="font-size: 16px; font-weight: 900; color: ${isDark ? '#f4f4f5' : '#18181b'}; margin-bottom: 6px; line-height: 1.2;">
+        <div style="font-size: 18px; font-weight: 950; color: ${isDark ? '#f4f4f5' : '#18181b'}; margin-bottom: 6px; line-height: 1.2;">
           ${shop.name}
         </div>
-        <div style="font-size: 12px; color: ${isDark ? '#a1a1aa' : '#71717a'}; line-height: 1.5;">
+        <div style="font-size: 13px; color: ${isDark ? '#a1a1aa' : '#71717a'}; line-height: 1.5; margin-bottom: 12px;">
+          ${shop.description}
+        </div>
+        <div style="font-size: 12px; color: ${isDark ? '#71717a' : '#a1a1aa'}; margin-bottom: 14px; display: flex; align-items: center; gap: 4px;">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path><circle cx="12" cy="10" r="3"></circle></svg>
           ${shop.address}
         </div>
-        <div style="margin-top: 10px; display: flex; align-items: center; gap: 4px;">
-           <span style="color: #fbbf24;">★</span>
-           <span style="font-size: 13px; font-weight: 700; color: ${isDark ? '#f4f4f5' : '#18181b'};">${shop.rating}</span>
-        </div>
+        <a href="${naverSearchUrl}" target="_blank" style="
+          display: block;
+          width: 100%;
+          padding: 10px 0;
+          background: #03c75a;
+          color: white;
+          text-align: center;
+          text-decoration: none;
+          border-radius: 8px;
+          font-size: 13px;
+          font-weight: 700;
+          transition: background 0.2s;
+        ">
+          네이버 지도로 자세히 보기
+        </a>
       </div>
     `
     naverInfoWindow.setContent(content)
