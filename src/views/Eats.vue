@@ -883,8 +883,7 @@ const initNaverMap = () => {
   const mapOptions = {
     center: new window.naver.maps.LatLng(37.5665, 126.9780),
     zoom: 16,
-    mapTypeId: document.documentElement.classList.contains('dark') ? window.naver.maps.MapTypeId.NAVY : window.naver.maps.MapTypeId.NORMAL,
-    gl: true, // GL 엔진 활성화 (Navi/Navy 모드 가동)
+    mapTypeId: window.naver.maps.MapTypeId.NORMAL,
     zoomControl: true,
     zoomControlOptions: {
       position: window.naver.maps.Position.RIGHT_BOTTOM
@@ -1031,9 +1030,8 @@ watch(() => selectedCountry.value, (newCountry) => {
 const observer = new MutationObserver((mutations) => {
   mutations.forEach((mutation) => {
     if (mutation.attributeName === 'class' && naverMap && window.naver) {
-      const isDark = document.documentElement.classList.contains('dark')
-      // submodules=gl 덕분에 이제 NAVY(네이티브 다크) 사용 가능
-      naverMap.setMapTypeId(isDark ? window.naver.maps.MapTypeId.NAVY : window.naver.maps.MapTypeId.NORMAL)
+      // NAVY 타입은 GL 인증 오류로 인해 NORMAL 사용하되 CSS 필터로 대체
+      naverMap.setMapTypeId(window.naver.maps.MapTypeId.NORMAL)
     }
   })
 })
@@ -1085,23 +1083,25 @@ onUnmounted(() => {
   pointer-events: none !important;
 }
 
-/* Google Map Only: CSS Filter (Naver uses native Navy theme now) */
+/* Naver & Google Map Dark Mode Fix: CSS Filter (Subtle adjustments for visibility) */
+.dark #naver-map,
 .dark .google-map-iframe {
-  filter: invert(90%) hue-rotate(185deg) brightness(85%) contrast(93%);
+  filter: invert(90%) hue-rotate(185deg) brightness(88%) contrast(92%);
 }
 
 #naver-map {
-  background: #f9fafb; /* Light base */
+  background: #f9fafb;
 }
 
 .dark #naver-map {
-  background: #131313; /* Dark base */
+  background: #131313;
 }
 
-/* Invert overlays back so they look normal (Markers, InfoWindows) */
+/* Invert overlays back so they look normal (Markers, InfoWindows, Labels) */
 .dark #naver-map div:not([style*="background-image"]), 
 .dark #naver-map .group,
-.dark #naver-map [style*="z-index: 100"] {
+.dark #naver-map [style*="z-index: 100"],
+.dark #naver-map [style*="font-size"] {
   filter: invert(100%) hue-rotate(-185deg) brightness(1.2) contrast(1.1);
 }
 </style>
