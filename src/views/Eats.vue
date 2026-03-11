@@ -1102,6 +1102,11 @@ onUnmounted(() => {
 .dark #naver-map .group,
 .dark #naver-map [style*="z-index: 100"],
 .dark #naver-map [style*="font-size"] {
-  filter: invert(100%) hue-rotate(-185deg) saturate(1.4) brightness(1.3) contrast(1.1);
+  filter: invert(100%) hue-rotate(-185deg) saturate(1.8) brightness(1.3) contrast(1.2);
+}
+
+/* Ensure the marker's Brand Blue remains vibrant in Dark Mode */
+.dark #naver-map .group svg path[fill="#1a73e8"] {
+  fill: #60a5fa !important; /* Brighter vivid blue for better dark contrast */
 }
 </style>
