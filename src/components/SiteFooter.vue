@@ -11,21 +11,24 @@
         </nav>
       </div>
 
-      <!-- Middle Section: Legal & Info -->
-      <div class="max-w-4xl">
-        <p class="text-[14px] leading-[150%] text-zinc-400 dark:text-zinc-600 font-medium">
-          본 서비스에서 제공하는 모든 뉴스 및 데이터의 저작권은 각 원본 언론사와 제공처에 있으며, <br class="hidden sm:block">
-          각 기사의 제목이나 썸네일 클릭 시 해당 언론사의 원문 서비스 페이지로 직접 연결됩니다.
-        </p>
-      </div>
+      <!-- Legal & Copyright Group -->
+      <div class="flex flex-col gap-6">
+        <!-- Middle Section: Legal & Info -->
+        <div class="max-w-4xl">
+          <p class="text-[14px] leading-[150%] text-zinc-400 dark:text-zinc-600 font-medium">
+            본 서비스에서 제공하는 모든 뉴스 및 데이터의 저작권은 각 원본 언론사와 제공처에 있으며, <br class="hidden sm:block">
+            각 기사의 제목이나 썸네일 클릭 시 해당 언론사의 원문 서비스 페이지로 직접 연결됩니다.
+          </p>
+        </div>
 
-      <!-- Bottom Section: Copyright & Version -->
-      <div class="flex flex-col gap-1">
-        <p class="text-[24px] font-black text-zinc-300 dark:text-[#ddd] tracking-tight">
-          © DUX
-        </p>
-        <div class="text-[12px] font-bold text-zinc-300 dark:text-[#ddd]">
-          ver. 53.0
+        <!-- Bottom Section: Copyright & Version -->
+        <div class="flex flex-col gap-1">
+          <p class="text-[24px] font-black text-zinc-300 dark:text-[#ddd] tracking-tight">
+            © DUX
+          </p>
+          <div class="text-[12px] font-bold text-zinc-300 dark:text-[#ddd]">
+            ver. 54.0
+          </div>
         </div>
       </div>
     </div>
