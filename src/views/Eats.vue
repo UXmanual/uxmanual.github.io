@@ -1091,7 +1091,7 @@ const updateNaverMap = (shop: Shop) => {
     }
   })
 
-  // InfoWindow Update
+  // InfoWindow Content Update
   if (naverInfoWindow) {
     const isDark = document.documentElement.classList.contains('dark')
     const naverSearchUrl = `https://map.naver.com/v5/search/${encodeURIComponent(shop.name + ' ' + shop.address)}`
@@ -1141,7 +1141,18 @@ const updateNaverMap = (shop: Shop) => {
       </div>
     `
     naverInfoWindow.setContent(content)
-    naverInfoWindow.open(naverMap, latlng)
+    
+    // Ensure window is closed when switching shops
+    naverInfoWindow.close()
+
+    // Add click listener to marker for TOGGLE behavior
+    window.naver.maps.Event.addListener(naverMarker, 'click', () => {
+      if (naverInfoWindow.getMap()) {
+        naverInfoWindow.close()
+      } else {
+        naverInfoWindow.open(naverMap, naverMarker)
+      }
+    })
   }
 }
 
