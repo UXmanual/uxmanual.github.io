@@ -4,17 +4,20 @@
   >
     <SiteNavbar />
     
-    <div class="pt-[60px]">
-      <SiteBanner />
-    </div>
+    <!-- Top Section (White background) -->
+    <div class="bg-white dark:bg-[#131313]">
+      <div class="pt-[60px]">
+        <SiteBanner />
+      </div>
 
-    <SiteHeader 
-      title="NEWS STAND" 
-      description="All major news feeds, real-time and in one place"
-      padding-top="pt-16"
-      :enable-gradient="true"
-      :show-date-time-weather="true"
-    />
+      <SiteHeader 
+        title="NEWS STAND" 
+        description="All major news feeds, real-time and in one place"
+        padding-top="pt-16"
+        :enable-gradient="true"
+        :show-date-time-weather="true"
+      />
+    </div>
 
     <!-- Stable Anchor for Scroll Positioning -->
     <div ref="scrollAnchor" class="h-px"></div>
@@ -22,13 +25,13 @@
     <!-- Category Tabs: Sticky Logic -->
     <div 
       ref="tabsRef"
-      class="sticky z-40 bg-zinc-50/90 dark:bg-[#131313]/90 backdrop-blur-xl border-b border-zinc-200 dark:border-white/10 mb-12 transition-all duration-200"
+      class="sticky z-40 bg-white/90 dark:bg-[#131313]/90 backdrop-blur-xl border-b border-zinc-200 dark:border-white/10 mb-12 transition-all duration-200"
       :style="{ top: `max(0px, 56px + var(--nav-y, 0px))` }"
     >
       <div class="px-6 md:px-10 max-w-[1800px] mx-auto pt-2 pb-0">
         <div class="relative group/tabs">
           <div 
-            class="absolute left-0 top-0 bottom-0 w-8 bg-gradient-to-r from-zinc-50 dark:from-[#131313] to-transparent pointer-events-none z-10 transition-opacity"
+            class="absolute left-0 top-0 bottom-0 w-8 bg-gradient-to-r from-white dark:from-[#131313] to-transparent pointer-events-none z-10 transition-opacity"
             :class="showLeftGradient ? 'opacity-100' : 'opacity-0'"
           ></div>
 
@@ -57,7 +60,7 @@
           </div>
 
           <div 
-            class="absolute right-0 top-0 bottom-0 w-8 bg-gradient-to-l from-zinc-50 dark:from-[#131313] to-transparent pointer-events-none z-10 transition-opacity"
+            class="absolute right-0 top-0 bottom-0 w-8 bg-gradient-to-l from-white dark:from-[#131313] to-transparent pointer-events-none z-10 transition-opacity"
             :class="showRightGradient ? 'opacity-100' : 'opacity-0'"
           ></div>
         </div>
@@ -258,7 +261,7 @@ import SiteFooter from '../components/SiteFooter.vue'
 import SiteHeader from '../components/SiteHeader.vue'
 import SiteBanner from '../components/SiteBanner.vue'
 
-const CURRENT_CACHE_VERSION = '55.5'
+const CURRENT_CACHE_VERSION = '55.6'
 const CACHE_KEY = `uxm_trends_cache_${CURRENT_CACHE_VERSION}`
 
 interface NewsItem {

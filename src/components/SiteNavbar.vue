@@ -2,7 +2,7 @@
   <nav 
     :class="[
       route.path === '/eats' ? 'fixed' : 'fixed',
-      'top-0 left-0 right-0 z-[70] bg-zinc-50/90 dark:bg-[#131313]/90 backdrop-blur-xl transition-all duration-200 opacity-100'
+      'top-0 left-0 right-0 z-[70] bg-white/90 dark:bg-[#131313]/90 backdrop-blur-xl transition-all duration-200 opacity-100'
     ]"
     :style="route.path === '/eats' ? {} : { transform: `translateY(${navTranslateY}px)` }"
   >
@@ -120,7 +120,7 @@ const handleScroll = () => {
 }
 
 const updateThemeClass = (dark: boolean) => {
-  const themeColor = dark ? '#131313' : '#f9fafb'
+  const themeColor = dark ? '#131313' : '#ffffff'
   const statusBarStyle = dark ? 'black-translucent' : 'default'
 
   if (dark) {
