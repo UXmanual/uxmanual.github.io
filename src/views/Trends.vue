@@ -6,26 +6,27 @@
     
     <!-- Top Section (White background) -->
     <div class="bg-white dark:bg-[#131313]">
-      <div class="pt-[60px]">
+      <div class="pt-[56px]">
         <SiteBanner />
       </div>
 
       <SiteHeader 
         title="NEWS STAND" 
         description="All major news feeds, real-time and in one place"
-        padding-top="pt-16"
+        padding-top="pt-10 md:pt-16"
+        margin-bottom="mb-4"
         :enable-gradient="true"
         :show-date-time-weather="true"
       />
+      
+      <!-- Stable Anchor for Scroll Positioning (Inside white bg to prevent color gap) -->
+      <div ref="scrollAnchor" class="h-px"></div>
     </div>
-
-    <!-- Stable Anchor for Scroll Positioning -->
-    <div ref="scrollAnchor" class="h-px"></div>
 
     <!-- Category Tabs: Sticky Logic -->
     <div 
       ref="tabsRef"
-      class="sticky z-40 bg-white/90 dark:bg-[#131313]/90 backdrop-blur-xl border-b border-zinc-200 dark:border-white/10 mb-12 transition-all duration-200"
+      class="sticky z-40 bg-white/90 dark:bg-[#131313]/90 backdrop-blur-xl mb-12 transition-all duration-200"
       :style="{ top: `max(0px, 56px + var(--nav-y, 0px))` }"
     >
       <div class="px-6 md:px-10 max-w-[1800px] mx-auto pt-2 pb-0">
@@ -261,7 +262,7 @@ import SiteFooter from '../components/SiteFooter.vue'
 import SiteHeader from '../components/SiteHeader.vue'
 import SiteBanner from '../components/SiteBanner.vue'
 
-const CURRENT_CACHE_VERSION = '55.6'
+const CURRENT_CACHE_VERSION = '55.7'
 const CACHE_KEY = `uxm_trends_cache_${CURRENT_CACHE_VERSION}`
 
 interface NewsItem {
