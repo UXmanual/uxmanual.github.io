@@ -45,7 +45,7 @@
           
           <!-- Desktop: Floating Sidebar (Right) | Mobile: Bottom Sheet -->
           <div 
-            class="fixed lg:relative inset-x-0 top-0 lg:inset-auto lg:top-0 lg:right-0 z-[60] lg:z-30 w-full lg:w-[400px] h-[100svh] lg:h-[calc(100vh-100px)] pointer-events-auto bg-white dark:bg-zinc-900 shadow-2xl rounded-t-[32px] lg:rounded-3xl transition-transform duration-500 ease-in-out transform touch-none select-none flex flex-col"
+            class="fixed lg:relative inset-x-0 top-0 lg:inset-auto lg:top-0 lg:right-0 z-[60] lg:z-30 w-full lg:w-[400px] h-[100svh] lg:h-[calc(100vh-100px)] pointer-events-auto bg-zinc-50 dark:bg-[#131313] shadow-2xl rounded-t-[32px] lg:rounded-3xl transition-transform duration-500 ease-in-out transform touch-none select-none flex flex-col"
             :class="[
               sheetMode === 'collapsed' && !isDragging ? 'translate-y-[calc(100svh-85px)]' : '',
               sheetMode === 'half' && !isDragging ? 'translate-y-[60svh]' : '',
@@ -105,7 +105,7 @@
             </div>
 
             <!-- Bottom Extension to prevent holes during over-drag (Moved outside scroll area) -->
-            <div class="lg:hidden absolute top-[100%] left-0 right-0 h-[2000px] bg-white dark:bg-zinc-900 z-[-1] pointer-events-none"></div>
+            <div class="lg:hidden absolute top-[100%] left-0 right-0 h-[2000px] bg-zinc-50 dark:bg-[#131313] z-[-1] pointer-events-none"></div>
 
             <!-- List Container (Glassmorphism for Desktop) -->
             <div 
@@ -125,8 +125,8 @@
                 @click="handleShopSelect(shop)"
                 class="p-4 rounded-2xl transition-all duration-300 cursor-pointer group border"
                 :class="selectedId === shop.id 
-                  ? 'bg-white dark:bg-white/10 border-[#1a73e8]' 
-                  : 'bg-transparent border-zinc-200 dark:border-white/10 hover:bg-zinc-50 dark:hover:bg-white/5'"
+                  ? 'bg-white dark:bg-[#2a2a2a] border-[#1a73e8]' 
+                  : 'bg-white dark:bg-[#1f1f1f] border-zinc-200 dark:border-white/5 hover:bg-zinc-100 dark:hover:bg-[#252525]'"
               >
                 <div class="min-w-0">
                   <div class="flex justify-between items-center mb-1.5">
