@@ -883,7 +883,8 @@ const initNaverMap = () => {
   const mapOptions = {
     center: new window.naver.maps.LatLng(37.5665, 126.9780),
     zoom: 16,
-    mapTypeId: window.naver.maps.MapTypeId.NORMAL,
+    mapTypeId: document.documentElement.classList.contains('dark') ? window.naver.maps.MapTypeId.NAVY : window.naver.maps.MapTypeId.NORMAL,
+    gl: true, // GL 엔진 활성화 (Navi/Navy 모드 가동)
     zoomControl: true,
     zoomControlOptions: {
       position: window.naver.maps.Position.RIGHT_BOTTOM
@@ -1030,8 +1031,9 @@ watch(() => selectedCountry.value, (newCountry) => {
 const observer = new MutationObserver((mutations) => {
   mutations.forEach((mutation) => {
     if (mutation.attributeName === 'class' && naverMap && window.naver) {
-      // NAVY 타입은 존재하지 않으므로 NORMAL 사용 (스타일은 CSS 필터로 처리)
-      naverMap.setMapTypeId(window.naver.maps.MapTypeId.NORMAL)
+      const isDark = document.documentElement.classList.contains('dark')
+      // submodules=gl 덕분에 이제 NAVY(네이티브 다크) 사용 가능
+      naverMap.setMapTypeId(isDark ? window.naver.maps.MapTypeId.NAVY : window.naver.maps.MapTypeId.NORMAL)
     }
   })
 })
@@ -1083,10 +1085,17 @@ onUnmounted(() => {
   pointer-events: none !important;
 }
 
-/* Naver & Google Map Dark Mode Fix: CSS Filter to simulate dark theme */
-.dark #naver-map,
+/* Google Map Only: CSS Filter (Naver uses native Navy theme now) */
 .dark .google-map-iframe {
-  filter: invert(90%) hue-rotate(185deg) brightness(85%) contrast(95%);
+  filter: invert(90%) hue-rotate(185deg) brightness(85%) contrast(93%);
+}
+
+#naver-map {
+  background: #f9fafb; /* Light base */
+}
+
+.dark #naver-map {
+  background: #131313; /* Dark base */
 }
 
 /* Invert overlays back so they look normal (Markers, InfoWindows) */
