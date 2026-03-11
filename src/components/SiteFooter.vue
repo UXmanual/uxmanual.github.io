@@ -22,10 +22,10 @@
       <!-- Bottom Section: Copyright & Version -->
       <div class="flex flex-col gap-1">
         <p class="text-[24px] font-black text-zinc-300 dark:text-[#ddd] tracking-tight">
-          © NUXA
+          © DUX
         </p>
         <div class="text-[12px] font-bold text-zinc-300 dark:text-[#ddd]">
-          ver. 51.0
+          ver. 52.0
         </div>
       </div>
     </div>
@@ -36,7 +36,7 @@
 /**
  * SiteFooter.vue
  * 
- * © NUXA - Clean Minimal Footer
+ * © DUX - Delivering Unified Xperience
  * Includes RSS legal notice and development version history.
  */
 </script>
