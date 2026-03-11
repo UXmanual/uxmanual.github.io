@@ -424,7 +424,7 @@ const selectedCountry = ref<'한국' | '일본'>('한국')
 const selectedId = ref(104)
 
 const regionsByCountry: Record<'한국' | '일본', string[]> = {
-  '한국': ['전체', '서울', '경기', '인천', '강원', '충북', '충남', '대전', '전북', '전남', '광주', '경북', '경남', '대구', '울산', '부산', '세종', '제주'],
+  '한국': ['전체', '서울특별시', '경기도', '인천광역시', '강원특별자치도', '충청북도', '충청남도', '대전광역시', '전북특별자치도', '전라남도', '광주광역시', '경상북도', '경상남도', '대구광역시', '울산광역시', '부산광역시', '세종특별자치시', '제주특별자치도'],
   '일본': ['전체', '도쿄', '오사카', '교토', '후쿠오카', '삿포로', '아오모리', '요코하마', '나고야', '나라', '히로시마', '센다이', '오키나와', '시즈오카', '구마모토', '가고시마']
 }
 const selectedRegion = ref('전체')
@@ -439,8 +439,8 @@ const getRegionCount = (region: string) => {
       // 일본 주소 형식: "일본 도쿄 ..." -> 두 번째 세그먼트 확인
       return s.address.split(' ')[1]?.includes(region)
     } else {
-      // 한국 주소 형식: "대구광역시 ..." -> 첫 번째 세그먼트 확인
-      return s.address.split(' ')[0]?.includes(region)
+      // 한국 주소 형식: "대구광역시 ..." -> 시작 문자열 확인 (해운대구 등 중간 단어 포함 방지)
+      return s.address.startsWith(region)
     }
   }).length
 }
@@ -583,7 +583,8 @@ const filteredRestaurants = computed(() => {
       if (selectedCountry.value === '일본') {
         return s.address.split(' ')[1]?.includes(selectedRegion.value)
       } else {
-        return s.address.split(' ')[0]?.includes(selectedRegion.value)
+        // 한국 주소: 공식 명칭으로 시작하는지 확인 (startsWith)
+        return s.address.startsWith(selectedRegion.value)
       }
     })
   }
