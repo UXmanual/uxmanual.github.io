@@ -885,7 +885,7 @@ const initNaverMap = () => {
   const mapOptions = {
     center: new window.naver.maps.LatLng(37.5665, 126.9780),
     zoom: 16,
-    mapTypeId: document.documentElement.classList.contains('dark') ? window.naver.maps.MapTypeId.NAVY : window.naver.maps.MapTypeId.NORMAL,
+    mapTypeId: window.naver.maps.MapTypeId.NORMAL,
     zoomControl: true,
     zoomControlOptions: {
       position: window.naver.maps.Position.RIGHT_BOTTOM
@@ -1032,8 +1032,8 @@ watch(() => selectedCountry.value, (newCountry) => {
 const observer = new MutationObserver((mutations) => {
   mutations.forEach((mutation) => {
     if (mutation.attributeName === 'class' && naverMap && window.naver) {
-      const isDark = document.documentElement.classList.contains('dark')
-      naverMap.setMapTypeId(isDark ? window.naver.maps.MapTypeId.NAVY : window.naver.maps.MapTypeId.NORMAL)
+      // NAVY 타입은 존재하지 않으므로 NORMAL 사용 (스타일은 CSS 필터로 처리)
+      naverMap.setMapTypeId(window.naver.maps.MapTypeId.NORMAL)
     }
   })
 })
@@ -1079,8 +1079,21 @@ onUnmounted(() => {
   opacity: 0;
 }
 
+
 /* Prevent child interaction during desktop mouse drag scroll */
 .dragging-active * {
   pointer-events: none !important;
+}
+
+/* Naver Map Dark Mode Fix: CSS Filter to simulate dark theme without JS error */
+.dark #naver-map {
+  filter: invert(90%) hue-rotate(185deg) brightness(85%) contrast(95%);
+}
+
+/* Invert overlays back so they look normal (Markers, InfoWindows) */
+.dark #naver-map div:not([style*="background-image"]), 
+.dark #naver-map .group,
+.dark #naver-map [style*="z-index: 100"] {
+  filter: invert(100%) hue-rotate(-185deg) brightness(1.2) contrast(1.1);
 }
 </style>

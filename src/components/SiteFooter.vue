@@ -27,7 +27,7 @@
             © DUX
           </p>
           <div class="text-[12px] font-bold text-zinc-300 dark:text-zinc-700">
-            Ver. 55.3
+            Ver. 55.4
           </div>
         </div>
       </div>
