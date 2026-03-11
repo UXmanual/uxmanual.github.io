@@ -502,6 +502,23 @@ const handleRegionDrag = (e: MouseEvent) => {
   lastRegionTime = currentTime
 }
 
+const scrollToShop = async (shopId: number) => {
+  await nextTick()
+  // DOM 렌더링 및 레이아웃 안정을 위해 짧은 지연 추가
+  await new Promise(resolve => setTimeout(resolve, 100))
+  
+  const container = scrollContainer.value
+  if (!container) return
+  
+  const targetElement = container.querySelector(`[data-id="${shopId}"]`) as HTMLElement
+  if (targetElement) {
+    container.scrollTo({
+      top: targetElement.offsetTop - 8,
+      behavior: 'smooth'
+    })
+  }
+}
+
 const selectRegion = async (region: string) => {
   selectedRegion.value = region
   
@@ -516,22 +533,19 @@ const selectRegion = async (region: string) => {
       inline: 'center'
     })
   }
-
-  // Reset main list scroll
-  if (scrollContainer.value) {
-    scrollContainer.value.scrollTop = 0
-  }
   
   // Select a random shop in new filtered list to keep it fresh
   const list = filteredRestaurants.value
   if (list.length > 0) {
     const randomIndex = Math.floor(Math.random() * list.length)
-    selectedId.value = list[randomIndex].id
+    const randomShop = list[randomIndex]
+    selectedId.value = randomShop.id
+    // Auto-scroll to the selected shop in the list
+    await scrollToShop(randomShop.id)
   }
 }
 
-// Initial random pick for Korean Seoul
-selectRegion('서울')
+// Initial region setup will be handled in onMounted to ensure DOM availability for scrolling
 
 const filteredRestaurants = computed(() => {
   let list = restaurantList.value.filter(s => s.country === selectedCountry.value)
@@ -611,6 +625,9 @@ onMounted(() => {
   document.documentElement.style.height = '100svh'
   document.body.style.overflow = 'hidden'
   document.body.style.height = '100svh'
+
+  // Initial random pick for Korean Seoul - moved here to ensure scrollContainer is ready
+  selectRegion('서울')
 })
 
 onUnmounted(() => {
@@ -818,19 +835,10 @@ const handleShopSelect = async (shop: Shop) => {
   
   if (window.innerWidth < 1024) {
     sheetMode.value = 'half'
-    
-    await nextTick()
-    const container = scrollContainer.value
-    if (container) {
-      const selectedElement = container.querySelector(`[data-id="${shop.id}"]`) as HTMLElement
-      if (selectedElement) {
-        container.scrollTo({
-          top: selectedElement.offsetTop - 8,
-          behavior: 'smooth'
-        })
-      }
-    }
   }
+  
+  // Auto-scroll the selected card to the top
+  await scrollToShop(shop.id)
 }
 
 /**
