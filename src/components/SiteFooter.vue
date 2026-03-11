@@ -24,10 +24,10 @@
         <!-- Bottom Section: Copyright & Version -->
         <div class="flex flex-col gap-1">
           <p class="text-[24px] font-black text-zinc-300 dark:text-zinc-700 tracking-tight">
-            © DUX
+            © DUXX
           </p>
           <div class="text-[12px] font-bold text-zinc-300 dark:text-zinc-700">
-            Ver. 55.4
+            Ver. 55.5
           </div>
         </div>
       </div>
@@ -39,7 +39,7 @@
 /**
  * SiteFooter.vue
  * 
- * © DUX - Delivering Unified Xperience
+ * © DUXX - Delivering Unified Xperience eXtended
  * Includes RSS legal notice and development version history.
  */
 </script>
