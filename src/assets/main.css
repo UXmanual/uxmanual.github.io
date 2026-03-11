@@ -1,5 +1,8 @@
 @import "tailwindcss";
 
+/* Force Tailwind 4 to use .dark class for 'dark:' variant */
+@variant dark (&:where(.dark, .dark *));
+
 @theme {
     --color-dark-bg: #131313;
     --color-card-bg: #1f1f1f;
@@ -9,7 +12,11 @@
 
 :root {
     --bg-dark: #131313;
-    color-scheme: light dark;
+    color-scheme: light;
+}
+
+:root.dark {
+    color-scheme: dark;
 }
 
 /* Ensure body and html follow the theme */

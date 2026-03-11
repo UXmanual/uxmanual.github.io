@@ -155,8 +155,8 @@ onMounted(() => {
   if (savedTheme) {
     isDark.value = savedTheme === 'dark'
   } else {
-    // Default to system preference if no saved setting
-    isDark.value = window.matchMedia('(prefers-color-scheme: dark)').matches
+    // Default to light mode (false) even if OS is dark
+    isDark.value = false
   }
   updateThemeClass(isDark.value)
   
